@@ -1,21 +1,18 @@
 # DPL
 ## Build
 How to build
-
-1. Using shell script
 ```bash
-chmod +x run && ./run
-```
-
-2. Using cmake
-```bash
-mkdir build
-cd build
-cmake ../src; make
+chmod +x compile && ./compile
 ```
 
 Then use
 ```bash
-./dplc
+./dplc <file>
 ```
 to run the dpl compiler
+
+## Clean Build
+To make a clean build run the following command:
+```bash
+./compile clean
+```
