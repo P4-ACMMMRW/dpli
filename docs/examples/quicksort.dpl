@@ -1,18 +1,18 @@
 // Example quicksort implementation in DPL
-quicksort(list A, int lo, int hi):
+def quicksort(A: list, lo: int, hi: int):
     if lo >= 0 and lo < hi:
-        list p = partition(A, lo, hi)
+        p: list = partition(A, lo, hi)
         quicksort(A, lo, p[0] - 1)
         quicksort(A, p[1] + 1, hi)
 
-partition(list A, int lo, int hi) -> list:
-    int pivot = A[(lo + hi) / 2]
+def partition(A: list, lo: int, hi: int) -> list:
+    pivot: int = A[(lo + hi) / 2]
 
-    int lt = lo
-    int eq = lo
-    int gt = hi
+    lt: int = lo
+    eq: int = lo
+    gt: int = hi
 
-    loop eq <= gt:
+    while eq <= gt:
         if A[eq] < pivot:
             swap(A, eq, lt)
             lt = lt + 1
@@ -26,12 +26,12 @@ partition(list A, int lo, int hi) -> list:
     
     return [lt, gt]
 
-swap(list A, int i, int j):
-    int temp = A[i]
+def swap(A: list, i: int, j: int):
+    temp: int = A[i]
     A[i] = A[j]
     A[j] = temp
 
-list A = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5]
+A: list = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5]
 quicksort(A, 0, len(A) - 1)
 
 print("Sorted list: " + A)
