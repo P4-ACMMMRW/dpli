@@ -1,3 +1,4 @@
+// Euclidean algorithm in DPL
 gcd(int a, int b) -> int:
     if b == 0:
         return a
