@@ -1,4 +1,0 @@
-int i = 1;
-loop 10 times:
-    print(i)
-    i = i + 1
