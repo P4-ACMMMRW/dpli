@@ -7,13 +7,6 @@ if errorlevel 1 (
     exit /b 1
 )
 
-REM Check if make is installed
-where make >nul 2>nul
-if errorlevel 1 (
-    echo make could not be found. Please install make and try again.
-    exit /b 1
-)
-
 REM If build clean
 if "%~1"=="clean" (
     if exist build rmdir /s /q build
