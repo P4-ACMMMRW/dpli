@@ -25,7 +25,7 @@ if not exist build (
 )
 
 cd build
-cmake .. -DCMAKE_BUILD_TYPE=Debug -G "Unix Makefiles"
+cmake .. -DCMAKE_BUILD_TYPE=Debug -G "MinGW Makefiles"
 cmake --build .
 
 rem Wait until done compiling and then run tests
