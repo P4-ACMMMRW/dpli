@@ -25,3 +25,12 @@ if not exist build mkdir build
 cd build
 cmake .. -DCMAKE_BUILD_TYPE=Debug
 make
+
+REM Wait until done compiling and then run tests
+if errorlevel 0 (
+    echo Compilation successful. Running tests...
+    .\tests\unit_tests.exe
+) else (
+    echo Compilation failed.
+    exit /b 1
+)
