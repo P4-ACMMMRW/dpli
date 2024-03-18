@@ -1,5 +1,8 @@
 #include "Test.hpp"
 
+using namespace antlr4;
+using namespace dplgrammar;
+
 TEST_CASE("gcd.dpl", "[lexer]") {
     std::ifstream file = std::ifstream(std::filesystem::path(exampleLocation + "gcd.dpl"));
     if (!file.is_open()) {

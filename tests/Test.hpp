@@ -9,9 +9,6 @@
 #include "DplLexer.h"
 #include "DplParser.h"
 
-using namespace antlr4;
-using namespace dplgrammar;
-
 const std::string exampleLocation = "../docs/examples/";
 
 #endif

@@ -25,8 +25,8 @@ if not exist build (
 )
 
 cd build
-cmake .. -DCMAKE_BUILD_TYPE=Debug
-cmake --build .
+cmake .. -DCMAKE_BUILD_TYPE=Debug -G "Unix Makefiles"
+mingw32-make
 
 rem Wait until done compiling and then run tests
 if %errorlevel% equ 0 (
