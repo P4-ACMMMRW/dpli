@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 add_subdirectory(src)
 
-add_executable(dplc Main.cpp)
-target_link_libraries(dplc PRIVATE dpllib)
+add_executable(dpli Main.cpp)
+target_link_libraries(dpli PRIVATE dpllib)
 
 add_subdirectory(tests)

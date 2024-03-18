@@ -7,9 +7,9 @@ chmod +x compile.sh && ./compile.sh
 Then use
 ```bash
 cd build
-./dplc <file>
+./dpli <file>
 ```
-to run the dpl compiler
+to run the dpl interpreter
 
 #### Clean Build
 To make a clean build run the following command:

@@ -1,5 +1,5 @@
 // Euclidean algorithm in DPL
-gcd(int a, int b) -> int:
+def gcd(a: int, b: int) -> int:
     if b == 0:
         return a
     return gcd(b, a % b)
