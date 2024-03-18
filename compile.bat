@@ -23,8 +23,7 @@ REM Check if build directory exists
 if not exist build mkdir build
 
 cd build
-cmake .. -DCMAKE_BUILD_TYPE=Debug
-make
+cmake .. -DCMAKE_BUILD_TYPE=Debug --build
 
 REM Wait until done compiling and then run tests
 if errorlevel 0 (
