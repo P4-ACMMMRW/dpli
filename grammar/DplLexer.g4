@@ -1,86 +1,64 @@
 lexer grammar DplLexer;
 
-// These are all supported lexer sections:
-
-// Lexer file header. Appears at the top of h + cpp files. Use e.g. for copyrights.
-@lexer::header {/* lexer header section */}
-
-// Appears before any #include in h + cpp files.
-@lexer::preinclude {/* lexer precinclude section */}
-
-// Follows directly after the standard #includes in h + cpp files.
-@lexer::postinclude {
-/* lexer postinclude section */
-#ifndef _WIN32
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-#endif
-}
-
-// Directly preceds the lexer class declaration in the h file (e.g. for additional types etc.).
-@lexer::context {/* lexer context section */}
-
-// Appears in the public part of the lexer in the h file.
-@lexer::members {/* public lexer declarations section */
-bool canTestFoo() { return true; }
-bool isItFoo() { return true; }
-bool isItBar() { return true; }
-
-void myFooLexerAction() { /* do something*/ };
-void myBarLexerAction() { /* do something*/ };
-}
-
-// Appears in the private part of the lexer in the h file.
-@lexer::declarations {/* private lexer declarations/members section */}
-
-// Appears in line with the other class member definitions in the cpp file.
-@lexer::definitions {/* lexer definitions section */}
-
-channels { CommentsChannel, DirectiveChannel }
-
-tokens {
-	DUMMY
-}
-
-Return: 'return';
+// Keywords
+If: 'if';
+Else: 'else';
+While: 'while';
+Break: 'break';
 Continue: 'continue';
+Return: 'return';
+Def: 'def';
+Replace: 'replace';
+With: 'with';
 
-INT: Digit+;
-Digit: [0-9];
+// Type declarations
+IntType: 'int';
+FloatType: 'float';
+BoolType: 'bool';
+StringType: 'str';
+ListType: 'list';
+TableType: 'table';
 
-ID: LETTER (LETTER | '0'..'9')*;
-fragment LETTER : [a-zA-Z\u0080-\u{10FFFF}];
-
-LessThan: '<';
-GreaterThan:  '>';
-Equal: '=';
-And: 'and';
-
+// Symbols
+OpenPar: '(';
+ClosePar: ')';
+OpenCurly: '{';
+CloseCurly: '}';
+OpenSquare: '[';
+CloseSquare: ']';
 Colon: ':';
-Semicolon: ';';
+Comma: ',';
+Arrow: '->';
+
+// Operators
 Plus: '+';
 Minus: '-';
 Star: '*';
-OpenPar: '(';
-ClosePar: ')';
-OpenCurly: '{' -> pushMode(Mode1);
-CloseCurly: '}' -> popMode;
-QuestionMark: '?';
-Comma: ',' -> skip;
-Dollar: '$' -> more, mode(Mode1);
-Ampersand: '&' -> type(DUMMY);
+Slash: '/';
+Mod: '%';
+Equal: '==';
+NotEqual: '!=';
+Less: '<';
+LessEqual: '<=';
+Greater: '>';
+GreaterEqual: '>=';
+And: 'and';
+Or: 'or';
+Not: 'not';
+Assign: '=';
 
-String: '"' .*? '"';
-Foo: {canTestFoo()}? 'foo' {isItFoo()}? { myFooLexerAction(); };
-Bar: 'bar' {isItBar()}? { myBarLexerAction(); };
-Any: Foo Dot Bar? DotDot Baz;
+// Types
+fragment DIGIT: [0-9];
+fragment ALPHA: [a-zA-Z];
+fragment ALPHANUM: [a-zA-Z0-9];
+Identifier: ALPHA ALPHANUM*;
+Integer: DIGIT+;
+Float: DIGIT+ '.' DIGIT+;
+Bool: 'true' | 'false';
+String: '"' ~["\r\n]* '"';
+None: 'None';
 
-Comment : '#' ~[\r\n]* '\r'? '\n' -> channel(CommentsChannel);
-WS: [ \t\r\n]+ -> channel(99);
-
-fragment Baz: 'Baz';
-
-mode Mode1;
-Dot: '.';
-
-mode Mode2;
-DotDot: '..';
+// Ignore
+Comment: '//' ~[\r\n]* -> skip;
+MultiLineComment: '/*' .*? '*/' -> skip;
+Whitespace: [ \t\r\n]+ -> skip;
