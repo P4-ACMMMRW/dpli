@@ -23,5 +23,5 @@ if [ ! -d build ]; then
 fi
 
 cd build
-cmake ../src -DCMAKE_BUILD_TYPE=Debug
+cmake .. -DCMAKE_BUILD_TYPE=Debug
 make
