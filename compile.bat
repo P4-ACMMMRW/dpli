@@ -1,29 +1,37 @@
 @echo off
 
-REM Check if cmake is installed
+rem Check if cmake is installed
 where cmake >nul 2>nul
-if errorlevel 1 (
+if %errorlevel% neq 0 (
     echo cmake could not be found. Please install cmake and try again.
     exit /b 1
 )
 
-REM If build clean
-if "%~1"=="clean" (
-    if exist build rmdir /s /q build
+rem Check if mingw32-make is installed
+where mingw32-make >nul 2>nul
+if %errorlevel% neq 0 (
+    echo mingw32-make could not be found. Please install MinGW and try again.
+    exit /b 1
 )
 
-REM Check if build directory exists
-if not exist build mkdir build
+rem If ./compile.bat clean
+if "%1" == "clean" (
+    rd /s /q build
+)
+
+rem Check if build directory exists
+if not exist build (
+    mkdir build
+)
 
 cd build
-cmake .. -DCMAKE_BUILD_TYPE=Debug
-cmake --build .
+cmake .. -DCMAKE_BUILD_TYPE=Debug -G "MinGW Makefiles"
+mingw32-make
 
-REM Wait until done compiling and then run tests
-if errorlevel 0 (
+rem Wait until done compiling and then run tests
+if %errorlevel% equ 0 (
     echo Compilation successful. Running tests...
-    .\tests\unit_tests.exe
+    tests\unit_tests.exe
 ) else (
     echo Compilation failed.
-    exit /b 1
 )
