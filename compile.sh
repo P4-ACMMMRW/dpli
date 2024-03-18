@@ -23,5 +23,13 @@ if [ ! -d build ]; then
 fi
 
 cd build
-cmake ../src -DCMAKE_BUILD_TYPE=Debug
+cmake .. -DCMAKE_BUILD_TYPE=Debug
 make
+
+# Wait until done compiling and then run tests
+if [ $? -eq 0 ]; then
+    echo "Compilation successful. Running tests..."
+    ./tests/unit_tests
+else
+    echo "Compilation failed."
+fi

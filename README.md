@@ -1,18 +1,18 @@
 # DPL
 ## Build
-How to build
+### Linux
 ```bash
-chmod +x compile && ./compile
+chmod +x compile.sh && ./compile.sh
 ```
-
 Then use
 ```bash
+cd build
 ./dplc <file>
 ```
 to run the dpl compiler
 
-## Clean Build
+#### Clean Build
 To make a clean build run the following command:
 ```bash
-./compile clean
+./compile.sh clean
 ```
