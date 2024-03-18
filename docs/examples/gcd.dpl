@@ -1,0 +1,7 @@
+// Euclidean algorithm in DPL
+gcd(int a, int b) -> int:
+    if b == 0:
+        return a
+    return gcd(b, a % b)
+
+print(gcd(10, 15))
