@@ -5,6 +5,10 @@ tokens {
     Dedent
 }
 
+@lexer::header {
+    #include <queue>
+}
+
 @lexer::members {
     void addDentTokens(bool isEOF = false) {
         if (indentLevels.empty()) {
@@ -21,7 +25,6 @@ tokens {
                 indentLevels.pop();
                 std::cout << "add dedent\n";
             }
-
         }    
     }
 
