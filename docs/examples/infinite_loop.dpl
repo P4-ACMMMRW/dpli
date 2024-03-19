@@ -1,11 +1,10 @@
-i: int = 0
+i = 0
 
-loop {
+while true: 
     i = i + 1
     
-    if i == 10 {
+    if i == 10 
         break
-    }
-
+    
     print("Loop until break!");
-}
+
