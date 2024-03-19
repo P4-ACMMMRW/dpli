@@ -11,14 +11,6 @@ Def: 'def';
 Replace: 'replace';
 With: 'with';
 
-// Type declarations
-IntType: 'int';
-FloatType: 'float';
-BoolType: 'bool';
-StringType: 'str';
-ListType: 'list';
-TableType: 'table';
-
 // Symbols
 OpenPar: '(';
 ClosePar: ')';
@@ -28,9 +20,9 @@ OpenSquare: '[';
 CloseSquare: ']';
 Colon: ':';
 Comma: ',';
-Arrow: '->';
 
 // Operators
+Exponent: '**';
 Plus: '+';
 Minus: '-';
 Star: '*';
@@ -54,7 +46,7 @@ fragment ALPHANUM: [a-zA-Z0-9];
 Identifier: ALPHA ALPHANUM*;
 Integer: DIGIT+;
 Float: DIGIT+ '.' DIGIT+;
-Bool: 'true' | 'false';
+Bool: 'True' | 'False';
 String: '"' ~["\r\n]* '"';
 None: 'None';
 

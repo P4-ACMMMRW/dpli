@@ -105,8 +105,7 @@ literal: Float
 //boolexpr: Not expr
 //        | expr (And | Or | Equal | Less | Greater | LessEqual | LessEqual) expr;
 
-procdec: Def Identifier OpenPar args ClosePar Colon stm+
-       | Def Identifier OpenPar args ClosePar Arrow Colon stm+;
+procdec: Def Identifier OpenPar args ClosePar Colon stm+;
 
 vardec: Identifier
       | Identifier Assign expr;
