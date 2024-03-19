@@ -27,6 +27,10 @@ tokens {
             }
         }    
     }
+}
+
+@lexer::declarations {
+    std::stack<int> indentLevels;
 
     int getIndentation() {
         int length = 0;
@@ -42,10 +46,6 @@ tokens {
 
         return length;
     }
-}
-
-@lexer::declarations {
-    std::stack<int> indentLevels;
 }
 
 // Keywords
