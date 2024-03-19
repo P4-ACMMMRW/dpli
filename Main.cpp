@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
     }
 
     DplParser parser(&tokens);
-    tree::ParseTree* tree = parser.main();
+    tree::ParseTree* tree = parser.prog();
 
     std::cout << tree->toStringTree(&parser) << "\n\n";
 

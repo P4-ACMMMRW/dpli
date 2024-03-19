@@ -68,6 +68,61 @@ void doAfter() {}
 @parser::basevisitordefinitions {/* base visitor definitions section */}
 
 // Actual grammar start.
+prog: (stm | vardec | procdec)+;
+
+stm: expr
+   | Identifier Assign expr
+   | vardec Assign expr
+   | If expr Colon stm+
+   | If expr Colon stm+ Else Colon stm+
+   | Loop Colon stm+
+   | Loop expr Colon stm+
+   | Loop expr Star Colon stm+
+   | Break
+   | Return
+   | Return expr
+   | Replace expr With expr;
+
+expr: OpenPar expr ClosePar
+    //| arthexpr
+    //| boolexpr
+    | Identifier
+    | Identifier OpenSquare expr CloseSquare
+    | Identifier OpenPar args ClosePar
+    | expr (Plus | Minus | Star | Slash | Mod) expr
+    | Not expr
+    | expr (And | Or | Equal | Less | Greater | LessEqual | LessEqual) expr
+    | const;
+
+const: Float 
+     | Integer
+     | Bool
+     | String
+     | None;
+
+
+//arthexpr: expr (Plus | Minus | Star | Slash | Mod) expr;
+
+//boolexpr: Not expr
+//        | expr (And | Or | Equal | Less | Greater | LessEqual | LessEqual) expr;
+
+procdec: Identifier OpenPar args ClosePar Colon stm+
+       | Identifier OpenPar args ClosePar Arrow Colon stm+;
+
+vardec: type Identifier
+      | type Identifier Assign expr;
+
+type: IntType 
+    | FloatType
+    | BoolType 
+    | StringType 
+    | ListType 
+    | TableType;
+
+args: (type Identifier)*;
+    
+
+/* 
 main: stat+ EOF;
 divide : ID (and_ GreaterThan)? {doesItBlend()}?;
 and_ @init{ doInit(); } @after { doAfter(); } : And ;
@@ -116,4 +171,4 @@ flowControl:
 id: ID;
 array : OpenCurly el += INT (Comma el += INT)* CloseCurly;
 idarray : OpenCurly element += id (Comma element += id)* CloseCurly;
-any: t = .;
+any: t = .;*/
