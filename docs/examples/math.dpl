@@ -1,0 +1,9 @@
+x = 2**3
+y = 2 * 3
+z = 10 / 2
+i = 10 % 2
+
+print(x) # => 8
+print(y) # => 6
+print(z) # => 5
+print(i) # => 0

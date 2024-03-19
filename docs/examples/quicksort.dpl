@@ -1,4 +1,4 @@
-// Example quicksort implementation in DPL
+# Example quicksort implementation in DPL
 def quicksort(A, lo, hi):
     if lo >= 0 and lo < hi:
         p = partition(A, lo, hi)

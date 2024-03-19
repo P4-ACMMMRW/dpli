@@ -51,6 +51,6 @@ String: '"' ~["\r\n]* '"';
 None: 'None';
 
 // Ignore
-Comment: '//' ~[\r\n]* -> skip;
+Comment: '#' ~[\r\n]* -> skip;
 MultiLineComment: '/*' .*? '*/' -> skip;
 Whitespace: [ \t\r\n]+ -> skip;

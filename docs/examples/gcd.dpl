@@ -1,4 +1,4 @@
-// Euclidean algorithm in DPL
+# Euclidean algorithm in DPL
 def gcd(a, b):
     if b == 0:
         return a
