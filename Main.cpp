@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
     CommonTokenStream tokens(&lexer);
 
     tokens.fill();
-    for (auto token : tokens.getTokens()) {
+    for (antlr4::Token *token : tokens.getTokens()) {
         std::cout << token->toString() << '\n';
     }
 
