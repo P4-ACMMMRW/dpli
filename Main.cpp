@@ -10,9 +10,14 @@ int main(int argc, char **argv) {
         return 0;
     }
 
-    std::ifstream file = std::ifstream(std::filesystem::path(argv[1]));
+    if (!std::filesystem::exists(argv[1])) {
+        std::cerr << "File does not exist: " << argv[1] << '\n';
+        exit(EXIT_FAILURE);
+    }
+
+    std::ifstream file = std::ifstream(argv[1]);
     if (!file.is_open()) {
-        std::cerr << "Failed to open file: " << argv[1];
+        std::cerr << "Failed to open file: " << argv[1] << '\n';
         exit(EXIT_FAILURE);
     }
 

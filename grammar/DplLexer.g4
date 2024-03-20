@@ -5,7 +5,7 @@ tokens {
     Dedent
 }
 
-@lexer::header {
+@lexer::preinclude {
     #include <queue>
 }
 
@@ -131,5 +131,8 @@ None: 'None';
 Comment: '#' ~[\r\n]* -> skip;
 MultiLineComment: '/*' .*? '*/' -> skip;
 
+// Add Indent and Dedent tokens
 Newline: '\r'? '\n' { addDentTokens(); } -> skip;
-Space: [ \t] -> skip;
+
+// Skip whitespace
+Whitespace: [ \t] -> skip;
