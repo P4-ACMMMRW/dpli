@@ -10,7 +10,13 @@ tokens {
 }
 
 @lexer::members {
-    void addDentTokens(bool isEOF = false) {
+    /**
+    * Starts by pushing 0 onto the stack.
+    * Calculate the indentation of the current line if EOF is set to 0 to add remaining dedent tokens
+    * If current lines indentation > top of the stack, push it onto the stack and add an indent token
+    * Else if the current lines indentation is < top of the stack, pop the stack and add dedent tokens until indentation >= top of the stack. 
+    */
+    void addDentTokens() {
         if (indentLevels.empty()) {
             indentLevels.push(0);
         }
@@ -18,20 +24,45 @@ tokens {
         int indent = _input->LA(1) == EOF ? 0 : getIndentation();
 
         if (indent > indentLevels.top()) {
-            std::cout << "add indent\n";
             indentLevels.push(indent);
+            pendingTokens.push(_factory->create({ this, _input }, Indent, "Indent", channel, tokenStartCharIndex, getCharIndex() - 1, tokenStartLine, tokenStartCharPositionInLine));
         } else if (indent < indentLevels.top()) {
             while (indent < indentLevels.top()) {
                 indentLevels.pop();
-                std::cout << "add dedent\n";
+                pendingTokens.push(_factory->create({ this, _input }, Dedent, "Dedent", channel, tokenStartCharIndex, getCharIndex() - 1, tokenStartLine, tokenStartCharPositionInLine));
             }
-        }    
+        }
+    }
+
+    /**
+    * Returns the next token in the queue if not empty
+    * Otherwise, get next token from lexer and add it to the queue
+    * If the queue is still empty, return the token otherwise return the next token in the queue
+    */
+    std::unique_ptr<antlr4::Token> nextToken() override {
+        if (pendingTokens.empty()) {
+            std::unique_ptr<antlr4::Token> next = antlr4::Lexer::nextToken();
+            if (pendingTokens.empty()) {
+                return next;
+            }
+
+            pendingTokens.push(std::move(next));
+        }
+
+        std::unique_ptr<antlr4::Token> token = std::move(pendingTokens.front());
+        pendingTokens.pop();
+
+        return token;
     }
 }
 
 @lexer::declarations {
     std::stack<int> indentLevels;
+    std::queue<std::unique_ptr<antlr4::Token>> pendingTokens;
 
+    /**
+    * Calculate indentation of current line
+    */
     int getIndentation() {
         int length = 0;
         int i = 1;
@@ -41,8 +72,6 @@ tokens {
             length += _input->LA(i) == ' ' ? 1 : 8;
             ++i;
         }
-
-        std::cout << "length: " << length << '\n';
 
         return length;
     }
