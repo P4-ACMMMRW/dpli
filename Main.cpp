@@ -33,7 +33,7 @@ int main(int argc, char **argv) {
     DplParser parser(&tokens);
     tree::ParseTree* tree = parser.prog();
 
-    std::cout << tree->toStringTree(&parser) << "\n\n";
+    std::cout << tree->toStringTree(&parser, true) << "\n\n";
 
     return 0;
 }

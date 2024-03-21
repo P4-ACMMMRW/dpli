@@ -73,12 +73,13 @@ prog: (stm | procdec)+;
 // Statement 
 stm: Indent stm+ Dedent
    | expr
-   | vardec 
+   | Identifier
    | listdec
    | tabledec
    | ctrlstm
    | loopstm
    | flowstm
+   | assignstm
    | Replace expr With expr;
 
 // Control Statements
@@ -95,6 +96,8 @@ flowstm: Break
        | Return
        | Return expr;
 
+assignstm: (Identifier | tablecall | listcall) Assign expr;
+
 // Expressions
 expr: Not expr
     | OpenPar expr ClosePar
@@ -108,14 +111,24 @@ expr: Not expr
 
 arthexpr: (Plus | Minus | Star | Slash | Mod) expr;
 
-boolexpr: (And | Or | Equal | Less | Greater | LessEqual | GreaterEqual) expr;
+boolexpr: junctionopr | compareopr expr;
+
+
+// Table Unary Expression
+unaryexpr: compareopr expr (junctionopr expr)*;
+
+
 
 // Table Non-Terminals
 table:  OpenCurly (String Colon list (Comma String Colon list)*)? CloseCurly; 
 
 tabledec: Identifier Assign table;
 
-tablecall: Identifier (OpenSquare (Integer | expr | boolexpr) CloseSquare)+;
+tablecall: OpenPar tablecall ClosePar
+         | Identifier (OpenSquare expr CloseSquare (OpenSquare unaryexpr CloseSquare)?)? 
+         | tablecall  OpenSquare expr CloseSquare (OpenSquare unaryexpr CloseSquare)?;
+
+
 
 // List Non-Terminals 
 list: OpenSquare args CloseSquare;
@@ -124,23 +137,32 @@ listdec: Identifier Assign list;
 
 listcall: Identifier (OpenSquare Integer CloseSquare)+;
 
+
+
 // Procedures Non-Terminals
 procdec: Def Identifier OpenPar params ClosePar Colon stm+;
 
 proccall: Identifier OpenPar args ClosePar;
 
-// Lambda (prob doessn't work correctly like dont want return)
-lambda: Identifier Assign params Colon stm+;
 
-// Variable declaration (NEED WAY TO ASSIGN LIST ELEMENT)
-vardec: Identifier
-      | Identifier Assign expr;
 
 // Args
 args: (expr (Comma expr)*)?;
 
-// params
+// Params
 params: (Identifier (Comma Identifier)*)?;
+
+
+
+
+
+// Compare Operators
+compareopr : (Equal | Less | Greater | LessEqual | GreaterEqual);
+
+// Junction Operator
+junctionopr: (And | Or);
+
+
 
 // Literals
 literal: Float 
@@ -150,3 +172,4 @@ literal: Float
        | list
        | table
        | None;
+
