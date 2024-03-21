@@ -17,10 +17,6 @@ tokens {
     * Else if the current lines indentation is < top of the stack, pop the stack and add dedent tokens until indentation >= top of the stack. 
     */
     void addDentTokens() {
-        if (indentLevels.empty()) {
-            indentLevels.push(0);
-        }
-
         int indent = _input->LA(1) == EOF ? 0 : getIndentation();
 
         if (indent > indentLevels.top()) {
@@ -57,7 +53,7 @@ tokens {
 }
 
 @lexer::declarations {
-    std::stack<int> indentLevels;
+    std::stack<int> indentLevels = std::stack<int>({0});
     std::queue<std::unique_ptr<antlr4::Token>> pendingTokens;
 
     /**
