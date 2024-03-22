@@ -17,16 +17,13 @@ tokens {
     * Else if the current lines indentation is < top of the stack, pop the stack and add dedent tokens until indentation >= top of the stack. 
     */
     void addDentTokens() {
-        if (indentLevels.empty()) {
-            indentLevels.push(0);
-        }
-
         int indent = _input->LA(1) == EOF ? 0 : getIndentation();
+        char nextChar = computeNextChar();
 
         if (indent > indentLevels.top()) {
             indentLevels.push(indent);
             pendingTokens.push(_factory->create({ this, _input }, Indent, "Indent", channel, tokenStartCharIndex, getCharIndex() - 1, tokenStartLine, tokenStartCharPositionInLine));
-        } else if (indent < indentLevels.top()) {
+        } else if (indent < indentLevels.top() && nextChar != '\n') {
             while (indent < indentLevels.top()) {
                 indentLevels.pop();
                 pendingTokens.push(_factory->create({ this, _input }, Dedent, "Dedent", channel, tokenStartCharIndex, getCharIndex() - 1, tokenStartLine, tokenStartCharPositionInLine));
@@ -54,10 +51,18 @@ tokens {
 
         return token;
     }
+
+    /**
+    * Call addDentTokens() at end of file to add missing dedent tokens
+    */
+    antlr4::Token* emitEOF() override {
+        addDentTokens();
+        return antlr4::Lexer::emitEOF();
+    }
 }
 
 @lexer::declarations {
-    std::stack<int> indentLevels;
+    std::stack<int> indentLevels = std::stack<int>({0});
     std::queue<std::unique_ptr<antlr4::Token>> pendingTokens;
 
     /**
@@ -74,6 +79,23 @@ tokens {
         }
 
         return length;
+    }
+
+    /**
+    * Compute the next character in the input stream.
+    * Auxiliary function used to make sure lines with only whitespace
+    * are not getting spammed with dedent & indent tokens.
+    */
+    char computeNextChar() {
+        char nextChar = _input->LA(1);
+        int i = 1;
+
+        while (nextChar == ' ' || nextChar == '\t') {
+            ++i;
+            nextChar = _input->LA(i);
+        }
+
+        return nextChar;
     }
 }
 
@@ -120,12 +142,12 @@ Assign: '=';
 fragment DIGIT: [0-9];
 fragment ALPHA: [a-zA-Z];
 fragment ALPHANUM: [a-zA-Z0-9];
-Identifier: ALPHA ALPHANUM*;
 Integer: DIGIT+;
 Float: DIGIT+ '.' DIGIT+;
 Bool: 'True' | 'False';
 String: '"' ~["\r\n]* '"';
 None: 'None';
+Identifier: ALPHA ALPHANUM*;
 
 // Comments
 Comment: '#' ~[\r\n]* -> skip;
