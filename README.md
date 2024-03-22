@@ -19,33 +19,30 @@ cd build
 ```
 to run the dpl interpreter
 
+#### Clean Build
+To make a clean build run the following command:
+```bash
+./compile.sh clean
+```
+
 #### Run Tests
 After compiling the interpreter tests can be run with:
 
 First time 
 ```bash
-chmod +x test.sh
+chmod +x run_tests.sh
 ```
 then
 ```bash
-./test.sh
+./run_tests.sh
 ```
 to verify tests.
 
 #### Generate Parse Tree PNG
-(OPS need to install graphvis)
-
 ```bash
-sudo apt install graphviz -y
+chmod +x generate_tree.sh
 ```
-
+then
 ```bash
-./dpli <input/file> <output/file> 
-dot -Tpng output/tree.dot -o output/tree.png
-```
-
-#### Clean Build
-To make a clean build run the following command:
-```bash
-./compile.sh clean
+./generate_tree.sh <input-file> <output-name>
 ```
