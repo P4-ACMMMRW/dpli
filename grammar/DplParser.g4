@@ -109,9 +109,9 @@ expr: Not expr
     | proccall
     | literal;
 
-arthexpr: (Plus | Minus | Star | Slash | Mod) expr;
+arthexpr: (Plus | Minus | Star | Slash | Mod | Exponent) expr;
 
-boolexpr: junctionopr | compareopr expr;
+boolexpr: (junctionopr | compareopr) expr;
 
 
 // Table Unary Expression
@@ -157,7 +157,7 @@ params: (Identifier (Comma Identifier)*)?;
 
 
 // Compare Operators
-compareopr : (Equal | Less | Greater | LessEqual | GreaterEqual);
+compareopr : (Equal | NotEqual | Less | Greater | LessEqual | GreaterEqual);
 
 // Junction Operator
 junctionopr: (And | Or);
