@@ -18,10 +18,8 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         build_type: [Release]
-        cpp_compiler: [g++, clang++, cl]
+        cpp_compiler: [clang++, cl]
         exclude:
-          - os: windows-latest
-            cpp_compiler: g++
           - os: windows-latest
             cpp_compiler: clang++
           - os: ubuntu-latest
