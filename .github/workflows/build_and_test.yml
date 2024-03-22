@@ -47,7 +47,7 @@ jobs:
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
 
     - name: Setup JDK
-      if: matrix.os == 'windows-latest'
+      if: matrix.os != 'ubuntu-latest'
       uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
