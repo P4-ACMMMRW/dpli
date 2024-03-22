@@ -1,3 +1,5 @@
+[![Build and Test](https://github.com/P4-ACMMMRW/dpli/actions/workflows/build_and_test.yml/badge.svg)](https://github.com/P4-ACMMMRW/dpli/actions/workflows/build_and_test.yml)
+
 # DPL
 ## Build
 ### Linux
