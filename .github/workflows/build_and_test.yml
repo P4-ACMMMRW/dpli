@@ -68,7 +68,12 @@ jobs:
       run: ctest --build-config ${{ matrix.build_type }} --output-on-failure
 
     - name: List build directory
+      if: matrix.os != 'windows-latest'
       run: ls -l build
+
+    - name: List build directory
+      if: matrix.os == 'windows-latest'
+      run: ls -l build\Release
 
     - name: Upload Linux
       if: matrix.os == 'ubuntu-latest'
@@ -83,7 +88,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: dpli
-        path: build/dpli.exe
+        path: build/Release/dpli.exe
         if-no-files-found: error
     
     - name: Upload MacOS
