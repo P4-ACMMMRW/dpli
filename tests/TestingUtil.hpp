@@ -9,14 +9,13 @@
 #include <DplLexer.h>
 #include <DplParser.h>
 
-
 #define LEXER_TEST(name) TEST_CASE(name, "[lexer]")
 
 namespace util {
     class TestingUtil {
         public:
             static void testTokens(std::string testFileName, std::vector<int> expectedTokenTypes) {
-                const std::string exampleLocation = "../docs/examples/";
+                const std::string exampleLocation = "../../docs/examples/";
 
                 std::string filePath = exampleLocation + testFileName;
 
