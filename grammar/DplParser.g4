@@ -68,52 +68,46 @@ void doAfter() {}
 @parser::basevisitordefinitions {/* base visitor definitions section */}
 
 // Actual grammar start.
-main: stat+ EOF;
-divide : ID (and_ GreaterThan)? {doesItBlend()}?;
-and_ @init{ doInit(); } @after { doAfter(); } : And ;
+prog: (stm | vardec | procdec)+;
 
-conquer:
-	divide+
-	| {doesItBlend()}? and_ { myAction(); }
-	| ID (LessThan* divide)?? { $ID.text; }
-;
+stm: expr
+   | Identifier Assign expr
+   | vardec Assign expr
+   | If expr Colon stm+
+   | If expr Colon stm+ Else Colon stm+
+   | While expr Colon stm+
+   | While expr Star Colon stm+
+   | Break
+   | Return
+   | Return expr
+   | Replace expr With expr;
 
-// Unused rule to demonstrate some of the special features.
-unused[double input = 111] returns [double calculated] locals [int _a, double _b, int _c] @init{ doInit(); } @after { doAfter(); } :
-	stat
-;
-catch [...] {
-  // Replaces the standard exception handling.
-}
-finally {
-  cleanUp();
-}
+expr: OpenPar expr ClosePar
+    //| arthexpr
+    //| boolexpr
+    | Identifier
+    | Identifier OpenSquare expr CloseSquare
+    | Identifier OpenPar args ClosePar
+    | expr (Plus | Minus | Star | Slash | Mod) expr
+    | Not expr
+    | expr (And | Or | Equal | Less | Greater | LessEqual | GreaterEqual) expr
+    | literal;
 
-unused2:
-	(unused[1] .)+ (Colon | Semicolon | Plus)? ~Semicolon
-;
+literal: Float 
+     | Integer
+     | Bool
+     | String
+     | None;
 
-stat: expr Equal expr Semicolon
-    | expr Semicolon
-;
 
-expr: expr Star expr
-    | expr Plus expr
-    | OpenPar expr ClosePar
-    | <assoc = right> expr QuestionMark expr Colon expr
-    | <assoc = right> expr Equal expr
-    | identifier = id
-    | flowControl
-    | INT
-    | String
-;
+//arthexpr: expr (Plus | Minus | Star | Slash | Mod) expr;
 
-flowControl:
-	Return expr # Return
-	| Continue # Continue
-;
+//boolexpr: Not expr
+//        | expr (And | Or | Equal | Less | Greater | LessEqual | LessEqual) expr;
 
-id: ID;
-array : OpenCurly el += INT (Comma el += INT)* CloseCurly;
-idarray : OpenCurly element += id (Comma element += id)* CloseCurly;
-any: t = .;
+procdec: Def Identifier OpenPar args ClosePar Colon stm+;
+
+vardec: Identifier
+      | Identifier Assign expr;
+
+args: (expr (Comma expr)*)?;
