@@ -1,15 +1,15 @@
 #!/bin/bash
 
-# Check if cmake is installed
+# Check if cmake is installed and install if not
 if ! command -v cmake &> /dev/null; then
-    echo "cmake could not be found. Please install cmake and try again."
-    exit 1
+    echo "cmake could not be found. Installing cmake..."
+    sudo apt install cmake -y
 fi
 
-# Check if make is installed
+# Check if make is installed and install if not
 if ! command -v make &> /dev/null; then
-    echo "make could not be found. Please install make and try again."
-    exit 1
+    echo "make could not be found. Installing make..."
+    sudo apt install make -y
 fi
 
 # If ./build clean
