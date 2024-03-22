@@ -3,7 +3,7 @@
 using namespace dplgrammar;
 
 LEXER_TEST("gcd.dpl") {
-    std::vector<int> expectedTokenTypes = {
+    std::vector<size_t> expectedTokenTypes = {
         DplLexer::Def,
         DplLexer::Identifier,
         DplLexer::OpenPar,

@@ -3,7 +3,7 @@
 using namespace dplgrammar;
 
 LEXER_TEST("continue.dpl") {
-    std::vector<int> expectedTokens = {
+    std::vector<size_t> expectedTokens = {
         DplLexer::Identifier,
         DplLexer::Assign,
         DplLexer::Integer,
