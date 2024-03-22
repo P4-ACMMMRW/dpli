@@ -3,7 +3,7 @@
 using namespace dplgrammar;
 
 
-PARSER_TEST("break.dpl") {
+PARSER_TEST("Parser - break.dpl") {
     std::vector<int> expectedTokenTypes = {
     };
     
