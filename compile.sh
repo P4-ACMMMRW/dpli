@@ -29,7 +29,7 @@ make
 # Wait until done compiling and then run tests
 if [ $? -eq 0 ]; then
     echo "Compilation successful. Running tests..."
-    ./tests/unit_tests
+    ctest --output-on-failure
 else
     echo "Compilation failed."
 fi
