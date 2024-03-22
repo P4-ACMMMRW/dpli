@@ -17,7 +17,7 @@ antlr_target(DplParser ../grammar/DplParser.g4 PARSER
              PACKAGE dplgrammar
              DEPENDS_ANTLR DplLexer
              OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/antlr4cpp_generated_src/DplParser/grammar
-             COMPILE_FLAGS -lib ${ANTLR_DplLexer_OUTPUT_DIR})
+             COMPILE_FLAGS -lib ${ANTLR_DplLexer_OUTPUT_DIR} -visitor)
 
 message(STATUS "ANTLR_DplLexer_OUTPUT_DIR: ${ANTLR_DplLexer_OUTPUT_DIR}")
 message(STATUS "ANTLR_DplParser_OUTPUT_DIR: ${ANTLR_DplParser_OUTPUT_DIR}")

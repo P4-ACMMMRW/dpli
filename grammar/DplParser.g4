@@ -36,37 +36,6 @@ void doInit() {}
 void doAfter() {}
 }
 
-// Appears in the public part of the parser in the h file.
-@parser::declarations {/* private parser declarations section */}
-
-// Appears in line with the other class member definitions in the cpp file.
-@parser::definitions {/* parser definitions section */}
-
-// Additionally there are similar sections for (base)listener and (base)visitor files.
-@parser::listenerpreinclude {/* listener preinclude section */}
-@parser::listenerpostinclude {/* listener postinclude section */}
-@parser::listenerdeclarations {/* listener public declarations/members section */}
-@parser::listenermembers {/* listener private declarations/members section */}
-@parser::listenerdefinitions {/* listener definitions section */}
-
-@parser::baselistenerpreinclude {/* base listener preinclude section */}
-@parser::baselistenerpostinclude {/* base listener postinclude section */}
-@parser::baselistenerdeclarations {/* base listener public declarations/members section */}
-@parser::baselistenermembers {/* base listener private declarations/members section */}
-@parser::baselistenerdefinitions {/* base listener definitions section */}
-
-@parser::visitorpreinclude {/* visitor preinclude section */}
-@parser::visitorpostinclude {/* visitor postinclude section */}
-@parser::visitordeclarations {/* visitor public declarations/members section */}
-@parser::visitormembers {/* visitor private declarations/members section */}
-@parser::visitordefinitions {/* visitor definitions section */}
-
-@parser::basevisitorpreinclude {/* base visitor preinclude section */}
-@parser::basevisitorpostinclude {/* base visitor postinclude section */}
-@parser::basevisitordeclarations {/* base visitor public declarations/members section */}
-@parser::basevisitormembers {/* base visitor private declarations/members section */}
-@parser::basevisitordefinitions {/* base visitor definitions section */}
-
 // Actual grammar start.
 prog: (stm | procdec)+;
 

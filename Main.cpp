@@ -16,6 +16,9 @@ std::string escapeDotString(const std::string& str) {
     return result;
 }
 
+/*
+   Generate file which is used for visualizing the parse tree
+*/
 void generateDotFile(tree::ParseTree* node, const std::string& parentId, std::ofstream& out) {
     std::string nodeId = std::to_string(reinterpret_cast<std::uintptr_t>(node));
 
