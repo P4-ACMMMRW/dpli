@@ -12,6 +12,8 @@
 #include <DplParserBaseVisitor.h>
 
 
+#include <DplParserBaseVisitor.h>
+
 #define LEXER_TEST(name) TEST_CASE(name, "[lexer]")
 #define PARSER_TEST(name) TEST_CASE(name, "[parser]")
 
@@ -155,6 +157,36 @@ namespace util {
                     INFO(i);
                     REQUIRE(tokens.get(i)->getType() == expectedTokenTypes[i]);
                 }
+            }
+        public: 
+            static void testParser(std::string testFileName, std::vector<int> expectedTreeNodes) {
+                const std::string exampleLocation = "../docs/examples/";
+
+                std::string filePath = exampleLocation + testFileName;
+
+                if (!std::filesystem::exists(filePath)) {
+                    std::cerr << "File does not exist: " << filePath << '\n';
+                    exit(EXIT_FAILURE);
+                }
+
+                std::ifstream file = std::ifstream(filePath);
+                if (!file.is_open()) {
+                    std::cerr << "Failed to open file: " << filePath;
+                    FAIL();
+                }
+
+                antlr4::ANTLRInputStream input(file);
+
+                dplgrammar::DplLexer lexer(&input);
+                antlr4::CommonTokenStream tokens(&lexer);
+
+                tokens.fill();
+
+                dplgrammar::DplParser parser(&tokens);
+                antlr4::tree::ParseTree* tree = parser.prog();
+
+                TestVisitor visitor;
+                visitor.visit(tree);
             }
         public: 
             static void testParser(std::string testFileName, std::vector<int> expectedTreeNodes) {
