@@ -18,12 +18,12 @@ if [ ! -f build/dpli ]; then
     chmod +x compile.sh && ./compile.sh
 fi
 
-./build/dpli $1 tree/$2
-
 # If tree directory does not exist, create it
 if [ ! -d tree ]; then
     mkdir tree
 fi
 
-# Create tree at argument 2
+./build/dpli $1 tree/$2
+
+# Wait for the tree to be generated and then convert it to png
 dot -Tpng tree/$2 -o tree/$2.png
