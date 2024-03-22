@@ -3,7 +3,6 @@
 using namespace antlr4;
 using namespace dplgrammar;
 
-
 std::string escapeDotString(const std::string& str) {
     std::string result;
     for (char c : str) {
