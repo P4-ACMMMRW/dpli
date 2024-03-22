@@ -68,52 +68,108 @@ void doAfter() {}
 @parser::basevisitordefinitions {/* base visitor definitions section */}
 
 // Actual grammar start.
-main: stat+ EOF;
-divide : ID (and_ GreaterThan)? {doesItBlend()}?;
-and_ @init{ doInit(); } @after { doAfter(); } : And ;
+prog: (stm | procdec)+;
 
-conquer:
-	divide+
-	| {doesItBlend()}? and_ { myAction(); }
-	| ID (LessThan* divide)?? { $ID.text; }
-;
+// Statement 
+stm: Indent stm+ Dedent
+   | expr
+   | Identifier
+   | listdec
+   | tabledec
+   | ctrlstm
+   | loopstm
+   | flowstm
+   | assignstm
+   | Replace expr With expr;
 
-// Unused rule to demonstrate some of the special features.
-unused[double input = 111] returns [double calculated] locals [int _a, double _b, int _c] @init{ doInit(); } @after { doAfter(); } :
-	stat
-;
-catch [...] {
-  // Replaces the standard exception handling.
-}
-finally {
-  cleanUp();
-}
+// Control Statements
+ctrlstm: If expr Colon stm+
+       | If expr Colon stm+ Else Colon stm+;
 
-unused2:
-	(unused[1] .)+ (Colon | Semicolon | Plus)? ~Semicolon
-;
+// Loop Statements
+loopstm: While expr Colon stm+
+       | While expr Star Colon stm+;
 
-stat: expr Equal expr Semicolon
-    | expr Semicolon
-;
+// Flow Statements
+flowstm: Break
+       | Continue
+       | Return
+       | Return expr;
 
-expr: expr Star expr
-    | expr Plus expr
+assignstm: (Identifier | tablecall | listcall) Assign expr;
+
+// Expressions
+expr: Not expr
     | OpenPar expr ClosePar
-    | <assoc = right> expr QuestionMark expr Colon expr
-    | <assoc = right> expr Equal expr
-    | identifier = id
-    | flowControl
-    | INT
-    | String
-;
+    | expr arthexpr
+    | expr boolexpr
+    | Identifier
+    | tablecall
+    | listcall
+    | proccall
+    | literal;
 
-flowControl:
-	Return expr # Return
-	| Continue # Continue
-;
+arthexpr: (Plus | Minus | Star | Slash | Mod | Exponent) expr;
 
-id: ID;
-array : OpenCurly el += INT (Comma el += INT)* CloseCurly;
-idarray : OpenCurly element += id (Comma element += id)* CloseCurly;
-any: t = .;
+boolexpr: (junctionopr | compareopr) expr;
+
+
+// Table Unary Expression
+unaryexpr: compareopr expr (junctionopr expr)*;
+
+
+
+// Table Non-Terminals
+table:  OpenCurly (String Colon list (Comma String Colon list)*)? CloseCurly; 
+
+tabledec: Identifier Assign table;
+
+tablecall: OpenPar tablecall ClosePar
+         | Identifier (OpenSquare expr CloseSquare (OpenSquare unaryexpr CloseSquare)?)? 
+         | tablecall  OpenSquare expr CloseSquare (OpenSquare unaryexpr CloseSquare)?;
+
+
+
+// List Non-Terminals 
+list: OpenSquare args CloseSquare;
+
+listdec: Identifier Assign list;
+
+listcall: Identifier (OpenSquare Integer CloseSquare)+;
+
+
+
+// Procedures Non-Terminals
+procdec: Def Identifier OpenPar params ClosePar Colon stm+;
+
+proccall: Identifier OpenPar args ClosePar;
+
+
+
+// Args
+args: (expr (Comma expr)*)?;
+
+// Params
+params: (Identifier (Comma Identifier)*)?;
+
+
+
+
+
+// Compare Operators
+compareopr : (Equal | NotEqual | Less | Greater | LessEqual | GreaterEqual);
+
+// Junction Operator
+junctionopr: (And | Or);
+
+
+
+// Literals
+literal: Float 
+       | Integer
+       | Bool
+       | String
+       | list
+       | table
+       | None;
+
