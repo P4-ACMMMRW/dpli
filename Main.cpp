@@ -73,7 +73,6 @@ int main(int argc, char **argv) {
         out << "digraph {\n";
         generateDotFile(tree, "", out);
         out << "}\n";
-        out.close();
     }
 
     return 0;
