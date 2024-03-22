@@ -2,7 +2,7 @@
 
 # Check if two arguments are passed
 if [ "$#" -ne 2 ]; then
-    echo "Usage: ./generate_tree.sh <input_file> <output_file>"
+    echo "Usage: ./generate_tree.sh <input-file> <output-file>"
     exit 1
 fi
 
