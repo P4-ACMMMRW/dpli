@@ -31,6 +31,15 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
+    - name: Cache build outputs
+      uses: actions/cache@v4
+      with:
+        path: |
+          build
+        key: ${{ runner.os }}-build-${{ hashFiles('**/CMakeLists.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-build-
+
     - name: Set Build Output Directory
       id: strings
       shell: bash
