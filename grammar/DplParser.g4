@@ -68,46 +68,108 @@ void doAfter() {}
 @parser::basevisitordefinitions {/* base visitor definitions section */}
 
 // Actual grammar start.
-prog: (stm | vardec | procdec)+;
+prog: (stm | procdec)+;
 
-stm: expr
-   | Identifier Assign expr
-   | vardec Assign expr
-   | If expr Colon stm+
-   | If expr Colon stm+ Else Colon stm+
-   | While expr Colon stm+
-   | While expr Star Colon stm+
-   | Break
-   | Return
-   | Return expr
+// Statement 
+stm: Indent stm+ Dedent
+   | expr
+   | Identifier
+   | listdec
+   | tabledec
+   | ctrlstm
+   | loopstm
+   | flowstm
+   | assignstm
    | Replace expr With expr;
 
-expr: OpenPar expr ClosePar
-    //| arthexpr
-    //| boolexpr
+// Control Statements
+ctrlstm: If expr Colon stm+
+       | If expr Colon stm+ Else Colon stm+;
+
+// Loop Statements
+loopstm: While expr Colon stm+
+       | While expr Star Colon stm+;
+
+// Flow Statements
+flowstm: Break
+       | Continue
+       | Return
+       | Return expr;
+
+assignstm: (Identifier | tablecall | listcall) Assign expr;
+
+// Expressions
+expr: Not expr
+    | OpenPar expr ClosePar
+    | expr arthexpr
+    | expr boolexpr
     | Identifier
-    | Identifier OpenSquare expr CloseSquare
-    | Identifier OpenPar args ClosePar
-    | expr (Plus | Minus | Star | Slash | Mod) expr
-    | Not expr
-    | expr (And | Or | Equal | Less | Greater | LessEqual | GreaterEqual) expr
+    | tablecall
+    | listcall
+    | proccall
     | literal;
 
-literal: Float 
-     | Integer
-     | Bool
-     | String
-     | None;
+arthexpr: (Plus | Minus | Star | Slash | Mod | Exponent) expr;
+
+boolexpr: (junctionopr | compareopr) expr;
 
 
-//arthexpr: expr (Plus | Minus | Star | Slash | Mod) expr;
+// Table Unary Expression
+unaryexpr: compareopr expr (junctionopr expr)*;
 
-//boolexpr: Not expr
-//        | expr (And | Or | Equal | Less | Greater | LessEqual | LessEqual) expr;
 
-procdec: Def Identifier OpenPar args ClosePar Colon stm+;
 
-vardec: Identifier
-      | Identifier Assign expr;
+// Table Non-Terminals
+table:  OpenCurly (String Colon list (Comma String Colon list)*)? CloseCurly; 
 
+tabledec: Identifier Assign table;
+
+tablecall: OpenPar tablecall ClosePar
+         | Identifier (OpenSquare expr CloseSquare (OpenSquare unaryexpr CloseSquare)?)? 
+         | tablecall  OpenSquare expr CloseSquare (OpenSquare unaryexpr CloseSquare)?;
+
+
+
+// List Non-Terminals 
+list: OpenSquare args CloseSquare;
+
+listdec: Identifier Assign list;
+
+listcall: Identifier (OpenSquare Integer CloseSquare)+;
+
+
+
+// Procedures Non-Terminals
+procdec: Def Identifier OpenPar params ClosePar Colon stm+;
+
+proccall: Identifier OpenPar args ClosePar;
+
+
+
+// Args
 args: (expr (Comma expr)*)?;
+
+// Params
+params: (Identifier (Comma Identifier)*)?;
+
+
+
+
+
+// Compare Operators
+compareopr : (Equal | NotEqual | Less | Greater | LessEqual | GreaterEqual);
+
+// Junction Operator
+junctionopr: (And | Or);
+
+
+
+// Literals
+literal: Float 
+       | Integer
+       | Bool
+       | String
+       | list
+       | table
+       | None;
+
