@@ -12,6 +12,19 @@ if ! command -v make &> /dev/null; then
     sudo apt install make -y
 fi
 
+# Check if java is installed
+if ! command -v java &> /dev/null; then
+    echo "java could not be found. Installing java..."
+    sudo apt install openjdk-11-jdk -y
+fi
+
+# Check if java jdk is atleast version 11 and install if not
+if [ "$(java -version 2>&1 | awk -F '"' '/version/ {print $2}' | awk -F '.' '{print $1}')" -lt 11 ]; then
+    echo "Java version is less than 11. Installing java 11..."
+    sudo apt install openjdk-11-jdk -y
+    exit 1
+fi
+
 # If ./build clean
 if [ "$1" == "clean" ]; then
     rm -rf build
