@@ -44,5 +44,5 @@ chmod +x generate_tree.sh
 ```
 then
 ```bash
-./generate_tree.sh <input-file> <output-name>
+./generate_tree.sh <input-file> <output-file>
 ```
