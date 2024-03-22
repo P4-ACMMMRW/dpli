@@ -3,22 +3,40 @@
 # DPL
 ## Build
 ### Linux
+First time do
 ```bash
-chmod +x compile.sh && ./compile.sh
+chmod +x compile.sh
 ```
-Then use
+then 
+```bash
+./compile.sh
+```
+
+and lastly
 ```bash
 cd build
-
 ./dpli <file>
 ```
 to run the dpl interpreter
+
+#### Run Tests
+After compiling the interpreter tests can be run with:
+
+First time 
+```bash
+chmod +x test.sh
+```
+then
+```bash
+./test.sh
+```
+to verify tests.
 
 #### Generate Parse Tree PNG
 (OPS need to install graphvis)
 
 ```bash
-sudo apt-get install graphviz
+sudo apt install graphviz -y
 ```
 
 ```bash
