@@ -8,8 +8,8 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     strategy:
-      # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
-      fail-fast: false
+      # Set to false to test all configurations
+      fail-fast: true
 
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
