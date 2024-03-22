@@ -42,7 +42,7 @@ print("Sorted list: " + A)
 
 
 LEXER_TEST("quicksort.dpl") {
-    std::vector<int> expectedTokens = {
+    std::vector<size_t> expectedTokens = {
         DplLexer::Def,
         DplLexer::Identifier,
         DplLexer::OpenPar,

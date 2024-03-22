@@ -14,7 +14,7 @@
 namespace util {
     class TestingUtil {
         public:
-            static void testTokens(std::string testFileName, std::vector<int> expectedTokenTypes) {
+            static void testTokens(std::string testFileName, std::vector<size_t> expectedTokenTypes) {
                 const std::string exampleLocation = "../../docs/examples/";
 
                 std::string filePath = exampleLocation + testFileName;
@@ -39,10 +39,8 @@ namespace util {
 
                 size_t tokensSize = tokens.size() - 1;
                 INFO("Token stream mismatch");
-                //REQUIRE(tokensSize == expectedTokenTypes.size());
-                
 
-                for (int i = 0; i < tokensSize; ++i) {
+                for (size_t i = 0; i < tokensSize; ++i) {
                     INFO(i);
                     REQUIRE(tokens.get(i)->getType() == expectedTokenTypes[i]);
                 }
