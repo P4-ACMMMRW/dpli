@@ -1,0 +1,63 @@
+#include <TestingUtil.hpp>
+
+using namespace dplgrammar;
+
+PARSER_TEST("math.dpl") {
+    std::vector<int> expectedNodeRules = {
+        DplParser::RuleProg,
+        DplParser::RuleStm,
+        DplParser::RuleAssignstm,
+        DplParser::RuleExpr,
+        DplParser::RuleExpr,
+        DplParser::RuleLiteral,
+        DplParser::RuleArthexpr,
+        DplParser::RuleExpr,
+        DplParser::RuleLiteral,
+        DplParser::RuleStm,
+        DplParser::RuleAssignstm,
+        DplParser::RuleExpr,
+        DplParser::RuleExpr,
+        DplParser::RuleLiteral,
+        DplParser::RuleArthexpr,
+        DplParser::RuleExpr,
+        DplParser::RuleLiteral,
+        DplParser::RuleStm,
+        DplParser::RuleAssignstm,
+        DplParser::RuleExpr,
+        DplParser::RuleExpr,
+        DplParser::RuleLiteral,
+        DplParser::RuleArthexpr,
+        DplParser::RuleExpr,
+        DplParser::RuleLiteral,
+        DplParser::RuleStm,
+        DplParser::RuleAssignstm,
+        DplParser::RuleExpr,
+        DplParser::RuleExpr,
+        DplParser::RuleLiteral,
+        DplParser::RuleArthexpr,
+        DplParser::RuleExpr,
+        DplParser::RuleLiteral,
+        DplParser::RuleStm,
+        DplParser::RuleExpr,
+        DplParser::RuleStm,
+        DplParser::RuleExpr,
+        DplParser::RuleExpr,
+        DplParser::RuleStm,
+        DplParser::RuleExpr,
+        DplParser::RuleStm,
+        DplParser::RuleExpr,
+        DplParser::RuleExpr,
+        DplParser::RuleStm,
+        DplParser::RuleExpr,
+        DplParser::RuleStm,
+        DplParser::RuleExpr,
+        DplParser::RuleExpr,
+        DplParser::RuleStm,
+        DplParser::RuleExpr,
+        DplParser::RuleStm,
+        DplParser::RuleExpr,
+        DplParser::RuleExpr
+    };
+    
+    util::TestingUtil::testParser("math.dpl", expectedNodeRules);
+}

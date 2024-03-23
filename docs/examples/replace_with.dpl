@@ -3,4 +3,6 @@ t1 = { "width": [1, 2, 3], "height": [4, 5, 6], "area": [None, 10, None] }
 t2 = t1["area"][==None]
 replace t2["area"] with t2["width"] * t2["height"]
 
+t3 = t1["area"][==None]["area"] 
+
 print(t2)

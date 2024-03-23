@@ -36,78 +36,109 @@ void doInit() {}
 void doAfter() {}
 }
 
-// Appears in the public part of the parser in the h file.
-@parser::declarations {/* private parser declarations section */}
-
-// Appears in line with the other class member definitions in the cpp file.
-@parser::definitions {/* parser definitions section */}
-
-// Additionally there are similar sections for (base)listener and (base)visitor files.
-@parser::listenerpreinclude {/* listener preinclude section */}
-@parser::listenerpostinclude {/* listener postinclude section */}
-@parser::listenerdeclarations {/* listener public declarations/members section */}
-@parser::listenermembers {/* listener private declarations/members section */}
-@parser::listenerdefinitions {/* listener definitions section */}
-
-@parser::baselistenerpreinclude {/* base listener preinclude section */}
-@parser::baselistenerpostinclude {/* base listener postinclude section */}
-@parser::baselistenerdeclarations {/* base listener public declarations/members section */}
-@parser::baselistenermembers {/* base listener private declarations/members section */}
-@parser::baselistenerdefinitions {/* base listener definitions section */}
-
-@parser::visitorpreinclude {/* visitor preinclude section */}
-@parser::visitorpostinclude {/* visitor postinclude section */}
-@parser::visitordeclarations {/* visitor public declarations/members section */}
-@parser::visitormembers {/* visitor private declarations/members section */}
-@parser::visitordefinitions {/* visitor definitions section */}
-
-@parser::basevisitorpreinclude {/* base visitor preinclude section */}
-@parser::basevisitorpostinclude {/* base visitor postinclude section */}
-@parser::basevisitordeclarations {/* base visitor public declarations/members section */}
-@parser::basevisitormembers {/* base visitor private declarations/members section */}
-@parser::basevisitordefinitions {/* base visitor definitions section */}
-
 // Actual grammar start.
-prog: (stm | vardec | procdec)+;
+prog: (stm | procdec)+;
 
-stm: expr
-   | Identifier Assign expr
-   | vardec Assign expr
-   | If expr Colon stm+
-   | If expr Colon stm+ Else Colon stm+
-   | While expr Colon stm+
-   | While expr Star Colon stm+
-   | Break
-   | Return
-   | Return expr
+// Statement 
+stm: Indent stm+ Dedent
+   | expr
+   | Identifier
+   | listdec
+   | tabledec
+   | ctrlstm
+   | loopstm
+   | flowstm
+   | assignstm
    | Replace expr With expr;
 
-expr: OpenPar expr ClosePar
-    //| arthexpr
-    //| boolexpr
+// Control Statements
+ctrlstm: If expr Colon stm+
+       | If expr Colon stm+ Else Colon stm+;
+
+// Loop Statements
+loopstm: While expr Colon stm+
+       | While expr Star Colon stm+;
+
+// Flow Statements
+flowstm: Break
+       | Continue
+       | Return
+       | Return expr;
+
+assignstm: (Identifier | tablecall | listcall) Assign expr;
+
+// Expressions
+expr: Not expr
+    | OpenPar expr ClosePar
+    | expr arthexpr
+    | expr boolexpr
     | Identifier
-    | Identifier OpenSquare expr CloseSquare
-    | Identifier OpenPar args ClosePar
-    | expr (Plus | Minus | Star | Slash | Mod) expr
-    | Not expr
-    | expr (And | Or | Equal | Less | Greater | LessEqual | GreaterEqual) expr
+    | tablecall
+    | listcall
+    | proccall
     | literal;
 
-literal: Float 
-     | Integer
-     | Bool
-     | String
-     | None;
+arthexpr: (Plus | Minus | Star | Slash | Mod | Exponent) expr;
+
+boolexpr: (junctionopr | compareopr) expr;
 
 
-//arthexpr: expr (Plus | Minus | Star | Slash | Mod) expr;
+// Table Unary Expression
+unaryexpr: compareopr expr (junctionopr expr)*;
 
-//boolexpr: Not expr
-//        | expr (And | Or | Equal | Less | Greater | LessEqual | LessEqual) expr;
 
-procdec: Def Identifier OpenPar args ClosePar Colon stm+;
 
-vardec: Identifier
-      | Identifier Assign expr;
+// Table Non-Terminals
+table:  OpenCurly (String Colon list (Comma String Colon list)*)? CloseCurly; 
 
+tabledec: Identifier Assign table;
+
+tablecall: OpenPar tablecall ClosePar
+         | Identifier (OpenSquare expr CloseSquare (OpenSquare unaryexpr CloseSquare)?)? 
+         | tablecall  OpenSquare expr CloseSquare (OpenSquare unaryexpr CloseSquare)?;
+
+
+
+// List Non-Terminals 
+list: OpenSquare args CloseSquare;
+
+listdec: Identifier Assign list;
+
+listcall: Identifier (OpenSquare Integer CloseSquare)+;
+
+
+
+// Procedures Non-Terminals
+procdec: Def Identifier OpenPar params ClosePar Colon stm+;
+
+proccall: Identifier OpenPar args ClosePar;
+
+
+
+// Args
 args: (expr (Comma expr)*)?;
+
+// Params
+params: (Identifier (Comma Identifier)*)?;
+
+
+
+
+
+// Compare Operators
+compareopr : (Equal | NotEqual | Less | Greater | LessEqual | GreaterEqual);
+
+// Junction Operator
+junctionopr: (And | Or);
+
+
+
+// Literals
+literal: Float 
+       | Integer
+       | Bool
+       | String
+       | list
+       | table
+       | None;
+

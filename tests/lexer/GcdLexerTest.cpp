@@ -1,23 +1,9 @@
-#include "Test.hpp"
+#include <TestingUtil.hpp>
 
-using namespace antlr4;
 using namespace dplgrammar;
 
-TEST_CASE("gcd.dpl", "[lexer]") {
-    std::ifstream file = std::ifstream(std::filesystem::path(exampleLocation + "gcd.dpl"));
-    if (!file.is_open()) {
-        std::cerr << "Failed to open file: " << exampleLocation + "gcd.dpl";
-        FAIL();
-    }
-
-    ANTLRInputStream input(file);
-
-    DplLexer lexer(&input);
-    CommonTokenStream tokens(&lexer);
-
-    tokens.fill();
-
-    std::vector<int> expectedTokenTypes = {
+LEXER_TEST("gcd.dpl") {
+    std::vector<size_t> expectedTokenTypes = {
         DplLexer::Def,
         DplLexer::Identifier,
         DplLexer::OpenPar,
@@ -57,11 +43,5 @@ TEST_CASE("gcd.dpl", "[lexer]") {
         DplLexer::ClosePar
     };
 
-    size_t tokensSize = tokens.size() - 1;
-    INFO("Token stream size mismatch");
-    REQUIRE(tokensSize == expectedTokenTypes.size());
-
-    for (int i = 0; i < tokensSize; ++i) {
-        REQUIRE(tokens.get(i)->getType() == expectedTokenTypes[i]);
-    }
+    util::TestingUtil::testTokens("gcd.dpl", expectedTokenTypes);
 }
