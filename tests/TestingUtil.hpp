@@ -19,108 +19,166 @@
 
 
 class TestVisitor : public dplgrammar::DplParserBaseVisitor {
+private:
+    dplgrammar::DplParser* parser; // Add a parser member
+    std::vector<int> expectedTreeNodes;
+
 public:
-    virtual antlrcpp::Any visitProg(dplgrammar::DplParser::ProgContext *node) override {
-        std::cout << node->getText() + "\n" << std::endl;
-        // Visit the children of the node.
-        return visitChildren(node);
+    TestVisitor(dplgrammar::DplParser* parser, std::vector<int> expectedTreeNodes) 
+        : parser(parser), expectedTreeNodes(expectedTreeNodes) {} 
+
+    void printTokens(int ruleIndex) {
+        std::string name = parser->getRuleNames()[ruleIndex];
+
+        name[0] = std::toupper(static_cast<unsigned char>(name[0]));
+        std::cout << "DplParser::Rule" << name + "," << std::endl;
     }
 
-    virtual std::any visitStm(dplgrammar::DplParser::StmContext *node) override {
-        std::cout << "Stm " + node->getText() + "\n" << std::endl;
-        return visitChildren(node);
+    void testNode(antlr4::ParserRuleContext *ctx) {
+        if ( (int) ctx->getRuleIndex() != (int) expectedTreeNodes[0]) {
+            std::cerr <<  ctx->getRuleIndex() << " != " << expectedTreeNodes[0] << "\n";
+            assert(false);
+        }
+        expectedTreeNodes.erase(expectedTreeNodes.begin());
     }
 
-    virtual std::any visitCtrlstm(dplgrammar::DplParser::CtrlstmContext *node) override {
-        std::cout << "Ctrlstm " + node->getText() + "\n" << std::endl;
-        return visitChildren(node);
+    virtual antlrcpp::Any visitProg(dplgrammar::DplParser::ProgContext *ctx) {
+        //printTokens(ctx->getRuleIndex());
+        testNode(ctx);
+        return visitChildren(ctx);
     }
 
-    virtual std::any visitLoopstm(dplgrammar::DplParser::LoopstmContext *node) override {
-        std::cout << "Loopstm " + node->getText() + "\n" << std::endl;
-        return visitChildren(node);
+    virtual antlrcpp::Any visitStm(dplgrammar::DplParser::StmContext *ctx) override {
+        //printTokens(ctx->getRuleIndex());
+        testNode(ctx);
+        return visitChildren(ctx);
     }
 
-    virtual std::any visitFlowstm(dplgrammar::DplParser::FlowstmContext *node) override {
-        std::cout << "Flowstm " + node->getText() + "\n" << std::endl;
-        return visitChildren(node);
+    virtual antlrcpp::Any visitCtrlstm(dplgrammar::DplParser::CtrlstmContext *ctx) override {
+         //printTokens(ctx->getRuleIndex());
+        testNode(ctx);
+        return visitChildren(ctx);
     }
 
-    virtual std::any visitAssignstm(dplgrammar::DplParser::AssignstmContext *node) override {
-        
-        std::cout << "Assignstm " + node->getText() + "\n" << std::endl;
-        return visitChildren(node);
+    virtual antlrcpp::Any visitLoopstm(dplgrammar::DplParser::LoopstmContext *ctx) override {
+         //printTokens(ctx->getRuleIndex());
+        testNode(ctx);
+        return visitChildren(ctx);
     }
 
-    virtual std::any visitExpr(dplgrammar::DplParser::ExprContext *node) override {
-        return visitChildren(node);
+    virtual antlrcpp::Any visitFlowstm(dplgrammar::DplParser::FlowstmContext *ctx) override {
+         //printTokens(ctx->getRuleIndex());
+        testNode(ctx);
+        return visitChildren(ctx);
     }
 
-    virtual std::any visitArthexpr(dplgrammar::DplParser::ArthexprContext *node) override {
-        return visitChildren(node);
+    virtual antlrcpp::Any visitAssignstm(dplgrammar::DplParser::AssignstmContext *ctx) override {
+         //printTokens(ctx->getRuleIndex());
+        testNode(ctx);
+        return visitChildren(ctx);
     }
 
-    virtual std::any visitBoolexpr(dplgrammar::DplParser::BoolexprContext *node) override {
-        return visitChildren(node);
+    virtual antlrcpp::Any visitExpr(dplgrammar::DplParser::ExprContext *ctx) override {
+         //printTokens(ctx->getRuleIndex());
+        testNode(ctx);
+        return visitChildren(ctx);
     }
 
-    virtual std::any visitUnaryexpr(dplgrammar::DplParser::UnaryexprContext *node) override {
-        return visitChildren(node);
+    virtual antlrcpp::Any visitArthexpr(dplgrammar::DplParser::ArthexprContext *ctx) override {
+         //printTokens(ctx->getRuleIndex());
+        testNode(ctx);
+        return visitChildren(ctx);
     }
 
-    virtual std::any visitTable(dplgrammar::DplParser::TableContext *node) override {
-        return visitChildren(node);
+    virtual antlrcpp::Any visitBoolexpr(dplgrammar::DplParser::BoolexprContext *ctx) override {
+         //printTokens(ctx->getRuleIndex());
+        testNode(ctx);
+        return visitChildren(ctx);
     }
 
-    virtual std::any visitTabledec(dplgrammar::DplParser::TabledecContext *node) override {
-        return visitChildren(node);
+    virtual antlrcpp::Any visitUnaryexpr(dplgrammar::DplParser::UnaryexprContext *ctx) override {
+         //printTokens(ctx->getRuleIndex());
+        testNode(ctx);
+        return visitChildren(ctx);
     }
 
-    virtual std::any visitTablecall(dplgrammar::DplParser::TablecallContext *node) override {
-        return visitChildren(node);
+    virtual antlrcpp::Any visitTable(dplgrammar::DplParser::TableContext *ctx) override {
+         //printTokens(ctx->getRuleIndex());
+        testNode(ctx);
+        return visitChildren(ctx);
     }
 
-    virtual std::any visitList(dplgrammar::DplParser::ListContext *node) override {
-        return visitChildren(node);
+    virtual antlrcpp::Any visitTabledec(dplgrammar::DplParser::TabledecContext *ctx) override {
+         //printTokens(ctx->getRuleIndex());
+        testNode(ctx); 
+        return visitChildren(ctx);
     }
 
-    virtual std::any visitListdec(dplgrammar::DplParser::ListdecContext *node) override {
-        return visitChildren(node);
+    virtual antlrcpp::Any visitTablecall(dplgrammar::DplParser::TablecallContext *ctx) override {
+         //printTokens(ctx->getRuleIndex());
+        testNode(ctx);
+        return visitChildren(ctx);
     }
 
-    virtual std::any visitListcall(dplgrammar::DplParser::ListcallContext *node) override {
-        return visitChildren(node);
+    virtual antlrcpp::Any visitList(dplgrammar::DplParser::ListContext *ctx) override {
+         //printTokens(ctx->getRuleIndex());
+        testNode(ctx);
+        return visitChildren(ctx);
     }
 
-    virtual std::any visitProcdec(dplgrammar::DplParser::ProcdecContext *node) override {
-        return visitChildren(node);
+    virtual antlrcpp::Any visitListdec(dplgrammar::DplParser::ListdecContext *ctx) override {
+         //printTokens(ctx->getRuleIndex());
+        testNode(ctx);
+        return visitChildren(ctx);
     }
 
-    virtual std::any visitProccall(dplgrammar::DplParser::ProccallContext *node) override {
-        return visitChildren(node);
+    virtual antlrcpp::Any visitListcall(dplgrammar::DplParser::ListcallContext *ctx) override {
+         //printTokens(ctx->getRuleIndex());
+        testNode(ctx);
+        return visitChildren(ctx);
     }
 
-    virtual std::any visitArgs(dplgrammar::DplParser::ArgsContext *node) override {
-        return visitChildren(node);
+    virtual antlrcpp::Any visitProcdec(dplgrammar::DplParser::ProcdecContext *ctx) override {
+         //printTokens(ctx->getRuleIndex());
+        testNode(ctx);
+        return visitChildren(ctx);
     }
 
-    virtual std::any visitParams(dplgrammar::DplParser::ParamsContext *node) override {
-        return visitChildren(node);
+    virtual antlrcpp::Any visitProccall(dplgrammar::DplParser::ProccallContext *ctx) override {
+         //printTokens(ctx->getRuleIndex());
+        testNode(ctx);
+        return visitChildren(ctx);
     }
 
-    virtual std::any visitCompareopr(dplgrammar::DplParser::CompareoprContext *node) override {
-        return visitChildren(node);
+    virtual antlrcpp::Any visitArgs(dplgrammar::DplParser::ArgsContext *ctx) override {
+         //printTokens(ctx->getRuleIndex());
+        testNode(ctx);
+        return visitChildren(ctx);
     }
 
-    virtual std::any visitJunctionopr(dplgrammar::DplParser::JunctionoprContext *node) override {
-        return visitChildren(node);
+    virtual antlrcpp::Any visitParams(dplgrammar::DplParser::ParamsContext *ctx) override {
+         //printTokens(ctx->getRuleIndex());
+        testNode(ctx);
+        return visitChildren(ctx);
     }
 
-    virtual std::any visitLiteral(dplgrammar::DplParser::LiteralContext *node) override {
-        return visitChildren(node);
+    virtual antlrcpp::Any visitCompareopr(dplgrammar::DplParser::CompareoprContext *ctx) override {
+         //printTokens(ctx->getRuleIndex());
+        testNode(ctx);
+        return visitChildren(ctx);
     }
 
-    // Override other visit methods as needed...
+    virtual antlrcpp::Any visitJunctionopr(dplgrammar::DplParser::JunctionoprContext *ctx) override {
+         //printTokens(ctx->getRuleIndex());
+        testNode(ctx);
+        return visitChildren(ctx);
+    }
+
+    virtual antlrcpp::Any visitLiteral(dplgrammar::DplParser::LiteralContext *ctx) override {
+         //printTokens(ctx->getRuleIndex());
+        testNode(ctx);
+        return visitChildren(ctx);
+    }
 };
 
 
@@ -183,9 +241,9 @@ namespace util {
                 tokens.fill();
 
                 dplgrammar::DplParser parser(&tokens);
-                antlr4::tree::ParseTree* tree = parser.prog();
 
-                TestVisitor visitor;
+                TestVisitor visitor(&parser, expectedTreeNodes);
+                antlr4::tree::ParseTree* tree = parser.prog();
                 visitor.visit(tree);
             }
     };
