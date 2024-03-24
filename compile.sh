@@ -43,6 +43,7 @@ make
 if [ $? -eq 0 ]; then
     echo "Compilation successful. Running tests..."
     ctest --output-on-failure
+    alias dpli='./build/dpli'
 else
     echo "Compilation failed."
 fi

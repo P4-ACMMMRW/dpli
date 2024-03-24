@@ -57,7 +57,7 @@ namespace argz
    using options = std::vector<arg_t>;
 
    struct about final {
-      std::string_view description{}, version{};
+      std::string_view description{}, version{}, author{}, usage{};
       bool print_help_when_no_options = true;
       bool help{};
    };
@@ -107,7 +107,10 @@ namespace argz
    {
       std::cout << about.description << '\n';
       std::cout << "Version: " << about.version << '\n';
-      
+      std::cout << "Author: " << about.author << '\n';
+      std::cout << "\nUsage: " << about.usage << '\n';
+
+      std::cout<< "\nOptions:";      
       std::cout << '\n' << R"(-h, --help       write help to console)" << '\n';
       std::cout << R"(-v, --version    write the version to console)" << '\n';
 
@@ -119,7 +122,9 @@ namespace argz
          else {
             std::cout << (ids.id.size() == 1 ? "-" : "--") << ids.id;
          }
-         std::cout << "    " << h << ", default: " << detail::to_string(v) << '\n';
+
+         std::cout << "    " << h;
+         detail::to_string(v).empty() ? std::cout << '\n' : std::cout << ", default: " << detail::to_string(v) << '\n';
       }
       std::cout << '\n';
    }
@@ -165,7 +170,7 @@ namespace argz
          if (str.size() == 1) {
             str = get_id(*flag);
             if (str.empty()) {
-               throw std::runtime_error("Invalid alias flag '-' for: " + std::string(str));
+               throw std::runtime_error("Invalid argument: '-" + std::string(1, *flag) + "'");
             }
          }
          if (str.empty()) { break; }

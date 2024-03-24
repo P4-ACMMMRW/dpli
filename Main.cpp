@@ -34,20 +34,47 @@ void generateDotFile(tree::ParseTree* node, const std::string& parentId, std::of
 }
 
 int main(int argc, char **argv) {
-    if (argc < 2 || !std::strcmp(argv[1], "-h") || !std::strcmp(argv[1], "--help")) {
-        std::string usageStr = "Usage: " + std::string(argv[0]) + " <file>";
-        std::cout << usageStr << '\n';
-        return 0;
+    std::string description = "DPL Interpreter";
+    std::string version = "0.0.1";
+    std::string author = "P4-ACMMMRW";
+    std::string usage = std::string(argv[0]) + " <input file> [options]";
+    argz::about about{ description, version, author, usage };
+    about.print_help_when_no_options = false;
+
+    bool verbose = false;
+    bool debug = false;
+    std::string dotFile{};
+    argz::options opts {
+        { { "verbose", 'v'}, verbose, "enable verbose output"},
+        { { "debug", 'd' }, debug, "enable debug output"},
+        { { "Dot", 'D' }, dotFile, "generate a DOT file for the parse tree"}
+    };
+
+    if (argc < 2) {
+        argz::help(about, opts);
+        exit(EXIT_FAILURE);
     }
 
-    if (!std::filesystem::exists(argv[1])) {
-        std::cerr << "File does not exist: " << argv[1] << '\n';
+    if (argv[1][0] == '-' ) {
+        std::cerr << "Usage: " << usage << '\n';
+        exit(EXIT_FAILURE);
+    }
+
+    if (std::filesystem::exists(argv[1])) {
+        std::cerr << "Error: file \"" << argv[1] << "\" not found\n";
         exit(EXIT_FAILURE);
     }
 
     std::ifstream file = std::ifstream(argv[1]);
     if (!file.is_open()) {
-        std::cerr << "Failed to open file: " << argv[1] << '\n';
+        std::cerr << "Error: file \"" << argv[1] << "\" could not be opened\n";
+        exit(EXIT_FAILURE);
+    }
+
+    try {
+        argz::parse(about, opts, argc - 1, argv + 1);
+    } catch (const std::exception& e) {
+        std::cerr << e.what() << '\n';
         exit(EXIT_FAILURE);
     }
 
@@ -56,19 +83,20 @@ int main(int argc, char **argv) {
     CommonTokenStream tokens(&lexer);
 
     tokens.fill();
-    for (antlr4::Token *token : tokens.getTokens()) {
-        std::cout << token->toString() << '\n';
-    }
 
     DplParser parser(&tokens);
     tree::ParseTree* tree = parser.prog();
 
-    // Print the parse tree
-    std::cout << tree->toStringTree(&parser, true) << "\n\n";
+    if (debug) {
+        for (antlr4::Token *token : tokens.getTokens()) {
+            std::cout << token->toString() << '\n';
+        }
 
-    // Write the parse tree to a DOT file
-    if (argc >= 3) {
-        std::ofstream out(argv[2]);
+        std::cout << tree->toStringTree(&parser, true) << "\n\n";
+    }
+    
+    if (!dotFile.empty()) {
+        std::ofstream out(dotFile);
         out << "digraph {\n";
         generateDotFile(tree, "", out);
         out << "}\n";
