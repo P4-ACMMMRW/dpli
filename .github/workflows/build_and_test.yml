@@ -49,9 +49,6 @@ jobs:
         distribution: 'temurin'
         java-version: '11'
 
-    - name: Check C++ compiler version
-      run: ${{ matrix.cpp_compiler }} --version
-
     - name: Configure CMake
       run: >
         cmake -B ${{ steps.strings.outputs.build-output-dir }}
