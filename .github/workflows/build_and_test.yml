@@ -14,18 +14,17 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         build_type: [Release]
-        cpp_compiler: [clang++, cl]
-        exclude:
-          - os: windows-latest
-            cpp_compiler: clang++
-          - os: ubuntu-latest
-            cpp_compiler: cl
-          - os: macos-latest
-            cpp_compiler: cl
+        cpp_compiler: [clang++]
 
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+
+    - name: Setup Clang
+      if: matrix.os == 'windows-latest'
+      uses: egor-tensin/setup-clang@v1
+      with:
+        version: latest
 
     - name: Cache build outputs
       uses: actions/cache@v4
