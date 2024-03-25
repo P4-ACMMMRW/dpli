@@ -1,3 +1,15 @@
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+//      http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 #pragma once
 
 #include <cstdint>
@@ -118,7 +130,7 @@ namespace argz
       std::cout << '\n';
    }
 
-   template <class int_t, class char_ptr_t, typename = std::enable_if_t<std::is_pointer_v<char_ptr_t>>>
+   template <class int_t, class char_ptr_t> requires (std::is_pointer_v<char_ptr_t>)
    inline void parse(about& about, options& opts, const int_t argc, char_ptr_t argv, int fileArgIndex)
    {
       if (argc == 1) {
