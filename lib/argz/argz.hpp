@@ -130,7 +130,7 @@ namespace argz
       std::cout << '\n';
    }
 
-   template <class int_t, class char_ptr_t> requires (std::is_pointer_v<char_ptr_t>)
+   template <class int_t, class char_ptr_t, typename std::enable_if<std::is_pointer<char_ptr_t>::value>::type* = nullptr>
    inline void parse(about& about, options& opts, const int_t argc, char_ptr_t argv, int fileArgIndex)
    {
       if (argc == 1) {
