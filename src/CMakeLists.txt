@@ -1,9 +1,7 @@
 # For Visual C++ compilers only
-if(MSVC)
-    set(ANTLR4_WITH_STATIC_CRT OFF)
-else()
-    add_definitions(-DANTLR4CPP_STATIC)
-endif()
+set(ANTLR4_WITH_STATIC_CRT OFF)
+
+add_definitions(-DANTLR4CPP_STATIC)
 
 include(ExternalAntlr4Cpp)
 
