@@ -1,15 +1,3 @@
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-// 
-//      http://www.apache.org/licenses/LICENSE-2.0
-// 
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 #pragma once
 
 #include <cstdint>
@@ -74,18 +62,14 @@ namespace argz
             std::visit(overloaded{
                [&](ref<std::string>& x) { x.get() = str; },
                [&](ref<bool>& x) { x.get() = str == "true" ? true : false; },
-               [&](auto& x_opt) {
-                  using T = typename std::decay_t<decltype(x_opt)>::type::type;
-                  if constexpr (std::is_same_v<ref_opt<T>, std::decay_t<decltype(x_opt)>>) {
-                     auto temp = T{};
-                     auto temp_var = var{ ref<T>{ temp } };
-                     parse(c, temp_var);
-                     x_opt.get().emplace(std::get<ref<T>>(temp_var).get());
-                  } else {
-                     x.get() = static_cast<typename std::decay_t<decltype(x)>::type>(std::stol(std::string(str)));
-                  }
-               }
-            }, v);
+               [&]<typename T>(ref_opt<T>& x_opt) {
+                  auto temp = T{};
+                  auto temp_var = var{ ref<T>{ temp } };
+                  parse(c, temp_var);
+                  x_opt.get().emplace(std::get<ref<T>>(temp_var).get());
+               },
+               [&](auto& x) { x.get() = static_cast<typename std::decay_t<decltype(x)>::type>(std::stol(std::string(str))); }
+               }, v);
          }
       }
 
@@ -97,16 +81,12 @@ namespace argz
                if (has_value) return x.get().value();
                else return std::string{ };
             },
-            [](auto& x_opt) {
-               using T = typename std::decay_t<decltype(x_opt)>::type::type;
-               if constexpr (std::is_same_v<ref_opt<T>, std::decay_t<decltype(x_opt)>>) {
-                  const auto has_value = x_opt.get().has_value();
-                  if (has_value) return std::to_string(x_opt.get().value());
-                  else return std::string{ };
-               } else {
-                  return std::to_string(x_opt.get());
-               }
-            }
+            []<typename T>(const ref_opt<T>& x_opt) {
+               const auto has_value = x_opt.get().has_value();
+               if (has_value) return std::to_string(x_opt.get().value());
+               else return std::string{ };
+            },
+            [](const auto& x) { return std::to_string(x.get()); },
          }, v);
       }
    }
@@ -138,7 +118,7 @@ namespace argz
       std::cout << '\n';
    }
 
-   template <class int_t, class char_ptr_t, typename std::enable_if<std::is_pointer<char_ptr_t>::value>::type* = nullptr>
+   template <class int_t, class char_ptr_t, typename = std::enable_if_t<std::is_pointer_v<char_ptr_t>>>
    inline void parse(about& about, options& opts, const int_t argc, char_ptr_t argv, int fileArgIndex)
    {
       if (argc == 1) {
