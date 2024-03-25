@@ -12,5 +12,4 @@ if [ ! -f build/dpli ]; then
     chmod +x compile.sh && ./compile.sh
 fi
 
-cd build
-ctest --output-on-failure
+./build/tests/unit_tests 

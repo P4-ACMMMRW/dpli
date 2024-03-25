@@ -1,7 +1,7 @@
 #ifndef TEST_HPP
 #define TEST_HPP
 
-#include <catch2/catch_test_macros.hpp>
+#include <snitch/snitch.hpp>
 #include <fstream>
 #include <filesystem>
 #include <iostream>
@@ -57,14 +57,12 @@ namespace util {
                 std::string filePath = std::filesystem::path(std::string{exampleLocation} + testFileName).string();
 
                 if (!std::filesystem::exists(filePath)) {
-                    std::cerr << "File does not exist: " << filePath << '\n';
-                    FAIL();
+                    FAIL("File does not exist: " + filePath);
                 }
 
                 std::ifstream file{filePath};
                 if (!file.is_open()) {
-                    std::cerr << "Failed to open file: " << filePath;
-                    FAIL();
+                    FAIL("Failed to open file: " + filePath);
                 }
 
                 antlr4::ANTLRInputStream input(file);
@@ -87,14 +85,12 @@ namespace util {
                 std::string filePath = std::filesystem::path(std::string{exampleLocation} + testFileName).string();
 
                 if (!std::filesystem::exists(filePath)) {
-                    std::cerr << "File does not exist: " << filePath << '\n';
-                    FAIL();
+                    FAIL("File does not exist: " + filePath);
                 }
 
                 std::ifstream file{filePath};
                 if (!file.is_open()) {
-                    std::cerr << "Failed to open file: " << filePath;
-                    FAIL();
+                    FAIL("Failed to open file: " + filePath);
                 }
 
                 antlr4::ANTLRInputStream input(file);
@@ -112,7 +108,7 @@ namespace util {
             }
 
         private:
-            static constexpr std::string_view exampleLocation = "../../docs/examples/"; 
+            static constexpr std::string_view exampleLocation = "docs/examples/"; 
     };
 }
 

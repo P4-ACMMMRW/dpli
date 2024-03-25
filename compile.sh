@@ -38,11 +38,12 @@ fi
 cd build
 cmake .. -DCMAKE_BUILD_TYPE=Debug
 make
+cd ..
 
 # Wait until done compiling and then run tests
 if [ $? -eq 0 ]; then
     echo "Compilation successful. Running tests..."
-    ctest --output-on-failure    
+    ./build/tests/unit_tests 
 else
     echo "Compilation failed."
 fi
