@@ -39,5 +39,5 @@ PARSER_TEST("break.dpl") {
         DplParser::RuleLiteral
     };
     
-    util::TestingUtil::testParser("break.dpl", expectedNodeRules);
+    dplutil::TestingUtil::testParser("break.dpl", expectedNodeRules);
 }

@@ -81,5 +81,5 @@ LEXER_TEST("replace_with.dpl") {
         DplLexer::ClosePar
     };
 
-    util::TestingUtil::testTokens("replace_with.dpl", expectedTokens);
+    dplutil::TestingUtil::testTokens("replace_with.dpl", expectedTokens);
 }
