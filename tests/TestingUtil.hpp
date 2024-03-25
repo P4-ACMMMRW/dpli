@@ -10,66 +10,58 @@
 #include <DplParser.h>
 
 #include <DplParserBaseVisitor.h>
-
-
 #include <DplParserBaseVisitor.h>
 
 #define LEXER_TEST(name) TEST_CASE("Lexer -- " #name, "[lexer]")
 #define PARSER_TEST(name) TEST_CASE("Parser -- " #name, "[parser]")
 
-
-class TestVisitor : public dplgrammar::DplParserBaseVisitor {
-private:
-    dplgrammar::DplParser* parser; // Add a parser member
-    std::vector<int> expectedTreeNodes;
-
-public:
-    TestVisitor(dplgrammar::DplParser* parser, std::vector<int> expectedTreeNodes) 
-        : parser(parser), expectedTreeNodes(expectedTreeNodes) {} 
-
-    void printTokens(int ruleIndex) {
-        std::string name = parser->getRuleNames()[ruleIndex];
-
-        name[0] = std::toupper(static_cast<unsigned char>(name[0]));
-        std::cout << "DplParser::Rule" << name + "," << std::endl;
-    }
-
-    void testNode(antlr4::ParserRuleContext *ctx) {
-        if ( (int) ctx->getRuleIndex() != (int) expectedTreeNodes[0]) {
-            std::cerr <<  ctx->getRuleIndex() << " != " << expectedTreeNodes[0] << "\n";
-            assert(false);
-        }
-        expectedTreeNodes.erase(expectedTreeNodes.begin());
-    }
-
-    virtual antlrcpp::Any visitChildren(antlr4::tree::ParseTree *tree) override {
-        for (size_t i = 0; i < tree->children.size(); ++i) {
-
-            antlr4::ParserRuleContext* ctx = dynamic_cast<antlr4::ParserRuleContext*>(tree->children[i]);
-            if (ctx) {
-                testNode(ctx);
-            }
-            tree->children[i]->accept(this);
-        }
-        return nullptr;
-    }
-};
-
-
 namespace util {
+    class TestVisitor : public dplgrammar::DplParserBaseVisitor {
+        private:
+            dplgrammar::DplParser* parser; // Add a parser member
+            std::vector<int> expectedTreeNodes;
+
+        public:
+            TestVisitor(dplgrammar::DplParser* parser, std::vector<int> expectedTreeNodes) 
+                : parser(parser), expectedTreeNodes(expectedTreeNodes) {} 
+
+            void printTokens(int ruleIndex) {
+                std::string name = parser->getRuleNames()[ruleIndex];
+
+                name[0] = std::toupper(static_cast<unsigned char>(name[0]));
+                std::cout << "DplParser::Rule" << name + "," << std::endl;
+            }
+
+            void testNode(antlr4::ParserRuleContext *ctx) {
+                INFO(ctx->getRuleIndex() + " != " + expectedTreeNodes[0] + '\n');
+                REQUIRE(static_cast<int>(ctx->getRuleIndex()) == static_cast<int>(expectedTreeNodes[0]));
+                expectedTreeNodes.erase(expectedTreeNodes.begin());
+            }
+
+            antlrcpp::Any visitChildren(antlr4::tree::ParseTree *tree) override {
+                for (size_t i = 0; i < tree->children.size(); ++i) {
+
+                    antlr4::ParserRuleContext* ctx = dynamic_cast<antlr4::ParserRuleContext*>(tree->children[i]);
+                    if (ctx) {
+                        testNode(ctx);
+                    }
+                    tree->children[i]->accept(this);
+                }
+                return nullptr;
+            }
+    };
+
     class TestingUtil {
         public:
             static void testTokens(std::string testFileName, std::vector<size_t> expectedTokenTypes) {
-                const std::string exampleLocation = "../../docs/examples/";
-
-                std::string filePath = exampleLocation + testFileName;
+                std::string filePath = std::filesystem::path(std::string{exampleLocation} + testFileName);
 
                 if (!std::filesystem::exists(filePath)) {
                     std::cerr << "File does not exist: " << filePath << '\n';
-                    exit(EXIT_FAILURE);
+                    FAIL();
                 }
 
-                std::ifstream file = std::ifstream(filePath);
+                std::ifstream file{filePath};
                 if (!file.is_open()) {
                     std::cerr << "Failed to open file: " << filePath;
                     FAIL();
@@ -90,18 +82,16 @@ namespace util {
                     REQUIRE(tokens.get(i)->getType() == expectedTokenTypes[i]);
                 }
             }
-        public: 
-            static void testParser(std::string testFileName, std::vector<int> expectedTreeNodes) {
-                const std::string exampleLocation = "../../docs/examples/";
 
-                std::string filePath = exampleLocation + testFileName;
+            static void testParser(std::string testFileName, std::vector<int> expectedTreeNodes) {
+                std::string filePath = std::string{exampleLocation} + testFileName;
 
                 if (!std::filesystem::exists(filePath)) {
                     std::cerr << "File does not exist: " << filePath << '\n';
-                    exit(EXIT_FAILURE);
+                    FAIL();
                 }
 
-                std::ifstream file = std::ifstream(filePath);
+                std::ifstream file{filePath};
                 if (!file.is_open()) {
                     std::cerr << "Failed to open file: " << filePath;
                     FAIL();
@@ -120,6 +110,9 @@ namespace util {
                 antlr4::tree::ParseTree* tree = parser.prog();
                 visitor.visit(tree);
             }
+
+        private:
+            static constexpr std::string_view exampleLocation = "../../docs/examples/"; 
     };
 }
 
