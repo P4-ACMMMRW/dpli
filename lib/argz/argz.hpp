@@ -67,6 +67,16 @@ namespace argz
       template <class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
       template <class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
       
+      template <typename T>
+      struct parse_opt {
+         void operator()(ref_opt<T>& x_opt, const char* const c) {
+            auto temp = T{};
+            auto temp_var = var{ ref<T>{ temp } };
+            parse(c, temp_var);
+            x_opt.get().emplace(std::get<ref<T>>(temp_var).get());
+         }
+      };
+
       inline void parse(const char* const c, var& v)
       {
          if (c) {
@@ -74,16 +84,24 @@ namespace argz
             std::visit(overloaded{
                [&](ref<std::string>& x) { x.get() = str; },
                [&](ref<bool>& x) { x.get() = str == "true" ? true : false; },
-               [&]<typename T>(ref_opt<T>& x_opt) {
-                  auto temp = T{};
-                  auto temp_var = var{ ref<T>{ temp } };
-                  parse(c, temp_var);
-                  x_opt.get().emplace(std::get<ref<T>>(temp_var).get());
-               },
+               [&](ref_opt<int32_t>& x) { parse_opt<int32_t>{}(x, c); },
+               [&](ref_opt<uint32_t>& x) { parse_opt<uint32_t>{}(x, c); },
+               [&](ref_opt<int64_t>& x) { parse_opt<int64_t>{}(x, c); },
+               [&](ref_opt<uint64_t>& x) { parse_opt<uint64_t>{}(x, c); },
+               [&](ref_opt<std::string>& x) { parse_opt<std::string>{}(x, c); },
                [&](auto& x) { x.get() = static_cast<typename std::decay_t<decltype(x)>::type>(std::stol(std::string(str))); }
                }, v);
          }
       }
+
+      template <typename T>
+      struct to_string_opt {
+         std::string operator()(const ref_opt<T>& x_opt) {
+            const auto has_value = x_opt.get().has_value();
+            if (has_value) return std::to_string(x_opt.get().value());
+            else return std::string{ };
+         }
+      };
 
       inline std::string to_string(const var& v) {
          return std::visit(overloaded {
@@ -93,11 +111,10 @@ namespace argz
                if (has_value) return x.get().value();
                else return std::string{ };
             },
-            []<typename T>(const ref_opt<T>& x_opt) {
-               const auto has_value = x_opt.get().has_value();
-               if (has_value) return std::to_string(x_opt.get().value());
-               else return std::string{ };
-            },
+            [&](const ref_opt<int32_t>& x) { return to_string_opt<int32_t>{}(x); },
+            [&](const ref_opt<uint32_t>& x) { return to_string_opt<uint32_t>{}(x); },
+            [&](const ref_opt<int64_t>& x) { return to_string_opt<int64_t>{}(x); },
+            [&](const ref_opt<uint64_t>& x) { return to_string_opt<uint64_t>{}(x); },
             [](const auto& x) { return std::to_string(x.get()); },
          }, v);
       }
