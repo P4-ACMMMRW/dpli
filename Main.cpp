@@ -8,18 +8,19 @@ int main(int argc, char **argv) {
     std::string version = "0.0.1";
     std::string author = "P4-ACMMMRW";
     std::string usage = std::string{argv[0]} + " [options] <input file> [arguments]";
-    argz::about about{description, version, author, usage};
-    about.print_help_when_no_options = false;
+    //argz::about about{description, version, author, usage};
+    //about.print_help_when_no_options = false;
 
     bool debug = false;
     std::string dotFile{};
+    /*
     argz::options args {
         { { "debug", 'd' }, debug, "enable debug output"},
         { { "Dot", 'D' }, dotFile, "generate a DOT file for the parse tree"}
-    };
+    };*/
 
     if (argc < 2) {
-        argz::help(about, args);
+        //argz::help(about, args);
         exit(EXIT_SUCCESS);
     }
 
@@ -36,7 +37,7 @@ int main(int argc, char **argv) {
 
     // Parse all arguments except fileArgIndex and argv[0]
     try {
-        argz::parse(about, args, argc, argv, fileArgIndex);
+        //argz::parse(about, args, argc, argv, fileArgIndex);
     } catch (const std::exception& e) {
         std::cerr << e.what() << '\n';
         exit(EXIT_FAILURE);
