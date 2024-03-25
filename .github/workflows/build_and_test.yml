@@ -49,6 +49,21 @@ jobs:
         distribution: 'temurin'
         java-version: '11'
 
+    - name: Setup Clang++ and libc++ (Ubuntu)
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        sudo apt update
+        sudo apt install -y clang-14 libc++-14-dev libc++abi-14-dev
+        sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-14 100
+      
+    - name: Configure CMake
+      run: >
+        cmake -B ${{ steps.strings.outputs.build-output-dir }}
+        -DCMAKE_CXX_COMPILER=${{ matrix.os == 'ubuntu-latest' && 'clang++-14' || matrix.cpp_compiler }}
+        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        -DCMAKE_CXX_FLAGS="-stdlib=libc++"
+        -S ${{ github.workspace }}
+
     - name: Configure CMake
       run: >
         cmake -B ${{ steps.strings.outputs.build-output-dir }}

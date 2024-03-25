@@ -1,7 +1,7 @@
 #ifndef TEST_HPP
 #define TEST_HPP
 
-#include <snitch/snitch.hpp>
+#include <catch2/catch_test_macros.hpp>
 #include <fstream>
 #include <filesystem>
 #include <iostream>
@@ -108,7 +108,7 @@ namespace util {
             }
 
         private:
-            static constexpr std::string_view exampleLocation = "docs/examples/"; 
+            static constexpr std::string_view exampleLocation = "../../docs/examples/"; 
     };
 }
 
