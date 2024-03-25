@@ -49,6 +49,10 @@ jobs:
         distribution: 'temurin'
         java-version: '11'
 
+    - name: Install dependencies
+      if: matrix.os != 'windows-latest'
+      run: sudo apt install -y libc++-dev libc++abi-dev
+
     - name: Configure CMake
       run: >
         cmake -B ${{ steps.strings.outputs.build-output-dir }}
