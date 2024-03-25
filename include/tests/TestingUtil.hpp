@@ -54,7 +54,7 @@ namespace util {
     class TestingUtil {
         public:
             static void testTokens(std::string testFileName, std::vector<size_t> expectedTokenTypes) {
-                std::string filePath = std::filesystem::path(std::string{exampleLocation} + testFileName);
+                std::string filePath = std::filesystem::path(std::string{exampleLocation} + testFileName).string();
 
                 if (!std::filesystem::exists(filePath)) {
                     std::cerr << "File does not exist: " << filePath << '\n';
@@ -84,7 +84,7 @@ namespace util {
             }
 
             static void testParser(std::string testFileName, std::vector<int> expectedTreeNodes) {
-                std::string filePath = std::string{exampleLocation} + testFileName;
+                std::string filePath = std::filesystem::path(std::string{exampleLocation} + testFileName).string();
 
                 if (!std::filesystem::exists(filePath)) {
                     std::cerr << "File does not exist: " << filePath << '\n';
