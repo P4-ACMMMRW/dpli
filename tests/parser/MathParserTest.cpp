@@ -4,7 +4,6 @@ using namespace dplgrammar;
 
 PARSER_TEST("math.dpl") {
     std::vector<int> expectedNodeRules = {
-        DplParser::RuleProg,
         DplParser::RuleStm,
         DplParser::RuleAssignstm,
         DplParser::RuleExpr,
