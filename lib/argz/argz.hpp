@@ -74,14 +74,18 @@ namespace argz
             std::visit(overloaded{
                [&](ref<std::string>& x) { x.get() = str; },
                [&](ref<bool>& x) { x.get() = str == "true" ? true : false; },
-               [&]<typename T>(ref_opt<T>& x_opt) {
-                  auto temp = T{};
-                  auto temp_var = var{ ref<T>{ temp } };
-                  parse(c, temp_var);
-                  x_opt.get().emplace(std::get<ref<T>>(temp_var).get());
-               },
-               [&](auto& x) { x.get() = static_cast<typename std::decay_t<decltype(x)>::type>(std::stol(std::string(str))); }
-               }, v);
+               [&](auto& x_opt) {
+                  using T = typename std::decay_t<decltype(x_opt)>::type::type;
+                  if constexpr (std::is_same_v<ref_opt<T>, std::decay_t<decltype(x_opt)>>) {
+                     auto temp = T{};
+                     auto temp_var = var{ ref<T>{ temp } };
+                     parse(c, temp_var);
+                     x_opt.get().emplace(std::get<ref<T>>(temp_var).get());
+                  } else {
+                     x.get() = static_cast<typename std::decay_t<decltype(x)>::type>(std::stol(std::string(str)));
+                  }
+               }
+            }, v);
          }
       }
 
@@ -93,12 +97,16 @@ namespace argz
                if (has_value) return x.get().value();
                else return std::string{ };
             },
-            []<typename T>(const ref_opt<T>& x_opt) {
-               const auto has_value = x_opt.get().has_value();
-               if (has_value) return std::to_string(x_opt.get().value());
-               else return std::string{ };
-            },
-            [](const auto& x) { return std::to_string(x.get()); },
+            [](auto& x_opt) {
+               using T = typename std::decay_t<decltype(x_opt)>::type::type;
+               if constexpr (std::is_same_v<ref_opt<T>, std::decay_t<decltype(x_opt)>>) {
+                  const auto has_value = x_opt.get().has_value();
+                  if (has_value) return std::to_string(x_opt.get().value());
+                  else return std::string{ };
+               } else {
+                  return std::to_string(x_opt.get());
+               }
+            }
          }, v);
       }
    }
