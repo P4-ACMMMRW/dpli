@@ -1,4 +1,4 @@
-#include "SymbolTable.hpp"
+#include <SymbolTable.hpp>
 
 using namespace dplsrc;
 

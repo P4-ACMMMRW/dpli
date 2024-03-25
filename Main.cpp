@@ -1,53 +1,69 @@
-#include "Main.hpp"
+#include <Main.hpp>
 
 using namespace antlr4;
 using namespace dplgrammar;
 
-std::string escapeDotString(const std::string& str) {
-    std::string result;
-    for (char c : str) {
-        if (c == '"') {
-            result += "\\\"";
-        } else {
-            result += c;
+int main(int argc, char **argv) {
+    std::string description = "DPL Interpreter";
+    std::string version = "0.0.1";
+    std::string author = "P4-ACMMMRW";
+    std::string usage = std::string{argv[0]} + " [options] <input file> [arguments]";
+    argz::about about{description, version, author, usage};
+    about.print_help_when_no_options = false;
+
+    bool debug = false;
+    std::string dotFile{};
+    
+    argz::options args {
+        { { "debug", 'd' }, debug, "enable debug output"},
+        { { "Dot", 'D' }, dotFile, "generate a DOT file for the parse tree"}
+    };
+
+    if (argc < 2) {
+        argz::help(about, args);
+        exit(EXIT_SUCCESS);
+    }
+
+    int fileArgIndex = 0;
+    bool isOption = true;
+    for (int i = 1; i < argc; ++i) {
+        isOption = !std::strcmp(argv[i], "-h") || !std::strcmp(argv[i], "--help") || !std::strcmp(argv[i], "-v") || !std::strcmp(argv[i], "--version");
+
+        if (!isOption) {
+            fileArgIndex = i;
+            break;
         }
     }
-    return result;
-}
 
-/*
-   Generate file which is used for visualizing the parse tree
-*/
-void generateDotFile(tree::ParseTree* node, const std::string& parentId, std::ofstream& out) {
-    std::string nodeId = std::to_string(reinterpret_cast<std::uintptr_t>(node));
-
-    // Use the text of the node as the label
-    std::string label = escapeDotString(node->getText());
-
-    out << "  " << nodeId << " [label=\"" << label << "\"];\n";
-    if (!parentId.empty()) {
-        out << "  " << parentId << " -> " << nodeId << ";\n";
-    }
-    for (size_t i = 0; i < node->children.size(); ++i) {
-        generateDotFile(node->children[i], nodeId, out);
-    }
-}
-
-int main(int argc, char **argv) {
-    if (argc < 2 || !std::strcmp(argv[1], "-h") || !std::strcmp(argv[1], "--help")) {
-        std::string usageStr = "Usage: " + std::string(argv[0]) + " <file>";
-        std::cout << usageStr << '\n';
-        return 0;
-    }
-
-    if (!std::filesystem::exists(argv[1])) {
-        std::cerr << "File does not exist: " << argv[1] << '\n';
+    // Parse all arguments except fileArgIndex and argv[0]
+    try {
+        argz::parse(about, args, argc, argv, fileArgIndex);
+    } catch (const std::exception& e) {
+        std::cerr << e.what() << '\n';
         exit(EXIT_FAILURE);
     }
 
-    std::ifstream file = std::ifstream(argv[1]);
+    // No file provided, and options have already been evaluated so exit program.
+    if (!fileArgIndex) {
+        exit(EXIT_SUCCESS);
+    }
+
+    // If after options comes an argument write error
+    if (argv[fileArgIndex][0] == '-') {
+        std::cerr << "Error: expected input file but received argument \"" << argv[fileArgIndex] << "\"\n";
+        std::cout << "Usage: " << usage << '\n';
+        exit(EXIT_FAILURE);
+    }
+
+    // Check if input file exists
+    if (!std::filesystem::exists(argv[fileArgIndex])) {
+        std::cerr << "Error: file \"" << argv[fileArgIndex] << "\" not found\n";
+        exit(EXIT_FAILURE);
+    }
+
+    std::ifstream file{std::filesystem::path(argv[fileArgIndex])};
     if (!file.is_open()) {
-        std::cerr << "Failed to open file: " << argv[1] << '\n';
+        std::cerr << "Error: file \"" << argv[fileArgIndex] << "\" could not be opened\n";
         exit(EXIT_FAILURE);
     }
 
@@ -56,23 +72,56 @@ int main(int argc, char **argv) {
     CommonTokenStream tokens(&lexer);
 
     tokens.fill();
-    for (antlr4::Token *token : tokens.getTokens()) {
-        std::cout << token->toString() << '\n';
-    }
 
     DplParser parser(&tokens);
-    tree::ParseTree* tree = parser.prog();
+    tree::ParseTree *tree = parser.prog();
 
-    // Print the parse tree
-    std::cout << tree->toStringTree(&parser, true) << "\n\n";
+    if (debug) {
+        for (antlr4::Token *token : tokens.getTokens()) {
+            std::cout << token->toString() << '\n';
+        }
 
-    // Write the parse tree to a DOT file
-    if (argc >= 3) {
-        std::ofstream out(argv[2]);
-        out << "digraph {\n";
-        generateDotFile(tree, "", out);
-        out << "}\n";
+        std::cout << tree->toStringTree(&parser, true) << "\n\n";
+    }
+    
+    if (!dotFile.empty()) {
+        generateDotFile(tree, dotFile);        
     }
 
-    return 0;
+    exit(EXIT_SUCCESS);
+}
+
+void generateDotFile(tree::ParseTree *root, std::string fileName) {
+    std::ofstream out{std::filesystem::path(fileName)};
+
+    std::stack<std::pair<tree::ParseTree *, std::string>> stack;
+    std::string rootId = std::to_string(reinterpret_cast<std::uintptr_t>(root));
+
+    stack.push({root, rootId});
+
+    out << "digraph {\n";
+
+    while (!stack.empty()) {
+        std::pair<tree::ParseTree *, std::string> nodeAndParentId = stack.top();
+        tree::ParseTree *node = nodeAndParentId.first;
+        std::string parentId = nodeAndParentId.second;
+        stack.pop();
+
+        std::string nodeId = std::to_string(reinterpret_cast<std::uintptr_t>(node));
+
+        // Escape quotation marks in label
+        std::string label = std::regex_replace(node->getText(), std::regex("\""), "\\\"");
+
+        out << "  " << nodeId << " [label=\"" << label << "\"];\n";
+        if (!parentId.empty()) {
+            out << "  " << parentId << " -> " << nodeId << ";\n";
+        }
+
+        // Push the node's children on stack
+        for (std::vector<tree::ParseTree *>::reverse_iterator it = node->children.rbegin(); it != node->children.rend(); ++it) {
+            stack.push({*it, nodeId});
+        }
+    }
+
+    out << "}\n";
 }

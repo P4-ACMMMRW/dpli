@@ -29,11 +29,11 @@ namespace util {
                 std::string name = parser->getRuleNames()[ruleIndex];
 
                 name[0] = std::toupper(static_cast<unsigned char>(name[0]));
-                std::cout << "DplParser::Rule" << name + "," << std::endl;
+                std::cout << "DplParser::Rule" << name + ",\n";
             }
 
             void testNode(antlr4::ParserRuleContext *ctx) {
-                INFO(ctx->getRuleIndex() + " != " + expectedTreeNodes[0] + '\n');
+                INFO(std::to_string(ctx->getRuleIndex()) + " != " + std::to_string(expectedTreeNodes[0]) + '\n');
                 REQUIRE(static_cast<int>(ctx->getRuleIndex()) == static_cast<int>(expectedTreeNodes[0]));
                 expectedTreeNodes.erase(expectedTreeNodes.begin());
             }
@@ -54,17 +54,15 @@ namespace util {
     class TestingUtil {
         public:
             static void testTokens(std::string testFileName, std::vector<size_t> expectedTokenTypes) {
-                std::string filePath = std::filesystem::path(std::string{exampleLocation} + testFileName);
+                std::string filePath = std::filesystem::path(std::string{exampleLocation} + testFileName).string();
 
                 if (!std::filesystem::exists(filePath)) {
-                    std::cerr << "File does not exist: " << filePath << '\n';
-                    FAIL();
+                    FAIL("File does not exist: " + filePath);
                 }
 
                 std::ifstream file{filePath};
                 if (!file.is_open()) {
-                    std::cerr << "Failed to open file: " << filePath;
-                    FAIL();
+                    FAIL("Failed to open file: " + filePath);
                 }
 
                 antlr4::ANTLRInputStream input(file);
@@ -84,17 +82,15 @@ namespace util {
             }
 
             static void testParser(std::string testFileName, std::vector<int> expectedTreeNodes) {
-                std::string filePath = std::string{exampleLocation} + testFileName;
+                std::string filePath = std::filesystem::path(std::string{exampleLocation} + testFileName).string();
 
                 if (!std::filesystem::exists(filePath)) {
-                    std::cerr << "File does not exist: " << filePath << '\n';
-                    FAIL();
+                    FAIL("File does not exist: " + filePath);
                 }
 
                 std::ifstream file{filePath};
                 if (!file.is_open()) {
-                    std::cerr << "Failed to open file: " << filePath;
-                    FAIL();
+                    FAIL("Failed to open file: " + filePath);
                 }
 
                 antlr4::ANTLRInputStream input(file);
