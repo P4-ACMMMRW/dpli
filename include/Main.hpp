@@ -9,7 +9,7 @@
 #include <DplLexer.h>
 #include <DplParser.h>
 #include <tree/Trees.h>
-//#include <argz.hpp>
+#include <argz.hpp>
 
 /**
 * Generate file which is used for visualizing the parse tree
