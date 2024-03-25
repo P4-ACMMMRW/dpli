@@ -59,9 +59,9 @@ jobs:
     - name: Configure CMake
       run: >
         cmake -B ${{ steps.strings.outputs.build-output-dir }}
-        -DCMAKE_CXX_COMPILER=${{ matrix.os == 'ubuntu-latest' && 'clang++-14' || matrix.cpp_compiler }}
+        -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-        -DCMAKE_CXX_FLAGS="-stdlib=libc++"
+        ${{ matrix.os == 'ubuntu-latest' && '-DCMAKE_CXX_FLAGS=-stdlib=libc++' || '' }}
         -S ${{ github.workspace }}
 
     - name: Configure CMake
