@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
 
     if (argc < 2) {
         argz::help(about, args);
-        exit(EXIT_SUCCESS);
+        return EXIT_SUCCESS;
     }
 
     int fileArgIndex = 0;
@@ -40,31 +40,31 @@ int main(int argc, char **argv) {
         argz::parse(about, args, argc, argv, fileArgIndex);
     } catch (const std::exception& e) {
         std::cerr << e.what() << '\n';
-        exit(EXIT_FAILURE);
+        return EXIT_FAILURE;
     }
 
     // No file provided, and options have already been evaluated so exit program.
     if (!fileArgIndex) {
-        exit(EXIT_SUCCESS);
+        return EXIT_SUCCESS;
     }
 
     // If after options comes an argument write error
     if (argv[fileArgIndex][0] == '-') {
         std::cerr << "Error: expected input file but received argument \"" << argv[fileArgIndex] << "\"\n";
         std::cout << "Usage: " << usage << '\n';
-        exit(EXIT_FAILURE);
+        return EXIT_FAILURE;
     }
 
     // Check if input file exists
     if (!std::filesystem::exists(argv[fileArgIndex])) {
         std::cerr << "Error: file \"" << argv[fileArgIndex] << "\" not found\n";
-        exit(EXIT_FAILURE);
+        return EXIT_FAILURE;
     }
 
     std::ifstream file{std::filesystem::path(argv[fileArgIndex])};
     if (!file.is_open()) {
         std::cerr << "Error: file \"" << argv[fileArgIndex] << "\" could not be opened\n";
-        exit(EXIT_FAILURE);
+        return EXIT_FAILURE;
     }
 
     ANTLRInputStream input(file);
@@ -88,7 +88,7 @@ int main(int argc, char **argv) {
         generateDotFile(tree, dotFile);        
     }
 
-    exit(EXIT_SUCCESS);
+    return EXIT_SUCCESS;
 }
 
 void generateDotFile(tree::ParseTree *root, std::string fileName) {
