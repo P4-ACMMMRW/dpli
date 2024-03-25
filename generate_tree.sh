@@ -23,7 +23,7 @@ if [ ! -d tree ]; then
     mkdir tree
 fi
 
-./build/dpli $1 tree/$2
+./build/dpli $1 -D tree/$2
 
 # Wait for the tree to be generated and then convert it to png
 dot -Tpng tree/$2 -o tree/$2.png

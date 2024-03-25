@@ -15,7 +15,7 @@ endif()
 add_subdirectory(src)
 
 add_executable(dpli Main.cpp)
-target_include_directories(dpli PRIVATE ${PROJECT_SOURCE_DIR}/include)
+target_include_directories(dpli PRIVATE ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/include/src)
 target_link_libraries(dpli PRIVATE dpllib)
 
 add_subdirectory(tests)

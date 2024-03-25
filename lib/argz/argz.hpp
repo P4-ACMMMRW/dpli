@@ -114,6 +114,7 @@ namespace argz
       std::cout << '\n' << R"(-h, --help       write help to console)" << '\n';
       std::cout << R"(-v, --version    write the version to console)" << '\n';
 
+      std::cout << "\nArguments:\n";
       for (auto& [ids, v, h] : opts)
       {
          if (ids.alias != '\0') {
@@ -130,7 +131,7 @@ namespace argz
    }
 
    template <class int_t, class char_ptr_t> requires (std::is_pointer_v<char_ptr_t>)
-   inline void parse(about& about, options& opts, const int_t argc, char_ptr_t argv)
+   inline void parse(about& about, options& opts, const int_t argc, char_ptr_t argv, int fileArgIndex)
    {
       if (argc == 1) {
          if (about.print_help_when_no_options) {
@@ -149,6 +150,8 @@ namespace argz
       };
 
       for (int_t i = 1; i < argc; ++i) {
+         if (i == fileArgIndex) continue;
+
          const char* flag = argv[i];
          if (*flag != '-') {
             throw std::runtime_error("Expected '-'");
