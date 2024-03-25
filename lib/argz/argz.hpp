@@ -67,6 +67,8 @@ namespace argz
       template <class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
       template <class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
       
+      void parse(const char* const c, var& v);
+
       template <typename T>
       struct parse_opt {
          void operator()(ref_opt<T>& x_opt, const char* const c) {
