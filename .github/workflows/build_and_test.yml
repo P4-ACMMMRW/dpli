@@ -14,14 +14,14 @@ jobs:
       matrix:
         os: [windows-latest, ubuntu-latest, macos-latest]
         build_type: [Release]
-        cpp_compiler: [clang++, mingw]
+        cpp_compiler: [clang++, g++]
         exclude:
           - os: windows-latest
             cpp_compiler: clang++
           - os: ubuntu-latest
-            cpp_compiler: mingw
+            cpp_compiler: g++
           - os: macos-latest
-            cpp_compiler: mingw
+            cpp_compiler: g++
 
     steps:
     - name: Checkout
