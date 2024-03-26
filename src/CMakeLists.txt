@@ -1,5 +1,5 @@
 # For Visual C++ compilers only
-set(ANTLR4_WITH_STATIC_CRT ON)
+set(ANTLR4_WITH_STATIC_CRT OFF)
 
 add_definitions(-DANTLR4CPP_STATIC)
 
@@ -27,4 +27,8 @@ message(STATUS "ANTLR_DplParser_CXX_OUTPUTS: ${ANTLR_DplParser_CXX_OUTPUTS}")
 
 add_library(dpllib ${ANTLR_DplLexer_CXX_OUTPUTS} ${ANTLR_DplParser_CXX_OUTPUTS})
 target_include_directories(dpllib PUBLIC ${ANTLR_DplLexer_OUTPUT_DIR} ${ANTLR_DplParser_OUTPUT_DIR} ${PROJECT_SOURCE_DIR}/lib/argz ${PROJECT_SOURCE_DIR}/include/src)
-target_link_libraries(dpllib antlr4_static)
+
+if (MSVC)
+    target_link_libraries(dpllib antlr4_shared)
+else()
+    target_link_libraries(dpllib antlr4_static)
