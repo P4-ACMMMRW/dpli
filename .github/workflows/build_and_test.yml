@@ -42,6 +42,10 @@ jobs:
       run: |
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
 
+    - name: Install Ninja
+      if: matrix.os == 'windows-latest'
+      run: choco install ninja
+
     - name: Setup JDK
       if: matrix.os != 'ubuntu-latest'
       uses: actions/setup-java@v4
@@ -50,11 +54,19 @@ jobs:
         java-version: '11'
       
     - name: Configure CMake
-      run: >
-        cmake -B ${{ steps.strings.outputs.build-output-dir }}
-        -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
-        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-        -S ${{ github.workspace }}
+      run: |
+        if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+          cmake -B ${{ steps.strings.outputs.build-output-dir }} 
+                -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} 
+                -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} 
+                -G "Ninja" 
+                -S ${{ github.workspace }}
+        else
+          cmake -B ${{ steps.strings.outputs.build-output-dir }} 
+                -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} 
+                -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} 
+                -S ${{ github.workspace }}
+        fi
 
     - name: Build
       run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
