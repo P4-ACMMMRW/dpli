@@ -42,10 +42,6 @@ jobs:
       run: |
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
 
-    - name: Install Ninja
-      if: matrix.os == 'windows-latest'
-      run: choco install ninja
-
     - name: Setup JDK
       if: matrix.os != 'ubuntu-latest'
       uses: actions/setup-java@v4
@@ -67,7 +63,7 @@ jobs:
         cmake -B ${{ steps.strings.outputs.build-output-dir }}
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-        -G "Ninja"
+        -G "MinGW Makefiles"
         -S ${{ github.workspace }}  
 
     - name: Build
