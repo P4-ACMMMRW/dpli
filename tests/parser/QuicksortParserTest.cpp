@@ -250,5 +250,5 @@ PARSER_TEST("quicksort.dpl") {
         DplParser::RuleExpr
     };
     
-    util::TestingUtil::testParser("quicksort.dpl", expectedNodeRules);
+    dplutil::TestingUtil::testParser("quicksort.dpl", expectedNodeRules);
 }

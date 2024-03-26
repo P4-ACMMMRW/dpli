@@ -294,5 +294,5 @@ LEXER_TEST("quicksort.dpl") {
 
     };
 
-    util::TestingUtil::testTokens("quicksort.dpl", expectedTokens);
+    dplutil::TestingUtil::testTokens("quicksort.dpl", expectedTokens);
 }

@@ -35,5 +35,5 @@ LEXER_TEST("continue.dpl") {
         DplLexer::Dedent
     };
 
-    util::TestingUtil::testTokens("continue.dpl", expectedTokens);
+    dplutil::TestingUtil::testTokens("continue.dpl", expectedTokens);
 }

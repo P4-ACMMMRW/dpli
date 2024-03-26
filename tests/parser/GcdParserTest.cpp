@@ -44,5 +44,5 @@ PARSER_TEST("gcd.dpl") {
         DplParser::RuleLiteral,
     };
     
-    util::TestingUtil::testParser("gcd.dpl", expectedNodeRules);
+    dplutil::TestingUtil::testParser("gcd.dpl", expectedNodeRules);
 }
