@@ -2,7 +2,7 @@
 
 # DPL
 ## Build
-### Linux & macOS
+### Ubuntu
 Run the ```compile.sh``` script with:
 ```bash
 ./compile.sh
