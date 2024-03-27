@@ -42,5 +42,5 @@ LEXER_TEST("math.dpl") {
         DplLexer::ClosePar
     };
 
-    util::TestingUtil::testTokens("math.dpl", expectedTokens);
+    dplutil::TestingUtil::testTokens("math.dpl", expectedTokens);
 }

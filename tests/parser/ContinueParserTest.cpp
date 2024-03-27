@@ -46,5 +46,5 @@ PARSER_TEST("continue.dpl") {
         DplParser::RuleExpr,
     };
     
-    util::TestingUtil::testParser("continue.dpl", expectedNodeRules);
+    dplutil::TestingUtil::testParser("continue.dpl", expectedNodeRules);
 }
