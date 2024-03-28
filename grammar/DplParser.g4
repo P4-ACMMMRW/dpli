@@ -49,15 +49,15 @@ stm: Indent stm+ Dedent
    | loopstm
    | flowstm
    | assignstm
-   | Replace expr With expr;
+   | replacestm;
 
 // Control Statements
-ctrlstm: If expr Colon stm+
-       | If expr Colon stm+ Else Colon stm+;
+ctrlstm: If expr Colon stm
+       | If expr Colon stm Else Colon stm;
 
 // Loop Statements
-loopstm: While expr Colon stm+
-       | While expr Star Colon stm+;
+loopstm: While expr Colon stm     
+       | While expr Star Colon stm;
 
 // Flow Statements
 flowstm: Break
@@ -67,8 +67,10 @@ flowstm: Break
 
 assignstm: (Identifier | tablecall | listcall) Assign expr;
 
+replacestm: Replace expr With expr;
+
 // Expressions
-expr: Not expr
+expr: notexpr
     | OpenPar expr ClosePar
     | expr arthexpr
     | expr boolexpr
@@ -81,6 +83,8 @@ expr: Not expr
 arthexpr: (Plus | Minus | Star | Slash | Mod | Exponent) expr;
 
 boolexpr: (junctionopr | compareopr) expr;
+
+notexpr: Not expr;
 
 
 // Table Unary Expression
@@ -109,7 +113,7 @@ listcall: Identifier (OpenSquare Integer CloseSquare)+;
 
 
 // Procedures Non-Terminals
-procdec: Def Identifier OpenPar params ClosePar Colon stm+;
+procdec: Def Identifier OpenPar params ClosePar Colon stm;
 
 proccall: Identifier OpenPar args ClosePar;
 

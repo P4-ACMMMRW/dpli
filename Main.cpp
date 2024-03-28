@@ -1,4 +1,5 @@
 #include <Main.hpp>
+#include <AstVisitor.hpp>
 
 using namespace antlr4;
 using namespace dplgrammar;
@@ -81,7 +82,10 @@ int main(int argc, char **argv) {
             std::cout << token->toString() << '\n';
         }
 
-        std::cout << tree->toStringTree(&parser, true) << "\n\n";
+        AstVisitor visitor{&parser, &lexer};
+        visitor.visit(tree);
+        visitor.getRoot()->print();
+        //std::cout << tree->toStringTree(&parser, true) << "\n\n";
     }
     
     if (!dotFile.empty()) {

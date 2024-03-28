@@ -33,9 +33,7 @@ PARSER_TEST("break.dpl") {
         DplParser::RuleFlowstm,
         DplParser::RuleStm,
         DplParser::RuleExpr,
-        DplParser::RuleStm,
-        DplParser::RuleExpr,
-        DplParser::RuleExpr,
+        DplParser::RuleProccall,
         DplParser::RuleLiteral
     };
     
