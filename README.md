@@ -2,47 +2,31 @@
 
 # DPL
 ## Build
-### Linux
-First time do
-```bash
-chmod +x compile.sh
-```
-then 
+### Ubuntu
+Run the ```compile.sh``` script with:
 ```bash
 ./compile.sh
 ```
-
-and lastly
+this will create an executable which can be run with:
 ```bash
 cd build
 ./dpli <file>
 ```
-to run the dpl interpreter
 
 #### Clean Build
-To make a clean build run the following command:
+To make a clean build run the ```compile.sh``` script with the argument "clean":
 ```bash
 ./compile.sh clean
 ```
 
 #### Run Tests
-After compiling the interpreter tests can be run with:
-
-First time 
-```bash
-chmod +x run_tests.sh
-```
-then
+After compiling the interpreter tests can be run using the ```run_tests.sh``` script:
 ```bash
 ./run_tests.sh
 ```
-to verify tests.
 
 #### Generate Parse Tree PNG
-```bash
-chmod +x generate_tree.sh
-```
-then
+A PNG of the parse tree can be generated using the ```generate_tree.sh``` script
 ```bash
 ./generate_tree.sh <input-file> <output-file>
 ```
