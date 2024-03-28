@@ -183,7 +183,7 @@ public:
         AstNode* oldNode = currentNode;
         currentNode = newNode;
 
-        for (size_t i = 1; i < parseNode->children.size(); i++) {
+        for (size_t i = 2; i < parseNode->children.size() - 1; i++) {
             AstNode* childNode = getTerminalLeafNode(parseNode->children[i]);
             if (childNode != nullptr) currentNode->children.push_back(childNode);
         }

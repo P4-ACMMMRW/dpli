@@ -33,15 +33,15 @@ PARSER_TEST("gcd.dpl") {
         DplParser::RuleExpr,
         DplParser::RuleStm,
         DplParser::RuleExpr,
-        DplParser::RuleStm,
-        DplParser::RuleExpr,
+        DplParser::RuleProccall,
+        DplParser::RuleArgs,
         DplParser::RuleExpr,
         DplParser::RuleProccall,
         DplParser::RuleArgs,
         DplParser::RuleExpr,
         DplParser::RuleLiteral,
         DplParser::RuleExpr,
-        DplParser::RuleLiteral,
+        DplParser::RuleLiteral
     };
     
     util::TestingUtil::testParser("gcd.dpl", expectedNodeRules);

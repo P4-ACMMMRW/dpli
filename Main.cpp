@@ -77,6 +77,7 @@ int main(int argc, char **argv) {
     DplParser parser(&tokens);
     tree::ParseTree *tree = parser.prog();
 
+
     if (debug) {
         for (antlr4::Token *token : tokens.getTokens()) {
             std::cout << token->toString() << '\n';
@@ -85,7 +86,7 @@ int main(int argc, char **argv) {
         AstVisitor visitor{&parser, &lexer};
         visitor.visit(tree);
         visitor.getRoot()->print();
-        //std::cout << tree->toStringTree(&parser, true) << "\n\n";
+        std::cout << tree->toStringTree(&parser, true) << "\n\n";
     }
     
     if (!dotFile.empty()) {

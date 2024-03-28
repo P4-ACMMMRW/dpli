@@ -41,9 +41,9 @@ PARSER_TEST("continue.dpl") {
         DplParser::RuleFlowstm,
         DplParser::RuleStm,
         DplParser::RuleExpr,
-        DplParser::RuleStm,
-        DplParser::RuleExpr,
-        DplParser::RuleExpr,
+        DplParser::RuleProccall,
+        DplParser::RuleArgs,
+        DplParser::RuleExpr
     };
     
     util::TestingUtil::testParser("continue.dpl", expectedNodeRules);

@@ -36,7 +36,7 @@ namespace util {
             }
 
             void testNode(ParserRuleContext *ctx) {
-                INFO(std::to_string(ctx->getRuleIndex()) + " != " + std::to_string(expectedTreeNodes[0]) + '\n');
+                INFO(parser->getRuleNames()[ctx->getRuleIndex()] + " != " + parser->getRuleNames()[expectedTreeNodes[0]] + '\n');
                 REQUIRE(static_cast<int>(ctx->getRuleIndex()) == static_cast<int>(expectedTreeNodes[0]));
                 expectedTreeNodes.erase(expectedTreeNodes.begin());
             }
@@ -46,6 +46,7 @@ namespace util {
 
                     ParserRuleContext* ctx = dynamic_cast<ParserRuleContext*>(tree->children[i]);
                     if (ctx) {
+                        printTokens(ctx->getRuleIndex());
                         testNode(ctx);
                     }
                     tree->children[i]->accept(this);

@@ -41,22 +41,22 @@ prog: (stm | procdec)+;
 
 // Statement 
 stm: Indent stm+ Dedent
-   | expr
-   | Identifier
    | listdec
    | tabledec
    | ctrlstm
    | loopstm
    | flowstm
    | assignstm
-   | replacestm;
+   | replacestm
+   | expr
+   | Identifier;
 
 // Control Statements
 ctrlstm: If expr Colon stm
        | If expr Colon stm Else Colon stm;
 
 // Loop Statements
-loopstm: While expr Colon stm     
+loopstm: While expr Colon stm
        | While expr Star Colon stm;
 
 // Flow Statements
@@ -71,14 +71,14 @@ replacestm: Replace expr With expr;
 
 // Expressions
 expr: notexpr
-    | OpenPar expr ClosePar
     | expr arthexpr
     | expr boolexpr
-    | Identifier
     | tablecall
     | listcall
     | proccall
-    | literal;
+    | literal
+    | Identifier
+    | OpenPar expr ClosePar;
 
 arthexpr: (Plus | Minus | Star | Slash | Mod | Exponent) expr;
 
@@ -97,8 +97,7 @@ table:  OpenCurly (String Colon list (Comma String Colon list)*)? CloseCurly;
 
 tabledec: Identifier Assign table;
 
-tablecall: OpenPar tablecall ClosePar
-         | Identifier (OpenSquare expr CloseSquare (OpenSquare unaryexpr CloseSquare)?)? 
+tablecall: Identifier (OpenSquare expr CloseSquare (OpenSquare unaryexpr CloseSquare)?) 
          | tablecall  OpenSquare expr CloseSquare (OpenSquare unaryexpr CloseSquare)?;
 
 
@@ -113,17 +112,19 @@ listcall: Identifier (OpenSquare Integer CloseSquare)+;
 
 
 // Procedures Non-Terminals
-procdec: Def Identifier OpenPar params ClosePar Colon stm;
+procdec: Def Identifier OpenPar params ClosePar Colon stm
+       | Def Identifier OpenPar ClosePar Colon stm;
 
-proccall: Identifier OpenPar args ClosePar;
+proccall: Identifier OpenPar args ClosePar 
+        | Identifier OpenPar ClosePar;
 
 
 
 // Args
-args: (expr (Comma expr)*)?;
+args: expr (Comma expr)*;
 
 // Params
-params: (Identifier (Comma Identifier)*)?;
+params: Identifier (Comma Identifier)*;
 
 
 
