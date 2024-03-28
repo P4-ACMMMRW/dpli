@@ -34,8 +34,13 @@ if(MSVC)
   set(ANTLR4_RUNTIME_LIBRARIES
       ${ANTLR4_OUTPUT_DIR}/antlr4-runtime.dll)
 else()
+  if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
   set(ANTLR4_STATIC_LIBRARIES
-      ${ANTLR4_OUTPUT_DIR}/libantlr4-runtime.a)
+          ${ANTLR4_OUTPUT_DIR}/libantlr4-runtime-static.a)
+  else()
+  set(ANTLR4_STATIC_LIBRARIES
+          ${ANTLR4_OUTPUT_DIR}/libantlr4-runtime.a)
+  endif()
   if(MINGW)
     set(ANTLR4_SHARED_LIBRARIES
         ${ANTLR4_OUTPUT_DIR}/libantlr4-runtime.dll.a)
@@ -96,7 +101,7 @@ if(ANTLR4_ZIP_REPOSITORY)
           -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
           -DWITH_STATIC_CRT:BOOL=${ANTLR4_WITH_STATIC_CRT}
           -DDISABLE_WARNINGS:BOOL=ON
-          # -DCMAKE_CXX_STANDARD:STRING=17 # if desired, compile the runtime with a different C++ standard
+          -DCMAKE_CXX_STANDARD:STRING=17 # if desired, compile the runtime with a different C++ standard
           # -DCMAKE_CXX_STANDARD:STRING=${CMAKE_CXX_STANDARD} # alternatively, compile the runtime with the same C++ standard as the outer project
       INSTALL_COMMAND ""
       EXCLUDE_FROM_ALL 1)
@@ -115,7 +120,7 @@ else()
           -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
           -DWITH_STATIC_CRT:BOOL=${ANTLR4_WITH_STATIC_CRT}
           -DDISABLE_WARNINGS:BOOL=ON
-          # -DCMAKE_CXX_STANDARD:STRING=17 # if desired, compile the runtime with a different C++ standard
+          -DCMAKE_CXX_STANDARD:STRING=17 # if desired, compile the runtime with a different C++ standard
           # -DCMAKE_CXX_STANDARD:STRING=${CMAKE_CXX_STANDARD} # alternatively, compile the runtime with the same C++ standard as the outer project
       INSTALL_COMMAND ""
       EXCLUDE_FROM_ALL 1)

@@ -8,14 +8,12 @@ set(CMAKE_CXX_STANDARD 17)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
 endif()
 
 add_subdirectory(src)
 
 add_executable(dpli Main.cpp)
 target_include_directories(dpli PRIVATE ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/include/src)
-target_link_libraries(dpli PRIVATE dpllib)
 
 add_subdirectory(tests)
+target_link_libraries(dpli PRIVATE dpllib)
