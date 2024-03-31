@@ -82,11 +82,11 @@ int main(int argc, char **argv) {
         for (antlr4::Token *token : tokens.getTokens()) {
             std::cout << token->toString() << '\n';
         }
+        std::cout << tree->toStringTree(&parser, true) << "\n\n";
 
         AstVisitor visitor{&parser, &lexer};
         visitor.visit(tree);
         visitor.getRoot()->print();
-        std::cout << tree->toStringTree(&parser, true) << "\n\n";
     }
     
     if (!dotFile.empty()) {

@@ -37,13 +37,10 @@ void doAfter() {}
 }
 
 // Actual grammar start.
-prog: (stm | procdec)+;
+prog: (stm | procdec)* EOF;
 
 // Statement 
-stm: Indent stm+ Dedent
-   | listdec
-   | tabledec
-   | ctrlstm
+stm: ifstm
    | loopstm
    | flowstm
    | assignstm
@@ -52,20 +49,22 @@ stm: Indent stm+ Dedent
    | Identifier;
 
 // Control Statements
-ctrlstm: If expr Colon stm
-       | If expr Colon stm Else Colon stm;
+ifstm: If expr Colon Indent stm+ Dedent
+     | If expr Colon Indent stm+ Dedent elsestm;
+
+elsestm: Else Colon Indent stm+ Dedent;
 
 // Loop Statements
-loopstm: While expr Colon stm
-       | While expr Star Colon stm;
+loopstm: While expr Colon Indent stm+ Dedent
+       | While expr Star Colon Indent stm+ Dedent;
 
 // Flow Statements
 flowstm: Break
        | Continue
-       | Return
-       | Return expr;
+       | Return expr
+       | Return;
 
-assignstm: (Identifier | tablecall | listcall) Assign expr;
+assignstm: (Identifier | listcall | tablecall) Assign expr;
 
 replacestm: Replace expr With expr;
 
@@ -73,8 +72,8 @@ replacestm: Replace expr With expr;
 expr: notexpr
     | expr arthexpr
     | expr boolexpr
-    | tablecall
     | listcall
+    | tablecall
     | proccall
     | literal
     | Identifier
@@ -82,38 +81,35 @@ expr: notexpr
 
 arthexpr: (Plus | Minus | Star | Slash | Mod | Exponent) expr;
 
-boolexpr: (junctionopr | compareopr) expr;
+boolexpr: junctionopr | compareopr;
 
 notexpr: Not expr;
 
 
 // Table Unary Expression
-unaryexpr: compareopr expr (junctionopr expr)*;
+unaryexpr: compareopr junctionopr*;
 
 
 
 // Table Non-Terminals
 table:  OpenCurly (String Colon list (Comma String Colon list)*)? CloseCurly; 
 
-tabledec: Identifier Assign table;
-
 tablecall: Identifier (OpenSquare expr CloseSquare (OpenSquare unaryexpr CloseSquare)?) 
-         | tablecall  OpenSquare expr CloseSquare (OpenSquare unaryexpr CloseSquare)?;
+         | tablecall OpenSquare expr CloseSquare (OpenSquare unaryexpr CloseSquare)?
+         | OpenPar tablecall ClosePar OpenSquare expr CloseSquare (OpenSquare unaryexpr CloseSquare)?;
 
 
 
 // List Non-Terminals 
 list: OpenSquare args CloseSquare;
 
-listdec: Identifier Assign list;
-
-listcall: Identifier (OpenSquare Integer CloseSquare)+;
+listcall: Identifier (OpenSquare expr CloseSquare)+;
 
 
 
 // Procedures Non-Terminals
-procdec: Def Identifier OpenPar params ClosePar Colon stm
-       | Def Identifier OpenPar ClosePar Colon stm;
+procdec: Def Identifier OpenPar params ClosePar Colon Indent stm+ Dedent
+       | Def Identifier OpenPar ClosePar Colon Indent stm+ Dedent;
 
 proccall: Identifier OpenPar args ClosePar 
         | Identifier OpenPar ClosePar;
@@ -131,10 +127,10 @@ params: Identifier (Comma Identifier)*;
 
 
 // Compare Operators
-compareopr : (Equal | NotEqual | Less | Greater | LessEqual | GreaterEqual);
+compareopr : (Equal | NotEqual | Less | Greater | LessEqual | GreaterEqual) expr;
 
 // Junction Operator
-junctionopr: (And | Or);
+junctionopr: (And | Or) expr;
 
 
 
