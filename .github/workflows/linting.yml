@@ -20,7 +20,7 @@ jobs:
           style: 'file'
           tidy-checks: 'boost-*,bugprone-*,performance-*,readability-*,portability-*,clang-analyzer-*,cppcoreguidelines-*'
           thread-comments: ${{ github.event_name == 'pull_request' && 'update' }}
-          tidy-review: true
+          format-review: true
       - name: Fail Fast
         if: steps.linter.outputs.checks-failed > 0
         run: exit 1
