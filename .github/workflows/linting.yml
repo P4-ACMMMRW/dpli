@@ -12,7 +12,7 @@ jobs:
       - name: Install Clang Format and Clang Tidy
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang-format-10 clang-tidy-10
+          sudo apt-get install -y clang-format clang-tidy
 
       - name: Run Clang Format
         run: |
