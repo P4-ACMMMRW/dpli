@@ -86,7 +86,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: dpli-win
-        path: build/Release/dpli.exe
+        path: build/dpli.exe
         if-no-files-found: error
     
     - name: Upload macOS
