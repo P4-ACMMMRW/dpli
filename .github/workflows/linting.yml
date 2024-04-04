@@ -11,13 +11,20 @@ jobs:
 
       - name: Install Clang Format and Clang Tidy
         run: |
-          sudo apt-get update
           sudo apt-get install -y clang-format clang-tidy
 
       - name: Run Clang Format
         run: |
           find . -regex '.*\.\(cpp\|hpp\|cc\|cxx\)' -exec clang-format -style=google -i {} \;
-
+  
       - name: Run Clang Tidy
         run: |
-          find . -regex '.*\.\(cpp\|hpp\|cc\|cxx\)' -exec clang-tidy -checks='cppcoreguidelines-*,modernize-*' {} \;
+          find . -regex '.*\.\(cpp\|hpp\|cc\|cxx\)' -exec clang-tidy -checks='cppcoreguidelines-*,modernize-*' -fix {} \;
+
+      - name: Commit and push changes
+        run: |
+            git config --global user.name 'GitHub Actions'
+            git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+            git add -A
+            git commit -m "Apply clang-format and clang-tidy fixes" || echo "No changes to commit"
+            git push
