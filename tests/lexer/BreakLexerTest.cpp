@@ -31,5 +31,5 @@ LEXER_TEST("break.dpl") {
         DplLexer::Dedent
     };
 
-    util::TestingUtil::testTokens("break.dpl", expectedTokenTypes);
+    dplutil::TestingUtil::testTokens("break.dpl", expectedTokenTypes);
 }
