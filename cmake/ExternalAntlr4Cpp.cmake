@@ -42,6 +42,8 @@ else()
           ${ANTLR4_OUTPUT_DIR}/libantlr4-runtime.a)
   endif()
   if(MINGW)
+    set(ANTL4_STATIC_LIBRARIES
+        ${ANTLR4_OUTPUT_DIR}/libantlr4-runtime.a)
     set(ANTLR4_SHARED_LIBRARIES
         ${ANTLR4_OUTPUT_DIR}/libantlr4-runtime.dll.a)
     set(ANTLR4_RUNTIME_LIBRARIES
