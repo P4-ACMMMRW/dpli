@@ -20,10 +20,10 @@ set(ANTLR_EXECUTABLE ${PROJECT_SOURCE_DIR}/lib/antlr/antlr-4.13.1-complete.jar)
 find_package(ANTLR REQUIRED)
 
 # ANTLR targets
-antlr_target(DplLexer grammar/DplLexer.g4 LEXER
+antlr_target(DplLexer ${PROJECT_SOURCE_DIR}/grammar/DplLexer.g4 LEXER
              PACKAGE dplgrammar
              OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/antlr4cpp_generated_src/DplLexer/grammar)
-antlr_target(DplParser grammar/DplParser.g4 PARSER
+antlr_target(DplParser ${PROJECT_SOURCE_DIR}/grammar/DplParser.g4 PARSER
              PACKAGE dplgrammar
              DEPENDS_ANTLR DplLexer
              OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/antlr4cpp_generated_src/DplParser/grammar
