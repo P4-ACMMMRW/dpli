@@ -12,7 +12,10 @@ endif()
 
 set(ANTLR4_WITH_STATIC_CRT ON)
 add_definitions(-DANTLR4CPP_STATIC)
-set(CMAKE_EXE_LINKER_FLAGS "-static")
+
+if(WIN32)
+    set(CMAKE_EXE_LINKER_FLAGS "-static")
+endif()
 
 include(ExternalAntlr4Cpp)
 
