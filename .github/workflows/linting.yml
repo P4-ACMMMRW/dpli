@@ -17,8 +17,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          style: 'google'
-          tidy-checks: ''
+          style: 'file'
+          tidy-checks: 'boost-*,bugprone-*,performance-*,readability-*,portability-*,clang-analyzer-*,cppcoreguidelines-*'
           thread-comments: ${{ github.event_name == 'pull_request' && 'update' }}
           tidy-review: true
       - name: Fail Fast
