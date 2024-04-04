@@ -79,5 +79,5 @@ PARSER_TEST("replace_with.dpl") {
         DplParser::RuleExpr
     };
     
-    util::TestingUtil::testParser("replace_with.dpl", expectedNodeRules);
+    dplutil::TestingUtil::testParser("replace_with.dpl", expectedNodeRules);
 }
