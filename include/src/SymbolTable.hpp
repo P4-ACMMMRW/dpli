@@ -10,13 +10,13 @@
 
 namespace dplsrc {
 class SymbolTable {
-public:
-    void bind(Symbol s);
-    Symbol lookup(Symbol s);
+   public:
+    void bind(Symbol sym);
+    Symbol lookup(Symbol sym);
     void enter();
     void exit();
 
-private:
+   private:
     std::stack<Symbol> table;
     std::unordered_map<std::string, Symbol> symbolLookupTable;
 };
