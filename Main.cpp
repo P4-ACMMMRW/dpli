@@ -13,11 +13,9 @@ int main(int argc, char **argv) {
 
     bool debug = false;
     std::string dotFile{};
-    
-    argz::options args {
-        { { "debug", 'd' }, debug, "enable debug output"},
-        { { "Dot", 'D' }, dotFile, "generate a DOT file for the parse tree"}
-    };
+
+    argz::options args{{{"debug", 'd'}, debug, "enable debug output"},
+                       {{"Dot", 'D'}, dotFile, "generate a DOT file for the parse tree"}};
 
     if (argc < 2) {
         argz::help(about, args);
@@ -27,7 +25,8 @@ int main(int argc, char **argv) {
     int fileArgIndex = 0;
     bool isOption = true;
     for (int i = 1; i < argc; ++i) {
-        isOption = !std::strcmp(argv[i], "-h") || !std::strcmp(argv[i], "--help") || !std::strcmp(argv[i], "-v") || !std::strcmp(argv[i], "--version");
+        isOption = (std::strcmp(argv[i], "-h") == 0) || (std::strcmp(argv[i], "--help") == 0) ||
+                   (std::strcmp(argv[i], "-v") == 0) || (std::strcmp(argv[i], "--version") == 0);
 
         if (!isOption) {
             fileArgIndex = i;
@@ -38,19 +37,20 @@ int main(int argc, char **argv) {
     // Parse all arguments except fileArgIndex and argv[0]
     try {
         argz::parse(about, args, argc, argv, fileArgIndex);
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         std::cerr << e.what() << '\n';
         return EXIT_FAILURE;
     }
 
     // No file provided, and options have already been evaluated so exit program.
-    if (!fileArgIndex) {
+    if (fileArgIndex == 0) {
         return EXIT_SUCCESS;
     }
 
     // If after options comes an argument write error
     if (argv[fileArgIndex][0] == '-') {
-        std::cerr << "Error: expected input file but received argument \"" << argv[fileArgIndex] << "\"\n";
+        std::cerr << "Error: expected input file but received argument \"" << argv[fileArgIndex]
+                  << "\"\n";
         std::cout << "Usage: " << usage << '\n';
         return EXIT_FAILURE;
     }
@@ -83,15 +83,15 @@ int main(int argc, char **argv) {
 
         std::cout << tree->toStringTree(&parser, true) << "\n\n";
     }
-    
+
     if (!dotFile.empty()) {
-        generateDotFile(tree, dotFile);        
+        generateDotFile(tree, dotFile);
     }
 
     return EXIT_SUCCESS;
 }
 
-void generateDotFile(tree::ParseTree *root, std::string fileName) {
+void generateDotFile(tree::ParseTree *root, const std::string& fileName) {
     std::ofstream out{std::filesystem::path(fileName)};
 
     std::stack<std::pair<tree::ParseTree *, std::string>> stack;
@@ -118,7 +118,8 @@ void generateDotFile(tree::ParseTree *root, std::string fileName) {
         }
 
         // Push the node's children on stack
-        for (std::vector<tree::ParseTree *>::reverse_iterator it = node->children.rbegin(); it != node->children.rend(); ++it) {
+        for (std::vector<tree::ParseTree *>::reverse_iterator it = node->children.rbegin();
+             it != node->children.rend(); ++it) {
             stack.push({*it, nodeId});
         }
     }

@@ -11,13 +11,9 @@ void SymbolTable::bind(Symbol s) {
     symbolLookupTable[s.getId()] = s;
 }
 
-Symbol SymbolTable::lookup(Symbol s) {
-    return symbolLookupTable[s.getId()];
-}
+Symbol SymbolTable::lookup(Symbol s) { return symbolLookupTable[s.getId()]; }
 
-void SymbolTable::enter() {
-    table.push(Symbol("$"));
-}
+void SymbolTable::enter() { table.push(Symbol("$")); }
 
 void SymbolTable::exit() {
     while (table.top().getVal() != "$") {
