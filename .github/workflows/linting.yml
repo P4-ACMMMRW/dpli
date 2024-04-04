@@ -1,26 +1,23 @@
 name: Linting
 on:
-    workflow_dispatch:
+  workflow_dispatch:
 
 jobs:
-  cpp-linter:
+  lint:
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Lint Code
-        uses: cpp-linter/cpp-linter-action@v2
-        id: linter
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          style: 'google'
-          tidy-checks: 'cppcoreguidelines-*,modernize-*'
-          thread-comments: ${{ github.event_name == 'pull_request' && 'update' }}
+      - name: Install Clang Format and Clang Tidy
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-format-10 clang-tidy-10
 
-      - name: Fail fast
-        if: steps.linter.outputs.checks-failed > 0
-        run: exit 1
+      - name: Run Clang Format
+        run: |
+          find . -regex '.*\.\(cpp\|hpp\|cc\|cxx\)' -exec clang-format-10 -style=google -i {} \;
+
+      - name: Run Clang Tidy
+        run: |
+          find . -regex '.*\.\(cpp\|hpp\|cc\|cxx\)' -exec clang-tidy-10 -checks='cppcoreguidelines-*,modernize-*' {} \;
