@@ -1,6 +1,9 @@
 name: Linting
 on:
   workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths: ['**/*.cpp', '**/*.hpp', '!lib/**']
 
 jobs:
   lint:
@@ -15,10 +18,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          style: 'google'  # Use .clang-format config file
-          tidy-checks: '' # Use .clang-tidy config file
-          # only 'update' a single comment in a pull request's thread.
+          style: 'google'
+          tidy-checks: ''
           thread-comments: ${{ github.event_name == 'pull_request' && 'update' }}
-      - name: Fail fast?!
+          format-review: true
+          tidy-review: true
+      - name: Fail Fast
         if: steps.linter.outputs.checks-failed > 0
         run: exit 1
