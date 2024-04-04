@@ -91,7 +91,7 @@ int main(int argc, char **argv) {
     return EXIT_SUCCESS;
 }
 
-void generateDotFile(tree::ParseTree *root, const std::string& fileName) {
+void generateDotFile(tree::ParseTree *root, const std::string &fileName) {
     std::ofstream out{std::filesystem::path(fileName)};
 
     std::stack<std::pair<tree::ParseTree *, std::string>> stack;
