@@ -84,9 +84,9 @@ int main(int argc, char **argv) {
         }
         std::cout << tree->toStringTree(&parser, true) << "\n\n";
 
-        AstVisitor visitor{&parser, &lexer};
-        visitor.visit(tree);
-        visitor.getRoot()->print();
+        //AstVisitor visitor{&parser, &lexer};
+        //visitor.visit(tree);
+        //visitor.getRoot()->print();
     }
     
     if (!dotFile.empty()) {
