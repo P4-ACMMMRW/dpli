@@ -16,8 +16,8 @@ jobs:
 
       - name: Run Clang Format
         run: |
-          find . -regex '.*\.\(cpp\|hpp\|cc\|cxx\)' -exec clang-format-10 -style=google -i {} \;
+          find . -regex '.*\.\(cpp\|hpp\|cc\|cxx\)' -exec clang-format -style=google -i {} \;
 
       - name: Run Clang Tidy
         run: |
-          find . -regex '.*\.\(cpp\|hpp\|cc\|cxx\)' -exec clang-tidy-10 -checks='cppcoreguidelines-*,modernize-*' {} \;
+          find . -regex '.*\.\(cpp\|hpp\|cc\|cxx\)' -exec clang-tidy -checks='cppcoreguidelines-*,modernize-*' {} \;
