@@ -28,3 +28,4 @@ jobs:
       - name: Fail Fast
         if: steps.linter.outputs.checks-failed > 0
         run: exit 1
+        
