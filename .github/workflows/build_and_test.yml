@@ -71,6 +71,7 @@ jobs:
 
     - name: Test
       run: ctest --build-config ${{ matrix.build_type }} --output-on-failure
+      working-directory: ${{ steps.strings.outputs.build-output-dir }}
 
     - name: Upload Linux
       if: matrix.os == 'ubuntu-latest'
