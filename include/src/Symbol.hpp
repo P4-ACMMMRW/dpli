@@ -15,9 +15,9 @@ enum SymbolType {
 };
 
 namespace dplsrc {
-    class Symbol {
-        public:
-            Symbol(std::string val) : val(std::move(val)) {}
+class Symbol {
+   public:
+    Symbol(std::string val) : val(std::move(val)) {}
     Symbol(std::string id, std::string val) : id(std::move(id)), val(std::move(val)) {}
     std::string getId() const { return id; }
     std::string getVal() const { return val; }
@@ -27,10 +27,10 @@ namespace dplsrc {
     bool is(SymbolType type) const;
             
         
-        private:
-            std::string id;
-            std::string val;
-            SymbolType type;
+  private:
+    std::string id;
+    std::string val;
+    SymbolType type;
     };
 }
 
