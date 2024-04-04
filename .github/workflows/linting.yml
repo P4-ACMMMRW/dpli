@@ -1,6 +1,9 @@
 name: Linting
 on:
   workflow_dispatch:
+  push:
+    branches: [google-style-format]
+    paths: ['**/*.cpp', '**/*.hpp', '!lib/**']
   pull_request:
     branches: [main]
     paths: ['**/*.cpp', '**/*.hpp', '!lib/**']
