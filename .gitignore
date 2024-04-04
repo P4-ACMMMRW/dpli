@@ -2,3 +2,5 @@ build/
 .antlr
 .vscode
 tree
+.clang-format
+.clang-tidy
