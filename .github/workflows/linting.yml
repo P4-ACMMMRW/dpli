@@ -1,14 +1,11 @@
 name: Linting
 on:
     workflow_dispatch:
-    push:
-        branches: [main]
-        paths: ['**.cpp', '**.hpp']
 
 jobs:
   cpp-linter:
     runs-on: ubuntu-latest
-    permissions: # (1)!
+    permissions:
       pull-requests: write
     steps:
       - name: Checkout
