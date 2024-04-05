@@ -7,17 +7,15 @@ int main(int argc, char **argv) {
     std::string description = "DPL Interpreter";
     std::string version = "0.0.1";
     std::string author = "P4-ACMMMRW";
-    std::string usage =
-        std::string{argv[0]} + " [options] <input file> [arguments]";
+    std::string usage = std::string{argv[0]} + " [options] <input file> [arguments]";
     argz::about about{description, version, author, usage};
     about.print_help_when_no_options = false;
 
     bool debug = false;
     std::string dotFile{};
 
-    argz::options args{
-        {{"debug", 'd'}, debug, "enable debug output"},
-        {{"Dot", 'D'}, dotFile, "generate a DOT file for the parse tree"}};
+    argz::options args{{{"debug", 'd'}, debug, "enable debug output"},
+                       {{"Dot", 'D'}, dotFile, "generate a DOT file for the parse tree"}};
 
     if (argc < 2) {
         argz::help(about, args);
@@ -27,10 +25,8 @@ int main(int argc, char **argv) {
     int fileArgIndex = 0;
     bool isOption = true;
     for (int i = 1; i < argc; ++i) {
-        isOption = (std::strcmp(argv[i], "-h") == 0) ||
-                   (std::strcmp(argv[i], "--help") == 0) ||
-                   (std::strcmp(argv[i], "-v") == 0) ||
-                   (std::strcmp(argv[i], "--version") == 0);
+        isOption = (std::strcmp(argv[i], "-h") == 0) || (std::strcmp(argv[i], "--help") == 0) ||
+                   (std::strcmp(argv[i], "-v") == 0) || (std::strcmp(argv[i], "--version") == 0);
 
         if (!isOption) {
             fileArgIndex = i;
@@ -54,8 +50,8 @@ int main(int argc, char **argv) {
 
     // If after options comes an argument write error
     if (argv[fileArgIndex][0] == '-') {
-        std::cerr << "Error: expected input file but received argument \""
-                  << argv[fileArgIndex] << "\"\n";
+        std::cerr << "Error: expected input file but received argument \"" << argv[fileArgIndex]
+                  << "\"\n";
         std::cout << "Usage: " << usage << '\n';
         return EXIT_FAILURE;
     }
@@ -68,8 +64,7 @@ int main(int argc, char **argv) {
 
     std::ifstream file{std::filesystem::path(argv[fileArgIndex])};
     if (!file.is_open()) {
-        std::cerr << "Error: file \"" << argv[fileArgIndex]
-                  << "\" could not be opened\n";
+        std::cerr << "Error: file \"" << argv[fileArgIndex] << "\" could not be opened\n";
         return EXIT_FAILURE;
     }
 
@@ -113,12 +108,10 @@ void generateDotFile(tree::ParseTree *root, const std::string &fileName) {
         std::string parentId = nodeAndParentId.second;
         stack.pop();
 
-        std::string nodeId =
-            std::to_string(reinterpret_cast<std::uintptr_t>(node));
+        std::string nodeId = std::to_string(reinterpret_cast<std::uintptr_t>(node));
 
         // Escape quotation marks in label
-        std::string label =
-            std::regex_replace(node->getText(), std::regex("\""), "\\\"");
+        std::string label = std::regex_replace(node->getText(), std::regex("\""), "\\\"");
 
         out << "  " << nodeId << " [label=\"" << label << "\"];\n";
         if (!parentId.empty()) {
@@ -126,8 +119,7 @@ void generateDotFile(tree::ParseTree *root, const std::string &fileName) {
         }
 
         // Push the node's children on stack
-        for (std::vector<tree::ParseTree *>::reverse_iterator it =
-                 node->children.rbegin();
+        for (std::vector<tree::ParseTree *>::reverse_iterator it = node->children.rbegin();
              it != node->children.rend(); ++it) {
             stack.push({*it, nodeId});
         }
