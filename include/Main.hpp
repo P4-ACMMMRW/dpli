@@ -14,6 +14,7 @@
 /**
  * Generate file which is used for visualizing the parse tree
  */
-void generateDotFile(antlr4::tree::ParseTree* node, const std::string& fileName);
+void generateDotFile(antlr4::tree::ParseTree *node,
+                     const std::string &fileName);
 
 #endif
