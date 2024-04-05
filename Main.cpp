@@ -1,5 +1,8 @@
 #include <Main.hpp>
-#include <AstVisitor.hpp>
+//#include <AstVisitor.hpp>
+
+using namespace antlr4;
+using namespace dplgrammar;
 
 int main(int argc, char **argv) {
     std::string description = "DPL Interpreter";

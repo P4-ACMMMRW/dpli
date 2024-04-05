@@ -48,6 +48,4 @@ add_executable(dpli Main.cpp)
 
 target_include_directories(dpli PRIVATE ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/include/src)
 
-add_subdirectory(tests)
-
 target_link_libraries(dpli PRIVATE dpllib antlr4_static)

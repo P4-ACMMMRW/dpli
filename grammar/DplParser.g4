@@ -55,14 +55,15 @@ expoexpr: notexpr (Exponent notexpr)*;
 notexpr: (Not | Minus)* term;
 
 term: proccall 
+    | list
+    | table
+    | list
     | Identifier 
     | Float 
     | Integer 
     | Bool 
     | String 
     | None 
-    | list
-    | table
     | OpenPar expr ClosePar;
 
 
