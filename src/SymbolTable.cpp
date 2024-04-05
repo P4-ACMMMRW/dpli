@@ -11,9 +11,7 @@ void SymbolTable::bind(Symbol sym) {
     symbolLookupTable[sym.getId()] = sym;
 }
 
-Symbol SymbolTable::lookup(Symbol sym) {
-    return symbolLookupTable[sym.getId()];
-}
+Symbol SymbolTable::lookup(Symbol sym) { return symbolLookupTable[sym.getId()]; }
 
 void SymbolTable::enter() { table.push(Symbol("$")); }
 
