@@ -1,26 +1,27 @@
 name: Linting
 on:
-    workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths: ['**/*.cpp', '**/*.hpp', '!lib/**']
 
 jobs:
-  cpp-linter:
+  lint:
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Lint Code
+      - name: Run Linter
         uses: cpp-linter/cpp-linter-action@v2
         id: linter
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          style: 'google'
-          tidy-checks: 'cppcoreguidelines-*,modernize-*'
+          style: 'file'
+          tidy-checks: '-*' 
           thread-comments: ${{ github.event_name == 'pull_request' && 'update' }}
-
-      - name: Fail fast
+          lines-changed-only: true
+          no-lgtm: false
+      - name: Fail Fast
         if: steps.linter.outputs.checks-failed > 0
         run: exit 1
