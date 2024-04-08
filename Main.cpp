@@ -1,5 +1,5 @@
 #include <Main.hpp>
-//#include <AstVisitor.hpp>
+#include <AstBuilder.hpp>
 
 using namespace antlr4;
 using namespace dplgrammar;
@@ -79,14 +79,14 @@ int main(int argc, char **argv) {
 
 
     if (debug) {
-        for (antlr4::Token *token : tokens.getTokens()) {
-            std::cout << token->toString() << '\n';
-        }
+//        for (antlr4::Token *token : tokens.getTokens()) {
+//            std::cout << token->toString() << '\n';
+//        }
         std::cout << tree->toStringTree(&parser, true) << "\n\n";
 
-        //AstVisitor visitor{&parser, &lexer};
-        //visitor.visit(tree);
-        //visitor.getRoot()->print();
+        AstBuilder builder{&parser, &lexer};
+        builder.visit(tree);
+        builder.getRoot()->print();
     }
     
     if (!dotFile.empty()) {

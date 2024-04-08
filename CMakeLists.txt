@@ -46,6 +46,10 @@ target_link_libraries(dpllib PUBLIC antlr4_static)
 
 add_executable(dpli Main.cpp)
 
-target_include_directories(dpli PRIVATE ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/include/src)
+target_include_directories(dpli PRIVATE 
+    ${PROJECT_SOURCE_DIR}/include 
+    ${PROJECT_SOURCE_DIR}/include/src
+    ${PROJECT_SOURCE_DIR}/include/src/ast
+    ${PROJECT_SOURCE_DIR}/include/src/ast/nodes)
 
 target_link_libraries(dpli PRIVATE dpllib antlr4_static)

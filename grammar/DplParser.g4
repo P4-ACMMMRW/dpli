@@ -4,24 +4,21 @@ options {
 	tokenVocab = DplLexer;
 }
 
-prog: (stm | procdec)+ EOF;
+prog:  (stm Newline? | procdec Newline?)+ EOF;
+
 
 stm: ifstm
    | whilestm
    | assignstm
    | flowstm
    | returnstm
-   | replacestm
-   | proccall;
+   | replacestm;
 
 ifstm: If expr Colon Indent stm+ Dedent (Else Colon Indent stm+ Dedent)?;
 
 whilestm: While expr Colon Indent stm+ Dedent;
 
-assignstm: listcall   Assign expr
-         | tablecall  Assign expr
-         | proccall   Assign expr
-         | Identifier Assign expr;
+assignstm: expr (Assign expr)?;
 
 flowstm: Break
        | Continue;
@@ -31,67 +28,59 @@ returnstm: Return expr
 
 replacestm: Replace expr With expr;
 
+expr: compexpr
+    | Not expr
+    | expr op = And expr
+    | expr op = Or expr;
 
-expr: eqexpr (Or  eqexpr)*
-    | eqexpr (And eqexpr)*; 
+compexpr: compexpr op = (Equal | NotEqual | Greater | GreaterEqual | Less | LessEqual) compexpr
+        | arthexpr;
 
-eqexpr: relexpr (Equal    relexpr)* 
-      | relexpr (NotEqual relexpr)*;
+arthexpr: subscript
+        | <assoc = right> arthexpr op = Exponent arthexpr
+        | op = (Plus | Minus)                    arthexpr
+        | arthexpr op = (Star | Slash |  Mod)    arthexpr
+        | arthexpr op = (Plus | Minus)           arthexpr; 
 
-relexpr: plusexpr (Greater      plusexpr)*
-       | plusexpr (Less         plusexpr)*
-       | plusexpr (GreaterEqual plusexpr)*
-       | plusexpr (LessEqual    plusexpr)*;
+subscript: subscript proccall
+         | subscript indexing
+         | subscript filtering
+         | term;
 
-plusexpr: multexpr (Plus  multexpr)*
-        | multexpr (Minus multexpr)*;
-
-multexpr: expoexpr (Star  expoexpr)*
-        | expoexpr (Slash expoexpr)*
-        | expoexpr (Mod   expoexpr)*;
-
-expoexpr: notexpr (Exponent notexpr)*;
- 
-notexpr: (Not | Minus)* term;
-
-term: proccall 
+term: OpenPar expr ClosePar
     | list
     | table
-    | list
-    | Identifier 
-    | Float 
-    | Integer 
+    | number 
     | Bool 
     | String 
-    | None 
-    | OpenPar expr ClosePar;
+    | None
+    | Identifier; 
 
+number: Minus? (Float | Integer);
+
+indexing: (OpenSquare expr CloseSquare);
+
+filtering: (OpenSquare unaryexpr CloseSquare);
+
+proccall: Identifier OpenPar ClosePar  
+        | Identifier OpenPar args ClosePar;
 
 unaryexpr: (Equal | NotEqual | Greater | GreaterEqual | Less | Less) expr;
 
 
+
 list: OpenSquare args CloseSquare;
 
-listcall: Identifier (OpenSquare expr CloseSquare)+;
+table: OpenCurly (column (Comma column)*)? CloseCurly; 
+
+column: String Colon list;
+
+procdec: Def Identifier OpenPar params ClosePar Colon Indent (stm Newline?)+ Dedent
+       | Def Identifier OpenPar ClosePar Colon Indent (stm Newline?)+ Dedent;
 
 
-table: OpenCurly (String Colon list (Comma String Colon list)*)? CloseCurly; 
-
-tablecall: Identifier                 OpenSquare expr CloseSquare (OpenSquare unaryexpr CloseSquare)?
-         | tablecall                  OpenSquare expr CloseSquare (OpenSquare unaryexpr CloseSquare)?
-         | OpenPar tablecall ClosePar OpenSquare expr CloseSquare (OpenSquare unaryexpr CloseSquare)?;
-
-
-procdec: Def Identifier OpenPar params ClosePar Colon Indent stm+ Dedent
-       | Def Identifier OpenPar ClosePar Colon Indent stm+ Dedent;
-
-proccall: Identifier OpenPar args ClosePar 
-        | Identifier OpenPar ClosePar;
-
-
-// Args
 args: expr (Comma expr)*;
 
-// Params
+
 params: Identifier (Comma Identifier)*;
  
