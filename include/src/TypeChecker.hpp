@@ -3,17 +3,14 @@
 
 #include <vector>
 
-//scuffed xdddd ignore for now
-strcut ExprResult {
-    SymbolType type;
-}
+// scuffed xdddd ignore for now
+strcut ExprResult { SymbolType type; }
 
 namespace dplsrc {
-    class TypeChecker {
-        public:
-            void 
-    }
+class TypeChecker {
+   public:
+    void
 }
-
+}  // namespace dplsrc
 
 #endif

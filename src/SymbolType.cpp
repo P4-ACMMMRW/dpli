@@ -2,10 +2,6 @@
 
 using namespace dplsrc;
 
-bool Symbol::is(SymbolType type) const { return this->type == type;}
+bool Symbol::is(SymbolType type) const { return this->type == type; }
 
-std::string Symbol::getType() const {
-
-}
-
-
+std::string Symbol::getType() const {}

@@ -21,17 +21,16 @@ class Symbol {
     Symbol(std::string id, std::string val) : id(std::move(id)), val(std::move(val)) {}
     std::string getId() const { return id; }
     std::string getVal() const { return val; }
-            
+
     Symbol(SymbolType type) : type(type) {}
     std::string getType() const;
     bool is(SymbolType type) const;
-            
-        
-  private:
+
+   private:
     std::string id;
     std::string val;
     SymbolType type;
-    };
-}
+};
+}  // namespace dplsrc
 
 #endif
