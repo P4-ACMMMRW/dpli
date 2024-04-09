@@ -8,10 +8,21 @@ using namespace dplgrammar;
 
 class ArthExprNode : public AstNode {
 public:
+    ArthExprNode(AstNode* parent) : AstNode(parent) { }
     AstNode* getLeft() { return  left;  };
     AstNode* getRight() { return right; };
 
-    void print(std::string indent = "", std::string prefix = "") {
+    void addChild(AstNode* child) override {
+        if (left == nullptr) {
+            left = child;
+        } else if (right == nullptr) {
+            right = child;
+        } else {
+            throw std::runtime_error("ArthExprNode already has two children");
+        }
+    }
+
+    void print(std::string indent = "", std::string prefix = "") override {
         std::cout << indent << prefix << AstNode::getText() << "\n";
 
         // Use a new level of indentation for the children

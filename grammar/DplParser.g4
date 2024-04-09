@@ -4,9 +4,16 @@ options {
 	tokenVocab = DplLexer;
 }
 
-prog:  (stm Newline? | procdec Newline?)+ EOF;
+prog:  (stm Newline? | procdec Newline? | Newline)+ EOF;
 
 
+procdec: Def Identifier OpenPar params ClosePar Colon block
+       | Def Identifier OpenPar ClosePar Colon block;
+
+
+params: Identifier (Comma Identifier)*;
+ 
+// Stms
 stm: ifstm
    | whilestm
    | assignstm
@@ -14,39 +21,58 @@ stm: ifstm
    | returnstm
    | replacestm;
 
-ifstm: If expr Colon Indent stm+ Dedent (Else Colon Indent stm+ Dedent)?;
+stms: (stm Newline?)+;
 
-whilestm: While expr Colon Indent stm+ Dedent;
+block: Indent Newline? stms Dedent Newline?;
 
+
+// If
+ifstm: If expr Colon block elsestm?;
+
+elsestm: Else Colon block;
+
+
+// While
+whilestm: While expr Colon block;
+
+
+// Assign
 assignstm: expr (Assign expr)?;
 
+// Flow
 flowstm: Break
        | Continue;
 
+// Return
 returnstm: Return expr
          | Return;
 
 replacestm: Replace expr With expr;
 
-expr: compexpr
-    | Not expr
-    | expr op = And expr
-    | expr op = Or expr;
+// Expressions
+expr: expr op = And expr
+    | expr op = Or  expr
+    | compexpr;
 
 compexpr: compexpr op = (Equal | NotEqual | Greater | GreaterEqual | Less | LessEqual) compexpr
         | arthexpr;
 
-arthexpr: subscript
-        | <assoc = right> arthexpr op = Exponent arthexpr
-        | op = (Plus | Minus)                    arthexpr
+arthexpr: <assoc = right> arthexpr op = Exponent arthexpr
         | arthexpr op = (Star | Slash |  Mod)    arthexpr
-        | arthexpr op = (Plus | Minus)           arthexpr; 
+        | arthexpr op = (Plus | Minus)           arthexpr
+        | notexpr;
+
+
+// Terms
+notexpr: op = Not            notexpr
+       | op = (Plus | Minus) notexpr
+       | subscript;
 
 subscript: subscript proccall
          | subscript indexing
          | subscript filtering
          | term;
-
+         
 term: OpenPar expr ClosePar
     | list
     | table
@@ -56,31 +82,26 @@ term: OpenPar expr ClosePar
     | None
     | Identifier; 
 
-number: Minus? (Float | Integer);
+number: (Plus | Minus)* (Float | Integer);
 
-indexing: (OpenSquare expr CloseSquare);
-
-filtering: (OpenSquare unaryexpr CloseSquare);
-
-proccall: Identifier OpenPar ClosePar  
-        | Identifier OpenPar args ClosePar;
-
-unaryexpr: (Equal | NotEqual | Greater | GreaterEqual | Less | Less) expr;
-
-
-
-list: OpenSquare args CloseSquare;
+list: OpenSquare args? CloseSquare;
 
 table: OpenCurly (column (Comma column)*)? CloseCurly; 
 
 column: String Colon list;
 
-procdec: Def Identifier OpenPar params ClosePar Colon Indent (stm Newline?)+ Dedent
-       | Def Identifier OpenPar ClosePar Colon Indent (stm Newline?)+ Dedent;
+// Trailers
+indexing: (OpenSquare expr CloseSquare);
 
+filtering: (OpenSquare unaryexpr CloseSquare);
+
+
+unaryexpr: (Equal | NotEqual | Greater | GreaterEqual | Less | Less) expr;
+
+
+proccall: OpenPar ClosePar  
+        | OpenPar args ClosePar;
 
 args: expr (Comma expr)*;
 
-
-params: Identifier (Comma Identifier)*;
  

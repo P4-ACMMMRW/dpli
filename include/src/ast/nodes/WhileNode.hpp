@@ -6,10 +6,19 @@ using namespace dplgrammar;
 
 class WhileNode : public AstNode {
 public:
+    WhileNode(AstNode *parent) : AstNode(parent) {};
     AstNode*              getCondNode() { return condNode; };
     std::vector<AstNode*> getStmNodes() { return stmNodes; };
 
-    void print(std::string indent = "", std::string prefix = "") {
+    void addChild(AstNode* node) override {
+        if (condNode == nullptr) {
+            condNode = node;
+        } else {
+            stmNodes.push_back(node);
+        }
+    }
+
+    void print(std::string indent = "", std::string prefix = "") override {
     std::cout << indent << prefix << AstNode::getText() << "\n";
 
     // Use a new level of indentation for the children

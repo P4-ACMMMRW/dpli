@@ -6,11 +6,22 @@ using namespace dplgrammar;
 
 class IfNode : public AstNode {
 public:
-    AstNode*              getCondNode()     { return condNode; };
-    std::vector<AstNode*> getIfStmNodes()   { return ifStmNodes; };
-    std::vector<AstNode*> getElseStmNodes() { return elseStmNodes; };
+    IfNode(AstNode *parent) : AstNode(parent) {};
+    AstNode*              getCondNode()  { return condNode; };
+    std::vector<AstNode*> getBodyNodes() { return bodyNodes; };
 
-    void print(std::string indent = "", std::string prefix = "") {
+    void addChild(AstNode* node) override {
+        if (condNode == nullptr) {
+            condNode = node;
+        } else if (node->getRule() == dplgrammar::DplParser::RuleElsestm) {
+            elseNode = node;
+        }
+        else {
+            bodyNodes.push_back(node);
+        }
+    }
+
+    void print(std::string indent = "", std::string prefix = "") override {
         std::cout << indent << prefix << AstNode::getText() << "\n";
 
         // Use a new level of indentation for the children
@@ -21,30 +32,23 @@ public:
             condNode->print(childIndent, "├── Condition: ");
         }
 
+
         // Print each if statement node
-        for (size_t i = 0; i < ifStmNodes.size(); ++i) {
+        for (size_t i = 0; i < bodyNodes.size(); ++i) {
             // For the last if statement node, we want to print a different prefix
-            if (i == ifStmNodes.size() - 1 && elseStmNodes.empty()) {
-                ifStmNodes[i]->print(childIndent, "└── If: ");
-            } else {
-                ifStmNodes[i]->print(childIndent, "├── If: ");
-            }
+            std::string bodyPrefix = (i == bodyNodes.size() - 1 && elseNode == nullptr) ? "└── " : "├── ";
+            bodyNodes[i]->print(childIndent, bodyPrefix);
         }
 
-        // Print each else statement node
-        for (size_t i = 0; i < elseStmNodes.size(); ++i) {
-            // For the last else statement node, we want to print a different prefix
-            if (i == elseStmNodes.size() - 1) {
-                elseStmNodes[i]->print(childIndent, "└── Else: ");
-            } else {
-                elseStmNodes[i]->print(childIndent, "├── Else: ");
-            }
+        // Print the else node, if it exists
+        if (elseNode != nullptr) {
+            elseNode->print(childIndent, "└── ");
         }
     }
 private:
     AstNode* condNode = nullptr;
-    std::vector<AstNode*> ifStmNodes;
-    std::vector<AstNode*> elseStmNodes;
+    std::vector<AstNode*> bodyNodes;
+    AstNode* elseNode = nullptr;
 };
 
 #endif

@@ -6,7 +6,7 @@ using namespace dplgrammar;
 
 class NotNode : public AstNode {
 public:
-    NotNode(AstNode *parent) : AstNode(parent) {setText("not");};
+    NotNode(AstNode *parent) : AstNode(parent) { };
     AstNode* getchild() { return child; };
 
     void addChild(AstNode* node) override {

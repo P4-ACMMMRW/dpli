@@ -12,13 +12,10 @@ public:
 
     void addChild(AstNode* node) override {
         if (left == nullptr) {
-            std::cout << "CompExprNode 1 child " << node->getText() << std::endl;
             left = node;
         } else if (right == nullptr) {
-            std::cout << "CompExprNode 2 child " << node->getText() << std::endl;
             right = node;
         } else {
-            std::cout << "CompExprNode 3 child " << node->getText() << std::endl;
             throw std::runtime_error("CompExprNode already has two children");
         }
     }

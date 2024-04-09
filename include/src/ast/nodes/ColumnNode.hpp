@@ -6,9 +6,18 @@ using namespace dplgrammar;
 
 class ColumnNode : public AstNode {
 public:
+    ColumnNode(AstNode *parent) : AstNode(parent) { };
     AstNode* getchild() { return child; };
 
-    void print(std::string indent = "", std::string prefix = "") {
+    void addChild(AstNode* node) override {
+        if (child == nullptr) {
+            child = node;
+        } else {
+            throw std::runtime_error("ColumnNode can only have one child");
+        }
+    }
+
+    void print(std::string indent = "", std::string prefix = "") override {
         std::cout << indent << prefix << AstNode::getText() << "\n";
 
         // Use a new level of indentation for the children

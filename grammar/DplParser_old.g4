@@ -101,7 +101,7 @@ tablecall: Identifier (OpenSquare expr CloseSquare (OpenSquare unaryexpr CloseSq
 
 
 // List Non-Terminals 
-list: OpenSquare args CloseSquare;
+list:  OpenSquare args? CloseSquare;
 
 listcall: Identifier (OpenSquare expr CloseSquare)+;
 

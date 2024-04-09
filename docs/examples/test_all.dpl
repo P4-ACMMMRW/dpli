@@ -1,3 +1,8 @@
+# Todo
+# - If not working (continue is skipped)
+# -  return not done
+
+
 # Assigning
 assign1 = 1
 
@@ -20,17 +25,58 @@ proccall3(1, 2, 3, 4) = 3
 
 # Expr 
 not True
+not not false
 True and not False
 not True or False
 
 # Comp
-not False and not True == not (True or False)
+(not False and not True) == not (True or False)
 True != False
 3 > 1
 4 >= 1
 5 < 6
 6 <= 6
 
-# terminal (it thinks its a proccall)
+# terminal 
 id 
 (True)
+[1, 2, 3, 4]
+[1 + 2, 3]
+{"toes": [1, 2, 3], "head": [1, 2, 3]}
+"hello world!"
+None
+5.4
+-6.9
++--+-12
+
+
+# If
+if var != false:
+    var = true
+
+if var == true:
+    var = not false
+else:
+    var = false
+
+
+# While
+
+while isTrue():
+    print("hi")
+
+# Function declaration
+def print(str):
+    out(str)
+
+
+# Flow stm
+def returnOfProc(true):
+    return true
+
+while true:
+    if var == true:
+        continue
+    else: 
+        break
+

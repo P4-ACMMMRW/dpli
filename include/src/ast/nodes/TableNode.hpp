@@ -6,10 +6,14 @@ using namespace dplgrammar;
 
 class TableNode : public AstNode {
 public:
-    TableNode(AstNode *parent) : AstNode(parent) {setText("{}");}
+    TableNode(AstNode *parent) : AstNode(parent) {}
     std::vector<AstNode*> getColumnNodes() { return columnNodes; };
 
-    void print(std::string indent = "", std::string prefix = "") {
+    void addChild(AstNode* node) override {
+        columnNodes.push_back(node);
+    }
+
+    void print(std::string indent = "", std::string prefix = "") override {
         std::cout << indent << prefix << AstNode::getText() << "\n";
 
         // Use a new level of indentation for the children
@@ -19,9 +23,9 @@ public:
         for (size_t i = 0; i < columnNodes.size(); ++i) {
             // For the last column node, we want to print a different prefix
             if (i == columnNodes.size() - 1) {
-                columnNodes[i]->print(childIndent, "└── Column: ");
+                columnNodes[i]->print(childIndent, "└── ");
             } else {
-                columnNodes[i]->print(childIndent, "├── Column: ");
+                columnNodes[i]->print(childIndent, "├── ");
             }
         }
     }

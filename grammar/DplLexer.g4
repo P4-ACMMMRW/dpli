@@ -154,7 +154,6 @@ Comment: '#' ~[\r\n]* -> skip;
 MultiLineComment: '/*' .*? '*/' -> skip;
 
 // Add Indent and Dedent tokens
-Newline: '\r'? '\n' { addDentTokens(); } -> skip;
-
+Newline: '\r'? '\n' {addDentTokens(); };
 // Skip whitespace
 Whitespace: [ \t] -> skip;

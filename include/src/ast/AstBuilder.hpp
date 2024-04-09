@@ -25,9 +25,54 @@ public:
         root = newNode;
         currentNode = newNode;
 
-        return visitChildren(parseNode);
+        std::vector<tree::ParseTree*> children = parseNode->children;
+
+        for (size_t i = 0; i < children.size(); i++) {
+            if (children[i]->getText() != "\n")  children[i]->accept(this);
+        }
+        
+        return nullptr;
     }
-    
+
+    virtual antlrcpp::Any visitBlock(DplParser::BlockContext *parseNode) override {
+        parseNode->children[2]->accept(this);
+
+        return nullptr;
+    }
+
+    virtual antlrcpp::Any visitStms(DplParser::StmsContext *parseNode) override {
+        for (size_t i = 0; i < parseNode->children.size(); i++) {
+            if (parseNode->children[i]->getText() != "\n") parseNode->children[i]->accept(this);
+        }
+        return nullptr;
+    }
+
+    virtual antlrcpp::Any visitProcdec(DplParser::ProcdecContext *parseNode) override {
+        std::string name = parseNode->children[1]->getText();
+        
+        ProcDecNode* newNode = new ProcDecNode(currentNode);
+        newNode->setRule(parseNode->getRuleIndex());
+        newNode->setText("def " + name);
+        newNode->setName(name);
+
+        AstNode* astNewNode = static_cast<AstNode*>(newNode);
+
+        currentNode->addChild(astNewNode);
+        AstNode* oldNode = currentNode;
+        currentNode = astNewNode;
+
+        size_t blockIndex = 5;
+        if (parseNode->children.size() > blockIndex) {
+            parseNode->children[3]->accept(this);
+            blockIndex = 6;
+        }
+        newNode->stopVisitingParams();
+        parseNode->children[blockIndex]->accept(this);
+
+        currentNode = oldNode;
+
+        return nullptr;
+    }
     
     virtual antlrcpp::Any visitAssignstm(DplParser::AssignstmContext *parseNode) override {
         if (parseNode->children.size() == 1) return parseNode->children[0]->accept(this);
@@ -49,10 +94,73 @@ public:
         return nullptr;
     }
 
+
+    //  IF-ELSE
+    virtual antlrcpp::Any visitIfstm(DplParser::IfstmContext *parseNode) override {
+        AstNode* newNode = new IfNode(currentNode);
+        newNode->setRule(parseNode->getRuleIndex());
+        newNode->setText("If");
+
+        currentNode->addChild(newNode);
+        AstNode* oldNode = currentNode;
+        currentNode = newNode;
+
+        // Condition
+        parseNode->children[1]->accept(this);
+
+        // Body
+        parseNode->children[3]->accept(this);
+
+        // Else
+        if (parseNode->children.size() > 4) {
+            parseNode->children[4]->accept(this);
+        }
+
+        currentNode = oldNode;
+
+        return nullptr;
+    }
+
+    virtual antlrcpp::Any visitElsestm(DplParser::ElsestmContext *parseNode) override {
+        AstNode* newNode = new ElseNode(currentNode);
+        newNode->setRule(parseNode->getRuleIndex());
+        newNode->setText("Else");
+
+        currentNode->addChild(newNode);
+        AstNode* oldNode = currentNode;
+        currentNode = newNode;
+
+        parseNode->children[2]->accept(this);
+
+        currentNode = oldNode;
+
+        return nullptr;
+    }
+
+    // While
+    virtual antlrcpp::Any visitWhilestm(DplParser::WhilestmContext *parseNode) override {
+        AstNode* newNode = new WhileNode(currentNode);
+        newNode->setRule(parseNode->getRuleIndex());
+        newNode->setText("While");
+
+        currentNode->addChild(newNode);
+        AstNode* oldNode = currentNode;
+        currentNode = newNode;
+
+        // Condition
+        parseNode->children[1]->accept(this);
+
+        // Body
+        parseNode->children[3]->accept(this);
+
+        currentNode = oldNode;
+
+        return nullptr;
+    }
+
     // Expressions  The expressions isn't correctly sequenced
     virtual antlrcpp::Any visitExpr(DplParser::ExprContext *parseNode) override {
-        if      (parseNode->children.size() == 1) return parseNode->children[0]->accept(this);
-        else if (parseNode->children.size() == 2) return notNode(parseNode);
+        if (parseNode->children.size() == 1) return parseNode->children[0]->accept(this);
         AstNode* newNode = new ExprNode(currentNode);
         newNode->setRule(parseNode->getRuleIndex());
         newNode->setText(parseNode->op->getText());
@@ -72,8 +180,25 @@ public:
         return nullptr;
     }
 
+    virtual antlrcpp::Any visitNotexpr(DplParser::NotexprContext *parseNode) {
+        if (parseNode->children.size() == 1) return parseNode->children[0]->accept(this);
+        AstNode* newNode = new NotNode(currentNode);
+        newNode->setRule(parseNode->getRuleIndex());
+        newNode->setText(parseNode->op->getText());
+        
+        currentNode->addChild(newNode);
+        AstNode* oldNode = currentNode;
+        currentNode = newNode;
+
+        parseNode->children[1]->accept(this);
+
+        currentNode = oldNode;
+
+        return nullptr;
+    }
+
     virtual antlrcpp::Any visitCompexpr(DplParser::CompexprContext *parseNode) override { 
-        if      (parseNode->children.size() == 1) return parseNode->children[0]->accept(this);
+        if (parseNode->children.size() == 1) return parseNode->children[0]->accept(this);
         AstNode* newNode = new CompExprNode(currentNode);
         newNode->setRule(parseNode->getRuleIndex());
         newNode->setText(parseNode->op->getText());
@@ -93,22 +218,26 @@ public:
         return nullptr;
     }
 
-    virtual antlrcpp::Any notNode(DplParser::ExprContext *parseNode) {
-        AstNode* newNode = new NotNode(currentNode);
+    virtual antlrcpp::Any visitArthexpr(DplParser::ArthexprContext *parseNode) override {
+        if (parseNode->children.size() == 1) return parseNode->children[0]->accept(this);
+        AstNode* newNode = new ArthExprNode(currentNode);
         newNode->setRule(parseNode->getRuleIndex());
-        newNode->setText("not");
-        
+        newNode->setText(parseNode->op->getText());
+
         currentNode->addChild(newNode);
         AstNode* oldNode = currentNode;
         currentNode = newNode;
 
-        parseNode->children[1]->accept(this);
+        // Left Node
+        parseNode->children[0]->accept(this);
 
+        // Right Node
+        parseNode->children[2]->accept(this);
+        
         currentNode = oldNode;
 
         return nullptr;
     }
-
 
     // Terms
     virtual antlrcpp::Any visitTerminal(tree::TerminalNode *node) override {
@@ -121,7 +250,58 @@ public:
         return nullptr;
     }
 
-    // Not done
+    virtual antlrcpp::Any visitList(DplParser::ListContext *parseNode) override {
+        AstNode* newNode = new ListNode(currentNode);
+        newNode->setRule(parseNode->getRuleIndex());
+        newNode->setText("[] List");
+
+        currentNode->addChild(newNode);
+        AstNode* oldNode = currentNode;
+        currentNode = newNode;
+
+        if (parseNode->children.size() == 3) parseNode->children[1]->accept(this);
+
+        currentNode = oldNode;
+
+        return nullptr;
+    }
+
+    virtual antlrcpp::Any visitTable(DplParser::TableContext *parseNode) override {
+        AstNode* newNode = new TableNode(currentNode);
+        newNode->setRule(parseNode->getRuleIndex());
+        newNode->setText("{} Table");
+
+        currentNode->addChild(newNode);
+        AstNode* oldNode = currentNode;
+        currentNode = newNode;
+
+        std::vector<tree::ParseTree*> children = parseNode->children;
+
+        for (size_t i = 1; i < children.size(); i = i + 2) {
+            children[i]->accept(this);
+        }
+
+        currentNode = oldNode;
+
+        return nullptr;
+    }
+
+    virtual antlrcpp::Any visitColumn(DplParser::ColumnContext *parseNode) override {
+        AstNode* newNode = new ColumnNode(currentNode);
+        newNode->setRule(parseNode->getRuleIndex());
+        newNode->setText(parseNode->children[0]->getText() + ":");
+
+        currentNode->addChild(newNode);
+        AstNode* oldNode = currentNode;
+        currentNode = newNode;
+
+        parseNode->children[2]->accept(this);
+
+        currentNode = oldNode;
+
+        return nullptr;
+    }
+
     virtual antlrcpp::Any visitTerm(DplParser::TermContext *parseNode) override {
         if (parseNode->children.size() == 1) return parseNode->children[0]->accept(this);
 
@@ -133,8 +313,7 @@ public:
         AstNode* oldNode = currentNode;
         currentNode = newNode;
 
-        // Left Node
-        parseNode->children[0]->accept(this);
+        parseNode->children[1]->accept(this);
         
         currentNode = oldNode;
 
@@ -239,322 +418,8 @@ public:
         return nullptr;
     }
 
-//    virtual antlrcpp::Any visitLoopstm(DplParser::LoopstmContext *parseNode) override {
-//        AstNode* newNode = new AstNode(currentNode);
-//        newNode->rule = parseNode->getRuleIndex();
-//        newNode->text = parseNode->children[0]->getText();
-//
-//        currentNode->children.push_back(newNode);
-//        AstNode* oldNode = currentNode;
-//        currentNode = newNode;
-//
-//        AstNode* condNode = getTerminalLeafNode(parseNode->children[1]);
-//        if (condNode != nullptr)  currentNode->children.push_back(condNode);
-//
-//        for (size_t i = 4; i < parseNode->children.size() - 1; i++) {
-//            AstNode* childNode = getTerminalLeafNode(parseNode->children[i]);
-//            if (childNode != nullptr) currentNode->children.push_back(childNode);
-//        }
-//
-//        visitChildren(parseNode);
-//
-//        currentNode = oldNode;
-//
-//        return nullptr;
-//    }
-//
-//    virtual antlrcpp::Any visitIfstm(DplParser::IfstmContext *parseNode) override {
-//        AstNode* newNode = new AstNode(currentNode);
-//        newNode->rule = parseNode->getRuleIndex();
-//        newNode->text = parseNode->children[0]->getText();
-//
-//        currentNode->children.push_back(newNode);
-//        AstNode* oldNode = currentNode;
-//        currentNode = newNode;
-//
-//        AstNode* condNode = getTerminalLeafNode(parseNode->children[1]);
-//        if (condNode != nullptr)  currentNode->children.push_back(condNode);
-//
-//        visitChildren(parseNode);
-//
-//        currentNode = oldNode;
-//
-//        return nullptr;
-//    }
-//
-//    virtual antlrcpp::Any visitElsestm(DplParser::ElsestmContext *parseNode) override {
-//        AstNode* newNode = new AstNode(currentNode);
-//        newNode->rule = parseNode->getRuleIndex();
-//        newNode->text = parseNode->children[0]->getText();
-//
-//        currentNode->children.push_back(newNode);
-//        AstNode* oldNode = currentNode;
-//        currentNode = newNode;
-//
-//        visitChildren(parseNode);
-//
-//        currentNode = oldNode;
-//
-//        return nullptr;
-//    }
-//
-//    virtual antlrcpp::Any visitExpr(DplParser::ExprContext *parseNode) override { // Problem is here
-//        AstNode* oldNode = currentNode;
-//        bool isArthExpr = (parseNode->arthexpr() != nullptr);
-//        bool isBoolExpr = (parseNode->boolexpr() != nullptr);
-//
-//        if (!isArthExpr  && !isBoolExpr) return visitChildren(parseNode);
-//    
-//        AstNode *newNode = new AstNode(currentNode);
-//
-//        tree::ParseTree *childParseTree = (isArthExpr) ? parseNode->children[1] : parseNode->children[1]->children[0];
-//        ParserRuleContext *childParseNode = dynamic_cast<ParserRuleContext*>(childParseTree); 
-//
-//        newNode->rule = childParseNode->getRuleIndex(); 
-//        newNode->text = childParseNode->children[0]->getText();
-//        currentNode->children.push_back(newNode);
-//        currentNode = newNode;
-//
-//        if (newNode->rule != DplParser::RuleJunctionopr) {
-//            AstNode* leftNode = getTerminalLeafNode(parseNode->children[0]);  
-//            AstNode* rightNode;    
-//
-//            if (isBoolExpr) rightNode = getTerminalLeafNode(childParseNode->children[1]->children[0]);     
-//            else            rightNode = getTerminalLeafNode(childParseNode->children[1]);      
-//            
-//            if (leftNode != nullptr) currentNode->children.push_back(leftNode);
-//            if (rightNode != nullptr) currentNode->children.push_back(rightNode);
-//        }
-//        visitChildren(parseNode);
-//
-//        currentNode = oldNode;
-//
-//        return nullptr;
-//    }
-//
-//
-//    virtual antlrcpp::Any visitFlowstm(DplParser::FlowstmContext *parseNode) override {
-//        AstNode* newNode = new AstNode(currentNode);
-//        newNode->rule = parseNode->getRuleIndex();
-//        newNode->text = parseNode->children[0]->getText();
-//    
-//        currentNode->children.push_back(newNode);
-//        AstNode* oldNode = currentNode;
-//        currentNode = newNode;
-//
-//        if (parseNode->children.size() > 1) {
-//            AstNode* childNode = getTerminalLeafNode(parseNode->children[1]);
-//            if (childNode != nullptr) currentNode->children.push_back(childNode);
-//        }
-//    
-//        visitChildren(parseNode);
-//    
-//        currentNode = oldNode;
-//    
-//        return nullptr;
-//    }
-//    
-//    virtual antlrcpp::Any visitProcdec(DplParser::ProcdecContext *parseNode) override {
-//        AstNode* newNode = new AstNode(currentNode);
-//        newNode->rule = parseNode->getRuleIndex();
-//        newNode->text = parseNode->children[1]->getText();
-//    
-//        currentNode->children.push_back(newNode);
-//        AstNode* oldNode = currentNode;
-//        currentNode = newNode;
-//    
-//        antlr4::ParserRuleContext *childParseNode = dynamic_cast<antlr4::ParserRuleContext*>(parseNode->children[3]); 
-//    
-//        if (childParseNode->getRuleIndex() == DplParser::RuleParams) {
-//            for (size_t i = 0; i < childParseNode->children.size(); i = i + 2) {
-//                AstNode* childNode = getTerminalLeafNode(childParseNode->children[i]);
-//                if (childNode != nullptr) currentNode->children.push_back(childNode);
-//            }
-//        }
-//    
-//        visitChildren(parseNode);
-//    
-//        currentNode = oldNode;
-//    
-//        return nullptr;
-//    }
-//    
-//    virtual antlrcpp::Any visitProccall(DplParser::ProccallContext *parseNode) override {
-//        AstNode* newNode = new AstNode(currentNode);
-//        newNode->rule = parseNode->getRuleIndex();
-//        newNode->text = parseNode->children[0]->getText();
-//        
-//    
-//        currentNode->children.push_back(newNode);
-//        AstNode* oldNode = currentNode;
-//        currentNode = newNode;
-//    
-//        antlr4::ParserRuleContext *childParseNode = dynamic_cast<antlr4::ParserRuleContext*>(parseNode->children[2]); 
-//        for (size_t i = 0; i < childParseNode->children.size(); i = i + 2) {
-//            AstNode* childNode = getTerminalLeafNode(childParseNode->children[i]);
-//            if (childNode != nullptr) currentNode->children.push_back(childNode);
-//        }
-//    
-//        visitChildren(parseNode);
-//    
-//        currentNode = oldNode;
-//    
-//        return nullptr;
-//    }
-//    
-//    virtual antlrcpp::Any visitList(DplParser::ListContext *parseNode) override {
-//        AstNode* newNode = new AstNode(currentNode);
-//        newNode->rule = parseNode->getRuleIndex();
-//        newNode->text = "[]";
-//        
-//        currentNode->children.push_back(newNode);
-//        AstNode* oldNode = currentNode;
-//        currentNode = newNode;
-//    
-//        antlr4::ParserRuleContext *childParseNode = dynamic_cast<antlr4::ParserRuleContext*>(parseNode->children[1]); 
-//        for (size_t i = 0; i < childParseNode->children.size(); i = i + 2) {
-//            AstNode* childNode = getTerminalLeafNode(childParseNode->children[i]);
-//            if (childNode != nullptr) currentNode->children.push_back(childNode);
-//        }
-//    
-//        visitChildren(parseNode);
-//    
-//        currentNode = oldNode;
-//    
-//        return nullptr;
-//    }
-//    
-//    virtual antlrcpp::Any visitListcall(DplParser::ListcallContext *parseNode) {
-//        AstNode* newNode = new AstNode(currentNode);
-//        newNode->rule = parseNode->getRuleIndex();
-//        newNode->text = parseNode->children[0]->getText();
-//    
-//        currentNode->children.push_back(newNode);
-//        AstNode* oldNode = currentNode;
-//        currentNode = newNode;
-//    
-//        for (size_t i = 2; i < parseNode->children.size(); i = i + 3) { 
-//            AstNode* childNode = getTerminalLeafNode(parseNode->children[i]);
-//            if (childNode != nullptr) currentNode->children.push_back(childNode);
-//        }
-//    
-//        visitChildren(parseNode);
-//    
-//        currentNode = oldNode;
-//    
-//        return nullptr;
-//    }
-//    
-//    virtual antlrcpp::Any visitTable(DplParser::TableContext *parseNode) {
-//        AstNode* newNode = new AstNode(currentNode);
-//        newNode->rule = parseNode->getRuleIndex();
-//        newNode->text = "{}";
-//        
-//        currentNode->children.push_back(newNode);
-//        AstNode* oldNode = currentNode;
-//        currentNode = newNode;
-//        
-//        for (size_t i = 1; i < parseNode->children.size(); i = i + 4) {
-//            AstNode* childNode = getTerminalLeafNode(parseNode->children[i]);
-//            if (childNode != nullptr) currentNode->children.push_back(childNode);
-//            currentNode = childNode;
-//            parseNode->children[i+2]->accept(this);
-//            currentNode = newNode;
-//        }
-//    
-//        currentNode = oldNode;
-//    
-//        return nullptr;
-//    }
-//    
-//    virtual antlrcpp::Any visitTablecall(DplParser::TablecallContext *parseNode) { // problem is here
-//        AstNode* oldNode = currentNode;
-//        std::vector<tree::ParseTree*> nodeChildren = parseNode->children;
-//        if (nodeChildren[0]->children.size() <= 1) {
-//            AstNode* newNode = new AstNode(currentNode);
-//            newNode->text = nodeChildren[0]->getText();
-//            newNode->rule = parseNode->getRuleIndex();
-//    
-//            currentNode->children.push_back(newNode);
-//            currentNode = newNode;
-//        }
-//    
-//        AstNode* rowNode     = getTerminalLeafNode(nodeChildren[2]);
-//        AstNode* coloumnNode = (nodeChildren.size() > 5) ? getTerminalLeafNode(nodeChildren[5]) : nullptr;
-//        if (rowNode != nullptr)     currentNode->children.push_back(rowNode);
-//        if (coloumnNode != nullptr) currentNode->children.push_back(coloumnNode);
-//    
-//        visitChildren(parseNode);
-//    
-//        currentNode = oldNode;
-//    
-//        return nullptr;
-//    }
-//    
-//    virtual antlrcpp::Any visitUnaryexpr(DplParser::UnaryexprContext *parseNode) {
-//        AstNode* newNode = new AstNode(currentNode);
-//        newNode->rule = parseNode->getRuleIndex();
-//        newNode->text = parseNode->children[0]->getText();
-//    
-//        currentNode->children.push_back(newNode);
-//        AstNode* oldNode = currentNode;
-//        currentNode = newNode;
-//    
-//        visitChildren(parseNode);
-//    
-//        currentNode = oldNode;
-//    
-//        return nullptr;
-//    }
-//    
-//    virtual antlrcpp::Any visitReplacestm(DplParser::ReplacestmContext *parseNode) {
-//        AstNode* newNode = new AstNode(currentNode);
-//        newNode->rule = parseNode->getRuleIndex();
-//        newNode->text = parseNode->children[0]->getText();
-//    
-//        currentNode->children.push_back(newNode);
-//        AstNode* oldNode = currentNode;
-//        currentNode = newNode;
-//    
-//        AstNode* leftNode = getTerminalLeafNode(parseNode->children[1]);
-//        AstNode* rightNode = getTerminalLeafNode(parseNode->children[3]);
-//    
-//        if (leftNode != nullptr)  currentNode->children.push_back(leftNode);
-//        if (rightNode != nullptr) currentNode->children.push_back(rightNode);
-//    
-//        visitChildren(parseNode);
-//    
-//        currentNode = oldNode;
-//    
-//        return nullptr;
-//    }
-//
-//    AstNode* getTerminalLeafNode(tree::ParseTree* childParseNode) {
-//        while (childParseNode->children.size() == 1) {
-//            childParseNode = childParseNode->children[0];
-//        }
-//        if (childParseNode->children.size() > 1) return nullptr;
-//
-//        tree::TerminalNode* parseLeafNode = dynamic_cast<antlr4::tree::TerminalNode*>(childParseNode);
-//
-//        AstNode* leafNode = new AstNode();
-//        leafNode->rule = parseLeafNode->getSymbol()->getType();
-//        leafNode->text = parseLeafNode->getText();
-//        return leafNode;
-//    }
-
-    tree::ParseTree* getTerminalNode(tree::ParseTree* parseNode) {
-        tree::ParseTree* newParseNode = parseNode;
-        while (newParseNode->children.size() == 1) {
-            newParseNode = newParseNode->children[0];
-        }
-        if (newParseNode->children.size() > 1) return parseNode;
-        
-        return newParseNode;
-    }
-
     AstNode* getRoot() {
-        return root;
+        return root;    
     }
 };
 

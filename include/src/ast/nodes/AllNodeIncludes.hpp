@@ -8,6 +8,7 @@
 #include <ChargedNode.hpp>
 #include <ColumnNode.hpp>
 #include <CompExprNode.hpp>
+#include <ElseNode.hpp>
 #include <ExprNode.hpp>
 #include <FilterNode.hpp>
 #include <IfNode.hpp>
@@ -17,6 +18,7 @@
 #include <NotNode.hpp>
 #include <ParNode.hpp>
 #include <ProcCallNode.hpp>
+#include <ProcDecNode.hpp>
 #include <ProgNode.hpp>
 #include <SubscriptNode.hpp>
 #include <TableNode.hpp>
