@@ -94,8 +94,26 @@ public:
         return nullptr;
     }
 
+    // Return
+    virtual antlrcpp::Any visitReturnstm(DplParser::ReturnstmContext *parseNode) override {
+        AstNode* newNode = new ReturnNode(currentNode);
+        newNode->setRule(parseNode->getRuleIndex());
+        newNode->setText("Return");
 
-    //  IF-ELSE
+        currentNode->addChild(newNode);
+        AstNode* oldNode = currentNode;
+        currentNode = newNode;
+
+        if (parseNode->children.size() > 1) {
+            parseNode->children[1]->accept(this);
+        }
+
+        currentNode = oldNode;
+
+        return nullptr;
+    }
+
+    // IF-ELSE
     virtual antlrcpp::Any visitIfstm(DplParser::IfstmContext *parseNode) override {
         AstNode* newNode = new IfNode(currentNode);
         newNode->setRule(parseNode->getRuleIndex());

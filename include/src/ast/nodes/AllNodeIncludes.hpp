@@ -20,6 +20,7 @@
 #include <ProcCallNode.hpp>
 #include <ProcDecNode.hpp>
 #include <ProgNode.hpp>
+#include <ReturnNode.hpp>
 #include <SubscriptNode.hpp>
 #include <TableNode.hpp>
 #include <UnaryExprNode.hpp>
