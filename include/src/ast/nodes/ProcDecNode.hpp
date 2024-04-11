@@ -11,6 +11,7 @@ class ProcDecNode : public AstNode {
         void setName(std::string name) { this->name = name; };
         std::vector<AstNode*> getParamNodes() { return paramNodes; };
         std::vector<AstNode*> getBodyNodes() { return bodyNodes; };
+        void stopVisitingParams() {visitingParams = false; } 
 
         void addChild(AstNode* node) override {
             if (visitingParams) {
@@ -38,10 +39,6 @@ class ProcDecNode : public AstNode {
                 bodyNodes[i]->print(childIndent, bodyPrefix + "Body: ");
             }
         }
-
-        void stopVisitingParams() {
-            visitingParams = false;
-        } 
 
     private:
         bool visitingParams = true;

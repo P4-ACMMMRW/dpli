@@ -6,14 +6,13 @@ using namespace dplgrammar;
 
 class FilterNode : public AstNode {
 public:
-    FilterNode(AstNode *parent) : AstNode(parent) {setText("Filter []");}
-    AstNode* getChildNode() { return childNode; };
+    FilterNode(AstNode *parent) : AstNode(parent) { }
+    AstNode* getLeftNode()  { return left; };
+    AstNode* getRightNode() { return right; };
     void addChild(AstNode* node) override {
-        if (childNode == nullptr) {
-            childNode = node;
-        } else {
-            throw std::runtime_error("FilterNode can only have one child");
-        }
+        if      (right == nullptr) right = node;
+        else if (left == nullptr)  left  = node;
+        else throw std::runtime_error("FilterNode can only have two children");
     }
 
     void print(std::string indent = "", std::string prefix = "") override {
@@ -22,13 +21,19 @@ public:
         // Use a new level of indentation for the children
         std::string childIndent = indent + (prefix.empty() ? "" : (prefix == "└── " ? "    " : "│   "));
 
-        // Print the condition node, if it exists
-        if (childNode != nullptr) {
-            childNode->print(childIndent, "└── ");
+        // Print the left child, if it exists
+        if (left != nullptr) {
+            left->print(childIndent, "├── ");
+        }
+
+        // Print the right child, if it exists
+        if (right != nullptr) {
+            right->print(childIndent, "└── ");
         }
     }
 private:
-    AstNode* childNode = nullptr;
+    AstNode* left  = nullptr;
+    AstNode* right = nullptr;
 };
 
 #endif

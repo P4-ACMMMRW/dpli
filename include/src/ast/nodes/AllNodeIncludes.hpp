@@ -11,6 +11,7 @@
 #include <ElseNode.hpp>
 #include <ExprNode.hpp>
 #include <FilterNode.hpp>
+#include <HeaderIndexNode.hpp>
 #include <IfNode.hpp>
 #include <IndexNode.hpp>
 #include <LeafNode.hpp>
@@ -21,7 +22,6 @@
 #include <ProcDecNode.hpp>
 #include <ProgNode.hpp>
 #include <ReturnNode.hpp>
-#include <SubscriptNode.hpp>
 #include <TableNode.hpp>
 #include <UnaryExprNode.hpp>
 #include <WhileNode.hpp>

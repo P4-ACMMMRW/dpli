@@ -119,6 +119,7 @@ OpenSquare: '[';
 CloseSquare: ']';
 Colon: ':';
 Comma: ',';
+Dollar: '$';
 
 // Operators
 Exponent: '**';

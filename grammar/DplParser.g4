@@ -18,8 +18,7 @@ stm: ifstm
    | whilestm
    | assignstm
    | flowstm
-   | returnstm
-   | replacestm;
+   | returnstm;
 
 stms: (stm Newline?)+;
 
@@ -47,8 +46,6 @@ flowstm: Break
 returnstm: Return expr
          | Return;
 
-replacestm: Replace expr With expr;
-
 // Expressions
 expr: expr op = And expr
     | expr op = Or  expr
@@ -69,7 +66,8 @@ notexpr: op = Not            notexpr
        | subscript;
 
 subscript: subscript proccall
-         | subscript indexing
+         | subscript headerindex
+         | subscript index
          | subscript filtering
          | term;
          
@@ -91,7 +89,9 @@ table: OpenCurly (column (Comma column)*)? CloseCurly;
 column: String Colon list;
 
 // Trailers
-indexing: (OpenSquare expr CloseSquare);
+index: (OpenSquare expr CloseSquare);
+
+headerindex: (OpenSquare Dollar expr CloseSquare);
 
 filtering: (OpenSquare unaryexpr CloseSquare);
 

@@ -341,35 +341,39 @@ public:
     virtual antlrcpp::Any visitSubscript(DplParser::SubscriptContext *parseNode) override {
         if (parseNode->children.size() == 1) return parseNode->children[0]->accept(this);
 
-        AstNode* newNode = new SubscriptNode(currentNode);
-        newNode->setRule(parseNode->getRuleIndex());
-        newNode->setText("Subscript");
-
-        currentNode->addChild(newNode);
         AstNode* oldNode = currentNode;
-        currentNode = newNode;
-
-        parseNode->children[0]->accept(this);
 
         parseNode->children[1]->accept(this);
+
+        parseNode->children[0]->accept(this);
 
         currentNode = oldNode;
 
         return nullptr;
     }
 
-    virtual antlrcpp::Any visitIndexing(DplParser::IndexingContext *parseNode) override { 
+    virtual antlrcpp::Any visitIndex(DplParser::IndexContext *parseNode) override { 
         AstNode* newNode = new IndexNode(currentNode);
         newNode->setRule(parseNode->getRuleIndex());
         newNode->setText("[] Indexing");
 
         currentNode->addChild(newNode);
-        AstNode* oldNode = currentNode;
         currentNode = newNode;
 
         parseNode->children[1]->accept(this);
 
-        currentNode = oldNode;
+        return nullptr;
+    }
+
+    virtual antlrcpp::Any visitHeaderindex(DplParser::HeaderindexContext *parseNode) override { 
+        AstNode* newNode = new HeaderIndexNode(currentNode);
+        newNode->setRule(parseNode->getRuleIndex());
+        newNode->setText("[$] Header Indexing");
+
+        currentNode->addChild(newNode);
+        currentNode = newNode;
+
+        parseNode->children[2]->accept(this);
 
         return nullptr;
     }
@@ -380,12 +384,9 @@ public:
         newNode->setText("[] Filter");
 
         currentNode->addChild(newNode);
-        AstNode* oldNode = currentNode;
         currentNode = newNode;
 
         parseNode->children[1]->accept(this);
-
-        currentNode = oldNode;
 
         return nullptr;
     }
@@ -408,21 +409,22 @@ public:
     }
 
     virtual antlrcpp::Any visitProccall(DplParser::ProccallContext *parseNode) override {
-        AstNode* newNode = new ProcCallNode(currentNode);
+        ProcCallNode* newNode = new ProcCallNode(currentNode);
         newNode->setRule(parseNode->getRuleIndex());
         newNode->setText("() Proccall");
 
-        currentNode->addChild(newNode);
+        AstNode* astNewNode = static_cast<AstNode*>(newNode);       
+        currentNode->addChild(astNewNode);
+        currentNode = astNewNode;
 
-        if (parseNode->children.size() == 2) return nullptr;
-
-        AstNode* oldNode = currentNode;
-        currentNode = newNode;
+        if (parseNode->children.size() == 2) {
+            newNode->stopVisitingParams();
+            return nullptr;
+        }
 
         parseNode->children[1]->accept(this);
-
-        currentNode = oldNode;
-
+        newNode->stopVisitingParams();
+        
         return nullptr;
     }
 

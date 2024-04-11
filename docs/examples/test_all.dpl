@@ -8,9 +8,9 @@ indexing3[1][2] = assign4[1][2][3]
 # Filtering && UnaryExpr
 filtering1[==1] = 1
 filtering2[==assign3[1]] = 2
-filtering3["toes"] = 3
-filtering4["head"][==2] = 4
-filtering5[==3]["neck"][==4] = 5
+filtering3[$"toes"] = 3
+filtering4[$"head"][==2] = 4
+filtering5[==3][$"neck"][==4] = 5
 
 # Proccall
 proccall()
@@ -60,12 +60,12 @@ else:
 while isTrue():
     print("hi")
 
-# Function declaration
+ Function declaration
 def print(str):
     out(str)
 
 
-# Flow stm
+ Flow stm
 def returnOfProc(true):
     return true
 
@@ -74,4 +74,3 @@ while true:
         continue
     else: 
         break
-

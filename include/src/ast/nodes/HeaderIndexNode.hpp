@@ -1,25 +1,18 @@
-#ifndef SUBSCRIPTNODE_HPP
-#define SUBSCRIPTNODE_HPP
-
-#include <AstNode.hpp> 
+#ifndef HEADERINDEXNODE_HPP
+#define HEADERINDEXNODE_HPP
 
 using namespace antlr4;
 using namespace dplgrammar;
 
-class SubscriptNode : public AstNode {
+class HeaderIndexNode : public AstNode {
 public:
-    SubscriptNode(AstNode* parent) : left(nullptr), right(nullptr) {AstNode::setParent(parent);}
-    AstNode* getLeft() { return  left;  };
-    AstNode* getRight() { return right; };
-
+    HeaderIndexNode(AstNode *parent) : AstNode(parent) {}
+    AstNode* getLeftNode()  { return left; };
+    AstNode* getRightNode() { return right; };
     void addChild(AstNode* node) override {
-        if (left == nullptr) {
-            left = node;
-        } else if (right == nullptr) {
-            right = node;
-        } else {
-            throw std::runtime_error("SubscriptNode can only have two children");
-        }
+        if      (right == nullptr) right = node;
+        else if (left == nullptr)  left  = node;
+        else throw std::runtime_error("HeaderIndexNode can only have two children");
     }
 
     void print(std::string indent = "", std::string prefix = "") override {
@@ -39,7 +32,7 @@ public:
         }
     }
 private:
-    AstNode* left = nullptr;
+    AstNode* left  = nullptr;
     AstNode* right = nullptr;
 };
 
