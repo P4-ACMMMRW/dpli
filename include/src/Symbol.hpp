@@ -5,6 +5,7 @@
 #include <utility>
 
 enum SymbolType {
+    TYPE_INVALID,
     TYPE_INT,
     TYPE_FLOAT,
     TYPE_STR,
@@ -22,9 +23,10 @@ class Symbol {
     std::string getId() const { return id; }
     std::string getVal() const { return val; }
 
-    Symbol(SymbolType type) : type(type) {}
+    explicit Symbol(SymbolType type) : type(type) {}
     std::string getType() const;
     bool is(SymbolType type) const;
+    bool isOneOf(const std::initializer_list<SymbolType> &types) const;
 
    private:
     std::string id;

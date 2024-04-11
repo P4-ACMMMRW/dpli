@@ -12,7 +12,7 @@ namespace dplsrc {
 class SymbolTable {
    public:
     void bind(Symbol sym);
-    Symbol lookup(Symbol sym);
+    Symbol lookup(const Symbol& sym);
     void enter();
     void exit();
 

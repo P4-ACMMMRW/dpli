@@ -8,10 +8,10 @@ void SymbolTable::bind(Symbol sym) {
     }
 
     table.push(sym);
-    symbolLookupTable[sym.getId()] = sym;
+    symbolLookupTable.insert_or_assign(sym.getId(), sym);
 }
 
-Symbol SymbolTable::lookup(Symbol sym) { return symbolLookupTable[sym.getId()]; }
+Symbol SymbolTable::lookup(const Symbol& sym) { return symbolLookupTable.at(sym.getId()); }
 
 void SymbolTable::enter() { table.push(Symbol("$")); }
 
