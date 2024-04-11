@@ -9,7 +9,7 @@
 #include <ColumnNode.hpp>
 #include <CompExprNode.hpp>
 #include <ElseNode.hpp>
-#include <ExprNode.hpp>
+#include <JuncExprNode.hpp>
 #include <FilterNode.hpp>
 #include <HeaderIndexNode.hpp>
 #include <IfNode.hpp>

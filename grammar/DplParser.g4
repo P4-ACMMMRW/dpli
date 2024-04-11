@@ -4,7 +4,7 @@ options {
 	tokenVocab = DplLexer;
 }
 
-prog:  (stm Newline? | procdec Newline? | Newline)+ EOF;
+prog: (stm Newline? | procdec Newline? | Newline)+ EOF;
 
 
 procdec: Def Identifier OpenPar params ClosePar Colon block
@@ -26,30 +26,30 @@ block: Indent Newline? stms Dedent Newline?;
 
 
 // If
-ifstm: If expr Colon block elsestm?;
+ifstm: If juncexpr Colon block elsestm?;
 
 elsestm: Else Colon block;
 
 
 // While
-whilestm: While expr Colon block;
+whilestm: While juncexpr Colon block;
 
 
 // Assign
-assignstm: expr (Assign expr)?;
+assignstm: juncexpr (Assign juncexpr)?;
 
 // Flow
 flowstm: Break
        | Continue;
 
 // Return
-returnstm: Return expr
+returnstm: Return juncexpr
          | Return;
 
 // Expressions
-expr: expr op = And expr
-    | expr op = Or  expr
-    | compexpr;
+juncexpr: juncexpr op = And juncexpr
+        | juncexpr op = Or  juncexpr
+        | compexpr;
 
 compexpr: compexpr op = (Equal | NotEqual | Greater | GreaterEqual | Less | LessEqual) compexpr
         | arthexpr;
@@ -71,7 +71,7 @@ subscript: subscript proccall
          | subscript filtering
          | term;
          
-term: OpenPar expr ClosePar
+term: OpenPar juncexpr ClosePar
     | list
     | table
     | number 
@@ -89,19 +89,19 @@ table: OpenCurly (column (Comma column)*)? CloseCurly;
 column: String Colon list;
 
 // Trailers
-index: (OpenSquare expr CloseSquare);
+index: (OpenSquare juncexpr CloseSquare);
 
-headerindex: (OpenSquare Dollar expr CloseSquare);
+headerindex: (OpenSquare Dollar juncexpr CloseSquare);
 
 filtering: (OpenSquare unaryexpr CloseSquare);
 
 
-unaryexpr: (Equal | NotEqual | Greater | GreaterEqual | Less | Less) expr;
+unaryexpr: (Equal | NotEqual | Greater | GreaterEqual | Less | Less) juncexpr;
 
 
 proccall: OpenPar ClosePar  
         | OpenPar args ClosePar;
 
-args: expr (Comma expr)*;
+args: juncexpr (Comma juncexpr)*;
 
  

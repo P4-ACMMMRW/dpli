@@ -176,7 +176,7 @@ public:
     }
 
     // Expressions  The expressions isn't correctly sequenced
-    virtual antlrcpp::Any visitExpr(DplParser::ExprContext *parseNode) override {
+    virtual antlrcpp::Any visitJuncexpr(DplParser::JuncexprContext *parseNode) {
         if (parseNode->children.size() == 1) return parseNode->children[0]->accept(this);
         AstNode* newNode = new ExprNode(currentNode);
         newNode->setRule(parseNode->getRuleIndex());
@@ -191,7 +191,7 @@ public:
 
         // Right Node
         parseNode->children[2]->accept(this);
-        
+
         currentNode = oldNode;
 
         return nullptr;
@@ -452,3 +452,51 @@ public:
 };
 
 #endif
+
+
+//public:
+//    AstBuilder(DplParser* parser, DplLexer* lexer);
+//    ~AstBuilder();
+//    
+//    virtual antlrcpp::Any visitProg(DplParser::ProgContext *parseNode) override;
+//    virtual antlrcpp::Any visitBlock(DplParser::BlockContext *parseNode) override;
+//
+//    // Declarations
+//    virtual antlrcpp::Any visitStms(DplParser::StmsContext *parseNode) override;
+//    virtual antlrcpp::Any visitProcdec(DplParser::ProcdecContext *parseNode) override;
+//    virtual antlrcpp::Any visitAssignstm(DplParser::AssignstmContext *parseNode) override;
+//    virtual antlrcpp::Any visitReturnstm(DplParser::ReturnstmContext *parseNode) override;
+//
+//    // IF-ELSE
+//    virtual antlrcpp::Any visitIfstm(DplParser::IfstmContext *parseNode) override;
+//    virtual antlrcpp::Any visitElsestm(DplParser::ElsestmContext *parseNode) override;
+//
+//    // While
+//    virtual antlrcpp::Any visitWhilestm(DplParser::WhilestmContext *parseNode) override;
+//
+//    // Expressions  The expressions isn't correctly sequenced
+//    virtual antlrcpp::Any visitJuncexpr(DplParser::JuncexprContext *parseNode) override;
+//    virtual antlrcpp::Any visitNotexpr(DplParser::NotexprContext *parseNode) override;
+//    virtual antlrcpp::Any visitCompexpr(DplParser::CompexprContext *parseNode) override;
+//    virtual antlrcpp::Any visitArthexpr(DplParser::ArthexprContext *parseNode) override;
+//
+//    // Terms
+//    virtual antlrcpp::Any visitTerminal(tree::TerminalNode *node) override;
+//    virtual antlrcpp::Any visitList(DplParser::ListContext *parseNode) override;
+//    virtual antlrcpp::Any visitTable(DplParser::TableContext *parseNode) override;
+//    virtual antlrcpp::Any visitColumn(DplParser::ColumnContext *parseNode) override;
+//    virtual antlrcpp::Any visitTerm(DplParser::TermContext *parseNode) override;
+//    virtual antlrcpp::Any visitSubscript(DplParser::SubscriptContext *parseNode) override;
+//    virtual antlrcpp::Any visitIndex(DplParser::IndexContext *parseNode) override;
+//    virtual antlrcpp::Any visitHeaderindex(DplParser::HeaderindexContext *parseNode) override;
+//    virtual antlrcpp::Any visitFiltering(DplParser::FilteringContext *parseNode) override;
+//
+//    virtual antlrcpp::Any visitUnaryexpr(DplParser::UnaryexprContext *parseNode) override;
+//    virtual antlrcpp::Any visitProccall(DplParser::ProccallContext *parseNode) override;
+//    virtual antlrcpp::Any visitArgs(DplParser::ArgsContext *parseNode) override;
+//    virtual antlrcpp::Any visitParams(DplParser::ParamsContext *parseNode) override;
+//
+//    AstNode* getRoot();
+//};
+//
+//#endif

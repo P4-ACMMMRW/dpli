@@ -1,4 +1,4 @@
-#include <SymbolTable.hpp>
+/*#include <SymbolTable.hpp>
 
 using namespace dplsrc;
 
@@ -26,4 +26,4 @@ void SymbolTable::exit() {
     }
 
     table.pop();
-}
+}*/
