@@ -52,7 +52,6 @@ public:
         
         ProcDecNode* newNode = new ProcDecNode(currentNode);
         newNode->setRule(parseNode->getRuleIndex());
-        newNode->setText("def " + name);
         newNode->setName(name);
 
         AstNode* astNewNode = static_cast<AstNode*>(newNode);
@@ -411,7 +410,6 @@ public:
     virtual antlrcpp::Any visitProccall(DplParser::ProccallContext *parseNode) override {
         ProcCallNode* newNode = new ProcCallNode(currentNode);
         newNode->setRule(parseNode->getRuleIndex());
-        newNode->setText("() Proccall");
 
         AstNode* astNewNode = static_cast<AstNode*>(newNode);       
         currentNode->addChild(astNewNode);
@@ -429,6 +427,16 @@ public:
     }
 
     virtual antlrcpp::Any visitArgs(DplParser::ArgsContext *parseNode) override {
+        if (parseNode->children.size() == 1) return parseNode->children[0]->accept(this);
+
+        for (size_t i = 0; i < parseNode->children.size(); i = i + 2) {
+            parseNode->children[i]->accept(this);
+        }
+
+        return nullptr;
+    }
+
+    virtual antlrcpp::Any visitParams(DplParser::ParamsContext *parseNode) override {
         if (parseNode->children.size() == 1) return parseNode->children[0]->accept(this);
 
         for (size_t i = 0; i < parseNode->children.size(); i = i + 2) {

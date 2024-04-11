@@ -22,21 +22,21 @@ class ProcDecNode : public AstNode {
         }
 
         void print(std::string indent = "", std::string prefix = "") override {
-            std::cout << indent << prefix << "Procedure: " << name << "\n";
+            std::cout << indent << prefix << "def " << getName() << "():" << "\n";
 
-            // Use a new level of indentation for the children
             std::string childIndent = indent + (prefix.empty() ? "" : (prefix == "└── " ? "    " : "│   "));
 
-            // Print each parameter node
             for (size_t i = 0; i < paramNodes.size(); ++i) {
-                std::string paramPrefix = (i == paramNodes.size() - 1 && bodyNodes.empty()) ? "└── " : "├── ";
-                paramNodes[i]->print(childIndent, paramPrefix + "Param: ");
+                paramNodes[i]->print(childIndent, "├── param: ");
             }
 
-            // Print each body node
             for (size_t i = 0; i < bodyNodes.size(); ++i) {
-                std::string bodyPrefix = (i == bodyNodes.size() - 1) ? "└── " : "├── ";
-                bodyNodes[i]->print(childIndent, bodyPrefix + "Body: ");
+                // For the last statement node, we want to print a different prefix
+                if (i == bodyNodes.size() - 1) {
+                    bodyNodes[i]->print(childIndent, "└── ");
+                } else {
+                    bodyNodes[i]->print(childIndent, "├── ");
+                }
             }
         }
 
@@ -45,6 +45,8 @@ class ProcDecNode : public AstNode {
         std::string name;
         std::vector<AstNode*> paramNodes;
         std::vector<AstNode*> bodyNodes;
+
+        
 };
 
 #endif

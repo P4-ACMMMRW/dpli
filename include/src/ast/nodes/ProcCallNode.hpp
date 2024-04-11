@@ -19,13 +19,13 @@ public:
     }
 
     void print(std::string indent = "", std::string prefix = "") override {
-        std::cout << indent << prefix << AstNode::getText() << "\n";
+        std::cout << indent << prefix << AstNode::getText() << " proccall" << "\n";
 
         // Use a new level of indentation for the children
         std::string childIndent = indent + (prefix.empty() ? "" : (prefix == "└── " ? "    " : "│   "));
 
         if (proc != nullptr) {
-            proc->print(childIndent, (argNodes.size() == 0) ? "└── " : "├── ");
+            proc->print(childIndent, (argNodes.size() == 0) ? "└── " : "├── Name: ");
         }
 
 
@@ -33,9 +33,9 @@ public:
         for (size_t i = 0; i < argNodes.size(); ++i) {
             // For the last if statement node, we want to print a different prefix
             if (i == argNodes.size() - 1 ) {
-                argNodes[i]->print(childIndent, "└── arg: ");
+                argNodes[i]->print(childIndent, "└── ");
             } else {
-                argNodes[i]->print(childIndent, "├── arg: ");
+                argNodes[i]->print(childIndent, "├── ");
             }
         }
     }
