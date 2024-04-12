@@ -1,28 +1,19 @@
 #ifndef UNARYEXPRNODE_HPP
 #define UNARYEXPRNODE_HPP
 
-using namespace antlr4;
-using namespace dplgrammar;
+#include <string>
+#include <vector>
+#include <AstNode.hpp>
+#include <iostream>
 
 class UnaryExprNode : public AstNode {
 public:
-
     UnaryExprNode(AstNode* parent) : AstNode(parent) { }
-
     AstNode* getchild() { return child; };
-    void     addChild(AstNode* child) { this->child = child; }
 
-    void print(std::string indent = "", std::string prefix = "") {
-        std::cout << indent << prefix << AstNode::getText() << "\n";
+    void addChild(AstNode* child) override;
 
-        // Use a new level of indentation for the children
-        std::string childIndent = indent + (prefix.empty() ? "" : (prefix == "└── " ? "    " : "    "));
-
-        // Print the child node, if it exists
-        if (child != nullptr) {
-            child->print(childIndent, "└── ");
-        }
-    }
+    void print(std::string indent, std::string prefix);
 private:
     AstNode* child = nullptr;
 };

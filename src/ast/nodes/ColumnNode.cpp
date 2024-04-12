@@ -1,14 +1,11 @@
-#ifndef CHARGEDNODE_HPP
-#define CHARGEDNODE_HPP
+#include <ColumnNode.hpp>
 
-using namespace antlr4;
-using namespace dplgrammar;
+void ColumnNode::addChild(AstNode* node) {
+    if (child == nullptr) child = node;
+    else throw std::runtime_error("ColumnNode can only have one child");
+}
 
-class ChargedNode : public AstNode {
-public:
-    AstNode* getchild() { return child; };
-
-    void print(std::string indent = "", std::string prefix = "") {
+void ColumnNode::print(std::string indent = "", std::string prefix = "") {
     std::cout << indent << prefix << AstNode::getText() << "\n";
 
     // Use a new level of indentation for the children
@@ -19,8 +16,3 @@ public:
         child->print(childIndent, "└── ");
     }
 }
-private:
-    AstNode* child = nullptr;
-};
-
-#endif

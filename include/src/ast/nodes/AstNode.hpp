@@ -1,9 +1,7 @@
 #ifndef ASTNODE_HPP
 #define ASTNODE_HPP
 
-using namespace antlr4;
-using namespace dplgrammar;
-
+#include <string>
 
 class AstNode  { 
 public:
@@ -15,6 +13,7 @@ public:
     void         setRule(int r) { rule = r; }
     void         setText(std::string t) { text = t; }
     void         setParent(AstNode* p) { parent = p; }
+    
     virtual void print(std::string indent = "", std::string prefix = "") = 0;
     virtual void addChild(AstNode* child) = 0;
 private:
