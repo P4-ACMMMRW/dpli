@@ -42,6 +42,7 @@ message(STATUS "ANTLR_DplLexer_CXX_OUTPUTS: ${ANTLR_DplLexer_CXX_OUTPUTS}")
 message(STATUS "ANTLR_DplParser_CXX_OUTPUTS: ${ANTLR_DplParser_CXX_OUTPUTS}")
 
 file(GLOB_RECURSE SOURCES "${PROJECT_SOURCE_DIR}/src/*.cpp")
+message(STATUS "SOURCES: ${SOURCES}")
 
 add_library(dpllib STATIC ${SOURCES} ${ANTLR_DplLexer_CXX_OUTPUTS} ${ANTLR_DplParser_CXX_OUTPUTS})
 
@@ -57,10 +58,6 @@ target_link_libraries(dpllib PUBLIC antlr4_static)
 
 add_executable(dpli Main.cpp)
 
-target_include_directories(dpli PRIVATE 
-    ${PROJECT_SOURCE_DIR}/include 
-    ${PROJECT_SOURCE_DIR}/include/src
-    ${PROJECT_SOURCE_DIR}/include/src/ast
-    ${PROJECT_SOURCE_DIR}/include/src/ast/nodes)
+target_include_directories(dpli PRIVATE ${PROJECT_SOURCE_DIR}/include)
 
 target_link_libraries(dpli PRIVATE dpllib antlr4_static)
