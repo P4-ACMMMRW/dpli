@@ -8,11 +8,11 @@
 #include <ColumnNode.hpp>
 #include <CompExprNode.hpp>
 #include <ElseNode.hpp>
-#include <JuncExprNode.hpp>
 #include <FilterNode.hpp>
 #include <HeaderIndexNode.hpp>
 #include <IfNode.hpp>
 #include <IndexNode.hpp>
+#include <JuncExprNode.hpp>
 #include <LeafNode.hpp>
 #include <ListNode.hpp>
 #include <NotNode.hpp>
@@ -24,7 +24,5 @@
 #include <TableNode.hpp>
 #include <UnaryExprNode.hpp>
 #include <WhileNode.hpp>
-#include <LeafNode.hpp>
-
 
 #endif

@@ -1,9 +1,12 @@
 #include <AssignNode.hpp>
 
 void AssignNode::addChild(AstNode* node) {
-    if (left == nullptr) left = node;
-    else if (right == nullptr) right = node;
-    else throw std::runtime_error("AssignNode can only have two children");
+    if (left == nullptr)
+        left = node;
+    else if (right == nullptr)
+        right = node;
+    else
+        throw std::runtime_error("AssignNode can only have two children");
 }
 
 void AssignNode::print(std::string indent = "", std::string prefix = "") {

@@ -1,23 +1,26 @@
 #ifndef ASTBUILDER_HPP
 #define ASTBUILDER_HPP
 
-#include <DplParserBaseVisitor.h>
 #include <DplLexer.h>
 #include <DplParser.h>
+#include <DplParserBaseVisitor.h>
+
 #include <AllNodeIncludes.hpp>
 
 using namespace antlr4;
 using namespace dplgrammar;
 
 class AstBuilder : public DplParserBaseVisitor {
-private:
-    DplParser* parser; // Add a parser member
-    DplLexer* lexer; // Add a lexer member
-    AstNode* root;
-    AstNode* currentNode;
-public:
-    AstBuilder(DplParser* parser, DplLexer* lexer) : parser(parser), lexer(lexer),  root(nullptr), currentNode(nullptr) {}
-    
+   private:
+    DplParser *parser;  // Add a parser member
+    DplLexer *lexer;    // Add a lexer member
+    AstNode *root;
+    AstNode *currentNode;
+
+   public:
+    AstBuilder(DplParser *parser, DplLexer *lexer)
+        : parser(parser), lexer(lexer), root(nullptr), currentNode(nullptr) {}
+
     virtual antlrcpp::Any visitProg(DplParser::ProgContext *parseNode) override;
     virtual antlrcpp::Any visitBlock(DplParser::BlockContext *parseNode) override;
 
@@ -56,7 +59,7 @@ public:
     virtual antlrcpp::Any visitArgs(DplParser::ArgsContext *parseNode) override;
     virtual antlrcpp::Any visitParams(DplParser::ParamsContext *parseNode) override;
 
-    AstNode* getRoot();
+    AstNode *getRoot();
 };
 
 #endif

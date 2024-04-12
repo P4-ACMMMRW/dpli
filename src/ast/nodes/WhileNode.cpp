@@ -1,8 +1,10 @@
 #include <WhileNode.hpp>
 
 void WhileNode::addChild(AstNode* node) {
-    if (condNode == nullptr) condNode = node;
-    else stmNodes.push_back(node);
+    if (condNode == nullptr)
+        condNode = node;
+    else
+        stmNodes.push_back(node);
 }
 
 void WhileNode::print(std::string indent = "", std::string prefix = "") {

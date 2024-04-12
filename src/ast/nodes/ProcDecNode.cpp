@@ -9,7 +9,8 @@ void ProcDecNode::addChild(AstNode* node) {
 }
 
 void ProcDecNode::print(std::string indent = "", std::string prefix = "") {
-    std::cout << indent << prefix << "def " << getName() << "():" << "\n";
+    std::cout << indent << prefix << "def " << getName() << "():"
+              << "\n";
 
     std::string childIndent = indent + (prefix.empty() ? "" : (prefix == "└── " ? "    " : "│   "));
 

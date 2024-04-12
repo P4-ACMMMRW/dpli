@@ -1,8 +1,6 @@
 #include <TableNode.hpp>
 
-void TableNode::addChild(AstNode* node) {
-    columnNodes.push_back(node);
-}
+void TableNode::addChild(AstNode* node) { columnNodes.push_back(node); }
 
 void TableNode::print(std::string indent = "", std::string prefix = "") {
     std::cout << indent << prefix << AstNode::getText() << "\n";

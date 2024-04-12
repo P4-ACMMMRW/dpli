@@ -1,12 +1,15 @@
 #include <HeaderIndexNode.hpp>
 
-void HeaderIndexNode::addChild(AstNode* node)  {
-    if      (right == nullptr) right = node;
-    else if (left == nullptr)  left  = node;
-    else throw std::runtime_error("HeaderIndexNode can only have two children");
+void HeaderIndexNode::addChild(AstNode* node) {
+    if (right == nullptr)
+        right = node;
+    else if (left == nullptr)
+        left = node;
+    else
+        throw std::runtime_error("HeaderIndexNode can only have two children");
 }
 
-void HeaderIndexNode::print(std::string indent = "", std::string prefix = "")  {
+void HeaderIndexNode::print(std::string indent = "", std::string prefix = "") {
     std::cout << indent << prefix << AstNode::getText() << "\n";
 
     // Use a new level of indentation for the children

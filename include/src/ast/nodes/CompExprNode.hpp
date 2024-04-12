@@ -1,21 +1,22 @@
 #ifndef COMPEXPRNODE_HPP
 #define COMPEXPRNODE_HPP
 
-#include <string>
-#include <vector>
 #include <AstNode.hpp>
 #include <iostream>
+#include <string>
+#include <vector>
 
 class CompExprNode : public AstNode {
-public:
+   public:
     CompExprNode(AstNode* parent) : AstNode(parent) {}
-    AstNode* getLeft() { return  left;  };
+    AstNode* getLeft() { return left; };
     AstNode* getRight() { return right; };
 
     void addChild(AstNode* node) override;
 
     void print(std::string indent, std::string prefix) override;
-private:
+
+   private:
     AstNode* left = nullptr;
     AstNode* right = nullptr;
 };

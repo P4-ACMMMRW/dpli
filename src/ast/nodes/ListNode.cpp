@@ -1,8 +1,6 @@
 #include <ListNode.hpp>
 
-void ListNode::addChild(AstNode* node) {
-    children.push_back(node);
-}
+void ListNode::addChild(AstNode* node) { children.push_back(node); }
 
 void ListNode::print(std::string indent = "", std::string prefix = "") {
     std::cout << indent << prefix << AstNode::getText() << "\n";

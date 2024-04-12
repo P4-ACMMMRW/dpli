@@ -1,5 +1,5 @@
-#include <Main.hpp>
 #include <AstBuilder.hpp>
+#include <Main.hpp>
 
 using namespace antlr4;
 using namespace dplgrammar;
@@ -78,11 +78,10 @@ int main(int argc, char **argv) {
     DplParser parser(&tokens);
     tree::ParseTree *tree = parser.prog();
 
-
     if (debug) {
-//        for (antlr4::Token *token : tokens.getTokens()) {
-//            std::cout << token->toString() << '\n';
-//        }
+        //        for (antlr4::Token *token : tokens.getTokens()) {
+        //            std::cout << token->toString() << '\n';
+        //        }
         std::cout << tree->toStringTree(&parser, true) << "\n\n";
 
         AstBuilder builder{&parser, &lexer};

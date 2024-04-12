@@ -1,6 +1,6 @@
 #include <NotNode.hpp>
 
-void NotNode::addChild(AstNode* node)  {
+void NotNode::addChild(AstNode* node) {
     if (child == nullptr) {
         child = node;
     } else {
@@ -8,7 +8,7 @@ void NotNode::addChild(AstNode* node)  {
     }
 }
 
-void NotNode::print(std::string indent = "", std::string prefix = "")  {
+void NotNode::print(std::string indent = "", std::string prefix = "") {
     std::cout << indent << prefix << AstNode::getText() << "\n";
 
     // Use a new level of indentation for the children

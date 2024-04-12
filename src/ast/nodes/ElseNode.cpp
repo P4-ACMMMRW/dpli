@@ -1,10 +1,8 @@
 #include <ElseNode.hpp>
 
-void ElseNode::addChild(AstNode* node)  {
-    bodyNodes.push_back(node);
-}
+void ElseNode::addChild(AstNode* node) { bodyNodes.push_back(node); }
 
-void ElseNode::print(std::string indent = "", std::string prefix = "")  {
+void ElseNode::print(std::string indent = "", std::string prefix = "") {
     std::cout << indent << prefix << AstNode::getText() << "\n";
 
     // Use a new level of indentation for the children
@@ -20,4 +18,3 @@ void ElseNode::print(std::string indent = "", std::string prefix = "")  {
         }
     }
 }
-

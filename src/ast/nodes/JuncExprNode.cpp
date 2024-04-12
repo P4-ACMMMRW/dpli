@@ -1,6 +1,6 @@
 #include <JuncExprNode.hpp>
 
-void JuncExprNode::addChild(AstNode* node)  {
+void JuncExprNode::addChild(AstNode* node) {
     if (left == nullptr) {
         left = node;
     } else if (right == nullptr) {
@@ -10,7 +10,7 @@ void JuncExprNode::addChild(AstNode* node)  {
     }
 }
 
-void JuncExprNode::print(std::string indent = "", std::string prefix = "")  {
+void JuncExprNode::print(std::string indent = "", std::string prefix = "") {
     std::cout << indent << prefix << AstNode::getText() << "\n";
 
     // Use a new level of indentation for the children
