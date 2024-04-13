@@ -3,22 +3,23 @@
 
 #include <AstNode.hpp>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
 
 class IndexNode : public AstNode {
-   public:
-    IndexNode(AstNode* parent) : AstNode(parent) {}
-    AstNode* getLeftNode() { return left; };
-    AstNode* getRightNode() { return right; };
+    public:
+     IndexNode(std::shared_ptr<AstNode> parent) : AstNode(parent) {}
+     std::shared_ptr<AstNode>& getLeftNode() { return left; };
+     std::shared_ptr<AstNode>& getRightNode() { return right; };
 
-    void addChild(AstNode* node) override;
+     void addChild(std::shared_ptr<AstNode> node) override;
 
-    void print(std::string indent, std::string prefix) override;
+     void print(std::string indent, std::string prefix) override;
 
-   private:
-    AstNode* left = nullptr;
-    AstNode* right = nullptr;
+    private:
+     std::shared_ptr<AstNode> left = nullptr;
+     std::shared_ptr<AstNode> right = nullptr;
 };
 
 #endif

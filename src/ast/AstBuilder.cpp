@@ -1,7 +1,7 @@
 #include <AstBuilder.hpp>
 
 antlrcpp::Any AstBuilder::visitProg(DplParser::ProgContext* parseNode) {
-    AstNode* newNode = new ProgNode();
+    auto newNode = std::make_shared<ProgNode>();
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText(parser->getRuleNames()[newNode->getRule()]);
 
@@ -37,14 +37,14 @@ antlrcpp::Any AstBuilder::visitStms(DplParser::StmsContext* parseNode) {
 antlrcpp::Any AstBuilder::visitProcdec(DplParser::ProcdecContext* parseNode) {
     std::string name = parseNode->children[1]->getText();
 
-    ProcDecNode* newNode = new ProcDecNode(currentNode);
+    std::shared_ptr<ProcDecNode> newNode = std::make_shared<ProcDecNode>(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setName(name);
 
-    AstNode* astNewNode = static_cast<AstNode*>(newNode);
+    std::shared_ptr<AstNode> astNewNode = std::static_pointer_cast<AstNode>(newNode);
 
     currentNode->addChild(astNewNode);
-    AstNode* oldNode = currentNode;
+    std::shared_ptr<AstNode> oldNode = currentNode;
     currentNode = astNewNode;
 
     size_t blockIndex = 5;
@@ -64,11 +64,11 @@ antlrcpp::Any AstBuilder::visitAssignstm(DplParser::AssignstmContext* parseNode)
     if (parseNode->children.size() == 1) {
         return parseNode->children[0]->accept(this);
     }
-    AstNode* newNode = new AssignNode(currentNode);
+    std::shared_ptr<AstNode> newNode = std::make_shared<AssignNode>(currentNode);
     newNode->setText(parseNode->children[1]->getText());
 
     currentNode->addChild(newNode);
-    AstNode* oldNode = currentNode;
+    std::shared_ptr<AstNode> oldNode = currentNode;
     currentNode = newNode;
 
     // Left Node
@@ -84,12 +84,12 @@ antlrcpp::Any AstBuilder::visitAssignstm(DplParser::AssignstmContext* parseNode)
 
 // Return
 antlrcpp::Any AstBuilder::visitReturnstm(DplParser::ReturnstmContext* parseNode) {
-    AstNode* newNode = new ReturnNode(currentNode);
+    std::shared_ptr<AstNode> newNode = std::make_shared<ReturnNode>(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText("Return");
 
     currentNode->addChild(newNode);
-    AstNode* oldNode = currentNode;
+    std::shared_ptr<AstNode> oldNode = currentNode;
     currentNode = newNode;
 
     if (parseNode->children.size() > 1) {
@@ -103,12 +103,12 @@ antlrcpp::Any AstBuilder::visitReturnstm(DplParser::ReturnstmContext* parseNode)
 
 // IF-ELSE
 antlrcpp::Any AstBuilder::visitIfstm(DplParser::IfstmContext* parseNode) {
-    AstNode* newNode = new IfNode(currentNode);
+    std::shared_ptr<AstNode> newNode = std::make_shared<IfNode>(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText("If");
 
     currentNode->addChild(newNode);
-    AstNode* oldNode = currentNode;
+    std::shared_ptr<AstNode> oldNode = currentNode;
     currentNode = newNode;
 
     // Condition
@@ -128,12 +128,12 @@ antlrcpp::Any AstBuilder::visitIfstm(DplParser::IfstmContext* parseNode) {
 }
 
 antlrcpp::Any AstBuilder::visitElsestm(DplParser::ElsestmContext* parseNode) {
-    AstNode* newNode = new ElseNode(currentNode);
+    std::shared_ptr<AstNode> newNode = std::make_shared<ElseNode>(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText("Else");
 
     currentNode->addChild(newNode);
-    AstNode* oldNode = currentNode;
+    std::shared_ptr<AstNode> oldNode = currentNode;
     currentNode = newNode;
 
     parseNode->children[2]->accept(this);
@@ -145,12 +145,12 @@ antlrcpp::Any AstBuilder::visitElsestm(DplParser::ElsestmContext* parseNode) {
 
 // While
 antlrcpp::Any AstBuilder::visitWhilestm(DplParser::WhilestmContext* parseNode) {
-    AstNode* newNode = new WhileNode(currentNode);
+    std::shared_ptr<AstNode> newNode = std::make_shared<WhileNode>(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText("While");
 
     currentNode->addChild(newNode);
-    AstNode* oldNode = currentNode;
+    std::shared_ptr<AstNode> oldNode = currentNode;
     currentNode = newNode;
 
     // Condition
@@ -169,12 +169,12 @@ antlrcpp::Any AstBuilder::visitJuncexpr(DplParser::JuncexprContext* parseNode) {
     if (parseNode->children.size() == 1) {
         return parseNode->children[0]->accept(this);
     }
-    AstNode* newNode = new JuncExprNode(currentNode);
+    std::shared_ptr<AstNode> newNode = std::make_shared<JuncExprNode>(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText(parseNode->op->getText());
 
     currentNode->addChild(newNode);
-    AstNode* oldNode = currentNode;
+    std::shared_ptr<AstNode> oldNode = currentNode;
     currentNode = newNode;
 
     // Left Node
@@ -192,12 +192,12 @@ antlrcpp::Any AstBuilder::visitNotexpr(DplParser::NotexprContext* parseNode) {
     if (parseNode->children.size() == 1) {
         return parseNode->children[0]->accept(this);
     }
-    AstNode* newNode = new NotNode(currentNode);
+    std::shared_ptr<AstNode> newNode = std::make_shared<NotNode>(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText(parseNode->op->getText());
 
     currentNode->addChild(newNode);
-    AstNode* oldNode = currentNode;
+    std::shared_ptr<AstNode> oldNode = currentNode;
     currentNode = newNode;
 
     parseNode->children[1]->accept(this);
@@ -211,12 +211,12 @@ antlrcpp::Any AstBuilder::visitCompexpr(DplParser::CompexprContext* parseNode) {
     if (parseNode->children.size() == 1) {
         return parseNode->children[0]->accept(this);
     }
-    AstNode* newNode = new CompExprNode(currentNode);
+    std::shared_ptr<AstNode> newNode = std::make_shared<CompExprNode>(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText(parseNode->op->getText());
 
     currentNode->addChild(newNode);
-    AstNode* oldNode = currentNode;
+    std::shared_ptr<AstNode> oldNode = currentNode;
     currentNode = newNode;
 
     // Left Node
@@ -234,12 +234,12 @@ antlrcpp::Any AstBuilder::visitArthexpr(DplParser::ArthexprContext* parseNode) {
     if (parseNode->children.size() == 1) {
         return parseNode->children[0]->accept(this);
     }
-    AstNode* newNode = new ArthExprNode(currentNode);
+    std::shared_ptr<AstNode> newNode = std::make_shared<ArthExprNode>(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText(parseNode->op->getText());
 
     currentNode->addChild(newNode);
-    AstNode* oldNode = currentNode;
+    std::shared_ptr<AstNode> oldNode = currentNode;
     currentNode = newNode;
 
     // Left Node
@@ -255,7 +255,7 @@ antlrcpp::Any AstBuilder::visitArthexpr(DplParser::ArthexprContext* parseNode) {
 
 // Terms
 antlrcpp::Any AstBuilder::visitTerminal(tree::TerminalNode* node) {
-    AstNode* newNode = new LeafNode(currentNode);
+    std::shared_ptr<AstNode> newNode = std::make_shared<LeafNode>(currentNode);
     newNode->setRule(node->getSymbol()->getType());
     newNode->setText(node->getText());
 
@@ -265,12 +265,12 @@ antlrcpp::Any AstBuilder::visitTerminal(tree::TerminalNode* node) {
 }
 
 antlrcpp::Any AstBuilder::visitList(DplParser::ListContext* parseNode) {
-    AstNode* newNode = new ListNode(currentNode);
+    std::shared_ptr<AstNode> newNode = std::make_shared<ListNode>(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText("[] List");
 
     currentNode->addChild(newNode);
-    AstNode* oldNode = currentNode;
+    std::shared_ptr<AstNode> oldNode = currentNode;
     currentNode = newNode;
 
     if (parseNode->children.size() == 3) {
@@ -283,12 +283,12 @@ antlrcpp::Any AstBuilder::visitList(DplParser::ListContext* parseNode) {
 }
 
 antlrcpp::Any AstBuilder::visitTable(DplParser::TableContext* parseNode) {
-    AstNode* newNode = new TableNode(currentNode);
+    std::shared_ptr<AstNode> newNode = std::make_shared<TableNode>(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText("{} Table");
 
     currentNode->addChild(newNode);
-    AstNode* oldNode = currentNode;
+    std::shared_ptr<AstNode> oldNode = currentNode;
     currentNode = newNode;
 
     std::vector<tree::ParseTree*> children = parseNode->children;
@@ -303,12 +303,12 @@ antlrcpp::Any AstBuilder::visitTable(DplParser::TableContext* parseNode) {
 }
 
 antlrcpp::Any AstBuilder::visitColumn(DplParser::ColumnContext* parseNode) {
-    AstNode* newNode = new ColumnNode(currentNode);
+    std::shared_ptr<AstNode> newNode = std::make_shared<ColumnNode>(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText(parseNode->children[0]->getText() + ":");
 
     currentNode->addChild(newNode);
-    AstNode* oldNode = currentNode;
+    std::shared_ptr<AstNode> oldNode = currentNode;
     currentNode = newNode;
 
     parseNode->children[2]->accept(this);
@@ -323,12 +323,12 @@ antlrcpp::Any AstBuilder::visitTerm(DplParser::TermContext* parseNode) {
         return parseNode->children[0]->accept(this);
     }
 
-    AstNode* newNode = new ParNode(currentNode);
+    std::shared_ptr<AstNode> newNode = std::make_shared<ParNode>(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText("() Parenthesis");
 
     currentNode->addChild(newNode);
-    AstNode* oldNode = currentNode;
+    std::shared_ptr<AstNode> oldNode = currentNode;
     currentNode = newNode;
 
     parseNode->children[1]->accept(this);
@@ -343,7 +343,7 @@ antlrcpp::Any AstBuilder::visitSubscript(DplParser::SubscriptContext* parseNode)
         return parseNode->children[0]->accept(this);
     }
 
-    AstNode* oldNode = currentNode;
+    std::shared_ptr<AstNode> oldNode = currentNode;
 
     parseNode->children[1]->accept(this);
 
@@ -355,7 +355,7 @@ antlrcpp::Any AstBuilder::visitSubscript(DplParser::SubscriptContext* parseNode)
 }
 
 antlrcpp::Any AstBuilder::visitIndex(DplParser::IndexContext* parseNode) {
-    AstNode* newNode = new IndexNode(currentNode);
+    std::shared_ptr<AstNode> newNode = std::make_shared<IndexNode>(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText("[] Indexing");
 
@@ -368,7 +368,7 @@ antlrcpp::Any AstBuilder::visitIndex(DplParser::IndexContext* parseNode) {
 }
 
 antlrcpp::Any AstBuilder::visitHeaderindex(DplParser::HeaderindexContext* parseNode) {
-    AstNode* newNode = new HeaderIndexNode(currentNode);
+    std::shared_ptr<AstNode> newNode = std::make_shared<HeaderIndexNode>(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText("[$] Header Indexing");
 
@@ -381,7 +381,7 @@ antlrcpp::Any AstBuilder::visitHeaderindex(DplParser::HeaderindexContext* parseN
 }
 
 antlrcpp::Any AstBuilder::visitFiltering(DplParser::FilteringContext* parseNode) {
-    AstNode* newNode = new FilterNode(currentNode);
+    std::shared_ptr<AstNode> newNode = std::make_shared<FilterNode>(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText("[] Filter");
 
@@ -394,12 +394,12 @@ antlrcpp::Any AstBuilder::visitFiltering(DplParser::FilteringContext* parseNode)
 }
 
 antlrcpp::Any AstBuilder::visitUnaryexpr(DplParser::UnaryexprContext* parseNode) {
-    AstNode* newNode = new UnaryExprNode(currentNode);
+    std::shared_ptr<AstNode> newNode = std::make_shared<UnaryExprNode>(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText(parseNode->children[0]->getText());
 
     currentNode->addChild(newNode);
-    AstNode* oldNode = currentNode;
+    std::shared_ptr<AstNode> oldNode = currentNode;
     currentNode = newNode;
 
     parseNode->children[1]->accept(this);
@@ -410,10 +410,10 @@ antlrcpp::Any AstBuilder::visitUnaryexpr(DplParser::UnaryexprContext* parseNode)
 }
 
 antlrcpp::Any AstBuilder::visitProccall(DplParser::ProccallContext* parseNode) {
-    ProcCallNode* newNode = new ProcCallNode(currentNode);
+    std::shared_ptr<ProcCallNode> newNode = std::make_shared<ProcCallNode>(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
 
-    AstNode* astNewNode = static_cast<AstNode*>(newNode);
+    std::shared_ptr<AstNode> astNewNode = std::static_pointer_cast<AstNode>(newNode);
     currentNode->addChild(astNewNode);
     currentNode = astNewNode;
 
@@ -452,4 +452,4 @@ antlrcpp::Any AstBuilder::visitParams(DplParser::ParamsContext* parseNode) {
     return nullptr;
 }
 
-AstNode* AstBuilder::getRoot() { return root; }
+std::shared_ptr<AstNode> AstBuilder::getRoot() { return root; }

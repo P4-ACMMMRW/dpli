@@ -1,10 +1,10 @@
 #include <AssignNode.hpp>
 
-void AssignNode::addChild(AstNode* node) {
+void AssignNode::addChild(std::shared_ptr<AstNode> node) {
     if (left == nullptr) {
-        left = node;
+        left = std::move(node);
     } else if (right == nullptr) {
-        right = node;
+        right = std::move(node);
     } else {
         throw std::runtime_error("AssignNode can only have two children");
     }

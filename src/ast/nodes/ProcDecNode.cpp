@@ -1,10 +1,11 @@
 #include <ProcDecNode.hpp>
+#include <memory>
 
-void ProcDecNode::addChild(AstNode* node) {
+void ProcDecNode::addChild(std::shared_ptr<AstNode> node) {
     if (visitingParams) {
-        paramNodes.push_back(node);
+        paramNodes.push_back(std::move(node));
     } else {
-        bodyNodes.push_back(node);
+        bodyNodes.push_back(std::move(node));
     }
 }
 

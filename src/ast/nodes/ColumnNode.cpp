@@ -1,8 +1,8 @@
 #include <ColumnNode.hpp>
 
-void ColumnNode::addChild(AstNode* node) {
+void ColumnNode::addChild(std::shared_ptr<AstNode> node) {
     if (child == nullptr) {
-        child = node;
+        child = std::move(node);
     } else {
         throw std::runtime_error("ColumnNode can only have one child");
     }

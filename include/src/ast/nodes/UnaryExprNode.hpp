@@ -3,20 +3,21 @@
 
 #include <AstNode.hpp>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
 
 class UnaryExprNode : public AstNode {
-   public:
-    UnaryExprNode(AstNode* parent) : AstNode(parent) {}
-    AstNode* getchild() { return child; };
+    public:
+     UnaryExprNode(std::shared_ptr<AstNode> parent) : AstNode(parent) {}
+     std::shared_ptr<AstNode> getchild() { return child; };
 
-    void addChild(AstNode* child) override;
+     void addChild(std::shared_ptr<AstNode> child) override;
 
-    void print(std::string indent, std::string prefix) override;
+     void print(std::string indent, std::string prefix) override;
 
-   private:
-    AstNode* child = nullptr;
+    private:
+     std::shared_ptr<AstNode> child = nullptr;
 };
 
 #endif

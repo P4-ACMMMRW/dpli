@@ -3,20 +3,21 @@
 
 #include <AstNode.hpp>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
 
 class ParNode : public AstNode {
-   public:
-    ParNode(AstNode* parent) : AstNode(parent) {}
-    AstNode* getChildNode() { return childNode; };
+    public:
+     ParNode(std::shared_ptr<AstNode> parent) : AstNode(parent) {}
+     std::shared_ptr<AstNode> getChildNode() { return childNode; };
 
-    void addChild(AstNode* node) override;
+     void addChild(std::shared_ptr<AstNode> node) override;
 
-    void print(std::string indent, std::string prefix) override;
+     void print(std::string indent, std::string prefix) override;
 
-   private:
-    AstNode* childNode = nullptr;
+    private:
+     std::shared_ptr<AstNode> childNode = nullptr;
 };
 
 #endif

@@ -1,10 +1,10 @@
 #include <ProcCallNode.hpp>
 
-void ProcCallNode::addChild(AstNode* node) {
+void ProcCallNode::addChild(std::shared_ptr<AstNode> node) {
     if (visitingParams) {
-        argNodes.push_back(node);
+        argNodes.push_back(std::move(node));
     } else if (proc == nullptr) {
-        proc = node;
+        proc = std::move(node);
     } else {
         throw std::runtime_error(
             "ProcCallNode can add more children after stopped visitingParams and procdure has been "

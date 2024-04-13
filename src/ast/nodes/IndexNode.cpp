@@ -1,10 +1,10 @@
 #include <IndexNode.hpp>
 
-void IndexNode::addChild(AstNode* node) {
+void IndexNode::addChild(std::shared_ptr<AstNode> node) {
     if (right == nullptr) {
-        right = node;
+        right = std::move(node);
     } else if (left == nullptr) {
-        left = node;
+        left = std::move(node);
     } else {
         throw std::runtime_error("IndexNode can only have two children");
     }

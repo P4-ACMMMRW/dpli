@@ -3,23 +3,24 @@
 
 #include <AstNode.hpp>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
 
 class JuncExprNode : public AstNode {
-   public:
-    JuncExprNode(AstNode* parent) : AstNode(parent) {}
+    public:
+     JuncExprNode(std::shared_ptr<AstNode> parent) : AstNode(parent) {}
 
-    AstNode* getLeft() { return left; };
-    AstNode* getRight() { return right; };
+     std::shared_ptr<AstNode>& getLeft() { return left; };
+     std::shared_ptr<AstNode>& getRight() { return right; };
 
-    void addChild(AstNode* node) override;
+     void addChild(std::shared_ptr<AstNode> node) override;
 
-    void print(std::string indent, std::string prefix) override;
+     void print(std::string indent, std::string prefix) override;
 
-   private:
-    AstNode* left = nullptr;
-    AstNode* right = nullptr;
+    private:
+     std::shared_ptr<AstNode> left = nullptr;
+     std::shared_ptr<AstNode> right = nullptr;
 };
 
 #endif

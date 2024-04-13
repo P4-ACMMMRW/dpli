@@ -1,10 +1,10 @@
 #include <ArthExprNode.hpp>
 
-void ArthExprNode::addChild(AstNode* child) {
+void ArthExprNode::addChild(std::shared_ptr<AstNode> child) {
     if (left == nullptr) {
-        left = child;
+        left = std::move(child);
     } else if (right == nullptr) {
-        right = child;
+        right = std::move(child);
     } else {
         throw std::runtime_error("ArthExprNode already has two children");
     }

@@ -3,18 +3,19 @@
 
 #include <AstNode.hpp>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
 
 class ProgNode : public AstNode {
    public:
-    std::vector<AstNode*> getChildren() { return children; };
-    void addChild(AstNode* child) override;
+    std::vector<std::shared_ptr<AstNode>> getChildren() { return children; };
+    void addChild(std::shared_ptr<AstNode> child) override;
 
     void print(std::string indent, std::string prefix) override;
 
    private:
-    std::vector<AstNode*> children;
+    std::vector<std::shared_ptr<AstNode>> children;
 };
 
 #endif

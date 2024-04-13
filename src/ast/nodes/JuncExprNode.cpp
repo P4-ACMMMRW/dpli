@@ -1,10 +1,10 @@
 #include <JuncExprNode.hpp>
 
-void JuncExprNode::addChild(AstNode* node) {
+void JuncExprNode::addChild(std::shared_ptr<AstNode> node) {
     if (left == nullptr) {
-        left = node;
+        left = std::move(node);
     } else if (right == nullptr) {
-        right = node;
+        right = std::move(node);
     } else {
         throw std::runtime_error("ExprNode can only have two children");
     }

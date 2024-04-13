@@ -1,6 +1,6 @@
 #include <NotNode.hpp>
 
-void NotNode::addChild(AstNode* node) {
+void NotNode::addChild(std::shared_ptr<AstNode> node) {
     if (child == nullptr) {
         child = node;
     } else {
@@ -8,13 +8,11 @@ void NotNode::addChild(AstNode* node) {
     }
 }
 
-void NotNode::print(std::string indent = "", std::string prefix = "") {
+void NotNode::print(std::string indent, std::string prefix) {
     std::cout << indent << prefix << AstNode::getText() << "\n";
 
-    // Use a new level of indentation for the children
     std::string childIndent = indent + (prefix.empty() ? "" : (prefix == "└── " ? "    " : "│   "));
 
-    // Print the child node, if it exists
     if (child != nullptr) {
         child->print(childIndent, "└── ");
     }

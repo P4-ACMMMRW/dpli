@@ -1,6 +1,9 @@
 #include <UnaryExprNode.hpp>
+#include <memory>
 
-void UnaryExprNode::addChild(AstNode* child) { this->child = child; }
+void UnaryExprNode::addChild(std::shared_ptr<AstNode> child) {
+    this->child = std::move(child);
+}
 
 void UnaryExprNode::print(std::string indent = "", std::string prefix = "") {
     std::cout << indent << prefix << AstNode::getText() << "\n";

@@ -1,10 +1,10 @@
 #include <HeaderIndexNode.hpp>
 
-void HeaderIndexNode::addChild(AstNode* node) {
+void HeaderIndexNode::addChild(std::shared_ptr<AstNode> node) {
     if (right == nullptr) {
-        right = node;
+        right = std::move(node);
     } else if (left == nullptr) {
-        left = node;
+        left = std::move(node);
     } else {
         throw std::runtime_error("HeaderIndexNode can only have two children");
     }

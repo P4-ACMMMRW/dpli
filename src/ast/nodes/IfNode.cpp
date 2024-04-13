@@ -1,14 +1,13 @@
 #include <DplParserBaseVisitor.h>
-
 #include <IfNode.hpp>
 
-void IfNode::addChild(AstNode* node) {
+void IfNode::addChild(std::shared_ptr<AstNode> node) {
     if (condNode == nullptr) {
-        condNode = node;
+        condNode = std::move(node);
     } else if (node->getRule() == dplgrammar::DplParser::RuleElsestm) {
-        elseNode = node;
+        elseNode = std::move(node);
     } else {
-        bodyNodes.push_back(node);
+        bodyNodes.push_back(std::move(node));
     }
 }
 

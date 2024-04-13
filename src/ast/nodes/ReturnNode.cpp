@@ -1,8 +1,8 @@
 #include <ReturnNode.hpp>
 
-void ReturnNode::addChild(AstNode* node) {
+void ReturnNode::addChild(std::shared_ptr<AstNode> node) {
     if (child == nullptr) {
-        child = node;
+        child = std::move(node);
     } else {
         throw std::runtime_error("NotNode can only have one child");
     }

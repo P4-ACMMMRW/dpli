@@ -1,10 +1,10 @@
 #include <WhileNode.hpp>
 
-void WhileNode::addChild(AstNode* node) {
+void WhileNode::addChild(std::shared_ptr<AstNode> node) {
     if (condNode == nullptr) {
-        condNode = node;
+        condNode = std::move(node);
     } else {
-        stmNodes.push_back(node);
+        stmNodes.push_back(std::move(node));
     }
 }
 

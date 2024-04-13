@@ -1,6 +1,8 @@
 #include <ElseNode.hpp>
 
-void ElseNode::addChild(AstNode* node) { bodyNodes.push_back(node); }
+void ElseNode::addChild(std::shared_ptr<AstNode> node) {
+    bodyNodes.push_back(std::move(node));
+}
 
 void ElseNode::print(std::string indent = "", std::string prefix = "") {
     std::cout << indent << prefix << AstNode::getText() << "\n";

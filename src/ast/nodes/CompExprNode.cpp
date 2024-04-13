@@ -1,10 +1,10 @@
 #include <CompExprNode.hpp>
 
-void CompExprNode::addChild(AstNode* node) {
+void CompExprNode::addChild(std::shared_ptr<AstNode> node) {
     if (left == nullptr) {
-        left = node;
+        left = std::move(node);
     } else if (right == nullptr) {
-        right = node;
+        right = std::move(node);
     } else {
         throw std::runtime_error("CompExprNode already has two children");
     }

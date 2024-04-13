@@ -1,8 +1,9 @@
 #include <ParNode.hpp>
+#include <memory>
 
-void ParNode::addChild(AstNode* node) {
+void ParNode::addChild(std::shared_ptr<AstNode> node) {
     if (childNode == nullptr) {
-        childNode = node;
+        childNode = std::move(node);
     } else {
         throw std::runtime_error("ParNode can only have one child");
     }

@@ -6,6 +6,7 @@
 #include <DplParserBaseVisitor.h>
 
 #include <AllNodeIncludes.hpp>
+#include <memory>
 
 using namespace antlr4;
 using namespace dplgrammar;
@@ -14,14 +15,15 @@ class AstBuilder : public DplParserBaseVisitor {
    private:
     DplParser *parser;  // Add a parser member
     DplLexer *lexer;    // Add a lexer member
-    AstNode *root;
-    AstNode *currentNode;
+    std::shared_ptr<AstNode> root;
+    std::shared_ptr<AstNode> currentNode;
 
    public:
     AstBuilder(DplParser *parser, DplLexer *lexer)
         : parser(parser), lexer(lexer), root(nullptr), currentNode(nullptr) {}
 
     antlrcpp::Any visitProg(DplParser::ProgContext *parseNode) override;
+
     antlrcpp::Any visitBlock(DplParser::BlockContext *parseNode) override;
 
     // Declarations
@@ -59,7 +61,7 @@ class AstBuilder : public DplParserBaseVisitor {
     antlrcpp::Any visitArgs(DplParser::ArgsContext *parseNode) override;
     antlrcpp::Any visitParams(DplParser::ParamsContext *parseNode) override;
 
-    AstNode *getRoot();
+    std::shared_ptr<AstNode> getRoot();
 };
 
 #endif
