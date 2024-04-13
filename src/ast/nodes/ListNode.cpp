@@ -1,8 +1,6 @@
 #include <ListNode.hpp>
 
-void ListNode::addChild(std::shared_ptr<AstNode> node) {
-    children.push_back(std::move(node));
-}
+void ListNode::addChild(std::shared_ptr<AstNode> node) { children.push_back(std::move(node)); }
 
 void ListNode::print(std::string indent = "", std::string prefix = "") {
     std::cout << indent << prefix << AstNode::getText() << "\n";

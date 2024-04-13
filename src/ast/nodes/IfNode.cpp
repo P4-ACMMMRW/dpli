@@ -1,4 +1,5 @@
 #include <DplParserBaseVisitor.h>
+
 #include <IfNode.hpp>
 
 void IfNode::addChild(std::shared_ptr<AstNode> node) {

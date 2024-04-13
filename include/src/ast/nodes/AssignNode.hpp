@@ -4,11 +4,14 @@
 #include <AstNode.hpp>
 #include <iostream>
 #include <string>
+#include <utility>
 #include <vector>
 
 class AssignNode : public AstNode {
    public:
-    AssignNode(std::shared_ptr<AstNode> parent) : left(nullptr), right(nullptr) { AstNode::setParent(parent); }
+    AssignNode(std::shared_ptr<AstNode> parent) : left(nullptr), right(nullptr) {
+        AstNode::setParent(std::move(parent));
+    }
     std::shared_ptr<AstNode> getLeft() { return left; };
     std::shared_ptr<AstNode> getRight() { return right; };
 

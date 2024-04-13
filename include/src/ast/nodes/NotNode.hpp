@@ -5,11 +5,12 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 class NotNode : public AstNode {
    public:
-    NotNode(std::shared_ptr<AstNode> parent) : AstNode(parent){};
+    NotNode(std::shared_ptr<AstNode> parent) : AstNode(std::move(parent)){};
     std::shared_ptr<AstNode> getchild() { return child; };
 
     void addChild(std::shared_ptr<AstNode> node) override;
