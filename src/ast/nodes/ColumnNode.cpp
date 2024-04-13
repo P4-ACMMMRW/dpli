@@ -1,10 +1,11 @@
 #include <ColumnNode.hpp>
 
 void ColumnNode::addChild(AstNode* node) {
-    if (child == nullptr)
+    if (child == nullptr) {
         child = node;
-    else
+    } else {
         throw std::runtime_error("ColumnNode can only have one child");
+    }
 }
 
 void ColumnNode::print(std::string indent = "", std::string prefix = "") {

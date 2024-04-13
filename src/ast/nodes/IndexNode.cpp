@@ -1,12 +1,13 @@
 #include <IndexNode.hpp>
 
 void IndexNode::addChild(AstNode* node) {
-    if (right == nullptr)
+    if (right == nullptr) {
         right = node;
-    else if (left == nullptr)
+    } else if (left == nullptr) {
         left = node;
-    else
+    } else {
         throw std::runtime_error("IndexNode can only have two children");
+    }
 }
 
 void IndexNode::print(std::string indent = "", std::string prefix = "") {

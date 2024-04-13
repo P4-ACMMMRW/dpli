@@ -6,7 +6,7 @@ void UnaryExprNode::print(std::string indent = "", std::string prefix = "") {
     std::cout << indent << prefix << AstNode::getText() << "\n";
 
     // Use a new level of indentation for the children
-    std::string childIndent = indent + (prefix.empty() ? "" : (prefix == "└── " ? "    " : "    "));
+    std::string childIndent = indent + (prefix.empty() ? "" : "    ");
 
     // Print the child node, if it exists
     if (child != nullptr) {

@@ -13,7 +13,7 @@ class UnaryExprNode : public AstNode {
 
     void addChild(AstNode* child) override;
 
-    void print(std::string indent, std::string prefix);
+    void print(std::string indent, std::string prefix) override;
 
    private:
     AstNode* child = nullptr;

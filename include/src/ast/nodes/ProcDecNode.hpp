@@ -4,12 +4,13 @@
 #include <AstNode.hpp>
 #include <iostream>
 #include <string>
+#include <utility>
 #include <vector>
 
 class ProcDecNode : public AstNode {
    public:
     ProcDecNode(AstNode* parent) : AstNode(parent){};
-    void setName(std::string name) { this->name = name; };
+    void setName(std::string name) { this->name = std::move(name); };
 
     std::string getName() { return name; };
     std::vector<AstNode*> getParamNodes() { return paramNodes; };

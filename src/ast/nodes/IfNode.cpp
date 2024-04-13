@@ -3,12 +3,13 @@
 #include <IfNode.hpp>
 
 void IfNode::addChild(AstNode* node) {
-    if (condNode == nullptr)
+    if (condNode == nullptr) {
         condNode = node;
-    else if (node->getRule() == dplgrammar::DplParser::RuleElsestm)
+    } else if (node->getRule() == dplgrammar::DplParser::RuleElsestm) {
         elseNode = node;
-    else
+    } else {
         bodyNodes.push_back(node);
+    }
 }
 
 void IfNode::print(std::string indent = "", std::string prefix = "") {

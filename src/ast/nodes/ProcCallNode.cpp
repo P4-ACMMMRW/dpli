@@ -1,14 +1,15 @@
 #include <ProcCallNode.hpp>
 
 void ProcCallNode::addChild(AstNode* node) {
-    if (visitingParams)
+    if (visitingParams) {
         argNodes.push_back(node);
-    else if (proc == nullptr)
+    } else if (proc == nullptr) {
         proc = node;
-    else
+    } else {
         throw std::runtime_error(
             "ProcCallNode can add more children after stopped visitingParams and procdure has been "
             "added");
+    }
 }
 
 void ProcCallNode::print(std::string indent = "", std::string prefix = "") {
@@ -19,7 +20,7 @@ void ProcCallNode::print(std::string indent = "", std::string prefix = "") {
     std::string childIndent = indent + (prefix.empty() ? "" : (prefix == "└── " ? "    " : "│   "));
 
     if (proc != nullptr) {
-        proc->print(childIndent, (argNodes.size() == 0) ? "└── " : "├── Name: ");
+        proc->print(childIndent, (argNodes.empty()) ? "└── " : "├── Name: ");
     }
 
     // Print each if statement node

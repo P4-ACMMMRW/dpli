@@ -1,12 +1,13 @@
 #include <CompExprNode.hpp>
 
 void CompExprNode::addChild(AstNode* node) {
-    if (left == nullptr)
+    if (left == nullptr) {
         left = node;
-    else if (right == nullptr)
+    } else if (right == nullptr) {
         right = node;
-    else
+    } else {
         throw std::runtime_error("CompExprNode already has two children");
+    }
 }
 
 void CompExprNode::print(std::string indent = "", std::string prefix = "") {

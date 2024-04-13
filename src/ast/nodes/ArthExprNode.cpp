@@ -1,12 +1,13 @@
 #include <ArthExprNode.hpp>
 
 void ArthExprNode::addChild(AstNode* child) {
-    if (left == nullptr)
+    if (left == nullptr) {
         left = child;
-    else if (right == nullptr)
+    } else if (right == nullptr) {
         right = child;
-    else
+    } else {
         throw std::runtime_error("ArthExprNode already has two children");
+    }
 }
 
 void ArthExprNode::print(std::string indent = "", std::string prefix = "") {

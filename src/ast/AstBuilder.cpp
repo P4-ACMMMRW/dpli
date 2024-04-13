@@ -11,7 +11,9 @@ antlrcpp::Any AstBuilder::visitProg(DplParser::ProgContext* parseNode) {
     std::vector<tree::ParseTree*> children = parseNode->children;
 
     for (size_t i = 0; i < children.size(); i++) {
-        if (children[i]->getText() != "\n") children[i]->accept(this);
+        if (children[i]->getText() != "\n") {
+            children[i]->accept(this);
+        }
     }
 
     return nullptr;
@@ -25,7 +27,9 @@ antlrcpp::Any AstBuilder::visitBlock(DplParser::BlockContext* parseNode) {
 
 antlrcpp::Any AstBuilder::visitStms(DplParser::StmsContext* parseNode) {
     for (size_t i = 0; i < parseNode->children.size(); i++) {
-        if (parseNode->children[i]->getText() != "\n") parseNode->children[i]->accept(this);
+        if (parseNode->children[i]->getText() != "\n") {
+            parseNode->children[i]->accept(this);
+        }
     }
     return nullptr;
 }
@@ -57,7 +61,9 @@ antlrcpp::Any AstBuilder::visitProcdec(DplParser::ProcdecContext* parseNode) {
 }
 
 antlrcpp::Any AstBuilder::visitAssignstm(DplParser::AssignstmContext* parseNode) {
-    if (parseNode->children.size() == 1) return parseNode->children[0]->accept(this);
+    if (parseNode->children.size() == 1) {
+        return parseNode->children[0]->accept(this);
+    }
     AstNode* newNode = new AssignNode(currentNode);
     newNode->setText(parseNode->children[1]->getText());
 
@@ -160,7 +166,9 @@ antlrcpp::Any AstBuilder::visitWhilestm(DplParser::WhilestmContext* parseNode) {
 
 // Expressions  The expressions isn't correctly sequenced
 antlrcpp::Any AstBuilder::visitJuncexpr(DplParser::JuncexprContext* parseNode) {
-    if (parseNode->children.size() == 1) return parseNode->children[0]->accept(this);
+    if (parseNode->children.size() == 1) {
+        return parseNode->children[0]->accept(this);
+    }
     AstNode* newNode = new JuncExprNode(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText(parseNode->op->getText());
@@ -181,7 +189,9 @@ antlrcpp::Any AstBuilder::visitJuncexpr(DplParser::JuncexprContext* parseNode) {
 }
 
 antlrcpp::Any AstBuilder::visitNotexpr(DplParser::NotexprContext* parseNode) {
-    if (parseNode->children.size() == 1) return parseNode->children[0]->accept(this);
+    if (parseNode->children.size() == 1) {
+        return parseNode->children[0]->accept(this);
+    }
     AstNode* newNode = new NotNode(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText(parseNode->op->getText());
@@ -198,7 +208,9 @@ antlrcpp::Any AstBuilder::visitNotexpr(DplParser::NotexprContext* parseNode) {
 }
 
 antlrcpp::Any AstBuilder::visitCompexpr(DplParser::CompexprContext* parseNode) {
-    if (parseNode->children.size() == 1) return parseNode->children[0]->accept(this);
+    if (parseNode->children.size() == 1) {
+        return parseNode->children[0]->accept(this);
+    }
     AstNode* newNode = new CompExprNode(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText(parseNode->op->getText());
@@ -219,7 +231,9 @@ antlrcpp::Any AstBuilder::visitCompexpr(DplParser::CompexprContext* parseNode) {
 }
 
 antlrcpp::Any AstBuilder::visitArthexpr(DplParser::ArthexprContext* parseNode) {
-    if (parseNode->children.size() == 1) return parseNode->children[0]->accept(this);
+    if (parseNode->children.size() == 1) {
+        return parseNode->children[0]->accept(this);
+    }
     AstNode* newNode = new ArthExprNode(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText(parseNode->op->getText());
@@ -259,7 +273,9 @@ antlrcpp::Any AstBuilder::visitList(DplParser::ListContext* parseNode) {
     AstNode* oldNode = currentNode;
     currentNode = newNode;
 
-    if (parseNode->children.size() == 3) parseNode->children[1]->accept(this);
+    if (parseNode->children.size() == 3) {
+        parseNode->children[1]->accept(this);
+    }
 
     currentNode = oldNode;
 
@@ -303,7 +319,9 @@ antlrcpp::Any AstBuilder::visitColumn(DplParser::ColumnContext* parseNode) {
 }
 
 antlrcpp::Any AstBuilder::visitTerm(DplParser::TermContext* parseNode) {
-    if (parseNode->children.size() == 1) return parseNode->children[0]->accept(this);
+    if (parseNode->children.size() == 1) {
+        return parseNode->children[0]->accept(this);
+    }
 
     AstNode* newNode = new ParNode(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
@@ -321,7 +339,9 @@ antlrcpp::Any AstBuilder::visitTerm(DplParser::TermContext* parseNode) {
 }
 
 antlrcpp::Any AstBuilder::visitSubscript(DplParser::SubscriptContext* parseNode) {
-    if (parseNode->children.size() == 1) return parseNode->children[0]->accept(this);
+    if (parseNode->children.size() == 1) {
+        return parseNode->children[0]->accept(this);
+    }
 
     AstNode* oldNode = currentNode;
 
@@ -409,7 +429,9 @@ antlrcpp::Any AstBuilder::visitProccall(DplParser::ProccallContext* parseNode) {
 }
 
 antlrcpp::Any AstBuilder::visitArgs(DplParser::ArgsContext* parseNode) {
-    if (parseNode->children.size() == 1) return parseNode->children[0]->accept(this);
+    if (parseNode->children.size() == 1) {
+        return parseNode->children[0]->accept(this);
+    }
 
     for (size_t i = 0; i < parseNode->children.size(); i = i + 2) {
         parseNode->children[i]->accept(this);
@@ -419,7 +441,9 @@ antlrcpp::Any AstBuilder::visitArgs(DplParser::ArgsContext* parseNode) {
 }
 
 antlrcpp::Any AstBuilder::visitParams(DplParser::ParamsContext* parseNode) {
-    if (parseNode->children.size() == 1) return parseNode->children[0]->accept(this);
+    if (parseNode->children.size() == 1) {
+        return parseNode->children[0]->accept(this);
+    }
 
     for (size_t i = 0; i < parseNode->children.size(); i = i + 2) {
         parseNode->children[i]->accept(this);
