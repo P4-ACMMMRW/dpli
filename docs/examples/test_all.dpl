@@ -60,12 +60,12 @@ else:
 while isTrue():
     print("hi")
 
- Function declaration
+# Function declaration
 def print(str):
     out(str)
 
 
- Flow stm
+# Flow stm
 def returnOfProc(true):
     return true
 
