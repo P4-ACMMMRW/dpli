@@ -17,7 +17,7 @@ class NotNode : public AstNode {
 
     void print(std::string indent, std::string prefix) override;
 
-    void accept(AstVisitor* visitor) override;
+    void accept(std::shared_ptr<AstVisitor> visitor) override;
 
    private:
     std::shared_ptr<AstNode> childNode = nullptr;

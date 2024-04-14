@@ -26,49 +26,49 @@ class TableNode;        // Forward declaration
 class UnaryExprNode;    // Forward declaration
 class WhileNode;        // Forward declaration
 
-class AstVisitor {
+class AstVisitor : public std::enable_shared_from_this<AstVisitor> {
    public:
-    virtual void visit(ArthExprNode* node) = 0;
+    virtual void visit(std::shared_ptr<ArthExprNode> node) = 0;
 
-    virtual void visit(AssignNode* node) = 0;
+    virtual void visit(std::shared_ptr<AssignNode> node) = 0;
 
-    virtual void visit(ColumnNode* node) = 0;
+    virtual void visit(std::shared_ptr<ColumnNode> node) = 0;
 
-    virtual void visit(CompExprNode* node) = 0;
+    virtual void visit(std::shared_ptr<CompExprNode> node) = 0;
 
-    virtual void visit(ElseNode* node) = 0;
+    virtual void visit(std::shared_ptr<ElseNode> node) = 0;
 
-    virtual void visit(FilterNode* node) = 0;
+    virtual void visit(std::shared_ptr<FilterNode> node) = 0;
 
-    virtual void visit(HeaderIndexNode* node) = 0;
+    virtual void visit(std::shared_ptr<HeaderIndexNode> node) = 0;
 
-    virtual void visit(IfNode* node) = 0;
+    virtual void visit(std::shared_ptr<IfNode> node) = 0;
 
-    virtual void visit(IndexNode* node) = 0;
+    virtual void visit(std::shared_ptr<IndexNode> node) = 0;
 
-    virtual void visit(JuncExprNode* node) = 0;
+    virtual void visit(std::shared_ptr<JuncExprNode> node) = 0;
 
-    virtual void visit(LeafNode* node) = 0;
+    virtual void visit(std::shared_ptr<LeafNode> node) = 0;
 
-    virtual void visit(ListNode* node) = 0;
+    virtual void visit(std::shared_ptr<ListNode> node) = 0;
 
-    virtual void visit(NotNode* node) = 0;
+    virtual void visit(std::shared_ptr<NotNode> node) = 0;
 
-    virtual void visit(ParNode* node) = 0;
+    virtual void visit(std::shared_ptr<ParNode> node) = 0;
 
-    virtual void visit(ProcCallNode* node) = 0;
+    virtual void visit(std::shared_ptr<ProcCallNode> node) = 0;
 
-    virtual void visit(ProcDecNode* node) = 0;
+    virtual void visit(std::shared_ptr<ProcDecNode> node) = 0;
 
-    virtual void visit(ProgNode* node) = 0;
+    virtual void visit(std::shared_ptr<ProgNode> node) = 0;
 
-    virtual void visit(ReturnNode* node) = 0;
+    virtual void visit(std::shared_ptr<ReturnNode> node) = 0;
 
-    virtual void visit(TableNode* node) = 0;
+    virtual void visit(std::shared_ptr<TableNode> node) = 0;
 
-    virtual void visit(UnaryExprNode* node) = 0;
+    virtual void visit(std::shared_ptr<UnaryExprNode> node) = 0;
 
-    virtual void visit(WhileNode* node) = 0;
+    virtual void visit(std::shared_ptr<WhileNode> node) = 0;
 };
 
 #endif

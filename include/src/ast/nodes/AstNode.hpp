@@ -6,7 +6,7 @@
 #include <string>
 #include <utility>
 
-class AstNode {
+class AstNode : public std::enable_shared_from_this<AstNode> {
    public:
     AstNode(std::shared_ptr<AstNode> parent) : parent(std::move(parent)) {}
     AstNode() {}
@@ -20,7 +20,7 @@ class AstNode {
 
     virtual void print(std::string indent = "", std::string prefix = "") = 0;
     virtual void addChild(std::shared_ptr<AstNode> child) = 0;
-    virtual void accept(AstVisitor* visitor) = 0;
+    virtual void accept(std::shared_ptr<AstVisitor> visitor) = 0;
 
    private:
     size_t rule{};

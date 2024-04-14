@@ -18,4 +18,4 @@ void NotNode::print(std::string indent, std::string prefix) {
     }
 }
 
-void NotNode::accept(AstVisitor* visitor) { visitor->visit(this); };
+void NotNode::accept(std::shared_ptr<AstVisitor> visitor) { visitor->visit(std::static_pointer_cast<NotNode>(shared_from_this())); };

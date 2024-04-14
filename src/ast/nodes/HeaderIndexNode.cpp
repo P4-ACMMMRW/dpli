@@ -26,4 +26,4 @@ void HeaderIndexNode::print(std::string indent = "", std::string prefix = "") {
         rightNode->print(childIndent, "└── ");
     }
 }
-void HeaderIndexNode::accept(AstVisitor* visitor) { visitor->visit(this); };
+void HeaderIndexNode::accept(std::shared_ptr<AstVisitor> visitor) { visitor->visit(std::static_pointer_cast<HeaderIndexNode>(shared_from_this())); };

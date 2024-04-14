@@ -33,4 +33,4 @@ void ProcCallNode::print(std::string indent = "", std::string prefix = "") {
         }
     }
 }
-void ProcCallNode::accept(AstVisitor* visitor) { visitor->visit(this); };
+void ProcCallNode::accept(std::shared_ptr<AstVisitor> visitor) { visitor->visit(std::static_pointer_cast<ProcCallNode>(shared_from_this())); };

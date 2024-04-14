@@ -91,9 +91,9 @@ int main(int argc, char **argv) {
         builder.getRoot()->print();
 
         // Visitor
-        // std::shared_ptr<AstNode> root = builder.getRoot();
-        // AstTestVisitor* visitor = new AstTestVisitor();
-        // root->accept(visitor);
+        std::shared_ptr<AstNode> root = builder.getRoot();
+        std::shared_ptr<AstTestVisitor> visitor = std::make_shared<AstTestVisitor>();
+        root->accept(visitor);
     }
 
     if (!dotFile.empty()) {

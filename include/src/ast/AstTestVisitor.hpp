@@ -5,47 +5,47 @@
 
 class AstTestVisitor : public AstVisitor {
    public:
-    void visit(ArthExprNode* node) override;
+    void visit(std::shared_ptr<ArthExprNode> node) override;
 
-    void visit(AssignNode* node) override;
+    void visit(std::shared_ptr<AssignNode> node) override;
 
-    void visit(ColumnNode* node) override;
+    void visit(std::shared_ptr<ColumnNode> node) override;
 
-    void visit(CompExprNode* node) override;
+    void visit(std::shared_ptr<CompExprNode> node) override;
 
-    void visit(ElseNode* node) override;
+    void visit(std::shared_ptr<ElseNode> node) override;
 
-    void visit(FilterNode* node) override;
+    void visit(std::shared_ptr<FilterNode> node) override;
 
-    void visit(HeaderIndexNode* node) override;
+    void visit(std::shared_ptr<HeaderIndexNode> node) override;
 
-    void visit(IfNode* node) override;
+    void visit(std::shared_ptr<IfNode> node) override;
 
-    void visit(IndexNode* node) override;
+    void visit(std::shared_ptr<IndexNode> node) override;
 
-    void visit(JuncExprNode* node) override;
+    void visit(std::shared_ptr<JuncExprNode> node) override;
 
-    void visit(LeafNode* node) override;
+    void visit(std::shared_ptr<LeafNode> node) override;
 
-    void visit(ListNode* node) override;
+    void visit(std::shared_ptr<ListNode> node) override;
 
-    void visit(NotNode* node) override;
+    void visit(std::shared_ptr<NotNode> node) override;
 
-    void visit(ParNode* node) override;
+    void visit(std::shared_ptr<ParNode> node) override;
 
-    void visit(ProcCallNode* node) override;
+    void visit(std::shared_ptr<ProcCallNode> node) override;
 
-    void visit(ProcDecNode* node) override;
+    void visit(std::shared_ptr<ProcDecNode> node) override;
 
-    void visit(ProgNode* node) override;
+    void visit(std::shared_ptr<ProgNode> node) override;
 
-    void visit(ReturnNode* node) override;
+    void visit(std::shared_ptr<ReturnNode> node) override;
 
-    void visit(TableNode* node) override;
+    void visit(std::shared_ptr<TableNode> node) override;
 
-    void visit(UnaryExprNode* node) override;
+    void visit(std::shared_ptr<UnaryExprNode> node) override;
 
-    void visit(WhileNode* node) override;
+    void visit(std::shared_ptr<WhileNode> node) override;
 };
 
 #endif
