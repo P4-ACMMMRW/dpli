@@ -1,7 +1,7 @@
 #include <AstBuilder.hpp>
 
 antlrcpp::Any AstBuilder::visitProg(DplParser::ProgContext* parseNode) {
-    auto newNode = std::make_shared<ProgNode>();
+    std::shared_ptr<ProgNode> newNode = std::make_shared<ProgNode>();
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText(parser->getRuleNames()[newNode->getRule()]);
 
