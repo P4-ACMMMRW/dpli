@@ -7,3 +7,4 @@ void LeafNode::print(std::string indent = "", std::string prefix = "") {
 void LeafNode::addChild([[maybe_unused]] std::shared_ptr<AstNode> child) {
     throw std::runtime_error("LeafNode cannot have children");
 }
+void LeafNode::accept(AstVisitor* visitor) { visitor->visit(this); };

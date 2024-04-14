@@ -28,3 +28,4 @@ void ProcDecNode::print(std::string indent = "", std::string prefix = "") {
         }
     }
 }
+void ProcDecNode::accept(AstVisitor* visitor) { visitor->visit(this); };

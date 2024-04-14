@@ -17,6 +17,8 @@ class TableNode : public AstNode {
 
     void print(std::string indent, std::string prefix) override;
 
+    void accept(AstVisitor* visitor) override;
+
    private:
     std::vector<std::shared_ptr<AstNode>> columnNodes;
 };

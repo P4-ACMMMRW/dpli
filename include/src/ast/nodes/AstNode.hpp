@@ -1,6 +1,7 @@
 #ifndef ASTNODE_HPP
 #define ASTNODE_HPP
 
+#include <AstVisitor.hpp>
 #include <memory>
 #include <string>
 #include <utility>
@@ -19,6 +20,7 @@ class AstNode {
 
     virtual void print(std::string indent = "", std::string prefix = "") = 0;
     virtual void addChild(std::shared_ptr<AstNode> child) = 0;
+    virtual void accept(AstVisitor* visitor) = 0;
 
    private:
     size_t rule{};

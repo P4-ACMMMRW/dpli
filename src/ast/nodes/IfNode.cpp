@@ -36,3 +36,4 @@ void IfNode::print(std::string indent = "", std::string prefix = "") {
         elseNode->print(childIndent, "└── ");
     }
 }
+void IfNode::accept(AstVisitor* visitor) { visitor->visit(this); };

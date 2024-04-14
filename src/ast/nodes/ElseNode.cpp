@@ -18,3 +18,4 @@ void ElseNode::print(std::string indent = "", std::string prefix = "") {
         }
     }
 }
+void ElseNode::accept(AstVisitor* visitor) { visitor->visit(this); };

@@ -1,4 +1,5 @@
 #include <AstBuilder.hpp>
+#include <AstTestVisitor.hpp>
 #include <Main.hpp>
 
 using namespace antlr4;
@@ -82,11 +83,17 @@ int main(int argc, char **argv) {
         //        for (antlr4::Token *token : tokens.getTokens()) {
         //            std::cout << token->toString() << '\n';
         //        }
-        std::cout << tree->toStringTree(&parser, true) << "\n\n";
+        // std::cout << tree->toStringTree(&parser, true) << "\n\n";
 
+        // Ast print
         AstBuilder builder{&parser, &lexer};
         builder.visit(tree);
         builder.getRoot()->print();
+
+        // Visitor
+        // std::shared_ptr<AstNode> root = builder.getRoot();
+        // AstTestVisitor* visitor = new AstTestVisitor();
+        // root->accept(visitor);
     }
 
     if (!dotFile.empty()) {

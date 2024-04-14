@@ -20,6 +20,8 @@ class ProcCallNode : public AstNode {
 
     void print(std::string indent, std::string prefix) override;
 
+    void accept(AstVisitor* visitor) override;
+
    private:
     std::shared_ptr<AstNode> proc = nullptr;
     std::vector<std::shared_ptr<AstNode>> argNodes;

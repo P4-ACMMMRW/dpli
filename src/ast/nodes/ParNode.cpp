@@ -20,3 +20,4 @@ void ParNode::print(std::string indent = "", std::string prefix = "") {
         childNode->print(childIndent, "└── ");
     }
 }
+void ParNode::accept(AstVisitor* visitor) { visitor->visit(this); };

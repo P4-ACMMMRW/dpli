@@ -17,6 +17,8 @@ class ParNode : public AstNode {
 
     void print(std::string indent, std::string prefix) override;
 
+    void accept(AstVisitor* visitor) override;
+
    private:
     std::shared_ptr<AstNode> childNode = nullptr;
 };

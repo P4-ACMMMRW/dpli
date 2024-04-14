@@ -1,8 +1,8 @@
 #include <NotNode.hpp>
 
 void NotNode::addChild(std::shared_ptr<AstNode> node) {
-    if (child == nullptr) {
-        child = node;
+    if (childNode == nullptr) {
+        childNode = node;
     } else {
         throw std::runtime_error("NotNode can only have one child");
     }
@@ -13,7 +13,9 @@ void NotNode::print(std::string indent, std::string prefix) {
 
     std::string childIndent = indent + (prefix.empty() ? "" : (prefix == "└── " ? "    " : "│   "));
 
-    if (child != nullptr) {
-        child->print(childIndent, "└── ");
+    if (childNode != nullptr) {
+        childNode->print(childIndent, "└── ");
     }
 }
+
+void NotNode::accept(AstVisitor* visitor) { visitor->visit(this); };

@@ -16,3 +16,4 @@ void ListNode::print(std::string indent = "", std::string prefix = "") {
         }
     }
 }
+void ListNode::accept(AstVisitor* visitor) { visitor->visit(this); };

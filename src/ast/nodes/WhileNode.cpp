@@ -29,3 +29,4 @@ void WhileNode::print(std::string indent = "", std::string prefix = "") {
         }
     }
 }
+void WhileNode::accept(AstVisitor* visitor) { visitor->visit(this); };

@@ -15,3 +15,5 @@ void ProgNode::print(std::string indent, std::string prefix) {
         }
     }
 }
+
+void ProgNode::accept(AstVisitor* visitor) { visitor->visit(this); };

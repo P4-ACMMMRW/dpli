@@ -33,3 +33,4 @@ void ProcCallNode::print(std::string indent = "", std::string prefix = "") {
         }
     }
 }
+void ProcCallNode::accept(AstVisitor* visitor) { visitor->visit(this); };

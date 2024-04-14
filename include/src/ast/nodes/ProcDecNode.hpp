@@ -23,6 +23,8 @@ class ProcDecNode : public AstNode {
 
     void print(std::string indent, std::string prefix) override;
 
+    void accept(AstVisitor* visitor) override;
+
    private:
     bool visitingParams = true;
     std::string name;

@@ -14,6 +14,8 @@ class LeafNode : public AstNode {
 
     void print(std::string indent, std::string prefix) override;
     void addChild([[maybe_unused]] std::shared_ptr<AstNode> child) override;
+
+    void accept(AstVisitor* visitor) override;
 };
 
 #endif

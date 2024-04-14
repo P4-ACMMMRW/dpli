@@ -18,3 +18,4 @@ void TableNode::print(std::string indent = "", std::string prefix = "") {
         }
     }
 }
+void TableNode::accept(AstVisitor* visitor) { visitor->visit(this); };
