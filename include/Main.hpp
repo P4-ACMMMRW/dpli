@@ -11,6 +11,9 @@
 #include <iostream>
 #include <regex>
 
+#include <AstBuilder.hpp>
+#include <AstTestVisitor.hpp>
+
 /**
  * Generate file which is used for visualizing the parse tree
  */
