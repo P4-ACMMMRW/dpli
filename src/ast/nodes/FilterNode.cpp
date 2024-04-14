@@ -26,4 +26,6 @@ void FilterNode::print(std::string indent = "", std::string prefix = "") {
         rightNode->print(childIndent, "└── ");
     }
 }
-void FilterNode::accept(std::shared_ptr<AstVisitor> visitor) { visitor->visit(std::static_pointer_cast<FilterNode>(shared_from_this())); };
+void FilterNode::accept(std::shared_ptr<AstVisitor> visitor) {
+    visitor->visit(std::static_pointer_cast<FilterNode>(shared_from_this()));
+};

@@ -36,4 +36,6 @@ void IfNode::print(std::string indent = "", std::string prefix = "") {
         elseNode->print(childIndent, "└── ");
     }
 }
-void IfNode::accept(std::shared_ptr<AstVisitor> visitor) { visitor->visit(std::static_pointer_cast<IfNode>(shared_from_this())); };
+void IfNode::accept(std::shared_ptr<AstVisitor> visitor) {
+    visitor->visit(std::static_pointer_cast<IfNode>(shared_from_this()));
+};

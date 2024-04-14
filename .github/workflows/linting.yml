@@ -2,7 +2,7 @@ name: Linting
 on:
   pull_request:
     branches: [main]
-    paths: ['**/*.cpp', '**/*.hpp', '!lib/**']
+    paths: ['**/*.cpp', '**/*.hpp', '!lib/**', '!tests/**']
 
 jobs:
   lint:
