@@ -5,14 +5,13 @@
 #include <DplParser.h>
 #include <antlr4-runtime.h>
 
+#include <AstBuilder.hpp>
+#include <AstTestVisitor.hpp>
 #include <argz.hpp>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <regex>
-
-#include <AstBuilder.hpp>
-#include <AstTestVisitor.hpp>
 
 /**
  * Generate file which is used for visualizing the parse tree

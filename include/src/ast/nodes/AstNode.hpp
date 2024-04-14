@@ -8,9 +8,16 @@
 
 class AstNode : public std::enable_shared_from_this<AstNode> {
    public:
-    AstNode(std::shared_ptr<AstNode> parent) : parent(std::move(parent)) {}
     AstNode() {}
-    virtual ~AstNode() {}
+    AstNode(std::shared_ptr<AstNode> parent) : parent(std::move(parent)) {}
+
+    // Rule of five
+    virtual ~AstNode() = default;
+    AstNode(const AstNode& other) = default;
+    AstNode& operator=(AstNode&& other) = default;
+    AstNode(AstNode&& other) = default;
+    AstNode& operator=(const AstNode& other) = default;
+
     size_t getRule() const { return rule; }
     std::string getText() { return text; }
     std::shared_ptr<AstNode> getParent() { return parent; }
@@ -24,7 +31,7 @@ class AstNode : public std::enable_shared_from_this<AstNode> {
 
    private:
     size_t rule{};
-    std::shared_ptr<AstNode> parent{};
+    std::shared_ptr<AstNode> parent;
     std::string text;
 };
 

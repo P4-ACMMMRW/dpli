@@ -23,7 +23,7 @@ class ProcCallNode : public AstNode {
     void accept(std::shared_ptr<AstVisitor> visitor) override;
 
    private:
-    std::shared_ptr<AstNode> proc = nullptr;
+    std::shared_ptr<AstNode> proc;
     std::vector<std::shared_ptr<AstNode>> argNodes;
     bool visitingParams = true;
 };

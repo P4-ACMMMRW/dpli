@@ -14,17 +14,14 @@
 #define LEXER_TEST(name) TEST_CASE("Lexer -- " #name, "[lexer]")
 #define PARSER_TEST(name) TEST_CASE("Parser -- " #name, "[parser]")
 
-using namespace antlr4;
-using namespace dplgrammar;
-
 namespace dplutil {
     class TestVisitor : public dplgrammar::DplParserBaseVisitor {
         private:
-            DplParser* parser; // Add a parser member
-            std::vector<int> expectedTreeNodes;
+            dplgrammar::DplParser* parser; // Add a parser member
+            std::vector<size_t> expectedTreeNodes;
 
         public:
-            TestVisitor(DplParser* parser, std::vector<int> expectedTreeNodes) 
+            TestVisitor(DplParser* parser, std::vector<size_t> expectedTreeNodes) 
                 : parser(parser), expectedTreeNodes(expectedTreeNodes) {} 
 
             void printTokens(int ruleIndex);
@@ -35,7 +32,7 @@ namespace dplutil {
     class TestingUtil {
         public:
             static void testTokens(std::string testFileName, std::vector<size_t> expectedTokenTypes);
-            static void testParser(std::string testFileName, std::vector<int> expectedTreeNodes);
+            static void testParser(std::string testFileName, std::vector<size_t> expectedTreeNodes);
 
         private:
             static constexpr std::string_view exampleLocation = "../../docs/examples/"; 

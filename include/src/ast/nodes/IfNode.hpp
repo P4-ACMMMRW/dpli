@@ -22,9 +22,9 @@ class IfNode : public AstNode {
     void accept(std::shared_ptr<AstVisitor> visitor) override;
 
    private:
-    std::shared_ptr<AstNode> condNode = nullptr;
+    std::shared_ptr<AstNode> condNode;
     std::vector<std::shared_ptr<AstNode>> bodyNodes;
-    std::shared_ptr<AstNode> elseNode = nullptr;
+    std::shared_ptr<AstNode> elseNode;
 };
 
 #endif

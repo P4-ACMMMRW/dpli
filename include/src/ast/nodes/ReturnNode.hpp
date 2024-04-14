@@ -20,7 +20,7 @@ class ReturnNode : public AstNode {
     void accept(std::shared_ptr<AstVisitor> visitor) override;
 
    private:
-    std::shared_ptr<AstNode> childNode = nullptr;
+    std::shared_ptr<AstNode> childNode;
 };
 
 #endif

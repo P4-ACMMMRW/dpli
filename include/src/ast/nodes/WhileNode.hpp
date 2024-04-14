@@ -21,7 +21,7 @@ class WhileNode : public AstNode {
     void accept(std::shared_ptr<AstVisitor> visitor) override;
 
    private:
-    std::shared_ptr<AstNode> condNode = nullptr;
+    std::shared_ptr<AstNode> condNode;
     std::vector<std::shared_ptr<AstNode>> stmNodes;
 };
 

@@ -1,3 +1,4 @@
+
 #include <Main.hpp>
 
 using namespace antlr4;
@@ -100,8 +101,9 @@ void generateDotFile(tree::ParseTree *root, const std::string &fileName) {
     std::ofstream out{std::filesystem::path(fileName)};
 
     std::stack<std::pair<tree::ParseTree *, std::string>> stack;
-    std::string rootId = std::to_string(reinterpret_cast<std::uintptr_t>(root));
 
+    std::size_t rootIdHash = std::hash<decltype(root)>()(root);
+    std::string rootId = std::to_string(rootIdHash);
     stack.push({root, rootId});
 
     out << "digraph {\n";
@@ -112,7 +114,8 @@ void generateDotFile(tree::ParseTree *root, const std::string &fileName) {
         std::string parentId = nodeAndParentId.second;
         stack.pop();
 
-        std::string nodeId = std::to_string(reinterpret_cast<std::uintptr_t>(node));
+        std::size_t nodeIdHash = std::hash<decltype(node)>()(node);
+        std::string nodeId = std::to_string(nodeIdHash);
 
         // Escape quotation marks in label
         std::string label = std::regex_replace(node->getText(), std::regex("\""), "\\\"");

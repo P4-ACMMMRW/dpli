@@ -20,8 +20,8 @@ class HeaderIndexNode : public AstNode {
     void accept(std::shared_ptr<AstVisitor> visitor) override;
 
    private:
-    std::shared_ptr<AstNode> leftNode = nullptr;
-    std::shared_ptr<AstNode> rightNode = nullptr;
+    std::shared_ptr<AstNode> leftNode;
+    std::shared_ptr<AstNode> rightNode;
 };
 
 #endif
