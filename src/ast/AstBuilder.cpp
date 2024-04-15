@@ -16,13 +16,13 @@ antlrcpp::Any AstBuilder::visitProg(DplParser::ProgContext* parseNode) {
         }
     }
 
-    return nullptr;
+    return void;
 }
 
 antlrcpp::Any AstBuilder::visitBlock(DplParser::BlockContext* parseNode) {
     parseNode->children[2]->accept(this);
 
-    return nullptr;
+    return void;
 }
 
 antlrcpp::Any AstBuilder::visitStms(DplParser::StmsContext* parseNode) {
@@ -31,7 +31,7 @@ antlrcpp::Any AstBuilder::visitStms(DplParser::StmsContext* parseNode) {
             parseNode->children[i]->accept(this);
         }
     }
-    return nullptr;
+    return void;
 }
 
 antlrcpp::Any AstBuilder::visitProcdec(DplParser::ProcdecContext* parseNode) {
@@ -57,7 +57,7 @@ antlrcpp::Any AstBuilder::visitProcdec(DplParser::ProcdecContext* parseNode) {
 
     currentNode = oldNode;
 
-    return nullptr;
+    return void;
 }
 
 antlrcpp::Any AstBuilder::visitAssignstm(DplParser::AssignstmContext* parseNode) {
@@ -79,7 +79,7 @@ antlrcpp::Any AstBuilder::visitAssignstm(DplParser::AssignstmContext* parseNode)
 
     currentNode = oldNode;
 
-    return nullptr;
+    return void;
 }
 
 // Return
@@ -98,7 +98,7 @@ antlrcpp::Any AstBuilder::visitReturnstm(DplParser::ReturnstmContext* parseNode)
 
     currentNode = oldNode;
 
-    return nullptr;
+    return void;
 }
 
 // IF-ELSE
@@ -124,7 +124,7 @@ antlrcpp::Any AstBuilder::visitIfstm(DplParser::IfstmContext* parseNode) {
 
     currentNode = oldNode;
 
-    return nullptr;
+    return void;
 }
 
 antlrcpp::Any AstBuilder::visitElsestm(DplParser::ElsestmContext* parseNode) {
@@ -140,7 +140,7 @@ antlrcpp::Any AstBuilder::visitElsestm(DplParser::ElsestmContext* parseNode) {
 
     currentNode = oldNode;
 
-    return nullptr;
+    return void;
 }
 
 // While
@@ -161,7 +161,7 @@ antlrcpp::Any AstBuilder::visitWhilestm(DplParser::WhilestmContext* parseNode) {
 
     currentNode = oldNode;
 
-    return nullptr;
+    return void;
 }
 
 // Expressions  The expressions isn't correctly sequenced
@@ -185,7 +185,7 @@ antlrcpp::Any AstBuilder::visitJuncexpr(DplParser::JuncexprContext* parseNode) {
 
     currentNode = oldNode;
 
-    return nullptr;
+    return void;
 }
 
 antlrcpp::Any AstBuilder::visitNotexpr(DplParser::NotexprContext* parseNode) {
@@ -204,7 +204,7 @@ antlrcpp::Any AstBuilder::visitNotexpr(DplParser::NotexprContext* parseNode) {
 
     currentNode = oldNode;
 
-    return nullptr;
+    return void;
 }
 
 antlrcpp::Any AstBuilder::visitCompexpr(DplParser::CompexprContext* parseNode) {
@@ -227,7 +227,7 @@ antlrcpp::Any AstBuilder::visitCompexpr(DplParser::CompexprContext* parseNode) {
 
     currentNode = oldNode;
 
-    return nullptr;
+    return void;
 }
 
 antlrcpp::Any AstBuilder::visitArthexpr(DplParser::ArthexprContext* parseNode) {
@@ -250,7 +250,7 @@ antlrcpp::Any AstBuilder::visitArthexpr(DplParser::ArthexprContext* parseNode) {
 
     currentNode = oldNode;
 
-    return nullptr;
+    return void;
 }
 
 // Terms
@@ -261,7 +261,7 @@ antlrcpp::Any AstBuilder::visitTerminal(tree::TerminalNode* node) {
 
     currentNode->addChild(newNode);
 
-    return nullptr;
+    return void;
 }
 
 antlrcpp::Any AstBuilder::visitList(DplParser::ListContext* parseNode) {
@@ -279,7 +279,7 @@ antlrcpp::Any AstBuilder::visitList(DplParser::ListContext* parseNode) {
 
     currentNode = oldNode;
 
-    return nullptr;
+    return void;
 }
 
 antlrcpp::Any AstBuilder::visitTable(DplParser::TableContext* parseNode) {
@@ -299,7 +299,7 @@ antlrcpp::Any AstBuilder::visitTable(DplParser::TableContext* parseNode) {
 
     currentNode = oldNode;
 
-    return nullptr;
+    return void;
 }
 
 antlrcpp::Any AstBuilder::visitColumn(DplParser::ColumnContext* parseNode) {
@@ -315,7 +315,7 @@ antlrcpp::Any AstBuilder::visitColumn(DplParser::ColumnContext* parseNode) {
 
     currentNode = oldNode;
 
-    return nullptr;
+    return void;
 }
 
 antlrcpp::Any AstBuilder::visitTerm(DplParser::TermContext* parseNode) {
@@ -335,7 +335,7 @@ antlrcpp::Any AstBuilder::visitTerm(DplParser::TermContext* parseNode) {
 
     currentNode = oldNode;
 
-    return nullptr;
+    return void;
 }
 
 antlrcpp::Any AstBuilder::visitSubscript(DplParser::SubscriptContext* parseNode) {
@@ -351,7 +351,7 @@ antlrcpp::Any AstBuilder::visitSubscript(DplParser::SubscriptContext* parseNode)
 
     currentNode = oldNode;
 
-    return nullptr;
+    return void;
 }
 
 antlrcpp::Any AstBuilder::visitIndex(DplParser::IndexContext* parseNode) {
@@ -364,7 +364,7 @@ antlrcpp::Any AstBuilder::visitIndex(DplParser::IndexContext* parseNode) {
 
     parseNode->children[1]->accept(this);
 
-    return nullptr;
+    return void;
 }
 
 antlrcpp::Any AstBuilder::visitHeaderindex(DplParser::HeaderindexContext* parseNode) {
@@ -377,7 +377,7 @@ antlrcpp::Any AstBuilder::visitHeaderindex(DplParser::HeaderindexContext* parseN
 
     parseNode->children[2]->accept(this);
 
-    return nullptr;
+    return void;
 }
 
 antlrcpp::Any AstBuilder::visitFiltering(DplParser::FilteringContext* parseNode) {
@@ -390,7 +390,7 @@ antlrcpp::Any AstBuilder::visitFiltering(DplParser::FilteringContext* parseNode)
 
     parseNode->children[1]->accept(this);
 
-    return nullptr;
+    return void;
 }
 
 antlrcpp::Any AstBuilder::visitUnaryexpr(DplParser::UnaryexprContext* parseNode) {
@@ -406,7 +406,7 @@ antlrcpp::Any AstBuilder::visitUnaryexpr(DplParser::UnaryexprContext* parseNode)
 
     currentNode = oldNode;
 
-    return nullptr;
+    return void;
 }
 
 antlrcpp::Any AstBuilder::visitProccall(DplParser::ProccallContext* parseNode) {
@@ -419,13 +419,13 @@ antlrcpp::Any AstBuilder::visitProccall(DplParser::ProccallContext* parseNode) {
 
     if (parseNode->children.size() == 2) {
         newNode->stopVisitingParams();
-        return nullptr;
+        return void;
     }
 
     parseNode->children[1]->accept(this);
     newNode->stopVisitingParams();
 
-    return nullptr;
+    return void;
 }
 
 antlrcpp::Any AstBuilder::visitArgs(DplParser::ArgsContext* parseNode) {
@@ -437,7 +437,7 @@ antlrcpp::Any AstBuilder::visitArgs(DplParser::ArgsContext* parseNode) {
         parseNode->children[i]->accept(this);
     }
 
-    return nullptr;
+    return void;
 }
 
 antlrcpp::Any AstBuilder::visitParams(DplParser::ParamsContext* parseNode) {
@@ -449,7 +449,7 @@ antlrcpp::Any AstBuilder::visitParams(DplParser::ParamsContext* parseNode) {
         parseNode->children[i]->accept(this);
     }
 
-    return nullptr;
+    return void;
 }
 
 std::shared_ptr<AstNode> AstBuilder::getRoot() { return root; }
