@@ -15,19 +15,16 @@ int main(int argc, char **argv) {
     about.print_help_when_no_options = false;
 
     bool debug = false;
-    std::string dotFile{};
+    argz::options options{{{"debug", 'd'}, debug, "enable debug output"}};
 
-    argz::options options{{{"debug", 'd'}, debug, "enable debug output"},
-                          {{"Dot", 'D'}, dotFile, "generate a DOT file for the parse tree"}};
-
-    if (args.size() < 2) {
+    if (argc < 2) {
         argz::help(about, options);
         return EXIT_SUCCESS;
     }
 
-    size_t fileArgIndex = 0;
+    int fileArgIndex = 0;
     bool isOption = true;
-    for (size_t i = 1; i < args.size(); ++i) {
+    for (int i = 1; i < argc; ++i) {
         isOption = std::string(args[i]) == "-h" || std::string(args[i]) == "--help" ||
                    std::string(args[i]) == "-v" || std::string(args[i]) == "--version";
 
@@ -86,10 +83,6 @@ int main(int argc, char **argv) {
         }
 
         std::cout << tree->toStringTree(&parser, true) << "\n\n";
-    }
-
-    if (!dotFile.empty()) {
-        generateDotFile(tree, dotFile);
     }
 
     return EXIT_SUCCESS;

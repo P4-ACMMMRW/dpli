@@ -30,6 +30,6 @@ for file in $(find . -name '*.cpp' -o -name '*.hpp' | grep -v -e './lib' -e './b
         continue
     fi
     
-    clang-tidy -p build -checks='boost-*,bugprone-*,performance-*,readability-*,portability-*,clang-analyzer-*,cppcoreguidelines-*' -fix -extra-arg=-std=c++17 $file
+    clang-tidy -p build -checks='boost-*,bugprone-*,performance-*,readability-*,portability-*,clang-analyzer-*,cppcoreguidelines-*' -fix -extra-arg=-std=c++20 $file
     echo ""
 done
