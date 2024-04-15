@@ -4,13 +4,10 @@ using namespace antlr4;
 using namespace dplgrammar;
 
 int main(int argc, char **argv) {
-    // Put args in span for safe handling
-    std::span<char *> args = std::span(argv, size_t(argc));
-
     std::string description = "DPL Interpreter";
     std::string version = "0.0.1";
     std::string author = "P4-ACMMMRW";
-    std::string usage = std::string(args[0]) + " [options] <input file> [arguments]";
+    std::string usage = std::string(argv[0]) + " [options] <input file> [arguments]";
     argz::about about{description, version, author, usage};
     about.print_help_when_no_options = false;
 
@@ -25,8 +22,8 @@ int main(int argc, char **argv) {
     int fileArgIndex = 0;
     bool isOption = true;
     for (int i = 1; i < argc; ++i) {
-        isOption = std::string(args[i]) == "-h" || std::string(args[i]) == "--help" ||
-                   std::string(args[i]) == "-v" || std::string(args[i]) == "--version";
+        isOption = std::strcmp(argv[i], "-h") == 0 || std::strcmp(argv[i], "--help") == 0 ||
+                   std::strcmp(argv[i], "-v") == 0 || std::strcmp(argv[i], "--version") == 0;
 
         if (!isOption) {
             fileArgIndex = i;
@@ -34,7 +31,7 @@ int main(int argc, char **argv) {
         }
     }
 
-    // Parse all arguments except fileArgIndex and args[0]
+    // Parse all arguments except fileArgIndex and argv[0]
     try {
         argz::parse(about, options, argc, argv, fileArgIndex);
     } catch (const std::exception &e) {
@@ -49,22 +46,22 @@ int main(int argc, char **argv) {
     }
 
     // If after options comes an argument write error
-    if (args[fileArgIndex][0] == '-') {
-        std::cerr << "Error: expected input file but received argument \"" << args[fileArgIndex]
+    if (argv[fileArgIndex][0] == '-') {
+        std::cerr << "Error: expected input file but received argument \"" << argv[fileArgIndex]
                   << "\"\n";
         std::cout << "Usage: " << usage << '\n';
         return EXIT_FAILURE;
     }
 
     // Check if input file exists
-    if (!std::filesystem::exists(args[fileArgIndex])) {
-        std::cerr << "Error: file \"" << args[fileArgIndex] << "\" not found\n";
+    if (!std::filesystem::exists(argv[fileArgIndex])) {
+        std::cerr << "Error: file \"" << argv[fileArgIndex] << "\" not found\n";
         return EXIT_FAILURE;
     }
 
-    std::ifstream file{std::filesystem::path(args[fileArgIndex])};
+    std::ifstream file{std::filesystem::path(argv[fileArgIndex])};
     if (!file.is_open()) {
-        std::cerr << "Error: file \"" << args[fileArgIndex] << "\" could not be opened\n";
+        std::cerr << "Error: file \"" << argv[fileArgIndex] << "\" could not be opened\n";
         return EXIT_FAILURE;
     }
 
