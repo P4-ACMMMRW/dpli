@@ -3,7 +3,8 @@
 
 #include "Symbol.hpp"
 #include "SymbolTableEntry.hpp"
-// #include <ASTBuilder.hpp>
+#include "SymbolTable.hpp"
+// #include <ASTVisitor.hpp>
 
 namespace dplsrc {
 
@@ -14,16 +15,16 @@ struct ExprResult {
 
 class TypeChecker {
    public:
-    // visitor stuff. add when visitor is ready
-    /*
+  
     std::any visitAssignstm(AssignNode *node) override;
     std::any visitArthexpr(ArthExprNode *node) override;
     std::any visitCompexpr(CompExprNode *node) override;
-    std::any visitIndex(IndexNode *node) override;
     std::any visitFiltering(FilterNode *node) override;
+    std::any visitIndex(IndexNode *node) override;
+    std::any visitNotexpr(NotNode *node) override;
     std::any visitUnaryexpr(UnaryExprNode *node) override;
+    std::any visitWhilestm(WhileNode *node) override;
 
-    */
 };
 }  // namespace dplsrc
 

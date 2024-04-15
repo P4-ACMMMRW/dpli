@@ -11,6 +11,7 @@
 #include <iostream>
 #include <regex>
 
+
 /**
  * Generate file which is used for visualizing the parse tree
  */

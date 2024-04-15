@@ -27,6 +27,7 @@ class Symbol {
     std::string getType() const;
     bool is(SymbolType type) const;
     bool isOneOf(const std::initializer_list<SymbolType> &types) const;
+    void setEvaluatedSymbolType(const SymbolType &type) { this->type = type; }
 
    private:
     std::string id;
