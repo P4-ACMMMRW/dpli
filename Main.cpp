@@ -1,5 +1,4 @@
 #include <Main.hpp>
-#include <span>
 
 using namespace antlr4;
 using namespace dplgrammar;
@@ -29,8 +28,8 @@ int main(int argc, char **argv) {
     size_t fileArgIndex = 0;
     bool isOption = true;
     for (size_t i = 1; i < args.size(); ++i) {
-        isOption =
-            std::string(args[i]) == "-h" || std::string(args[i]) == "--help" || std::string(args[i]) == "-v" || std::string(args[i]) == "--version";
+        isOption = std::string(args[i]) == "-h" || std::string(args[i]) == "--help" ||
+                   std::string(args[i]) == "-v" || std::string(args[i]) == "--version";
 
         if (!isOption) {
             fileArgIndex = i;
@@ -94,40 +93,4 @@ int main(int argc, char **argv) {
     }
 
     return EXIT_SUCCESS;
-}
-
-void generateDotFile(tree::ParseTree *root, const std::string &fileName) {
-    std::ofstream out{std::filesystem::path(fileName)};
-
-    std::stack<std::pair<tree::ParseTree *, std::string>> stack;
-    std::string rootId = std::to_string(reinterpret_cast<std::uintptr_t>(root));
-
-    stack.push({root, rootId});
-
-    out << "digraph {\n";
-
-    while (!stack.empty()) {
-        std::pair<tree::ParseTree *, std::string> nodeAndParentId = stack.top();
-        tree::ParseTree *node = nodeAndParentId.first;
-        std::string parentId = nodeAndParentId.second;
-        stack.pop();
-
-        std::string nodeId = std::to_string(reinterpret_cast<std::uintptr_t>(node));
-
-        // Escape quotation marks in label
-        std::string label = std::regex_replace(node->getText(), std::regex("\""), "\\\"");
-
-        out << "  " << nodeId << " [label=\"" << label << "\"];\n";
-        if (!parentId.empty()) {
-            out << "  " << parentId << " -> " << nodeId << ";\n";
-        }
-
-        // Push the node's children on stack
-        for (std::vector<tree::ParseTree *>::reverse_iterator it = node->children.rbegin();
-             it != node->children.rend(); ++it) {
-            stack.push({*it, nodeId});
-        }
-    }
-
-    out << "}\n";
 }

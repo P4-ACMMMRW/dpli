@@ -25,8 +25,16 @@ After compiling the interpreter tests can be run using the ```run_tests.sh``` sc
 ./run_tests.sh
 ```
 
-#### Generate Parse Tree PNG
-A PNG of the parse tree can be generated using the ```generate_tree.sh``` script
+## Linting
+Linting can be done with
 ```bash
-./generate_tree.sh <input-file> <output-file>
+./linter.sh
 ```
+or
+```bash
+./linter format-only
+```
+to skip clang-tidy checks.
+
+## Benchmarking
+Benchmarking can be done with ./bench.sh
