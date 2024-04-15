@@ -15,7 +15,7 @@ fi
 # Check if wsl2
 if grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null; then
     echo "WSL2 detected. Using perf_wsl2..."
-    run_perf ./perf_wsl2
+    run_perf ./lib/perf/perf_wsl2
     exit 0
 fi
 
