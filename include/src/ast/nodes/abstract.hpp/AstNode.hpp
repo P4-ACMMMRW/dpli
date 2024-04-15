@@ -25,7 +25,7 @@ class AstNode : public std::enable_shared_from_this<AstNode> {
     void setText(std::string text) { this->text = std::move(text); }
     void setParent(std::shared_ptr<AstNode> parent) { this->parent = std::move(parent); }
 
-    virtual void print(std::string indent = "", std::string prefix = "") = 0;
+    virtual std::string print(std::string indent = "", std::string prefix = "") = 0;
     virtual void addChild(std::shared_ptr<AstNode> child) = 0;
     virtual void accept(std::shared_ptr<AstVisitor> visitor) = 0;
 

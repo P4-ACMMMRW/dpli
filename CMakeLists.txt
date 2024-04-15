@@ -52,7 +52,8 @@ target_include_directories(dpllib PUBLIC
     ${PROJECT_SOURCE_DIR}/lib/argz 
     ${PROJECT_SOURCE_DIR}/include/src
     ${PROJECT_SOURCE_DIR}/include/src/ast
-    ${PROJECT_SOURCE_DIR}/include/src/ast/nodes)
+    ${PROJECT_SOURCE_DIR}/include/src/ast/nodes
+    ${PROJECT_SOURCE_DIR}/include/src/ast/nodes/abstract)
 
 target_link_libraries(dpllib PUBLIC antlr4_static)
 
