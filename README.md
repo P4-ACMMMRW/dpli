@@ -37,4 +37,7 @@ or
 to skip clang-tidy checks.
 
 ## Benchmarking
-Benchmarking can be done with ./bench.sh
+Benchmarking can be done with 
+```bash
+./bench.sh
+```
