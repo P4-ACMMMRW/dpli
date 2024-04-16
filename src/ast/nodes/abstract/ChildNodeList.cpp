@@ -10,3 +10,8 @@ std::string ChildNodeList::print(std::string indent, std::string prefix) {
         childNodeList[i]->print(indent, bodyPrefix);
     }
 }
+
+
+void ChildNodeList::accept(std::shared_ptr<AstVisitor> visitor) {
+    throw std::runtime_error("Can't accept composite node");
+}

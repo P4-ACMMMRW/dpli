@@ -20,12 +20,14 @@ antlrcpp::Any AstBuilder::visitProg(DplParser::ProgContext* parseNode) {
 }
 
 antlrcpp::Any AstBuilder::visitBlock(DplParser::BlockContext* parseNode) {
+    std::cout << "got to Block" << "\n";
     parseNode->children[2]->accept(this);
 
     return nullptr;
 }
 
 antlrcpp::Any AstBuilder::visitStms(DplParser::StmsContext* parseNode) {
+    std::cout << "got to stms" << "\n";
     for (size_t i = 0; i < parseNode->children.size(); i++) {
         if (parseNode->children[i]->getText() != "\n") {
             parseNode->children[i]->accept(this);
@@ -35,7 +37,7 @@ antlrcpp::Any AstBuilder::visitStms(DplParser::StmsContext* parseNode) {
 }
 
 antlrcpp::Any AstBuilder::visitProcdec(DplParser::ProcdecContext* parseNode) {
-
+    std::cout << "got to ProcDec" << "\n";
     std::shared_ptr<ProcDecNode> newNode = std::make_shared<ProcDecNode>(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText("def ()");
@@ -65,6 +67,8 @@ antlrcpp::Any AstBuilder::visitAssignstm(DplParser::AssignstmContext* parseNode)
     if (parseNode->children.size() == 1) {
         return parseNode->children[0]->accept(this);
     }
+    std::cout << "got to Assign" << "\n";
+
     std::shared_ptr<AstNode> newNode = std::make_shared<AssignNode>(currentNode);
     newNode->setText(parseNode->children[1]->getText());
 
@@ -72,11 +76,13 @@ antlrcpp::Any AstBuilder::visitAssignstm(DplParser::AssignstmContext* parseNode)
     std::shared_ptr<AstNode> oldNode = currentNode;
     currentNode = newNode;
 
+
     // Left Node
     parseNode->children[0]->accept(this);
 
     // Right Node
     parseNode->children[2]->accept(this);
+    
 
     currentNode = oldNode;
 
@@ -85,6 +91,7 @@ antlrcpp::Any AstBuilder::visitAssignstm(DplParser::AssignstmContext* parseNode)
 
 // Return
 antlrcpp::Any AstBuilder::visitReturnstm(DplParser::ReturnstmContext* parseNode) {
+    std::cout << "got to ReturnStm" << "\n";
     std::shared_ptr<AstNode> newNode = std::make_shared<ReturnNode>(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText("Return");
@@ -104,6 +111,7 @@ antlrcpp::Any AstBuilder::visitReturnstm(DplParser::ReturnstmContext* parseNode)
 
 // IF-ELSE
 antlrcpp::Any AstBuilder::visitIfstm(DplParser::IfstmContext* parseNode) {
+    std::cout << "got to IfStm" << "\n";
     std::shared_ptr<AstNode> newNode = std::make_shared<IfNode>(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText("If");
@@ -129,6 +137,7 @@ antlrcpp::Any AstBuilder::visitIfstm(DplParser::IfstmContext* parseNode) {
 }
 
 antlrcpp::Any AstBuilder::visitElsestm(DplParser::ElsestmContext* parseNode) {
+    std::cout << "got to Elsestm" << "\n";
     std::shared_ptr<AstNode> newNode = std::make_shared<ElseNode>(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText("Else");
@@ -146,6 +155,7 @@ antlrcpp::Any AstBuilder::visitElsestm(DplParser::ElsestmContext* parseNode) {
 
 // While
 antlrcpp::Any AstBuilder::visitWhilestm(DplParser::WhilestmContext* parseNode) {
+    std::cout << "got to While" << "\n";
     std::shared_ptr<AstNode> newNode = std::make_shared<WhileNode>(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText("While");
@@ -170,6 +180,7 @@ antlrcpp::Any AstBuilder::visitJuncexpr(DplParser::JuncexprContext* parseNode) {
     if (parseNode->children.size() == 1) {
         return parseNode->children[0]->accept(this);
     }
+    std::cout << "got to Junc" << "\n";
     std::shared_ptr<AstNode> newNode = std::make_shared<JuncExprNode>(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText(parseNode->op->getText());
@@ -193,6 +204,7 @@ antlrcpp::Any AstBuilder::visitNotexpr(DplParser::NotexprContext* parseNode) {
     if (parseNode->children.size() == 1) {
         return parseNode->children[0]->accept(this);
     }
+    std::cout << "got to Not" << "\n";
     std::shared_ptr<AstNode> newNode = std::make_shared<NotNode>(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText(parseNode->op->getText());
@@ -212,6 +224,7 @@ antlrcpp::Any AstBuilder::visitCompexpr(DplParser::CompexprContext* parseNode) {
     if (parseNode->children.size() == 1) {
         return parseNode->children[0]->accept(this);
     }
+    std::cout << "got to Compexpr" << "\n";
     std::shared_ptr<AstNode> newNode = std::make_shared<CompExprNode>(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText(parseNode->op->getText());
@@ -235,6 +248,8 @@ antlrcpp::Any AstBuilder::visitArthexpr(DplParser::ArthexprContext* parseNode) {
     if (parseNode->children.size() == 1) {
         return parseNode->children[0]->accept(this);
     }
+    std::cout << "got to Arthexpr" << "\n";
+
     std::shared_ptr<AstNode> newNode = std::make_shared<ArthExprNode>(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText(parseNode->op->getText());
@@ -256,16 +271,20 @@ antlrcpp::Any AstBuilder::visitArthexpr(DplParser::ArthexprContext* parseNode) {
 
 // Terms
 antlrcpp::Any AstBuilder::visitTerminal(tree::TerminalNode* node) {
+    std::cout << "got to terminal" << "\n";
     std::shared_ptr<AstNode> newNode = std::make_shared<LeafNode>(currentNode);
     newNode->setRule(node->getSymbol()->getType());
     newNode->setText(node->getText());
 
+    std::cout << "got to terminal 1" << "\n";
     currentNode->addChild(newNode);
+    std::cout << "got to terminal 2" << "\n";
 
     return nullptr;
 }
 
 antlrcpp::Any AstBuilder::visitList(DplParser::ListContext* parseNode) {
+    std::cout << "got to list" << "\n";
     std::shared_ptr<AstNode> newNode = std::make_shared<ListNode>(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText("[] List");
@@ -284,6 +303,7 @@ antlrcpp::Any AstBuilder::visitList(DplParser::ListContext* parseNode) {
 }
 
 antlrcpp::Any AstBuilder::visitTable(DplParser::TableContext* parseNode) {
+    std::cout << "got to table" << "\n";
     std::shared_ptr<AstNode> newNode = std::make_shared<TableNode>(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText("{} Table");
@@ -304,6 +324,7 @@ antlrcpp::Any AstBuilder::visitTable(DplParser::TableContext* parseNode) {
 }
 
 antlrcpp::Any AstBuilder::visitColumn(DplParser::ColumnContext* parseNode) {
+    std::cout << "got to column" << "\n";
     std::shared_ptr<AstNode> newNode = std::make_shared<ColumnNode>(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText(parseNode->children[0]->getText() + ":");
@@ -323,6 +344,7 @@ antlrcpp::Any AstBuilder::visitTerm(DplParser::TermContext* parseNode) {
     if (parseNode->children.size() == 1) {
         return parseNode->children[0]->accept(this);
     }
+    std::cout << "got to term" << "\n";
 
     std::shared_ptr<AstNode> newNode = std::make_shared<ParNode>(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
@@ -343,6 +365,7 @@ antlrcpp::Any AstBuilder::visitSubscript(DplParser::SubscriptContext* parseNode)
     if (parseNode->children.size() == 1) {
         return parseNode->children[0]->accept(this);
     }
+    std::cout << "got to subscript" << "\n";
 
     std::shared_ptr<AstNode> oldNode = currentNode;
 
@@ -356,6 +379,7 @@ antlrcpp::Any AstBuilder::visitSubscript(DplParser::SubscriptContext* parseNode)
 }
 
 antlrcpp::Any AstBuilder::visitIndex(DplParser::IndexContext* parseNode) {
+    std::cout << "got to index" << "\n";
     std::shared_ptr<AstNode> newNode = std::make_shared<IndexNode>(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText("[] Indexing");
@@ -369,6 +393,7 @@ antlrcpp::Any AstBuilder::visitIndex(DplParser::IndexContext* parseNode) {
 }
 
 antlrcpp::Any AstBuilder::visitHeaderindex(DplParser::HeaderindexContext* parseNode) {
+    std::cout << "got to headerindex" << "\n";
     std::shared_ptr<AstNode> newNode = std::make_shared<HeaderIndexNode>(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText("[$] Header Indexing");
@@ -382,6 +407,7 @@ antlrcpp::Any AstBuilder::visitHeaderindex(DplParser::HeaderindexContext* parseN
 }
 
 antlrcpp::Any AstBuilder::visitFiltering(DplParser::FilteringContext* parseNode) {
+    std::cout << "got to filtering" << "\n";
     std::shared_ptr<AstNode> newNode = std::make_shared<FilterNode>(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText("[] Filter");
@@ -395,6 +421,7 @@ antlrcpp::Any AstBuilder::visitFiltering(DplParser::FilteringContext* parseNode)
 }
 
 antlrcpp::Any AstBuilder::visitUnaryexpr(DplParser::UnaryexprContext* parseNode) {
+    std::cout << "got to unaryexpr" << "\n";
     std::shared_ptr<AstNode> newNode = std::make_shared<UnaryExprNode>(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText(parseNode->children[0]->getText());
@@ -411,14 +438,18 @@ antlrcpp::Any AstBuilder::visitUnaryexpr(DplParser::UnaryexprContext* parseNode)
 }
 
 antlrcpp::Any AstBuilder::visitProccall(DplParser::ProccallContext* parseNode) {
+    std::cout << "got to proccall" << "\n";
     std::shared_ptr<ProcCallNode> newNode = std::make_shared<ProcCallNode>(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
+    newNode->setText("() proccall");
 
     std::shared_ptr<AstNode> astNewNode = std::static_pointer_cast<AstNode>(newNode);
     currentNode->addChild(astNewNode);
     currentNode = astNewNode;
 
+
     if (parseNode->children.size() == 2) {
+        std::cout << "got to proccall 4" << "\n";
         newNode->stopVisitingParams();
         return nullptr;
     }
@@ -433,6 +464,7 @@ antlrcpp::Any AstBuilder::visitArgs(DplParser::ArgsContext* parseNode) {
     if (parseNode->children.size() == 1) {
         return parseNode->children[0]->accept(this);
     }
+    std::cout << "got to args" << "\n";
 
     for (size_t i = 0; i < parseNode->children.size(); i = i + 2) {
         parseNode->children[i]->accept(this);
@@ -445,6 +477,7 @@ antlrcpp::Any AstBuilder::visitParams(DplParser::ParamsContext* parseNode) {
     if (parseNode->children.size() == 1) {
         return parseNode->children[0]->accept(this);
     }
+    std::cout << "got to params" << "\n";
 
     for (size_t i = 0; i < parseNode->children.size(); i = i + 2) {
         parseNode->children[i]->accept(this);

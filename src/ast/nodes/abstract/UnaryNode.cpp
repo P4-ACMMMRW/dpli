@@ -1,7 +1,7 @@
 #include <UnaryNode.hpp>
 
 void UnaryNode::addChild(std::shared_ptr<AstNode> child) {
-    if (childNode->getChildNode() != nullptr) {
+    if (childNode->getChildNode() == nullptr) {
         childNode->addChild(child);
     } else {
         throw std::runtime_error("UnaryNode already has two children");

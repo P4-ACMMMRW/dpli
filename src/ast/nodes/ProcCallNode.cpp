@@ -3,7 +3,8 @@
 void ProcCallNode::addChild(std::shared_ptr<AstNode> node) {
     if (visitingParams) {
         childNodeList->addChild(node);
-    } else if (childNode->getChildNode() == nullptr) {
+    } else if (childNode->getChildNode() == nullptr) { // problem here 
+        std::cout << "hello hihi" << "\n";
         childNode->addChild(node);
     } else {
         throw std::runtime_error(

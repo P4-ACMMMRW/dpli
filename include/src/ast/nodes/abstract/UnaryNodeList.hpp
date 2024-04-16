@@ -6,7 +6,8 @@
 
 class UnaryNodeList : public AstNode {
    public:
-    UnaryNodeList(std::shared_ptr<AstNode> parent) : AstNode(std::move(parent)) { }
+    UnaryNodeList(std::shared_ptr<AstNode> parent) : AstNode(std::move(parent)), 
+                                                     childNodeList(std::make_shared<ChildNodeList>()) { }
     std::vector<std::shared_ptr<AstNode>>& getChildNodeList() { return childNodeList->getChildNodeList(); };
 
     void addChild(std::shared_ptr<AstNode> node) override;

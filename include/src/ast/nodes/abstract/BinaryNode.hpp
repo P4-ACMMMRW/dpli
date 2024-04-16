@@ -6,7 +6,9 @@
 
 class BinaryNode : public AstNode {
    public:
-    BinaryNode(std::shared_ptr<AstNode> parent) : AstNode(std::move(parent)) {}
+    BinaryNode(std::shared_ptr<AstNode> parent) : AstNode(std::move(parent)), 
+                                                  leftNode(std::make_shared<ChildNode>()),
+                                                  rightNode(std::make_shared<ChildNode>()) {}
     std::shared_ptr<AstNode>& getLeftNode() { return leftNode->getChildNode(); };
     std::shared_ptr<AstNode>& getRightNode() { return rightNode->getChildNode(); };
 

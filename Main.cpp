@@ -79,6 +79,9 @@ int main(int argc, char **argv) {
     tree::ParseTree *tree = parser.prog();
 
     if (debug) {
+        
+        std::cout << tree->toStringTree(&parser, true) << "\n\n";
+
         // Ast print
         AstBuilder builder{&parser, &lexer};
         builder.visit(tree);
