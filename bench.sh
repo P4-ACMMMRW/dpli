@@ -12,8 +12,7 @@ run_perf() {
     $1 record ./build/dpli "$tmpfile"
     $1 report > perf_report.txt
     echo "Generating stats..."
-    $1 stat -r 10 -e cache-misses,cycles,instructions,context-switches,cpu-migrations,faults,branches,branch-misses ./build/dpli "$tmpfile" >> perf_report.txt
-    #rm "$tmpfile"
+    $1 stat -r 10 -d ./build/dpli "$tmpfile" >> perf_report.txt
 }
 
 # Check if dpli exists otherwise compile
