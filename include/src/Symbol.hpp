@@ -8,6 +8,7 @@
 
 namespace dplsrc {
 
+class ASTNode;
 
 class Symbol {
    public:
@@ -17,7 +18,7 @@ class Symbol {
     std::string getVal() const { return val; }
 
 
-    Symbol(std::string name, Symbol type, ASTNode *declNode)
+    Symbol(std::string name, SymbolType type, ASTNode *declNode)
         : name(std::move(name)), type(std::move(type)), declNode(declNode) {}
 
     

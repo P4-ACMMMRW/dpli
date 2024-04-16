@@ -22,9 +22,12 @@ public:
     bool is(SymbolSuperType superType) const;
     bool isOneOf(const std::initializer_list<SymbolSuperType> &superTypes) const;
 
+
+    friend bool operator==(const SymbolType &lefthand, const SymbolType &righthand);
+    friend bool operator!=(const SymbolType &lefthand, const SymbolType &righthand);
 private:
     SymbolSuperType superType;
 
-    }
-};
+    };
+}
 

@@ -7,19 +7,19 @@
 #include <unordered_map>
 
 #include "Symbol.hpp"
-#include "SymbolTableEntry.hpp"
+
 
 namespace dplsrc {
 class SymbolTable {
    public:
     void bind(Symbol sym);
-    SymbolTableEntry *lookup(const std::string &name);
+    Symbol *lookup(const std::string &name);
     void enter();
     void exit();
 
    private:
     std::stack<Symbol> table;
-    std::unordered_map<std::string, SymbolTableEntry> symbolLookupTable;
+    std::unordered_map<std::string, Symbol> symbolLookupTable;
 };
 }  // namespace dplsrc
 
