@@ -1,9 +1,19 @@
 #!/bin/bash
 
 run_perf() {
-    $1 record ./build/dpli docs/examples/quicksort.dpl
-    $1 stat -d ./build/dpli docs/examples/quicksort.dpl
+    # Make a temporary file to store all examples
+    tmpfile=$(mktemp /tmp/tmp.XXXXXXXXXX.dpl)
+    for file in docs/examples/*; do
+        cat "$file" >> "$tmpfile"
+        echo "" >> "$tmpfile"
+    done
+
+    # Benchmark interpreter
+    $1 record ./build/dpli "$tmpfile"
     $1 report > perf_report.txt
+    echo "Generating stats..."
+    $1 stat -r 10 -e cache-misses,cycles,instructions,context-switches,cpu-migrations,faults,branches,branch-misses ./build/dpli "$tmpfile" >> perf_report.txt
+    #rm "$tmpfile"
 }
 
 # Check if dpli exists otherwise compile

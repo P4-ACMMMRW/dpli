@@ -2,5 +2,5 @@ build/
 .antlr
 .vscode
 perf.data
-perf.old
+perf.data.old
 perf_report.txt

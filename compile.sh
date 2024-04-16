@@ -36,7 +36,16 @@ if [ ! -d build ]; then
 fi
 
 cd build
-cmake .. -DCMAKE_BUILD_TYPE=Debug
+
+# If ./build.sh release enable release mode
+if [ "$1" == "release" ]; then
+    cmake .. -DCMAKE_BUILD_TYPE=Release
+    echo "Release mode enabled"
+else
+    cmake .. -DCMAKE_BUILD_TYPE=Debug
+    echo "Debug mode enabled"
+fi
+
 make
 
 # Wait until done compiling and then run tests
