@@ -2,7 +2,6 @@
 #define TYPECHECKER_HPP
 
 #include "Symbol.hpp"
-#include "SymbolTableEntry.hpp"
 #include "SymbolTable.hpp"
 // #include <ASTVisitor.hpp>
 

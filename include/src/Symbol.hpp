@@ -3,19 +3,12 @@
 
 #include <string>
 #include <utility>
+#include "SymbolType.hpp"
 
-enum SymbolType {
-    TYPE_INVALID,
-    TYPE_INT,
-    TYPE_FLOAT,
-    TYPE_STR,
-    TYPE_BOOL,
-    TYPE_LIST,
-    TYPE_TABLE,
-    TYPE_NONETYPE,
-};
 
 namespace dplsrc {
+
+
 class Symbol {
    public:
     Symbol(std::string val) : val(std::move(val)) {}
@@ -23,16 +16,20 @@ class Symbol {
     std::string getId() const { return id; }
     std::string getVal() const { return val; }
 
-    explicit Symbol(SymbolType type) : type(type) {}
-    std::string getType() const;
-    bool is(SymbolType type) const;
-    bool isOneOf(const std::initializer_list<SymbolType> &types) const;
-    void setEvaluatedSymbolType(const SymbolType &type) { this->type = type; }
+
+    Symbol(std::string name, Symbol type, ASTNode *declNode)
+        : name(std::move(name)), type(std::move(type)), declNode(declNode) {}
+
+    
+
+    const std::string name;
+    SymbolType type = SymbolType(TYPE_INVALID);
+    ASTNode *declNode;
 
    private:
     std::string id;
     std::string val;
-    SymbolType type;
+    
 };
 }  // namespace dplsrc
 
