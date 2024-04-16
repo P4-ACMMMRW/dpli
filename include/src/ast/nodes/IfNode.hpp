@@ -1,30 +1,26 @@
 #ifndef IFNODE_HPP
 #define IFNODE_HPP
 
-#include <AstNode.hpp>
-#include <iostream>
-#include <memory>
-#include <string>
-#include <utility>
-#include <vector>
+#include <ChildNode.hpp>
+#include <ChildNodeList.hpp>
 
 class IfNode : public AstNode {
    public:
     IfNode(std::shared_ptr<AstNode> parent) : AstNode(std::move(parent)){};
-    std::shared_ptr<AstNode> getCondNode() { return condNode; };
-    std::vector<std::shared_ptr<AstNode>> getBodyNodes() { return bodyNodes; };
-    std::shared_ptr<AstNode> getElseNode() { return elseNode; };
+    std::shared_ptr<AstNode> getCondNode()               { return condNode->getChildNode(); };
+    std::vector<std::shared_ptr<AstNode>> getBodyNodes() { return bodyNodeList->getChildNodeList(); };
+    std::shared_ptr<AstNode> getElseNode()               { return elseNode->getChildNode(); };
 
     void addChild(std::shared_ptr<AstNode> node) override;
 
-    void print(std::string indent, std::string prefix) override;
+    std::string print(std::string indent, std::string prefix) override;
 
     void accept(std::shared_ptr<AstVisitor> visitor) override;
 
    private:
-    std::shared_ptr<AstNode> condNode;
-    std::vector<std::shared_ptr<AstNode>> bodyNodes;
-    std::shared_ptr<AstNode> elseNode;
+    std::shared_ptr<ChildNode>     condNode;
+    std::shared_ptr<ChildNodeList> bodyNodeList;
+    std::shared_ptr<ChildNode>     elseNode;
 };
 
 #endif

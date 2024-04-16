@@ -1,24 +1,13 @@
 #ifndef PROGNODE_HPP
 #define PROGNODE_HPP
 
-#include <AstNode.hpp>
-#include <AstVisitor.hpp>
-#include <iostream>
-#include <memory>
-#include <string>
-#include <vector>
+#include <UnaryNodeList.hpp>
 
-class ProgNode : public AstNode {
+class ProgNode : public UnaryNodeList {
    public:
-    std::vector<std::shared_ptr<AstNode>> getChildNodes() { return children; };
-    void addChild(std::shared_ptr<AstNode> child) override;
-
-    void print(std::string indent, std::string prefix) override;
+    ProgNode() : UnaryNodeList(nullptr) { }
 
     void accept(std::shared_ptr<AstVisitor> visitor) override;
-
-   private:
-    std::vector<std::shared_ptr<AstNode>> children;
 };
 
 #endif

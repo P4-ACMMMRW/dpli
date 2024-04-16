@@ -50,7 +50,7 @@ void AstTestVisitor::visit(std::shared_ptr<CompExprNode> node) {
 
 void AstTestVisitor::visit(std::shared_ptr<ElseNode> node) {
     std::cout << "Visiting " << node->getText() << '\n';
-    std::vector<std::shared_ptr<AstNode>> bodyNodes = node->getBodyNodes();
+    std::vector<std::shared_ptr<AstNode>> bodyNodes = node->getChildNodeList();
     for (size_t i = 0; i < bodyNodes.size(); ++i) {
         bodyNodes[i]->accept(shared_from_this());
     }
@@ -131,7 +131,7 @@ void AstTestVisitor::visit(std::shared_ptr<LeafNode> node) {
 
 void AstTestVisitor::visit(std::shared_ptr<ListNode> node) {
     std::cout << "Visiting " << node->getText() << '\n';
-    std::vector<std::shared_ptr<AstNode>> childNodes = node->getChildNodes();
+    std::vector<std::shared_ptr<AstNode>> childNodes = node->getChildNodeList();
     for (size_t i = 0; i < childNodes.size(); ++i) {
         childNodes[i]->accept(shared_from_this());
     }
@@ -155,12 +155,12 @@ void AstTestVisitor::visit(std::shared_ptr<ParNode> node) {
 
 void AstTestVisitor::visit(std::shared_ptr<ProcCallNode> node) {
     std::cout << "Visiting " << node->getText() << '\n';
-    std::shared_ptr<AstNode> procNode = node->getProcNode();
+    std::shared_ptr<AstNode> procNode = node->getChildNode();
     if (procNode != nullptr) {
         procNode->accept(shared_from_this());
     }
 
-    std::vector<std::shared_ptr<AstNode>> argNodes = node->getArgNodes();
+    std::vector<std::shared_ptr<AstNode>> argNodes = node->getChildNodeList();
     for (size_t i = 0; i < argNodes.size(); ++i) {
         argNodes[i]->accept(shared_from_this());
     }
@@ -181,7 +181,7 @@ void AstTestVisitor::visit(std::shared_ptr<ProcDecNode> node) {
 
 void AstTestVisitor::visit(std::shared_ptr<ProgNode> node) {
     std::cout << "Visiting " << node->getText() << '\n';
-    std::vector<std::shared_ptr<AstNode>> childNodes = node->getChildNodes();
+    std::vector<std::shared_ptr<AstNode>> childNodes = node->getChildNodeList();
     for (size_t i = 0; i < childNodes.size(); ++i) {
         childNodes[i]->accept(shared_from_this());
     }
@@ -197,7 +197,7 @@ void AstTestVisitor::visit(std::shared_ptr<ReturnNode> node) {
 
 void AstTestVisitor::visit(std::shared_ptr<TableNode> node) {
     std::cout << "Visiting " << node->getText() << '\n';
-    std::vector<std::shared_ptr<AstNode>> columnNodes = node->getColumnNodes();
+    std::vector<std::shared_ptr<AstNode>> columnNodes = node->getChildNodeList();
     for (size_t i = 0; i < columnNodes.size(); ++i) {
         columnNodes[i]->accept(shared_from_this());
     }
@@ -213,12 +213,12 @@ void AstTestVisitor::visit(std::shared_ptr<UnaryExprNode> node) {
 
 void AstTestVisitor::visit(std::shared_ptr<WhileNode> node) {
     std::cout << "Visiting " << node->getText() << '\n';
-    std::shared_ptr<AstNode> condNode = node->getCondNode();
+    std::shared_ptr<AstNode> condNode = node->getChildNode();
     if (condNode != nullptr) {
         condNode->accept(shared_from_this());
     }
 
-    std::vector<std::shared_ptr<AstNode>> stmNodes = node->getStmNodes();
+    std::vector<std::shared_ptr<AstNode>> stmNodes = node->getChildNodeList();
     for (size_t i = 0; i < stmNodes.size(); ++i) {
         stmNodes[i]->accept(shared_from_this());
     }

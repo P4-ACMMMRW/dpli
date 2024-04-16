@@ -1,6 +1,6 @@
-#include <BinaryNode.hpp>
+#include <UnaryNode.hpp>
 
-void BinaryNode::addChild(std::shared_ptr<AstNode> child) {
+void UnaryNode::addChild(std::shared_ptr<AstNode> child) {
     if (childNode->getChildNode() != nullptr) {
         childNode->addChild(child);
     } else {
@@ -8,7 +8,7 @@ void BinaryNode::addChild(std::shared_ptr<AstNode> child) {
     }
 }
 
-void BinaryNode::print(std::string indent = "", std::string prefix = "") {
+std::string UnaryNode::print(std::string indent = "", std::string prefix = "") {
     std::string childIndent = AstNode::print(indent, prefix);
 
     childNode->print(childIndent, "└── ");

@@ -3,10 +3,6 @@
 
 #include <ChildNode.hpp>
 #include <AstNode.hpp>
-#include <iostream>
-#include <memory>
-#include <string>
-#include <utility>
 
 class BinaryNode : public AstNode {
    public:
@@ -16,7 +12,9 @@ class BinaryNode : public AstNode {
 
     void addChild(std::shared_ptr<AstNode> child) override;
 
-    void print(std::string indent, std::string prefix) override;
+    std::string print(std::string indent, std::string prefix) override;
+
+    void accept(std::shared_ptr<AstVisitor> visitor) override = 0; 
 
    private:
     std::shared_ptr<ChildNode> leftNode;

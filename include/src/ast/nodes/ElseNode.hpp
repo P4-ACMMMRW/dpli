@@ -2,25 +2,13 @@
 #define ELSENODE_HPP
 
 #include <AstNode.hpp>
-#include <iostream>
-#include <memory>
-#include <string>
-#include <utility>
-#include <vector>
+#include <UnaryNodeList.hpp>
 
-class ElseNode : public AstNode {
+class ElseNode : public UnaryNodeList {
    public:
-    ElseNode(std::shared_ptr<AstNode> parent) : AstNode(std::move(parent)){};
-    std::vector<std::shared_ptr<AstNode>>& getBodyNodes() { return bodyNodes; };
-
-    void addChild(std::shared_ptr<AstNode> node) override;
-
-    void print(std::string indent, std::string prefix) override;
-
+    ElseNode(std::shared_ptr<AstNode> parent) : UnaryNodeList(std::move(parent)){};
+   
     void accept(std::shared_ptr<AstVisitor> visitor) override;
-
-   private:
-    std::vector<std::shared_ptr<AstNode>> bodyNodes;
 };
 
 #endif

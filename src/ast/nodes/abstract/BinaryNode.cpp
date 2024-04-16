@@ -10,7 +10,7 @@ void BinaryNode::addChild(std::shared_ptr<AstNode> child) {
     }
 }
 
-void BinaryNode::print(std::string indent = "", std::string prefix = "") {
+std::string BinaryNode::print(std::string indent = "", std::string prefix = "") {
     std::string childIndent = AstNode::print(indent, prefix);
 
     leftNode->print(childIndent, "├── ");

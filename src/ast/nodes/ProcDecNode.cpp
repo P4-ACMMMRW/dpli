@@ -2,31 +2,20 @@
 #include <memory>
 
 void ProcDecNode::addChild(std::shared_ptr<AstNode> node) {
-    if (visitingParams) {
-        paramNodes.push_back(std::move(node));
+    if (nameNode->getChildNode() == nullptr) {
+        nameNode->addChild(node);
+    } else if (visitingParams) {
+        paramNodeList->addChild(node);
     } else {
-        bodyNodes.push_back(std::move(node));
+        bodyNodeList->addChild(node);
     }
 }
 
-void ProcDecNode::print(std::string indent = "", std::string prefix = "") {
-    std::cout << indent << prefix << "def " << getName() << "():"
-              << "\n";
-
-    std::string childIndent = indent + (prefix.empty() ? "" : (prefix == "└── " ? "    " : "│   "));
-
-    for (size_t i = 0; i < paramNodes.size(); ++i) {
-        paramNodes[i]->print(childIndent, "├── param: ");
-    }
-
-    for (size_t i = 0; i < bodyNodes.size(); ++i) {
-        // For the last statement node, we want to print a different prefix
-        if (i == bodyNodes.size() - 1) {
-            bodyNodes[i]->print(childIndent, "└── ");
-        } else {
-            bodyNodes[i]->print(childIndent, "├── ");
-        }
-    }
+std::string ProcDecNode::print(std::string indent = "", std::string prefix = "") {
+    std::string childIndent = AstNode::print(indent, prefix);
+    nameNode->print(childIndent, "├── Name: ");
+    paramNodeList->print(childIndent, "├── Params: ");
+    bodyNodeList->print(childIndent, "└── ");
 }
 
 void ProcDecNode::accept(std::shared_ptr<AstVisitor> visitor) {

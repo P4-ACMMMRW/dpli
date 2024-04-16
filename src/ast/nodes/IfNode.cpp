@@ -3,38 +3,24 @@
 #include <IfNode.hpp>
 
 void IfNode::addChild(std::shared_ptr<AstNode> node) {
-    if (condNode == nullptr) {
-        condNode = std::move(node);
+    if (condNode->getChildNode() == nullptr) {
+        condNode->addChild(node);
     } else if (node->getRule() == dplgrammar::DplParser::RuleElsestm) {
-        elseNode = std::move(node);
+        elseNode->addChild(node);
     } else {
-        bodyNodes.push_back(std::move(node));
+        bodyNodeList->addChild(node);
     }
 }
 
-void IfNode::print(std::string indent = "", std::string prefix = "") {
-    std::cout << indent << prefix << AstNode::getText() << "\n";
+std::string IfNode::print(std::string indent = "", std::string prefix = "") {
+    std::string childIndent = AstNode::print(indent, prefix);
 
-    // Use a new level of indentation for the children
-    std::string childIndent = indent + (prefix.empty() ? "" : (prefix == "└── " ? "    " : "│   "));
+    condNode->print(childIndent, "├── Condition: ");
 
-    // Print the condition node, if it exists
-    if (condNode != nullptr) {
-        condNode->print(childIndent, "├── Condition: ");
-    }
+    bodyNodeList->print(childIndent, "├── Body: ");
 
-    // Print each if statement node
-    for (size_t i = 0; i < bodyNodes.size(); ++i) {
-        // For the last if statement node, we want to print a different prefix
-        std::string bodyPrefix =
-            (i == bodyNodes.size() - 1 && elseNode == nullptr) ? "└── " : "├── ";
-        bodyNodes[i]->print(childIndent, bodyPrefix);
-    }
-
-    // Print the else node, if it exists
-    if (elseNode != nullptr) {
-        elseNode->print(childIndent, "└── ");
-    }
+    elseNode->print(childIndent, "└── ");
+    
 }
 
 void IfNode::accept(std::shared_ptr<AstVisitor> visitor) {

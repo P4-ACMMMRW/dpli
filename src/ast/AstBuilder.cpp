@@ -35,17 +35,18 @@ antlrcpp::Any AstBuilder::visitStms(DplParser::StmsContext* parseNode) {
 }
 
 antlrcpp::Any AstBuilder::visitProcdec(DplParser::ProcdecContext* parseNode) {
-    std::string name = parseNode->children[1]->getText();
 
     std::shared_ptr<ProcDecNode> newNode = std::make_shared<ProcDecNode>(currentNode);
     newNode->setRule(parseNode->getRuleIndex());
-    newNode->setName(name);
+    newNode->setText("def ()");
 
     std::shared_ptr<AstNode> astNewNode = std::static_pointer_cast<AstNode>(newNode);
 
     currentNode->addChild(astNewNode);
     std::shared_ptr<AstNode> oldNode = currentNode;
     currentNode = astNewNode;
+
+    parseNode->children[1]->accept(this);
 
     size_t blockIndex = 5;
     if (parseNode->children.size() > blockIndex) {

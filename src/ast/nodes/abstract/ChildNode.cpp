@@ -6,7 +6,7 @@ void ChildNode::addChild(std::shared_ptr<AstNode> node) {
     }
 }
 
-void ChildNode::print(std::string indent, std::string prefix) {
+std::string ChildNode::print(std::string indent, std::string prefix) {
     if (childNode != nullptr) {
         childNode->print(indent, prefix);
     }
