@@ -9,7 +9,7 @@ namespace dplsrc {
 
 struct ExprResult {
     Symbol type;
-    SymbolTableEntry *entry = nullptr;
+    Symbol *entry = nullptr;
 };
 
 class TypeChecker {

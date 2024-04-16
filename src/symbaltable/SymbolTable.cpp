@@ -11,7 +11,7 @@ void SymbolTable::bind(Symbol sym) {
     symbolLookupTable.insert_or_assign(sym.getId(), sym);
 }
 
-SymbolTableEntry *SymbolTable::lookup(const std::string &name) { return &symbolLookupTable.at(name); }
+Symbol *SymbolTable::lookup(const std::string &name) { return &symbolLookupTable.at(name); }
 
 void SymbolTable::enter() { table.push(Symbol("$")); }
 
