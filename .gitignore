@@ -3,4 +3,4 @@ build/
 .vscode
 perf.data
 perf.data.old
-perf_report.txt
+*.txt

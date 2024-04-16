@@ -1,13 +1,13 @@
 #!/bin/bash
 
-run_perf() {
-    # Make a temporary file to store all examples
-    tmpfile=$(mktemp /tmp/tmp.XXXXXXXXXX.dpl)
-    for file in docs/examples/*; do
-        cat "$file" >> "$tmpfile"
-        echo "" >> "$tmpfile"
-    done
+# Make a temporary file to store all examples
+tmpfile=$(mktemp /tmp/tmp.XXXXXXXXXX.dpl)
+for file in docs/examples/*; do
+    cat "$file" >> "$tmpfile"
+    echo "" >> "$tmpfile"
+done
 
+run_perf() {
     # Benchmark interpreter
     $1 record ./build/dpli "$tmpfile"
     $1 report > perf_report.txt
@@ -25,12 +25,12 @@ fi
 if grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null; then
     echo "WSL2 detected. Using perf_wsl2..."
     run_perf ./lib/perf/perf_wsl2
-    exit 0
-fi
+else
+    # Check if perf is installed and install if not
+    if ! command -v perf &> /dev/null; then
+        echo "perf could not be found. Installing perf..."
+        sudo apt install linux-tools-common linux-tools-generic -y
+    fi
 
-# Check if perf is installed and install if not
-if ! command -v perf &> /dev/null; then
-    echo "perf could not be found. Installing perf..."
-    sudo apt install linux-tools-common linux-tools-generic -y
     run_perf perf
 fi
