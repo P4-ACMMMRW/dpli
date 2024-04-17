@@ -171,7 +171,19 @@ antlrcpp::Any AstBuilder::visitJuncexpr(DplParser::JuncexprContext* parseNode) {
         return parseNode->children[0]->accept(this);
     }
 
-    std::shared_ptr<AstNode> newNode = std::make_shared<JuncExprNode>(currentNode);
+    std::shared_ptr<AstNode> newNode = nullptr;
+
+    switch (parseNode->op->getTokenIndex()) {
+        case DplLexer::And:
+            newNode = std::make_shared<AndExprNode>(currentNode);
+            break;
+        case DplLexer::Or:
+            newNode = std::make_shared<OrExprNode>(currentNode);
+            break;
+        default:
+            throw std::runtime_error("Junc expr was not valid operator");
+    }
+
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText(parseNode->op->getText());
 
@@ -195,7 +207,22 @@ antlrcpp::Any AstBuilder::visitNotexpr(DplParser::NotexprContext* parseNode) {
         return parseNode->children[0]->accept(this);
     }
 
-    std::shared_ptr<AstNode> newNode = std::make_shared<NotNode>(currentNode);
+    std::shared_ptr<AstNode> newNode = nullptr;
+
+    switch (parseNode->op->getTokenIndex()) {
+        case DplLexer::Not:
+            newNode = std::make_shared<NotNode>(currentNode);
+            break;
+        case DplLexer::Plus:
+            newNode = std::make_shared<PlusNode>(currentNode);
+            break;
+        case DplLexer::Minus:
+            newNode = std::make_shared<MinusNode>(currentNode);
+            break;
+        default:
+            throw std::runtime_error("Notexpr was not valid operator");
+    }
+
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText(parseNode->op->getText());
 
@@ -215,7 +242,31 @@ antlrcpp::Any AstBuilder::visitCompexpr(DplParser::CompexprContext* parseNode) {
         return parseNode->children[0]->accept(this);
     }
 
-    std::shared_ptr<AstNode> newNode = std::make_shared<CompExprNode>(currentNode);
+    std::shared_ptr<AstNode> newNode = nullptr;
+
+    switch (parseNode->op->getTokenIndex()) {
+        case DplLexer::Equal:
+            newNode = std::make_shared<EqualExprNode>(currentNode);
+            break;
+        case DplLexer::NotEqual:
+            newNode = std::make_shared<NotEqualExprNode>(currentNode);
+            break;
+        case DplLexer::Greater:
+            newNode = std::make_shared<GreaterExprNode>(currentNode);
+            break;
+        case DplLexer::GreaterEqual:
+            newNode = std::make_shared<GreaterEqualExprNode>(currentNode);
+            break;
+        case DplLexer::Less:
+            newNode = std::make_shared<LessExprNode>(currentNode);
+            break;
+        case DplLexer::LessEqual:
+            newNode = std::make_shared<LessEqualExprNode>(currentNode);
+            break;
+        default:
+            throw std::runtime_error("Compexpr was not valid operator");
+    }
+
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText(parseNode->op->getText());
 
@@ -239,7 +290,31 @@ antlrcpp::Any AstBuilder::visitArthexpr(DplParser::ArthexprContext* parseNode) {
         return parseNode->children[0]->accept(this);
     }
 
-    std::shared_ptr<AstNode> newNode = std::make_shared<ArthExprNode>(currentNode);
+    std::shared_ptr<AstNode> newNode = nullptr;
+
+    switch (parseNode->op->getTokenIndex()) {
+        case DplLexer::Exponent:
+            newNode = std::make_shared<ExpoExprNode>(currentNode);
+            break;
+        case DplLexer::Star:
+            newNode = std::make_shared<MultExprNode>(currentNode);
+            break;
+        case DplLexer::Slash:
+            newNode = std::make_shared<DivExprNode>(currentNode);
+            break;
+        case DplLexer::Mod:
+            newNode = std::make_shared<ModExprNode>(currentNode);
+            break;
+        case DplLexer::Plus:
+            newNode = std::make_shared<PlusExprNode>(currentNode);
+            break;
+        case DplLexer::Minus:
+            newNode = std::make_shared<MinusExprNode>(currentNode);
+            break;
+        default:
+            throw std::runtime_error("Arthexpr was not valid operator");
+    }
+
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText(parseNode->op->getText());
 
