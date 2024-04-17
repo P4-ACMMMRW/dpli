@@ -46,13 +46,13 @@ None
 
 
 # If
-if var != false:
-    var = true
+if var != False:
+    var = True
 
-if var == true:
-    var = not false
+if var == True:
+    var = not Talse
 else:
-    var = false
+    var = False
 
 
 # While
@@ -66,11 +66,11 @@ def print(str):
 
 
 # Flow stm
-def returnOfProc(true):
-    return true
+def returnOfProc(isTrue):
+    return isTrue
 
-while true:
-    if var == true:
+while True:
+    if var == True:
         continue
     else: 
         break

@@ -335,11 +335,35 @@ antlrcpp::Any AstBuilder::visitArthexpr(DplParser::ArthexprContext* parseNode) {
 
 // Terms
 antlrcpp::Any AstBuilder::visitTerminal(tree::TerminalNode* node) {
-    std::shared_ptr<AstNode> newNode = std::make_shared<LeafNode>(currentNode);
+    std::shared_ptr<LeafNode> newNode = std::make_shared<LeafNode>(currentNode);
     newNode->setRule(node->getSymbol()->getType());
     newNode->setText(node->getText());
 
-    currentNode->addChild(newNode);
+    switch (node->getSymbol()->getType()) {
+        case DplLexer::Identifier:
+            newNode->setType(LeafNode::type::IDENTIFIER);
+            break;
+        case DplLexer::Integer:
+            newNode->setType(LeafNode::type::INTEGER);
+            break;
+        case DplLexer::Float:
+            newNode->setType(LeafNode::type::FLOAT);
+            break;
+        case DplLexer::String:
+            newNode->setType(LeafNode::type::STRING);
+            break;
+        case DplLexer::Bool:
+            newNode->setType(LeafNode::type::BOOLEAN);
+            break;
+        case DplLexer::None:
+            newNode->setType(LeafNode::type::NONE);
+            break;
+        default:
+            newNode->setType(LeafNode::type::UNDEFINED);
+            break;
+    }
+
+    currentNode->addChild(std::static_pointer_cast<AstNode>(newNode));
 
     return nullptr;
 }
