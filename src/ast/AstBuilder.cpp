@@ -173,7 +173,7 @@ antlrcpp::Any AstBuilder::visitJuncexpr(DplParser::JuncexprContext* parseNode) {
 
     std::shared_ptr<AstNode> newNode = nullptr;
 
-    switch (parseNode->op->getTokenIndex()) {
+    switch (parseNode->op->getType()) {
         case DplLexer::And:
             newNode = std::make_shared<AndExprNode>(currentNode);
             break;
@@ -209,7 +209,7 @@ antlrcpp::Any AstBuilder::visitNotexpr(DplParser::NotexprContext* parseNode) {
 
     std::shared_ptr<AstNode> newNode = nullptr;
 
-    switch (parseNode->op->getTokenIndex()) {
+    switch (parseNode->op->getType()) {
         case DplLexer::Not:
             newNode = std::make_shared<NotNode>(currentNode);
             break;
@@ -244,7 +244,7 @@ antlrcpp::Any AstBuilder::visitCompexpr(DplParser::CompexprContext* parseNode) {
 
     std::shared_ptr<AstNode> newNode = nullptr;
 
-    switch (parseNode->op->getTokenIndex()) {
+    switch (parseNode->op->getType()) {
         case DplLexer::Equal:
             newNode = std::make_shared<EqualExprNode>(currentNode);
             break;
@@ -292,7 +292,7 @@ antlrcpp::Any AstBuilder::visitArthexpr(DplParser::ArthexprContext* parseNode) {
 
     std::shared_ptr<AstNode> newNode = nullptr;
 
-    switch (parseNode->op->getTokenIndex()) {
+    switch (parseNode->op->getType()) {
         case DplLexer::Exponent:
             newNode = std::make_shared<ExpoExprNode>(currentNode);
             break;
