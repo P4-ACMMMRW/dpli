@@ -25,9 +25,9 @@ public:
 
     friend bool operator==(const SymbolType &lefthand, const SymbolType &righthand);
     friend bool operator!=(const SymbolType &lefthand, const SymbolType &righthand);
+
 private:
     SymbolSuperType superType;
-
     };
 }
 

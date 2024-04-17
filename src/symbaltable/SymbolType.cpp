@@ -31,3 +31,7 @@ std::string SymbolType::getName() const {
     else
         assert(false && "Unknown type");
 }
+
+bool operator==(const SymbolType &lefthand, const SymbolType &righthand) { return lefthand.superType == righthand.syperType; }
+
+bool operator!=(const SymbolType &lefthand, const SymbolType &righthand) { return !(lefthand == righthand); }
