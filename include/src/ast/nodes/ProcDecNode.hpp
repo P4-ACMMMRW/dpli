@@ -6,11 +6,19 @@
 
 class ProcDecNode : public AstNode {
    public:
-    ProcDecNode(std::shared_ptr<AstNode> parent) : AstNode(std::move(parent)) { };
+    ProcDecNode(std::shared_ptr<AstNode> parent)
+        : AstNode(std::move(parent)),
+          nameNode(std::make_shared<ChildNode>()),
+          paramNodeList(std::make_shared<ChildNodeList>()),
+          bodyNodeList(std::make_shared<ChildNodeList>()){};
 
     std::shared_ptr<AstNode> getNameNode() { return nameNode->getChildNode(); };
-    std::vector<std::shared_ptr<AstNode>>& getParamNodes() { return paramNodeList->getChildNodeList(); };
-    std::vector<std::shared_ptr<AstNode>>& getBodyNodes()  { return bodyNodeList->getChildNodeList(); };
+    std::vector<std::shared_ptr<AstNode>>& getParamNodes() {
+        return paramNodeList->getChildNodeList();
+    };
+    std::vector<std::shared_ptr<AstNode>>& getBodyNodes() {
+        return bodyNodeList->getChildNodeList();
+    };
 
     void stopVisitingParams() { visitingParams = false; }
 

@@ -3,8 +3,7 @@
 void ProcCallNode::addChild(std::shared_ptr<AstNode> node) {
     if (visitingParams) {
         childNodeList->addChild(node);
-    } else if (childNode->getChildNode() == nullptr) { // problem here 
-        std::cout << "hello hihi" << "\n";
+    } else if (childNode->getChildNode() == nullptr) {  // problem here
         childNode->addChild(node);
     } else {
         throw std::runtime_error(
@@ -18,8 +17,9 @@ std::string ProcCallNode::print(std::string indent = "", std::string prefix = ""
 
     bool isChildNodeListEmpty = childNodeList->getChildNodeList().empty();
     childNode->print(childIndent, (isChildNodeListEmpty) ? "└── " : "├── Name: ");
-    
+
     childNodeList->print(childIndent, "└── ");
+    return "";
 }
 
 void ProcCallNode::accept(std::shared_ptr<AstVisitor> visitor) {

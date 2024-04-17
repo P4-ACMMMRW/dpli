@@ -12,8 +12,9 @@ std::string WhileNode::print(std::string indent = "", std::string prefix = "") {
     std::string childIndent = AstNode::print(indent, prefix);
 
     childNode->print(childIndent, "├── ");
-    
+
     childNodeList->print(childIndent, "└── ");
+    return "";
 }
 
 void WhileNode::accept(std::shared_ptr<AstVisitor> visitor) {

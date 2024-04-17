@@ -20,7 +20,7 @@ std::string IfNode::print(std::string indent = "", std::string prefix = "") {
     bodyNodeList->print(childIndent, "├── Body: ");
 
     elseNode->print(childIndent, "└── ");
-    
+    return "";
 }
 
 void IfNode::accept(std::shared_ptr<AstVisitor> visitor) {

@@ -79,8 +79,7 @@ int main(int argc, char **argv) {
     tree::ParseTree *tree = parser.prog();
 
     if (debug) {
-        
-        std::cout << tree->toStringTree(&parser, true) << "\n\n";
+        // std::cout << tree->toStringTree(&parser, true) << "\n\n";
 
         // Ast print
         AstBuilder builder{&parser, &lexer};
@@ -88,9 +87,9 @@ int main(int argc, char **argv) {
         builder.getRoot()->print();
 
         // Visitor
-        //std::shared_ptr<AstNode> root = builder.getRoot();
-        //std::shared_ptr<AstTestVisitor> visitor = std::make_shared<AstTestVisitor>();
-        //root->accept(visitor);
+        std::shared_ptr<AstNode> root = builder.getRoot();
+        std::shared_ptr<AstTestVisitor> visitor = std::make_shared<AstTestVisitor>();
+        root->accept(visitor);
     }
 
     if (!dotFile.empty()) {

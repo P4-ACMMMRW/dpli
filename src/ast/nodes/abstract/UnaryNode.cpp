@@ -10,6 +10,6 @@ void UnaryNode::addChild(std::shared_ptr<AstNode> child) {
 
 std::string UnaryNode::print(std::string indent = "", std::string prefix = "") {
     std::string childIndent = AstNode::print(indent, prefix);
-
     childNode->print(childIndent, "└── ");
+    return "";
 }

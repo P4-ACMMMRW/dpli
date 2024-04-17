@@ -15,4 +15,6 @@ std::string BinaryNode::print(std::string indent = "", std::string prefix = "") 
 
     leftNode->print(childIndent, "├── ");
     rightNode->print(childIndent, "└── ");
+
+    return "";
 }

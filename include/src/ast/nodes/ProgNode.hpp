@@ -5,7 +5,7 @@
 
 class ProgNode : public UnaryNodeList {
    public:
-    ProgNode() : UnaryNodeList(nullptr) { }
+    ProgNode() : UnaryNodeList(nullptr) {}
 
     void accept(std::shared_ptr<AstVisitor> visitor) override;
 };

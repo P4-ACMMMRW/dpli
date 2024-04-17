@@ -6,7 +6,7 @@
 
 class ChildNodeList : public AstNode {
    public:
-    ChildNodeList() {};
+    ChildNodeList(){};
 
     std::vector<std::shared_ptr<AstNode>>& getChildNodeList() { return childNodeList; };
 
@@ -14,7 +14,7 @@ class ChildNodeList : public AstNode {
 
     std::string print(std::string indent, std::string prefix) override;
 
-    void accept(std::shared_ptr<AstVisitor> visitor) override; 
+    void accept(std::shared_ptr<AstVisitor> visitor) override;
 
    private:
     std::vector<std::shared_ptr<AstNode>> childNodeList;

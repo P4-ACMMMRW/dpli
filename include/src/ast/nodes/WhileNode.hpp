@@ -6,9 +6,15 @@
 
 class WhileNode : public AstNode {
    public:
-    WhileNode(std::shared_ptr<AstNode> parent) : AstNode(std::move(parent)) {};
-    std::shared_ptr<AstNode> getChildNode()                  { return childNode->getChildNode(); };
-    std::vector<std::shared_ptr<AstNode>> getChildNodeList() { return childNodeList->getChildNodeList(); };
+    WhileNode(std::shared_ptr<AstNode> parent)
+        : AstNode(std::move(parent)),
+          childNode(std::make_shared<ChildNode>()),
+          childNodeList(std::make_shared<ChildNodeList>()){};
+
+    std::shared_ptr<AstNode> getChildNode() { return childNode->getChildNode(); };
+    std::vector<std::shared_ptr<AstNode>> getChildNodeList() {
+        return childNodeList->getChildNodeList();
+    };
 
     void addChild(std::shared_ptr<AstNode> node) override;
 
@@ -17,7 +23,7 @@ class WhileNode : public AstNode {
     void accept(std::shared_ptr<AstVisitor> visitor) override;
 
    private:
-    std::shared_ptr<ChildNode>     childNode;
+    std::shared_ptr<ChildNode> childNode;
     std::shared_ptr<ChildNodeList> childNodeList;
 };
 

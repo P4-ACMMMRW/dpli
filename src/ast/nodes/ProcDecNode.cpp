@@ -16,6 +16,7 @@ std::string ProcDecNode::print(std::string indent = "", std::string prefix = "")
     nameNode->print(childIndent, "├── Name: ");
     paramNodeList->print(childIndent, "├── Params: ");
     bodyNodeList->print(childIndent, "└── ");
+    return "";
 }
 
 void ProcDecNode::accept(std::shared_ptr<AstVisitor> visitor) {
