@@ -1,7 +1,7 @@
 #include <LeafNode.hpp>
 
 std::string LeafNode::print(std::string indent = "", std::string prefix = "") {
-    std::cout << indent << prefix << AstNode::getText() << "  "  << getType() << "\n";
+    std::cout << indent << prefix << AstNode::getText() << "\n";
     return "";
 }
 
