@@ -1,4 +1,6 @@
 build/
 .antlr
 .vscode
-tree
+perf.data
+perf.old
+perf_report.txt

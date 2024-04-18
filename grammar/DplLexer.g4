@@ -107,8 +107,6 @@ Break: 'break';
 Continue: 'continue';
 Return: 'return';
 Def: 'def';
-Replace: 'replace';
-With: 'with';
 
 // Symbols
 OpenPar: '(';
@@ -138,6 +136,8 @@ And: 'and';
 Or: 'or';
 Not: 'not';
 Assign: '=';
+Union: 'union';
+Intersection: 'intersection';
 
 // Types
 fragment DIGIT: [0-9];
@@ -152,7 +152,6 @@ Identifier: ALPHA ALPHANUM*;
 
 // Comments
 Comment: '#' ~[\r\n]* -> skip;
-MultiLineComment: '/*' .*? '*/' -> skip;
 
 // Add Indent and Dedent tokens
 Newline: '\r'? '\n' {addDentTokens(); };

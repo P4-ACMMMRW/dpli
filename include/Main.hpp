@@ -13,9 +13,4 @@
 #include <iostream>
 #include <regex>
 
-/**
- * Generate file which is used for visualizing the parse tree
- */
-void generateDotFile(antlr4::tree::ParseTree *root, const std::string &fileName);
-
 #endif
