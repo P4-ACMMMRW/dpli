@@ -13,7 +13,7 @@ std::any TypeChecker::visitAssignstm(AssignNode *node) {
     auto dataType = std::any_cast<SymbolType>(visit(node->dataType()));
 
     //Update type of symbol table entry
-    SymbolTableEntry *varEntry = vtable.lookup(node->varName);
+    Symbol *varEntry = vtable.lookup(node->varName);
     assert(varEntry != nullptr);
     varEntry->type = dataType;
 
@@ -30,7 +30,6 @@ std::any visitArthexpr(ArthExprNode *node) {
     //checks the types of the 2 operands and the operator
     auto lefthand = std::any_cast<ExprResult>(visit(node->operands().at(0)));
     auto righthand = std::any_cast<ExprResult>(visit(node->operands().at(1)));
-    auto operator = std::
 
     //Addition
 
