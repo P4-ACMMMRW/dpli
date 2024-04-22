@@ -17,28 +17,15 @@ class Symbol {
     std::string getVal() const { return val; }
 
 
-    Symbol(std::string name, SymbolType type, ASTNode *declNode)
+    Symbol(std::string name, SymbolType type, AstNode *declNode)
         : name(std::move(name)), type(std::move(type)), declNode(declNode) {}
 
-    
-
-
-    void setEvaluatedSymbolType(const SymbolType &symbolType) { this->symbolType = symbolType; }
-
-    const SymbolType &getEvaluatedSymbolType() const {
-    if (!symbolType.is(TYPE_INVALID))
-      return symbolType;
-    if (children.size() != 1)
-      throw std::runtime_error("Cannot deduce evaluated symbol type");
-    return children.front()->getEvaluatedSymbolType();
-  }
 
     const std::string name;
-    SymbolType type = SymbolType(TYPE_INVALID);
+    SymbolType type = SymbolType(SymbolSuperType::TYPE_INVALID);
     AstNode *declNode;
-    AstNode *parent;
-    std::vector<AstNode *> children;
-    SymbolType symbolType = SymbolType(TYPE_INVALID);
+
+ 
    private:
     std::string id;
     std::string val;

@@ -5,15 +5,18 @@
 #include <Symbol.hpp>
 #include <SymbolType.hpp>
 
+using namespace dplsrc;
+
 class LeafNode : public AstNode {
    public:
     LeafNode(std::shared_ptr<AstNode> parent) { AstNode::setParent(std::move(parent)); }
 
-    enum type { IDENTIFIER, INTEGER, FLOAT, STRING, BOOLEAN, NONE, UNDEFINED };
+    void setType(const dplsrc::SymbolType leafType) { this->leafType = leafType; }
 
-    void setType(SymbolType leafType) { this->leafType = leafType; }
-
-    type getType() { return leafType; }
+    dplsrc::SymbolType getType() const { 
+        if (!leafType.is(SymbolSuperType::TYPE_INVALID))
+            return leafType; 
+    }
 
     void addChild([[maybe_unused]] std::shared_ptr<AstNode> child) override;
 
@@ -24,7 +27,7 @@ class LeafNode : public AstNode {
 
 
    private: 
-    SymbolType leafType = SymbolSuperType::TYPE_INVALID;
+    dplsrc::SymbolType leafType = SymbolSuperType::TYPE_INVALID;
 };
 
 #endif

@@ -16,7 +16,7 @@ enum SymbolSuperType {
 
 class SymbolType{
 public:
-    explicit SymbolType(SymbolSuperType superType) : superType(superType) {}
+    SymbolType(SymbolSuperType superType) : superType(superType) {}
 
     std::string getName() const;
     bool is(SymbolSuperType superType) const;
