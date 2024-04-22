@@ -7,6 +7,7 @@
 #include <string>
 #include <utility>
 
+
 class AstNode : public std::enable_shared_from_this<AstNode> {
    public:
     AstNode() {}

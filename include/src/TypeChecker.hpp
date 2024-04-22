@@ -3,7 +3,7 @@
 
 #include "Symbol.hpp"
 #include "SymbolTable.hpp"
-// #include <ASTVisitor.hpp>
+#include "ast/AstVisitor.hpp"
 
 namespace dplsrc {
 

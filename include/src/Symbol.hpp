@@ -4,11 +4,10 @@
 #include <string>
 #include <utility>
 #include "SymbolType.hpp"
-
+#include "../ast/nodes/abstract/AstNode.hpp"
 
 namespace dplsrc {
 
-class ASTNode;
 
 class Symbol {
    public:
@@ -23,10 +22,23 @@ class Symbol {
 
     
 
+
+    void setEvaluatedSymbolType(const SymbolType &symbolType) { this->symbolType = symbolType; }
+
+    const SymbolType &getEvaluatedSymbolType() const {
+    if (!symbolType.is(TYPE_INVALID))
+      return symbolType;
+    if (children.size() != 1)
+      throw std::runtime_error("Cannot deduce evaluated symbol type");
+    return children.front()->getEvaluatedSymbolType();
+  }
+
     const std::string name;
     SymbolType type = SymbolType(TYPE_INVALID);
-    ASTNode *declNode;
-
+    AstNode *declNode;
+    AstNode *parent;
+    std::vector<AstNode *> children;
+    SymbolType symbolType = SymbolType(TYPE_INVALID);
    private:
     std::string id;
     std::string val;

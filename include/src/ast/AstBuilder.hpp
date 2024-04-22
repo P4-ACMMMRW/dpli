@@ -7,6 +7,8 @@
 
 #include <AllNodeIncludes.hpp>
 #include <memory>
+#include "../Symbol.hpp"
+
 
 using namespace antlr4;
 using namespace dplgrammar;
@@ -21,6 +23,8 @@ class AstBuilder : public DplParserBaseVisitor {
    public:
     AstBuilder(DplParser *parser, DplLexer *lexer)
         : parser(parser), lexer(lexer), root(nullptr), currentNode(nullptr) {}
+
+    
 
     antlrcpp::Any visitProg(DplParser::ProgContext *parseNode) override;
 
