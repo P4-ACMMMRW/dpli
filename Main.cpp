@@ -1,3 +1,4 @@
+
 #include <Main.hpp>
 
 using namespace antlr4;
@@ -7,26 +8,23 @@ int main(int argc, char **argv) {
     std::string description = "DPL Interpreter";
     std::string version = "0.0.1";
     std::string author = "P4-ACMMMRW";
-    std::string usage = std::string{argv[0]} + " [options] <input file> [arguments]";
+    std::string usage = std::string(argv[0]) + " [options] <input file> [arguments]";
     argz::about about{description, version, author, usage};
     about.print_help_when_no_options = false;
 
     bool debug = false;
-    std::string dotFile{};
-
-    argz::options args{{{"debug", 'd'}, debug, "enable debug output"},
-                       {{"Dot", 'D'}, dotFile, "generate a DOT file for the parse tree"}};
+    argz::options options{{{"debug", 'd'}, debug, "enable debug output"}};
 
     if (argc < 2) {
-        argz::help(about, args);
+        argz::help(about, options);
         return EXIT_SUCCESS;
     }
 
     int fileArgIndex = 0;
     bool isOption = true;
     for (int i = 1; i < argc; ++i) {
-        isOption = (std::strcmp(argv[i], "-h") == 0) || (std::strcmp(argv[i], "--help") == 0) ||
-                   (std::strcmp(argv[i], "-v") == 0) || (std::strcmp(argv[i], "--version") == 0);
+        isOption = std::strcmp(argv[i], "-h") == 0 || std::strcmp(argv[i], "--help") == 0 ||
+                   std::strcmp(argv[i], "-v") == 0 || std::strcmp(argv[i], "--version") == 0;
 
         if (!isOption) {
             fileArgIndex = i;
@@ -36,7 +34,7 @@ int main(int argc, char **argv) {
 
     // Parse all arguments except fileArgIndex and argv[0]
     try {
-        argz::parse(about, args, argc, argv, fileArgIndex);
+        argz::parse(about, options, argc, argv, fileArgIndex);
     } catch (const std::exception &e) {
         std::cerr << e.what() << '\n';
         return EXIT_FAILURE;
@@ -78,52 +76,18 @@ int main(int argc, char **argv) {
     tree::ParseTree *tree = parser.prog();
 
     if (debug) {
-        for (antlr4::Token *token : tokens.getTokens()) {
-            std::cout << token->toString() << '\n';
-        }
+        // std::cout << tree->toStringTree(&parser, true) << "\n\n";
 
-        std::cout << tree->toStringTree(&parser, true) << "\n\n";
-    }
+        // Ast print
+        AstBuilder builder{&parser, &lexer};
+        builder.visit(tree);
+        builder.getRoot()->print();
 
-    if (!dotFile.empty()) {
-        generateDotFile(tree, dotFile);
+        // Visitor
+        std::shared_ptr<AstNode> root = builder.getRoot();
+        std::shared_ptr<AstTestVisitor> visitor = std::make_shared<AstTestVisitor>();
+        root->accept(visitor);
     }
 
     return EXIT_SUCCESS;
-}
-
-void generateDotFile(tree::ParseTree *root, const std::string &fileName) {
-    std::ofstream out{std::filesystem::path(fileName)};
-
-    std::stack<std::pair<tree::ParseTree *, std::string>> stack;
-    std::string rootId = std::to_string(reinterpret_cast<std::uintptr_t>(root));
-
-    stack.push({root, rootId});
-
-    out << "digraph {\n";
-
-    while (!stack.empty()) {
-        std::pair<tree::ParseTree *, std::string> nodeAndParentId = stack.top();
-        tree::ParseTree *node = nodeAndParentId.first;
-        std::string parentId = nodeAndParentId.second;
-        stack.pop();
-
-        std::string nodeId = std::to_string(reinterpret_cast<std::uintptr_t>(node));
-
-        // Escape quotation marks in label
-        std::string label = std::regex_replace(node->getText(), std::regex("\""), "\\\"");
-
-        out << "  " << nodeId << " [label=\"" << label << "\"];\n";
-        if (!parentId.empty()) {
-            out << "  " << parentId << " -> " << nodeId << ";\n";
-        }
-
-        // Push the node's children on stack
-        for (std::vector<tree::ParseTree *>::reverse_iterator it = node->children.rbegin();
-             it != node->children.rend(); ++it) {
-            stack.push({*it, nodeId});
-        }
-    }
-
-    out << "}\n";
 }

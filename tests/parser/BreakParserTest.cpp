@@ -3,7 +3,7 @@
 using namespace dplgrammar;
 
 PARSER_TEST("break.dpl") {
-    std::vector<int> expectedNodeRules = {
+    std::vector<size_t> expectedNodeRules = {
         DplParser::RuleStm,
         DplParser::RuleAssignstm,
         DplParser::RuleExpr,
@@ -13,7 +13,6 @@ PARSER_TEST("break.dpl") {
         DplParser::RuleExpr,
         DplParser::RuleLiteral,
         DplParser::RuleStm,
-        DplParser::RuleStm,
         DplParser::RuleAssignstm,
         DplParser::RuleExpr,
         DplParser::RuleExpr,
@@ -21,7 +20,7 @@ PARSER_TEST("break.dpl") {
         DplParser::RuleExpr,
         DplParser::RuleLiteral,
         DplParser::RuleStm,
-        DplParser::RuleCtrlstm,
+        DplParser::RuleIfstm,
         DplParser::RuleExpr,
         DplParser::RuleExpr,
         DplParser::RuleBoolexpr,
@@ -29,12 +28,11 @@ PARSER_TEST("break.dpl") {
         DplParser::RuleExpr,
         DplParser::RuleLiteral,
         DplParser::RuleStm,
-        DplParser::RuleStm,
         DplParser::RuleFlowstm,
         DplParser::RuleStm,
         DplParser::RuleExpr,
-        DplParser::RuleStm,
-        DplParser::RuleExpr,
+        DplParser::RuleProccall,
+        DplParser::RuleArgs,
         DplParser::RuleExpr,
         DplParser::RuleLiteral
     };

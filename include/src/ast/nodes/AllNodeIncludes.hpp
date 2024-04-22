@@ -1,0 +1,41 @@
+// AllNodeIncludes.hpp
+#ifndef ALLNODEINCLUDES_HPP
+#define ALLNODEINCLUDES_HPP
+
+#include <AndExprNode.hpp>
+#include <AssignNode.hpp>
+#include <AstNode.hpp>
+#include <ColumnNode.hpp>
+#include <DivExprNode.hpp>
+#include <ElseNode.hpp>
+#include <EqualExprNode.hpp>
+#include <ExpoExprNode.hpp>
+#include <FilterNode.hpp>
+#include <GreaterEqualExprNode.hpp>
+#include <GreaterExprNode.hpp>
+#include <HeaderIndexNode.hpp>
+#include <IfNode.hpp>
+#include <IndexNode.hpp>
+#include <LeafNode.hpp>
+#include <LessEqualExprNode.hpp>
+#include <LessExprNode.hpp>
+#include <ListNode.hpp>
+#include <MinusExprNode.hpp>
+#include <MinusNode.hpp>
+#include <ModExprNode.hpp>
+#include <MultExprNode.hpp>
+#include <NotEqualExprNode.hpp>
+#include <NotNode.hpp>
+#include <OrExprNode.hpp>
+#include <ParNode.hpp>
+#include <PlusExprNode.hpp>
+#include <PlusNode.hpp>
+#include <ProcCallNode.hpp>
+#include <ProcDecNode.hpp>
+#include <ProgNode.hpp>
+#include <ReturnNode.hpp>
+#include <TableNode.hpp>
+#include <UnaryExprNode.hpp>
+#include <WhileNode.hpp>
+
+#endif

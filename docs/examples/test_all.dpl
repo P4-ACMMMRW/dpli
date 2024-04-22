@@ -1,0 +1,76 @@
+# Assigning
+assign1 = 1
+
+# Indexing
+indexing2[1] = assign1
+indexing3[1][2] = assign4[1][2][3]
+
+# Filtering && UnaryExpr
+filtering1[==1] = 1
+filtering2[==assign3[1]] = 2
+filtering3[$"toes"] = 3
+filtering4[$"head"][==2] = 4
+filtering5[==3][$"neck"][==4] = 5
+
+# Proccall
+proccall()
+proccall1() = 1
+proccall2(1) = 2
+proccall3(1, 2, 3, 4) = 3
+
+# Expr 
+not True
+not not false
+True and not False
+not True or False
+
+# Comp
+(not False and not True) == not (True or False)
+True != False
+3 > 1
+4 >= 1
+5 < 6
+6 <= 6
+
+# terminal 
+id 
+(True)
+[1, 2, 3, 4]
+[1 + 2, 3]
+{"toes": [1, 2, 3], "head": [1, 2, 3]}
+"hello world!"
+None
+5.4
+-6.9
++--+-12
+
+
+# If
+if var != False:
+    var = True
+
+if var == True:
+    var = not Talse
+else:
+    var = False
+
+
+# While
+
+while isTrue():
+    print("hi")
+
+# Function declaration
+def print(str):
+    out(str)
+
+
+# Flow stm
+def returnOfProc(isTrue):
+    return isTrue
+
+while True:
+    if var == True:
+        continue
+    else: 
+        break

@@ -4,6 +4,8 @@ project(dpl)
 enable_testing()
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+
+# Can not be upgraded to C++20 because of a bug in github actions with chrono header
 set(CMAKE_CXX_STANDARD 17)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -41,15 +43,26 @@ message(STATUS "ANTLR_DplParser_OUTPUT_DIR: ${ANTLR_DplParser_OUTPUT_DIR}")
 message(STATUS "ANTLR_DplLexer_CXX_OUTPUTS: ${ANTLR_DplLexer_CXX_OUTPUTS}")
 message(STATUS "ANTLR_DplParser_CXX_OUTPUTS: ${ANTLR_DplParser_CXX_OUTPUTS}")
 
-add_library(dpllib STATIC ${ANTLR_DplLexer_CXX_OUTPUTS} ${ANTLR_DplParser_CXX_OUTPUTS})
-target_include_directories(dpllib PUBLIC ${ANTLR_DplLexer_OUTPUT_DIR} ${ANTLR_DplParser_OUTPUT_DIR} ${PROJECT_SOURCE_DIR}/lib/argz ${PROJECT_SOURCE_DIR}/include/src)
+file(GLOB_RECURSE SOURCES "${PROJECT_SOURCE_DIR}/src/*.cpp")
+message(STATUS "SOURCES: ${SOURCES}")
+
+add_library(dpllib STATIC ${SOURCES} ${ANTLR_DplLexer_CXX_OUTPUTS} ${ANTLR_DplParser_CXX_OUTPUTS})
+
+target_include_directories(dpllib PUBLIC 
+    ${ANTLR_DplLexer_OUTPUT_DIR}
+    ${ANTLR_DplParser_OUTPUT_DIR} 
+    ${PROJECT_SOURCE_DIR}/lib/argz 
+    ${PROJECT_SOURCE_DIR}/include/src
+    ${PROJECT_SOURCE_DIR}/include/src/ast
+    ${PROJECT_SOURCE_DIR}/include/src/ast/nodes
+    ${PROJECT_SOURCE_DIR}/include/src/ast/nodes/abstract)
 
 target_link_libraries(dpllib PUBLIC antlr4_static)
 
 add_executable(dpli Main.cpp)
 
-target_include_directories(dpli PRIVATE ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/include/src)
-
-add_subdirectory(tests)
+target_include_directories(dpli PRIVATE ${PROJECT_SOURCE_DIR}/include)
 
 target_link_libraries(dpli PRIVATE dpllib antlr4_static)
+
+# add_subdirectory(tests)

@@ -3,7 +3,7 @@
 using namespace dplgrammar;
 
 PARSER_TEST("math.dpl") {
-    std::vector<int> expectedNodeRules = {
+    std::vector<size_t> expectedNodeRules = {
         DplParser::RuleStm,
         DplParser::RuleAssignstm,
         DplParser::RuleExpr,
@@ -38,24 +38,25 @@ PARSER_TEST("math.dpl") {
         DplParser::RuleLiteral,
         DplParser::RuleStm,
         DplParser::RuleExpr,
-        DplParser::RuleStm,
-        DplParser::RuleExpr,
-        DplParser::RuleExpr,
-        DplParser::RuleStm,
+        DplParser::RuleProccall,
+        DplParser::RuleArgs,
         DplParser::RuleExpr,
         DplParser::RuleStm,
         DplParser::RuleExpr,
+        DplParser::RuleProccall,
+        DplParser::RuleArgs,
         DplParser::RuleExpr,
         DplParser::RuleStm,
         DplParser::RuleExpr,
-        DplParser::RuleStm,
-        DplParser::RuleExpr,
-        DplParser::RuleExpr,
-        DplParser::RuleStm,
+        DplParser::RuleProccall,
+        DplParser::RuleArgs,
         DplParser::RuleExpr,
         DplParser::RuleStm,
         DplParser::RuleExpr,
-        DplParser::RuleExpr
+        DplParser::RuleProccall,
+        DplParser::RuleArgs,
+        DplParser::RuleExpr,
+        DplParser::RuleStm,
     };
     
     dplutil::TestingUtil::testParser("math.dpl", expectedNodeRules);

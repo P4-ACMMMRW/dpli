@@ -3,12 +3,11 @@
 using namespace dplgrammar;
 
 PARSER_TEST("gcd.dpl") {
-    std::vector<int> expectedNodeRules = {
+    std::vector<size_t> expectedNodeRules = {
         DplParser::RuleProcdec,
         DplParser::RuleParams,
         DplParser::RuleStm,
-        DplParser::RuleStm,
-        DplParser::RuleCtrlstm,
+        DplParser::RuleIfstm,
         DplParser::RuleExpr,
         DplParser::RuleExpr,
         DplParser::RuleBoolexpr,
@@ -16,13 +15,10 @@ PARSER_TEST("gcd.dpl") {
         DplParser::RuleExpr,
         DplParser::RuleLiteral,
         DplParser::RuleStm,
-        DplParser::RuleStm,
         DplParser::RuleFlowstm,
-        DplParser::RuleStm,
         DplParser::RuleExpr,
         DplParser::RuleStm,
         DplParser::RuleFlowstm,
-        DplParser::RuleStm,
         DplParser::RuleExpr,
         DplParser::RuleProccall,
         DplParser::RuleArgs,
@@ -33,15 +29,15 @@ PARSER_TEST("gcd.dpl") {
         DplParser::RuleExpr,
         DplParser::RuleStm,
         DplParser::RuleExpr,
-        DplParser::RuleStm,
-        DplParser::RuleExpr,
+        DplParser::RuleProccall,
+        DplParser::RuleArgs,
         DplParser::RuleExpr,
         DplParser::RuleProccall,
         DplParser::RuleArgs,
         DplParser::RuleExpr,
         DplParser::RuleLiteral,
         DplParser::RuleExpr,
-        DplParser::RuleLiteral,
+        DplParser::RuleLiteral
     };
     
     dplutil::TestingUtil::testParser("gcd.dpl", expectedNodeRules);

@@ -18,10 +18,10 @@ namespace dplutil {
     class TestVisitor : public dplgrammar::DplParserBaseVisitor {
         private:
             dplgrammar::DplParser* parser; // Add a parser member
-            std::vector<int> expectedTreeNodes;
+            std::vector<size_t> expectedTreeNodes;
 
         public:
-            TestVisitor(dplgrammar::DplParser* parser, std::vector<int> expectedTreeNodes) 
+            TestVisitor(DplParser* parser, std::vector<size_t> expectedTreeNodes) 
                 : parser(parser), expectedTreeNodes(expectedTreeNodes) {} 
 
             void printTokens(int ruleIndex);
@@ -32,7 +32,7 @@ namespace dplutil {
     class TestingUtil {
         public:
             static void testTokens(std::string testFileName, std::vector<size_t> expectedTokenTypes);
-            static void testParser(std::string testFileName, std::vector<int> expectedTreeNodes);
+            static void testParser(std::string testFileName, std::vector<size_t> expectedTreeNodes);
 
         private:
             static constexpr std::string_view exampleLocation = "../../docs/examples/"; 
