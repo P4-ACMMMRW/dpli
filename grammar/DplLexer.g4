@@ -138,10 +138,11 @@ Assign: '=';
 Union: 'union';
 Intersection: 'intersection';
 
-// Types
 fragment DIGIT: [0-9];
 fragment ALPHA: [a-zA-Z];
 fragment ALPHANUM: [a-zA-Z0-9];
+
+// Types
 Integer: DIGIT+;
 Float: DIGIT+ '.' DIGIT+;
 Bool: 'True' | 'False';
