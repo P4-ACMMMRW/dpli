@@ -145,7 +145,7 @@ fragment ALPHANUM: [a-zA-Z0-9];
 Integer: DIGIT+;
 Float: DIGIT+ '.' DIGIT+;
 Bool: 'True' | 'False';
-String: '"' ~["\r\n]* '"';
+String : '"' ( ~["\r\n\\] | '\\' '"' )* '"';
 None: 'None';
 Identifier: ALPHA ALPHANUM*;
 
