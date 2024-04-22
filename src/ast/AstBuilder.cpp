@@ -165,11 +165,56 @@ antlrcpp::Any AstBuilder::visitWhilestm(DplParser::WhilestmContext* parseNode) {
     return nullptr;
 }
 
+
+antlrcpp::Any AstBuilder::visitJuncexpr(DplParser::JuncexprContext* parseNode) {
+    size_t childAmount = parseNode->children.size();
+    if (childAmount == 1) {
+        return parseNode->children[0]->accept(this);
+    }
+
+    for (int i = childAmount - 1; i > 0; i = i - 2) {
+            
+        std::shared_ptr<AstNode> newNode = nullptr;
+
+        int operatorType = dynamic_cast<antlr4::tree::TerminalNode*>(parseNode->children[i-1])->getSymbol()->getType();
+
+        switch (operatorType) {
+            case DplLexer::And:
+                newNode = std::make_shared<AndExprNode>(currentNode);
+                break;
+            case DplLexer::Or:
+                newNode = std::make_shared<OrExprNode>(currentNode);
+                break;
+            default:
+                throw std::runtime_error("Junc expr was not valid operator");
+        }
+        
+        newNode->setRule(parseNode->getRuleIndex());
+        newNode->setText(parseNode->op->getText());
+
+        currentNode->addChild(newNode);
+        std::shared_ptr<AstNode> oldNode = currentNode;
+        currentNode = newNode;
+
+        //rightNode 
+        parseNode->children[i]->accept(this);
+
+        // if last iteration, add left node
+        if (i == 2) parseNode->children[0]->accept(this);
+    }
+
+    currentNode = oldNode;
+    
+    return nullptr;
+}
+
 // Expressions  The expressions isn't correctly sequenced
 antlrcpp::Any AstBuilder::visitJuncexpr(DplParser::JuncexprContext* parseNode) {
     if (parseNode->children.size() == 1) {
         return parseNode->children[0]->accept(this);
     }
+
+    //size_t childAmount = parseNode->children.size();
 
     std::shared_ptr<AstNode> newNode = nullptr;
 
@@ -198,7 +243,7 @@ antlrcpp::Any AstBuilder::visitJuncexpr(DplParser::JuncexprContext* parseNode) {
     parseNode->children[2]->accept(this);
 
     currentNode = oldNode;
-
+    
     return nullptr;
 }
 
@@ -207,32 +252,66 @@ antlrcpp::Any AstBuilder::visitNotexpr(DplParser::NotexprContext* parseNode) {
         return parseNode->children[0]->accept(this);
     }
 
-    std::shared_ptr<AstNode> newNode = nullptr;
+    std::shared_ptr<AstNode> oldNode = currentNode;
 
-    switch (parseNode->op->getType()) {
-        case DplLexer::Not:
-            newNode = std::make_shared<NotNode>(currentNode);
-            break;
-        case DplLexer::Plus:
-            newNode = std::make_shared<PlusNode>(currentNode);
-            break;
-        case DplLexer::Minus:
-            newNode = std::make_shared<MinusNode>(currentNode);
-            break;
-        default:
-            throw std::runtime_error("Notexpr was not valid operator");
+    size_t notAmount = parseNode->children.size() - 1;
+
+    for (int i = 0; i < notAmount; i++) {
+
+        std::shared_ptr<AstNode> newNode = std::make_shared<NotNode>(currentNode);
+
+        newNode->setRule(parseNode->getRuleIndex());
+        newNode->setText(parseNode->op->getText());
+
+        currentNode->addChild(newNode);
+        currentNode = newNode;
     }
 
-    newNode->setRule(parseNode->getRuleIndex());
-    newNode->setText(parseNode->op->getText());
-
-    currentNode->addChild(newNode);
-    std::shared_ptr<AstNode> oldNode = currentNode;
-    currentNode = newNode;
-
-    parseNode->children[1]->accept(this);
+    parseNode->children[notAmount]->accept(this);
 
     currentNode = oldNode;
+    
+
+    return nullptr;
+}
+
+antlrcpp::Any AstBuilder::visitEqulexpr(DplParser::EqulexprContext* parseNode) {
+    if (parseNode->children.size() == 1) {
+        return parseNode->children[0]->accept(this);
+    }
+
+    size_t childAmount = parseNode->children.size();
+
+    for (int i = 0; i < childAmount; i = i + 2) {
+
+        std::shared_ptr<AstNode> newNode = nullptr;
+
+        switch (parseNode->op->getType()) {
+            case DplLexer::Equal:
+                newNode = std::make_shared<EqualExprNode>(currentNode);
+                break;
+            case DplLexer::NotEqual:
+                newNode = std::make_shared<NotEqualExprNode>(currentNode);
+                break;
+            default:
+                throw std::runtime_error("Junc expr was not valid operator");
+        }
+
+        newNode->setRule(parseNode->getRuleIndex());
+        newNode->setText(parseNode->op->getText());
+
+        currentNode->addChild(newNode);
+        std::shared_ptr<AstNode> oldNode = currentNode;
+        currentNode = newNode;
+
+        // Left Node
+        parseNode->children[0]->accept(this);
+
+        // Right Node
+        parseNode->children[2]->accept(this);
+
+        currentNode = oldNode;
+    }
 
     return nullptr;
 }

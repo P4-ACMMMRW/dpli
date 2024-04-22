@@ -7,8 +7,8 @@ options {
 prog: (stm Newline? | procdec Newline? | Newline)+ EOF;
 
 
-procdec: Def Identifier OpenPar params ClosePar Colon block
-       | Def Identifier OpenPar ClosePar Colon block;
+procdec: Def Identifier OpenPar ClosePar Colon block 
+       | Def Identifier OpenPar params ClosePar Colon block;
 
 
 params: Identifier (Comma Identifier)*;
@@ -18,7 +18,8 @@ stm: ifstm
    | whilestm
    | assignstm
    | flowstm
-   | returnstm;
+   | returnstm
+   | juncexpr;
 
 stms: (stm Newline?)+;
 
@@ -36,7 +37,7 @@ whilestm: While juncexpr Colon block;
 
 
 // Assign
-assignstm: juncexpr (Assign juncexpr)?;
+assignstm: subscript Assign juncexpr;
 
 // Flow
 flowstm: Break
@@ -47,44 +48,41 @@ returnstm: Return juncexpr
          | Return;
 
 // Expressions
-juncexpr: juncexpr op = And juncexpr
-        | juncexpr op = Or  juncexpr
-        | compexpr;
+juncexpr: notexpr ((And | Or) notexpr)*;
 
-compexpr: compexpr op = (Equal | NotEqual | Greater | GreaterEqual | Less | LessEqual) compexpr
-        | arthexpr;
+notexpr: Not* equlexpr;
 
-arthexpr: <assoc = right> arthexpr op = Exponent arthexpr
-        | arthexpr op = (Star | Slash |  Mod)    arthexpr
-        | arthexpr op = (Plus | Minus)           arthexpr
-        | notexpr;
+equlexpr: compexpr ((Equal | NotEqual) compexpr)*;
 
+compexpr: plusexpr ((Equal | NotEqual | Greater | GreaterEqual | Less | LessEqual) plusexpr)*;
 
-// Terms
-notexpr: op = Not            notexpr
-       | op = (Plus | Minus) notexpr
-       | subscript;
+plusexpr: tablexpr ((Plus | Minus)  tablexpr)*;
 
-subscript: subscript proccall
-         | subscript headerindex
-         | subscript index
-         | subscript filtering
-         | term;
+tablexpr: multexpr ((Union | Intersection) multexpr)*; 
+
+multexpr: polaexpr ((Star | Slash |  Mod) polaexpr)*;
+
+polaexpr: ((Plus | Minus))* expoexpr;
+
+expoexpr: <assoc = right> term (Exponent term)*;
          
 term: OpenPar juncexpr ClosePar
     | list
     | table
-    | number 
+    | Float
+    | Integer
     | Bool 
     | String 
     | None
-    | Identifier; 
+    | subscript; 
 
-number: (Plus | Minus)* (Float | Integer);
+subscript: Identifier (proccall | headerindex | index | filtering)*;
 
-list: OpenSquare args? CloseSquare;
+list: OpenSquare args CloseSquare
+    | OpenSquare CloseSquare;
 
-table: OpenCurly (column (Comma column)*)? CloseCurly; 
+table: OpenCurly column (Comma column)* CloseCurly
+     | OpenCurly CloseCurly; 
 
 column: String Colon list;
 
@@ -103,5 +101,3 @@ proccall: OpenPar ClosePar
         | OpenPar args ClosePar;
 
 args: juncexpr (Comma juncexpr)*;
-
- 

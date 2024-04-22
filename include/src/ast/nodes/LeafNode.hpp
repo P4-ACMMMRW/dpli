@@ -3,6 +3,7 @@
 
 #include <AstNode.hpp>
 
+
 class LeafNode : public AstNode {
    public:
     LeafNode(std::shared_ptr<AstNode> parent) { AstNode::setParent(std::move(parent)); }
@@ -19,7 +20,7 @@ class LeafNode : public AstNode {
 
     void accept(std::shared_ptr<AstVisitor> visitor) override;
 
-   private: 
+   private:
     type leafType = type::UNDEFINED;
 };
 
