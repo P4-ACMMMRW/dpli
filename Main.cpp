@@ -9,7 +9,7 @@ int main(int argc, char **argv) {
     std::string description = "DPL Interpreter";
     std::string version = "0.0.1";
     std::string author = "P4-ACMMMRW";
-    std::string usage = std::string(argv[0]) + " [options] <source> [options]";
+    std::string usage = std::string(argv[0]) + " [options] <input-file> [options]";
     argz::about about{description, version, author, usage};
     about.print_help_when_no_options = false;
 
@@ -23,17 +23,17 @@ int main(int argc, char **argv) {
         return EXIT_SUCCESS;
     }
 
-    int sourceArgIndex = 0;
+    int fileArgIndex = 0;
     for (int i = 1; i < argc; ++i) {
         if (argv[i][0] != '-') {
-            sourceArgIndex = i;
+            fileArgIndex = i;
             break;
         }
     }
 
-    // Parse all arguments except sourceArgIndex and argv[0]
+    // Parse all arguments except fileArgIndex and argv[0]
     try {
-        argz::parse(about, options, argc, argv, sourceArgIndex);
+        argz::parse(about, options, argc, argv, fileArgIndex);
     } catch (const std::exception &e) {
         std::cerr << e.what() << '\n';
         return EXIT_FAILURE;
@@ -44,19 +44,19 @@ int main(int argc, char **argv) {
     if (!interpretFromCli) {
         // No source code provided, and options have already been evaluated so exit
         // program.
-        if (sourceArgIndex == 0) {
+        if (fileArgIndex == 0) {
             return EXIT_SUCCESS;
         }
 
         // Check if input file exists
-        if (!std::filesystem::exists(argv[sourceArgIndex])) {
-            std::cerr << "Error: file \"" << argv[sourceArgIndex] << "\" not found\n";
+        if (!std::filesystem::exists(argv[fileArgIndex])) {
+            std::cerr << "Error: file \"" << argv[fileArgIndex] << "\" not found\n";
             return EXIT_FAILURE;
         }
 
-        std::ifstream file{std::filesystem::path(argv[sourceArgIndex])};
+        std::ifstream file{std::filesystem::path(argv[fileArgIndex])};
         if (!file.is_open()) {
-            std::cerr << "Error: file \"" << argv[sourceArgIndex] << "\" could not be opened\n";
+            std::cerr << "Error: file \"" << argv[fileArgIndex] << "\" could not be opened\n";
             return EXIT_FAILURE;
         }
 
