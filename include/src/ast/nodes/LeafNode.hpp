@@ -18,8 +18,12 @@ class LeafNode : public AstNode {
     void setIsIdentifier(bool isIdentifier) { this->isIdentifier = isIdentifier; }
     bool getIsIdentifier() const { return isIdentifier; }
 
+    void setIsFunctionCall(bool isFunctionCall) { this->isFunctionCall = isFunctionCall; }
+    bool getIsFunctionCall() const { return isFunctionCall; }
+
    private:
     bool isIdentifier{};
+    bool isFunctionCall{};
 };
 
 #endif

@@ -85,7 +85,15 @@ void Evaluator::visit(std::shared_ptr<PlusExprNode> node) {}
 
 void Evaluator::visit(std::shared_ptr<PlusNode> node) {}
 
-void Evaluator::visit(std::shared_ptr<ProcCallNode> node) {}
+void Evaluator::visit(std::shared_ptr<ProcCallNode> node) {
+    std::shared_ptr<AstNode> procNode = node->getChildNode();
+    //procNode->accept(shared_from_this());
+
+    std::vector<std::shared_ptr<AstNode>> argNodes = node->getChildNodeList();
+    for (size_t i = 0; i < argNodes.size(); ++i) {
+        argNodes[i]->accept(shared_from_this());
+    }
+}
 
 void Evaluator::visit(std::shared_ptr<ProcDecNode> node) {}
 

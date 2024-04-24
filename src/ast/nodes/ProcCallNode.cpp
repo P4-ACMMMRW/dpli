@@ -16,7 +16,7 @@ std::string ProcCallNode::print(std::string indent = "", std::string prefix = ""
     std::string childIndent = AstNode::print(indent, prefix);
 
     bool isChildNodeListEmpty = childNodeList->getChildNodeList().empty();
-    childNode->print(childIndent, (isChildNodeListEmpty) ? "└── " : "├── Name: ");
+    childNode->print(childIndent, (isChildNodeListEmpty) ? "└── Name: " : "├── Name: ");
 
     childNodeList->print(childIndent, "└── ");
     return "";

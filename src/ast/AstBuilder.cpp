@@ -513,9 +513,8 @@ antlrcpp::Any AstBuilder::visitProccall(DplParser::ProccallContext* parseNode) {
     newNode->setRule(parseNode->getRuleIndex());
     newNode->setText("() proccall");
 
-    std::shared_ptr<AstNode> astNewNode = std::static_pointer_cast<AstNode>(newNode);
-    currentNode->addChild(astNewNode);
-    currentNode = astNewNode;
+    currentNode->addChild(newNode);
+    currentNode = newNode;
 
     if (parseNode->children.size() == 2) {
         newNode->stopVisitingParams();
