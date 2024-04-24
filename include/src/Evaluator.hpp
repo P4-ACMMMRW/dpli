@@ -46,9 +46,11 @@ class Evaluator : public AstVisitor {
     void visit(std::shared_ptr<WhileNode> node) override;
 
     SymbolTable getVtable() { return vtable; }
+    SymbolTable getPtable() { return ptable; }
 
    private:
     SymbolTable vtable = SymbolTable();
+    SymbolTable ptable = SymbolTable();
 };
 
 }  // namespace dplsrc

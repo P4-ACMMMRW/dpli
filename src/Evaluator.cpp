@@ -44,16 +44,25 @@ void Evaluator::visit(std::shared_ptr<IndexNode> node) {}
 
 void Evaluator::visit(std::shared_ptr<LeafNode> node) {
     if (node->getIsIdentifier()) {
-        Symbol *sym = nullptr;
-        try {
-            sym = vtable.lookup(node->getText());
-        } catch (const std::out_of_range &e) {
-            // TODO: call undefined variable error from error handler
-            throw std::runtime_error("Error: undefined variable \"" + node->getText() + "\"\n");
+        // TODO: there should probably be two table classes, one for variables and one for procedures. also two different entry types
+        if (node->getIsFunctionCall()) {
+            try {
+                Symbol *sym = ptable.lookup(node->getText());
+                node->setType(sym->getType());
+                node->setVal(sym->getVal());
+            } catch (const std::out_of_range &e) {
+                throw std::runtime_error("Error: undefined procedure \"" + node->getText() + "\"\n");
+            }
+        } else {
+            try {
+                Symbol *sym = vtable.lookup(node->getText());
+                node->setType(sym->getType());
+                node->setVal(sym->getVal());
+            } catch (const std::out_of_range &e) {
+                // TODO: call undefined variable error from error handler
+                throw std::runtime_error("Error: undefined variable \"" + node->getText() + "\"\n");
+            }
         }
-
-        node->setType(sym->getType());
-        node->setVal(sym->getVal());
     } else {
         node->setVal(node->getText());
     }
@@ -86,8 +95,9 @@ void Evaluator::visit(std::shared_ptr<PlusExprNode> node) {}
 void Evaluator::visit(std::shared_ptr<PlusNode> node) {}
 
 void Evaluator::visit(std::shared_ptr<ProcCallNode> node) {
-    std::shared_ptr<AstNode> procNode = node->getChildNode();
-    //procNode->accept(shared_from_this());
+    std::shared_ptr<LeafNode> procNode = std::dynamic_pointer_cast<LeafNode>(node->getChildNode());
+    procNode->setIsFunctionCall(true);
+    procNode->accept(shared_from_this());
 
     std::vector<std::shared_ptr<AstNode>> argNodes = node->getChildNodeList();
     for (size_t i = 0; i < argNodes.size(); ++i) {
