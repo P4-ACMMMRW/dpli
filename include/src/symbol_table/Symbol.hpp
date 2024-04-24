@@ -24,7 +24,7 @@ class Symbol {
    private:
     std::string id;
     std::string val;
-    Type type = Type(Type::UNKNOWN);
+    Type type = Type::UNKNOWN;
 };
 }  // namespace dplsrc
 

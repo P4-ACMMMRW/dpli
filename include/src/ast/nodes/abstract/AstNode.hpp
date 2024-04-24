@@ -27,8 +27,12 @@ class AstNode : public std::enable_shared_from_this<AstNode> {
     void setRule(size_t rule) { this->rule = rule; }
     void setText(std::string text) { this->text = std::move(text); }
     void setParent(std::shared_ptr<AstNode> parent) { this->parent = std::move(parent); }
+
     void setType(dplsrc::Type type) { this->type = type; }
     dplsrc::Type getType() const { return type; }
+
+    void setVal(std::string value) { this->value = std::move(value); }
+    std::string getVal() { return value; }
 
     virtual std::string print(std::string indent = "", std::string prefix = "");
     virtual void addChild(std::shared_ptr<AstNode> child) = 0;
@@ -39,6 +43,7 @@ class AstNode : public std::enable_shared_from_this<AstNode> {
     std::shared_ptr<AstNode> parent;
     std::string text;
     dplsrc::Type type = dplsrc::Type::UNKNOWN;
+    std::string value;
 };
 
 #endif
