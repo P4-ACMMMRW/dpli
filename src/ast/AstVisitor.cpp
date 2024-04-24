@@ -66,9 +66,7 @@ void AstVisitor::visit(std::shared_ptr<IndexNode> node) {
     visit(std::static_pointer_cast<BinaryNode>(node));
 }
 
-void AstVisitor::visit([[maybe_unused]]std::shared_ptr<LeafNode> node) {
-    return;
-}
+void AstVisitor::visit([[maybe_unused]] std::shared_ptr<LeafNode> node) { return; }
 
 void AstVisitor::visit(std::shared_ptr<LessEqualExprNode> node) {
     visit(std::static_pointer_cast<BinaryNode>(node));

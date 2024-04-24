@@ -3,26 +3,33 @@
 using namespace dplsrc;
 
 void Evaluator::visit(std::shared_ptr<AssignNode> node) {
-    auto leftNode = node->getLeftNode();
-    auto rightNode = node->getRightNode();
+    // Assume left node is a leaf node
+    std::shared_ptr<LeafNode> leftNode = std::dynamic_pointer_cast<LeafNode>(node->getLeftNode());
 
-    //leftNode->accept(shared_from_this());
-    //rightNode->accept(shared_from_this());
+    if (!leftNode->getIsIdentifier()) {
+        throw std::runtime_error("Error: left side of assignment must be an identifier\n");
+    }
 
-    std::cout << "Visiting AssignNode" << '\n';
-    std::cout << "LValue: " << leftNode->getText() << '\n';
-    std::cout << "LType: " << leftNode->getType() << '\n';
-    std::cout << "RValue: " << rightNode->getText() << '\n';
-    std::cout << "RType: " << rightNode->getType() << '\n';
+    std::shared_ptr<AstNode> rightNode = node->getRightNode();
+
+    // TODO: should use something else than getText()
+    vtable.bind(Symbol(leftNode->getText(), rightNode->getText(), rightNode->getType()));
+    vtable.print();
+
+    leftNode->accept(shared_from_this());
+    rightNode->accept(shared_from_this());
 }
 
 void Evaluator::visit(std::shared_ptr<LeafNode> node) {
     if (node->getIsIdentifier()) {
-        Symbol *sym = vtable.lookup(node->getText());
+        Symbol *sym;
+        try {
+            sym = vtable.lookup(node->getText());
+        } catch (const std::out_of_range &e) {
+            // TODO: call undefined variable error from error handler
+            throw std::runtime_error("Error: undefined variable \"" + node->getText() + "\"\n");
+        }
+
         node->setType(sym->getType());
     }
-
-    std::cout << "Visiting LeafNode" << '\n';
-    std::cout << "Value: " << node->getText() << '\n';
-    std::cout << "Type: " << node->getType() << '\n';
 }

@@ -6,9 +6,8 @@
 #include <memory>
 #include <string>
 #include <utility>
-#include <unordered_map>
-#include "Type.hpp"
 
+#include "Type.hpp"
 
 class AstNode : public std::enable_shared_from_this<AstNode> {
    public:

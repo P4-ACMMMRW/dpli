@@ -1,9 +1,9 @@
 #ifndef LEAFNODE_HPP
 #define LEAFNODE_HPP
 
-#include <vector>
 #include <AstNode.hpp>
 #include <memory>
+#include <vector>
 
 class LeafNode : public AstNode {
    public:
