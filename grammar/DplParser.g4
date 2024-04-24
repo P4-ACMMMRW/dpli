@@ -21,7 +21,7 @@ stm: ifstm
    | returnstm
    | juncexpr;
 
-stms: (stm Newline?)+;
+stms: (stm Newline? | Newline)+;
 
 block: Indent Newline? stms Dedent Newline?;
 
@@ -50,11 +50,12 @@ returnstm: Return juncexpr
 // Expressions
 juncexpr: notexpr ((And | Or) notexpr)*;
 
-notexpr: Not* equlexpr;
+notexpr: Not notexpr 
+       | equlexpr;
 
 equlexpr: compexpr ((Equal | NotEqual) compexpr)*;
 
-compexpr: plusexpr ((Equal | NotEqual | Greater | GreaterEqual | Less | LessEqual) plusexpr)*;
+compexpr: plusexpr ((Greater | GreaterEqual | Less | LessEqual) plusexpr)*;
 
 plusexpr: tablexpr ((Plus | Minus)  tablexpr)*;
 
@@ -62,7 +63,8 @@ tablexpr: multexpr ((Union | Intersection) multexpr)*;
 
 multexpr: polaexpr ((Star | Slash |  Mod) polaexpr)*;
 
-polaexpr: ((Plus | Minus))* expoexpr;
+polaexpr: (Plus | Minus) polaexpr
+        | expoexpr;
 
 expoexpr: <assoc = right> term (Exponent term)*;
          

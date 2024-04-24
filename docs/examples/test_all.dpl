@@ -24,8 +24,11 @@ not not false
 True and not False
 not True or False
 
+
+# Arth
+
 # Comp
-(not False and not True) == not (True or False)
+(not False and not True) == (not (True or False))
 True != False
 3 > 1
 4 >= 1
@@ -50,7 +53,7 @@ if var != False:
     var = True
 
 if var == True:
-    var = not Talse
+    var = not False
 else:
     var = False
 

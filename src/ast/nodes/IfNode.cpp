@@ -17,9 +17,12 @@ std::string IfNode::print(std::string indent = "", std::string prefix = "") {
 
     condNode->print(childIndent, "├── Condition: ");
 
-    bodyNodeList->print(childIndent, "├── Body: ");
+    bool elseNodeExists = elseNode->getChildNode() != nullptr;
 
+    std::string bodyPrefix = (!elseNodeExists) ? "└── " : "├── Body:";
+    bodyNodeList->print(childIndent, bodyPrefix);
     elseNode->print(childIndent, "└── ");
+
     return "";
 }
 

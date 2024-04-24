@@ -57,6 +57,10 @@ class AstTestVisitor : public AstVisitor {
         std::cout << "Visiting " << node->getText() << '\n';
         AstVisitor::visit(node);
     };
+    void visit(std::shared_ptr<IntersectionExprNode> node) override {
+        std::cout << "Visiting " << node->getText() << '\n';
+        AstVisitor::visit(node);
+    };
     void visit(std::shared_ptr<LeafNode> node) override {
         std::cout << "Visiting " << node->getText() << '\n';
         AstVisitor::visit(node);
@@ -130,6 +134,10 @@ class AstTestVisitor : public AstVisitor {
         AstVisitor::visit(node);
     };
     void visit(std::shared_ptr<UnaryExprNode> node) override {
+        std::cout << "Visiting " << node->getText() << '\n';
+        AstVisitor::visit(node);
+    };
+    void visit(std::shared_ptr<UnionExprNode> node) override {
         std::cout << "Visiting " << node->getText() << '\n';
         AstVisitor::visit(node);
     };

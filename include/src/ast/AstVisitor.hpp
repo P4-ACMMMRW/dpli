@@ -18,6 +18,7 @@ class GreaterExprNode;
 class HeaderIndexNode;
 class IfNode;
 class IndexNode;
+class IntersectionExprNode;
 class LeafNode;
 class LessEqualExprNode;
 class LessExprNode;
@@ -38,6 +39,7 @@ class ProgNode;
 class ReturnNode;
 class TableNode;
 class UnaryExprNode;
+class UnionExprNode;
 class WhileNode;
 
 // Abstract
@@ -68,6 +70,7 @@ class AstVisitor : public std::enable_shared_from_this<AstVisitor> {
     virtual void visit(std::shared_ptr<HeaderIndexNode> node);
     virtual void visit(std::shared_ptr<IfNode> node);
     virtual void visit(std::shared_ptr<IndexNode> node);
+    virtual void visit(std::shared_ptr<IntersectionExprNode> node);
     virtual void visit(std::shared_ptr<LeafNode> node);
     virtual void visit(std::shared_ptr<LessEqualExprNode> node);
     virtual void visit(std::shared_ptr<LessExprNode> node);
@@ -88,12 +91,13 @@ class AstVisitor : public std::enable_shared_from_this<AstVisitor> {
     virtual void visit(std::shared_ptr<ReturnNode> node);
     virtual void visit(std::shared_ptr<TableNode> node);
     virtual void visit(std::shared_ptr<UnaryExprNode> node);
+    virtual void visit(std::shared_ptr<UnionExprNode> node);
     virtual void visit(std::shared_ptr<WhileNode> node);
 
    private:
-    void visit(const std::shared_ptr<BinaryNode>& node);
-    void visit(const std::shared_ptr<UnaryNode>& node);
-    void visit(const std::shared_ptr<UnaryNodeList>& node);
+    void visit(const std::shared_ptr<BinaryNode> node);
+    void visit(const std::shared_ptr<UnaryNode> node);
+    void visit(const std::shared_ptr<UnaryNodeList> node);
 };
 
 #endif

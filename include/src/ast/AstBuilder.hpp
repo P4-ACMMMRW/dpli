@@ -42,13 +42,13 @@ class AstBuilder : public DplParserBaseVisitor {
     // Expressions  The expressions isn't correctly sequenced
     antlrcpp::Any visitJuncexpr(DplParser::JuncexprContext *parseNode) override;
     antlrcpp::Any visitNotexpr(DplParser::NotexprContext *parseNode) override;
-    antlrcpp::Any visitEqulexpr(DplParser::JuncexprContext *parseNode) override;
+    antlrcpp::Any visitEqulexpr(DplParser::EqulexprContext *parseNode) override;
     antlrcpp::Any visitCompexpr(DplParser::CompexprContext *parseNode) override;
-    antlrcpp::Any visitPlusexpr(DplParser::CompexprContext *parseNode) override;
-    antlrcpp::Any visitTableexpr(DplParser::CompexprContext *parseNode) override;
-    antlrcpp::Any visitMultexpr(DplParser::CompexprContext *parseNode) override;
-    antlrcpp::Any visitPolaexpr(DplParser::CompexprContext *parseNode) override;
-    antlrcpp::Any visitExpoexpr(DplParser::CompexprContext *parseNode) override;
+    antlrcpp::Any visitPlusexpr(DplParser::PlusexprContext *parseNode) override;
+    antlrcpp::Any visitTablexpr(DplParser::TablexprContext *parseNode) override;
+    antlrcpp::Any visitMultexpr(DplParser::MultexprContext *parseNode) override;
+    antlrcpp::Any visitPolaexpr(DplParser::PolaexprContext *parseNode) override;
+    antlrcpp::Any visitExpoexpr(DplParser::ExpoexprContext *parseNode) override;
 
     // Terms
     antlrcpp::Any visitTerminal(tree::TerminalNode *node) override;
@@ -67,6 +67,22 @@ class AstBuilder : public DplParserBaseVisitor {
     antlrcpp::Any visitParams(DplParser::ParamsContext *parseNode) override;
 
     std::shared_ptr<AstNode> getRoot();
+
+   private:
+    void initNewNode(antlr4::ParserRuleContext* parseNode, std::shared_ptr<AstNode> newNode, const std::string& text = ""); 
+
+    antlrcpp::Any unaryNode( std::function<std::shared_ptr<AstNode>()> createNode, antlr4::ParserRuleContext* parseNode, int childIndex, const std::string& text = "", bool restoreOldCurrent = true);
+   
+    antlrcpp::Any unaryNodeList( std::function<std::shared_ptr<AstNode>()> createNode, antlr4::ParserRuleContext* parseNode, int startIndex, int interval, const std::string& text = "");
+
+    antlrcpp::Any binaryNode( std::function<std::shared_ptr<AstNode>()> createNode, antlr4::ParserRuleContext* parseNode, int leftIndex, int rightIndex, bool restoreOldCurrent = true, const std::string& text = "");
+  
+    antlrcpp::Any unaryExpr(std::function<std::shared_ptr<AstNode>(int)> createNode, antlr4::ParserRuleContext* parseNode);
+    
+    antlrcpp::Any binaryExpr(std::function<std::shared_ptr<AstNode>(int)> createNode, antlr4::ParserRuleContext* parseNode);
+   
+    antlr4::Token* getChildToken(antlr4::tree::ParseTree* parseNode, int childIndex);
+
 };
 
 #endif

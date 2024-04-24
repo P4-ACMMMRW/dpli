@@ -79,11 +79,11 @@ int main(int argc, char **argv) {
          std::cout << tree->toStringTree(&parser, true) << "\n\n";
 
         // Ast print
-        //AstBuilder builder{&parser, &lexer};
-        //builder.visit(tree);
-        //builder.getRoot()->print();
-//
-        //// Visitor
+        AstBuilder builder{&parser, &lexer};
+        builder.visit(tree);
+        builder.getRoot()->print();
+
+        // Visitor
         //std::shared_ptr<AstNode> root = builder.getRoot();
         //std::shared_ptr<AstTestVisitor> visitor = std::make_shared<AstTestVisitor>();
         //root->accept(visitor);
