@@ -115,7 +115,6 @@ namespace argz
       std::cout << '\n' << R"(-h, --help       write help to console)" << '\n';
       std::cout << R"(-v, --version    write the version to console)" << '\n';
 
-      std::cout << "\nArguments:\n";
       for (auto& [ids, v, h] : opts)
       {
          if (ids.alias != '\0') {

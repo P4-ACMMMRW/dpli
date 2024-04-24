@@ -9,65 +9,66 @@ int main(int argc, char **argv) {
     std::string description = "DPL Interpreter";
     std::string version = "0.0.1";
     std::string author = "P4-ACMMMRW";
-    std::string usage = std::string(argv[0]) + " [options] <input file> [arguments]";
+    std::string usage = std::string(argv[0]) + " [options] <source> [options]";
     argz::about about{description, version, author, usage};
     about.print_help_when_no_options = false;
 
     bool debug = false;
-    argz::options options{{{"debug", 'd'}, debug, "enable debug output"}};
+    bool interpretFromCli = false;
+    argz::options options{{{"debug", 'd'}, debug, "enable debug output"},
+                          {{"cli", 'c'}, interpretFromCli, "interpret from command line"}};
 
     if (argc < 2) {
         argz::help(about, options);
         return EXIT_SUCCESS;
     }
 
-    int fileArgIndex = 0;
-    bool isOption = true;
+    int sourceArgIndex = 0;
     for (int i = 1; i < argc; ++i) {
-        isOption = std::strcmp(argv[i], "-h") == 0 || std::strcmp(argv[i], "--help") == 0 ||
-                   std::strcmp(argv[i], "-v") == 0 || std::strcmp(argv[i], "--version") == 0;
-
-        if (!isOption) {
-            fileArgIndex = i;
+        if (argv[i][0] != '-') {
+            sourceArgIndex = i;
             break;
         }
     }
 
-    // Parse all arguments except fileArgIndex and argv[0]
+    // Parse all arguments except sourceArgIndex and argv[0]
     try {
-        argz::parse(about, options, argc, argv, fileArgIndex);
+        argz::parse(about, options, argc, argv, sourceArgIndex);
     } catch (const std::exception &e) {
         std::cerr << e.what() << '\n';
         return EXIT_FAILURE;
     }
 
-    // No file provided, and options have already been evaluated so exit
-    // program.
-    if (fileArgIndex == 0) {
-        return EXIT_SUCCESS;
+    ANTLRInputStream input;
+
+    if (!interpretFromCli) {
+        // No source code provided, and options have already been evaluated so exit
+        // program.
+        if (sourceArgIndex == 0) {
+            return EXIT_SUCCESS;
+        }
+
+        // Check if input file exists
+        if (!std::filesystem::exists(argv[sourceArgIndex])) {
+            std::cerr << "Error: file \"" << argv[sourceArgIndex] << "\" not found\n";
+            return EXIT_FAILURE;
+        }
+
+        std::ifstream file{std::filesystem::path(argv[sourceArgIndex])};
+        if (!file.is_open()) {
+            std::cerr << "Error: file \"" << argv[sourceArgIndex] << "\" could not be opened\n";
+            return EXIT_FAILURE;
+        }
+
+        input = ANTLRInputStream(file);
+    } else {
+        std::cout << "> ";
+        std::string source;
+        std::getline(std::cin, source);
+
+        input = ANTLRInputStream(source);
     }
 
-    // If after options comes an argument write error
-    if (argv[fileArgIndex][0] == '-') {
-        std::cerr << "Error: expected input file but received argument \"" << argv[fileArgIndex]
-                  << "\"\n";
-        std::cout << "Usage: " << usage << '\n';
-        return EXIT_FAILURE;
-    }
-
-    // Check if input file exists
-    if (!std::filesystem::exists(argv[fileArgIndex])) {
-        std::cerr << "Error: file \"" << argv[fileArgIndex] << "\" not found\n";
-        return EXIT_FAILURE;
-    }
-
-    std::ifstream file{std::filesystem::path(argv[fileArgIndex])};
-    if (!file.is_open()) {
-        std::cerr << "Error: file \"" << argv[fileArgIndex] << "\" could not be opened\n";
-        return EXIT_FAILURE;
-    }
-
-    ANTLRInputStream input(file);
     DplLexer lexer(&input);
     CommonTokenStream tokens(&lexer);
 
@@ -76,22 +77,24 @@ int main(int argc, char **argv) {
     DplParser parser(&tokens);
     tree::ParseTree *tree = parser.prog();
 
+    AstBuilder builder{&parser, &lexer};
+    builder.visit(tree);
+    std::shared_ptr<AstNode> root = builder.getRoot();
+    std::shared_ptr<Evaluator> evaluator = std::make_shared<Evaluator>();
+    root->accept(evaluator);
+
     if (debug) {
         // std::cout << tree->toStringTree(&parser, true) << "\n\n";
 
         // Ast print
-        AstBuilder builder{&parser, &lexer};
-        builder.visit(tree);
         builder.getRoot()->print();
 
         // Visitor
-        std::shared_ptr<AstNode> root = builder.getRoot();
         // std::shared_ptr<AstTestVisitor> visitor = std::make_shared<AstTestVisitor>();
         // root->accept(visitor);
 
-        // Evaluator
-        std::shared_ptr<Evaluator> evaluator = std::make_shared<Evaluator>();
-        root->accept(evaluator);
+        // print eval
+        evaluator->getVtable().print();
     }
 
     return EXIT_SUCCESS;
