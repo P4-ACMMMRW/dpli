@@ -16,10 +16,10 @@ class LeafNode : public AstNode {
     void accept(std::shared_ptr<AstVisitor> visitor) override;
 
     void setIsIdentifier(bool isIdentifier) { this->isIdentifier = isIdentifier; }
-    bool getIsIdentifier() { return isIdentifier; }
+    bool getIsIdentifier() const { return isIdentifier; }
 
    private:
-    bool isIdentifier;
+    bool isIdentifier{};
 };
 
 #endif

@@ -66,7 +66,7 @@ void AstVisitor::visit(std::shared_ptr<IndexNode> node) {
     visit(std::static_pointer_cast<BinaryNode>(node));
 }
 
-void AstVisitor::visit([[maybe_unused]] std::shared_ptr<LeafNode> node) { return; }
+void AstVisitor::visit([[maybe_unused]] std::shared_ptr<LeafNode> node) { }
 
 void AstVisitor::visit(std::shared_ptr<LessEqualExprNode> node) {
     visit(std::static_pointer_cast<BinaryNode>(node));
@@ -177,7 +177,7 @@ void AstVisitor::visit(std::shared_ptr<WhileNode> node) {
 
 // Util
 
-void AstVisitor::visit(std::shared_ptr<BinaryNode> node) {
+void AstVisitor::visit(const std::shared_ptr<BinaryNode>& node) {
     std::shared_ptr<AstNode> leftNode = node->getLeftNode();
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
 
@@ -189,14 +189,14 @@ void AstVisitor::visit(std::shared_ptr<BinaryNode> node) {
     }
 }
 
-void AstVisitor::visit(std::shared_ptr<UnaryNode> node) {
+void AstVisitor::visit(const std::shared_ptr<UnaryNode>& node) {
     std::shared_ptr<AstNode> childNode = node->getChildNode();
     if (childNode != nullptr) {
         childNode->accept(shared_from_this());
     }
 }
 
-void AstVisitor::visit(std::shared_ptr<UnaryNodeList> node) {
+void AstVisitor::visit(const std::shared_ptr<UnaryNodeList>& node) {
     std::vector<std::shared_ptr<AstNode>> childNodes = node->getChildNodeList();
     for (size_t i = 0; i < childNodes.size(); ++i) {
         childNodes[i]->accept(shared_from_this());

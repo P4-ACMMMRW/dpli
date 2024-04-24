@@ -27,7 +27,8 @@ void SymbolTable::exit() {
 void SymbolTable::print() {
     std::cout << "\nSymbol Table\n----------------\n";
     for (const auto &entry : symbolLookupTable) {
-        std::cout << entry.first << " -> " << entry.second.getVal()<< " : " << entry.second.getType() << '\n';
+        std::cout << entry.first << " -> " << entry.second.getVal() << " : "
+                  << entry.second.getType() << '\n';
     }
     std::cout << "----------------\n";
 }

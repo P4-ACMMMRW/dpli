@@ -91,9 +91,9 @@ class AstVisitor : public std::enable_shared_from_this<AstVisitor> {
     virtual void visit(std::shared_ptr<WhileNode> node);
 
    private:
-    void visit(std::shared_ptr<BinaryNode> node);
-    void visit(std::shared_ptr<UnaryNode> node);
-    void visit(std::shared_ptr<UnaryNodeList> node);
+    void visit(const std::shared_ptr<BinaryNode>& node);
+    void visit(const std::shared_ptr<UnaryNode>& node);
+    void visit(const std::shared_ptr<UnaryNodeList>& node);
 };
 
 #endif
