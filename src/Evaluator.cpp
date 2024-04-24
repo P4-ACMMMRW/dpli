@@ -2,7 +2,7 @@
 
 using namespace dplsrc;
 
-// void Evaluator::visit(std::shared_ptr<AndExprNode> node) {}
+void Evaluator::visit(std::shared_ptr<AndExprNode> node) {}
 
 void Evaluator::visit(std::shared_ptr<AssignNode> node) {
     // Assume left node is a leaf node
@@ -20,7 +20,7 @@ void Evaluator::visit(std::shared_ptr<AssignNode> node) {
     vtable.bind(Symbol(leftNode->getText(), rightNode->getVal(), rightNode->getType()));
 }
 
-/*void Evaluator::visit(std::shared_ptr<ColumnNode> node) {}
+void Evaluator::visit(std::shared_ptr<ColumnNode> node) {}
 
 void Evaluator::visit(std::shared_ptr<DivExprNode> node) {}
 
@@ -40,7 +40,7 @@ void Evaluator::visit(std::shared_ptr<HeaderIndexNode> node) {}
 
 void Evaluator::visit(std::shared_ptr<IfNode> node) {}
 
-void Evaluator::visit(std::shared_ptr<IndexNode> node) {}*/
+void Evaluator::visit(std::shared_ptr<IndexNode> node) {}
 
 void Evaluator::visit(std::shared_ptr<LeafNode> node) {
     if (node->getIsIdentifier()) {
@@ -59,7 +59,7 @@ void Evaluator::visit(std::shared_ptr<LeafNode> node) {
     }
 }
 
-/*void Evaluator::visit(std::shared_ptr<LessEqualExprNode> node) {}
+void Evaluator::visit(std::shared_ptr<LessEqualExprNode> node) {}
 
 void Evaluator::visit(std::shared_ptr<LessExprNode> node) {}
 
@@ -89,7 +89,9 @@ void Evaluator::visit(std::shared_ptr<ProcCallNode> node) {}
 
 void Evaluator::visit(std::shared_ptr<ProcDecNode> node) {}
 
-void Evaluator::visit(std::shared_ptr<ProgNode> node) {}
+void Evaluator::visit(std::shared_ptr<ProgNode> node) {
+    AstVisitor::visit(std::static_pointer_cast<UnaryNodeList>(node));
+}
 
 void Evaluator::visit(std::shared_ptr<ReturnNode> node) {}
 
@@ -97,4 +99,4 @@ void Evaluator::visit(std::shared_ptr<TableNode> node) {}
 
 void Evaluator::visit(std::shared_ptr<UnaryExprNode> node) {}
 
-void Evaluator::visit(std::shared_ptr<WhileNode> node) {}*/
+void Evaluator::visit(std::shared_ptr<WhileNode> node) {}
