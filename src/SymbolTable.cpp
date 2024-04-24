@@ -23,3 +23,9 @@ void SymbolTable::exit() {
 
     table.pop();
 }
+
+void SymbolTable::print() {
+    for (const auto &entry : symbolLookupTable) {
+        std::cout << entry.first << " -> " << entry.second.getVal() << entry.second.getType() << '\n';
+    }
+}

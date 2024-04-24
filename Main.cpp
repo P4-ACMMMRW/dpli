@@ -3,6 +3,7 @@
 
 using namespace antlr4;
 using namespace dplgrammar;
+using namespace dplsrc;
 
 int main(int argc, char **argv) {
     std::string description = "DPL Interpreter";
@@ -87,6 +88,10 @@ int main(int argc, char **argv) {
         std::shared_ptr<AstNode> root = builder.getRoot();
         std::shared_ptr<AstTestVisitor> visitor = std::make_shared<AstTestVisitor>();
         root->accept(visitor);
+
+        // Evaluator
+        std::shared_ptr<Evaluator> evaluator = std::make_shared<Evaluator>();
+        root->accept(evaluator);
     }
 
     return EXIT_SUCCESS;

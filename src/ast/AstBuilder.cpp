@@ -339,28 +339,23 @@ antlrcpp::Any AstBuilder::visitTerminal(tree::TerminalNode* node) {
     newNode->setRule(node->getSymbol()->getType());
     newNode->setText(node->getText());
 
-    switch (node->getSymbol()->getType()) {
-        case DplLexer::Identifier:
-            newNode->setType(LeafNode::type::IDENTIFIER);
-            break;
-        case DplLexer::Integer:
-            newNode->setType(LeafNode::type::INTEGER);
-            break;
-        case DplLexer::Float:
-            newNode->setType(LeafNode::type::FLOAT);
-            break;
-        case DplLexer::String:
-            newNode->setType(LeafNode::type::STRING);
-            break;
-        case DplLexer::Bool:
-            newNode->setType(LeafNode::type::BOOLEAN);
-            break;
-        case DplLexer::None:
-            newNode->setType(LeafNode::type::NONE);
-            break;
-        default:
-            newNode->setType(LeafNode::type::UNDEFINED);
-            break;
+    bool isIdentifier = node->getSymbol()->getType() == DplLexer::Identifier;
+    newNode->setIsIdentifier(isIdentifier);
+
+    if (!isIdentifier) {
+        switch (node->getSymbol()->getType()) {
+            case DplLexer::Integer:
+                newNode->setType(dplsrc::Type::INT);
+                break;
+            case DplLexer::Float:
+                newNode->setType(dplsrc::Type::FLOAT);
+                break;
+            case DplLexer::String:
+                newNode->setType(dplsrc::Type::STR);
+                break;
+            case DplLexer::Bool:
+                newNode->setType(dplsrc::Type::BOOL);
+        }
     }
 
     currentNode->addChild(std::static_pointer_cast<AstNode>(newNode));

@@ -8,7 +8,6 @@
 
 #include "Symbol.hpp"
 
-
 namespace dplsrc {
 class SymbolTable {
    public:
@@ -16,6 +15,7 @@ class SymbolTable {
     Symbol *lookup(const std::string &name);
     void enter();
     void exit();
+    void print();
 
    private:
     std::stack<Symbol> table;
