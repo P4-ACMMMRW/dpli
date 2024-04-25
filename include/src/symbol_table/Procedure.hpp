@@ -24,7 +24,7 @@ class Procedure : public Symbol {
     /**
      * @return the ariety of the procedure
      */
-    int getAriety() const { return ariety; }
+    size_t getAriety() const { return ariety; }
 
     /**
      * @return the parameters of the procedure as a vector of strings
@@ -37,7 +37,7 @@ class Procedure : public Symbol {
     std::vector<std::shared_ptr<AstNode>> getBodyNodes() const { return bodyNodes; }
 
    private:
-    int ariety = 0;
+    size_t ariety = 0;
     std::vector<std::string> params;
     std::vector<std::shared_ptr<AstNode>> bodyNodes;
 };

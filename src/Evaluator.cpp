@@ -98,7 +98,7 @@ void Evaluator::visit(std::shared_ptr<ProcCallNode> node) {
     std::string arietyStr = std::to_string(node->getChildNodeList().size());
     std::string id = procNode->getText() + "_" + arietyStr;
 
-    Procedure *proc;
+    Procedure *proc = nullptr;
     try {
         proc = ptable.lookup(id);
     } catch (const std::out_of_range &e) {
