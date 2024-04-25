@@ -2,6 +2,7 @@
 #define ASTVISITOR_HPP
 
 #include <memory>
+#include <any>
 
 // Forward declaration to avoid circular dependencies
 class AstNode;
@@ -57,47 +58,47 @@ class AstVisitor : public std::enable_shared_from_this<AstVisitor> {
     AstVisitor(AstVisitor&& other) = default;
     AstVisitor& operator=(AstVisitor&& other) = default;
 
-    virtual void visit(std::shared_ptr<AndExprNode> node);
-    virtual void visit(std::shared_ptr<AssignNode> node);
-    virtual void visit(std::shared_ptr<ColumnNode> node);
-    virtual void visit(std::shared_ptr<DivExprNode> node);
-    virtual void visit(std::shared_ptr<ElseNode> node);
-    virtual void visit(std::shared_ptr<EqualExprNode> node);
-    virtual void visit(std::shared_ptr<ExpoExprNode> node);
-    virtual void visit(std::shared_ptr<FilterNode> node);
-    virtual void visit(std::shared_ptr<GreaterEqualExprNode> node);
-    virtual void visit(std::shared_ptr<GreaterExprNode> node);
-    virtual void visit(std::shared_ptr<HeaderIndexNode> node);
-    virtual void visit(std::shared_ptr<IfNode> node);
-    virtual void visit(std::shared_ptr<IndexNode> node);
-    virtual void visit(std::shared_ptr<IntersectionExprNode> node);
-    virtual void visit(std::shared_ptr<LeafNode> node);
-    virtual void visit(std::shared_ptr<LessEqualExprNode> node);
-    virtual void visit(std::shared_ptr<LessExprNode> node);
-    virtual void visit(std::shared_ptr<ListNode> node);
-    virtual void visit(std::shared_ptr<MinusExprNode> node);
-    virtual void visit(std::shared_ptr<MinusNode> node);
-    virtual void visit(std::shared_ptr<ModExprNode> node);
-    virtual void visit(std::shared_ptr<MultExprNode> node);
-    virtual void visit(std::shared_ptr<NotEqualExprNode> node);
-    virtual void visit(std::shared_ptr<NotNode> node);
-    virtual void visit(std::shared_ptr<OrExprNode> node);
-    virtual void visit(std::shared_ptr<ParNode> node);
-    virtual void visit(std::shared_ptr<PlusExprNode> node);
-    virtual void visit(std::shared_ptr<PlusNode> node);
-    virtual void visit(std::shared_ptr<ProcCallNode> node);
-    virtual void visit(std::shared_ptr<ProcDecNode> node);
-    virtual void visit(std::shared_ptr<ProgNode> node);
-    virtual void visit(std::shared_ptr<ReturnNode> node);
-    virtual void visit(std::shared_ptr<TableNode> node);
-    virtual void visit(std::shared_ptr<UnaryExprNode> node);
-    virtual void visit(std::shared_ptr<UnionExprNode> node);
-    virtual void visit(std::shared_ptr<WhileNode> node);
+    virtual std::any visit(std::shared_ptr<AndExprNode> node);
+    virtual std::any visit(std::shared_ptr<AssignNode> node);
+    virtual std::any visit(std::shared_ptr<ColumnNode> node);
+    virtual std::any visit(std::shared_ptr<DivExprNode> node);
+    virtual std::any visit(std::shared_ptr<ElseNode> node);
+    virtual std::any visit(std::shared_ptr<EqualExprNode> node);
+    virtual std::any visit(std::shared_ptr<ExpoExprNode> node);
+    virtual std::any visit(std::shared_ptr<FilterNode> node);
+    virtual std::any visit(std::shared_ptr<GreaterEqualExprNode> node);
+    virtual std::any visit(std::shared_ptr<GreaterExprNode> node);
+    virtual std::any visit(std::shared_ptr<HeaderIndexNode> node);
+    virtual std::any visit(std::shared_ptr<IfNode> node);
+    virtual std::any visit(std::shared_ptr<IndexNode> node);
+    virtual std::any visit(std::shared_ptr<IntersectionExprNode> node);
+    virtual std::any visit(std::shared_ptr<LeafNode> node);
+    virtual std::any visit(std::shared_ptr<LessEqualExprNode> node);
+    virtual std::any visit(std::shared_ptr<LessExprNode> node);
+    virtual std::any visit(std::shared_ptr<ListNode> node);
+    virtual std::any visit(std::shared_ptr<MinusExprNode> node);
+    virtual std::any visit(std::shared_ptr<MinusNode> node);
+    virtual std::any visit(std::shared_ptr<ModExprNode> node);
+    virtual std::any visit(std::shared_ptr<MultExprNode> node);
+    virtual std::any visit(std::shared_ptr<NotEqualExprNode> node);
+    virtual std::any visit(std::shared_ptr<NotNode> node);
+    virtual std::any visit(std::shared_ptr<OrExprNode> node);
+    virtual std::any visit(std::shared_ptr<ParNode> node);
+    virtual std::any visit(std::shared_ptr<PlusExprNode> node);
+    virtual std::any visit(std::shared_ptr<PlusNode> node);
+    virtual std::any visit(std::shared_ptr<ProcCallNode> node);
+    virtual std::any visit(std::shared_ptr<ProcDecNode> node);
+    virtual std::any visit(std::shared_ptr<ProgNode> node);
+    virtual std::any visit(std::shared_ptr<ReturnNode> node);
+    virtual std::any visit(std::shared_ptr<TableNode> node);
+    virtual std::any visit(std::shared_ptr<UnaryExprNode> node);
+    virtual std::any visit(std::shared_ptr<UnionExprNode> node);
+    virtual std::any visit(std::shared_ptr<WhileNode> node);
 
    private:
-    void visit(const std::shared_ptr<BinaryNode> node);
-    void visit(const std::shared_ptr<UnaryNode> node);
-    void visit(const std::shared_ptr<UnaryNodeList> node);
+    std::any visit(const std::shared_ptr<BinaryNode> node);
+    std::any visit(const std::shared_ptr<UnaryNode> node);
+    std::any visit(const std::shared_ptr<UnaryNodeList> node);
 };
 
 #endif

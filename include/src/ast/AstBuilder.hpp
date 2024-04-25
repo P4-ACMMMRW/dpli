@@ -69,20 +69,28 @@ class AstBuilder : public DplParserBaseVisitor {
     std::shared_ptr<AstNode> getRoot();
 
    private:
-    void initNewNode(antlr4::ParserRuleContext* parseNode, std::shared_ptr<AstNode> newNode, const std::string& text = ""); 
+    void initNewNode(antlr4::ParserRuleContext *parseNode, const std::shared_ptr<AstNode> &newNode,
+                     const std::string &text = "");
 
-    antlrcpp::Any unaryNode( std::function<std::shared_ptr<AstNode>()> createNode, antlr4::ParserRuleContext* parseNode, int childIndex, const std::string& text = "", bool restoreOldCurrent = true);
-   
-    antlrcpp::Any unaryNodeList( std::function<std::shared_ptr<AstNode>()> createNode, antlr4::ParserRuleContext* parseNode, int startIndex, int interval, const std::string& text = "");
+    antlrcpp::Any unaryNode(const std::function<std::shared_ptr<AstNode>()> &createNode,
+                            antlr4::ParserRuleContext *parseNode, int childIndex,
+                            const std::string &text = "", bool restoreOldCurrent = true);
 
-    antlrcpp::Any binaryNode( std::function<std::shared_ptr<AstNode>()> createNode, antlr4::ParserRuleContext* parseNode, int leftIndex, int rightIndex, bool restoreOldCurrent = true, const std::string& text = "");
-  
-    antlrcpp::Any unaryExpr(std::function<std::shared_ptr<AstNode>(int)> createNode, antlr4::ParserRuleContext* parseNode);
-    
-    antlrcpp::Any binaryExpr(std::function<std::shared_ptr<AstNode>(int)> createNode, antlr4::ParserRuleContext* parseNode);
-   
-    antlr4::Token* getChildToken(antlr4::tree::ParseTree* parseNode, int childIndex);
+    antlrcpp::Any unaryNodeList(const std::function<std::shared_ptr<AstNode>()> &createNode,
+                                antlr4::ParserRuleContext *parseNode, int startIndex, int interval,
+                                const std::string &text = "");
 
+    antlrcpp::Any binaryNode(const std::function<std::shared_ptr<AstNode>()> &createNode,
+                             antlr4::ParserRuleContext *parseNode, int leftIndex, int rightIndex,
+                             bool restoreOldCurrent = true, const std::string &text = "");
+
+    antlrcpp::Any unaryExpr(const std::function<std::shared_ptr<AstNode>(int)> &createNode,
+                            antlr4::ParserRuleContext *parseNode);
+
+    antlrcpp::Any binaryExpr(const std::function<std::shared_ptr<AstNode>(int)> &createNode,
+                             antlr4::ParserRuleContext *parseNode);
+
+    static antlr4::Token *getChildToken(antlr4::tree::ParseTree *parseNode, int childIndex);
 };
 
 #endif

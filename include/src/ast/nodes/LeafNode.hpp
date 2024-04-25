@@ -3,7 +3,6 @@
 
 #include <AstNode.hpp>
 
-
 class LeafNode : public AstNode {
    public:
     LeafNode(std::shared_ptr<AstNode> parent) { AstNode::setParent(std::move(parent)); }
