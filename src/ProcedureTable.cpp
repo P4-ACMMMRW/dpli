@@ -13,8 +13,10 @@ void ProcedureTable::print() {
         std::cout << "EMPTY\n";
     } else {
         for (const std::pair<const std::string, dplsrc::Procedure> &entry : procedures) {
-            std::cout << entry.first << " | ariety: " << entry.second.getAriety() << " (";
-            std::string paramsStr = "";
+            std::string idWithoutArity = entry.first.substr(0, entry.first.rfind('_'));
+            std::cout << idWithoutArity << "(";
+            
+            std::string paramsStr;
             for (const std::string &param : entry.second.getParams()) {
                 paramsStr += param + ", ";
             }
@@ -24,7 +26,7 @@ void ProcedureTable::print() {
                 paramsStr.erase(paramsStr.length() - 2);
             }
 
-            std::cout << paramsStr << ")\n";
+            std::cout << paramsStr << ") | ariety: " << entry.second.getAriety() << '\n';
         }
     }
 
