@@ -12,10 +12,10 @@ void ProcedureTable::print() {
     if (procedures.empty()) {
         std::cout << "EMPTY\n";
     } else {
-        for (const auto &entry : procedures) {
+        for (const std::pair<const std::string, dplsrc::Procedure> &entry : procedures) {
             std::cout << entry.first << " | ariety: " << entry.second.getAriety() << " (";
             std::string paramsStr = "";
-            for (const auto &param : entry.second.getParams()) {
+            for (const std::string &param : entry.second.getParams()) {
                 paramsStr += param + ", ";
             }
 
