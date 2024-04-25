@@ -168,7 +168,7 @@ antlrcpp::Any AstBuilder::visitWhilestm(DplParser::WhilestmContext* parseNode) {
 
 antlrcpp::Any AstBuilder::visitJuncexpr(DplParser::JuncexprContext* parseNode) {
     return binaryExpr(
-        [this](int operatorType) -> std::shared_ptr<AstNode> {
+        [this](size_t operatorType) -> std::shared_ptr<AstNode> {
             switch (operatorType) {
                 case DplLexer::And:
                     return std::make_shared<AndExprNode>(currentNode);
@@ -184,13 +184,15 @@ antlrcpp::Any AstBuilder::visitJuncexpr(DplParser::JuncexprContext* parseNode) {
 
 antlrcpp::Any AstBuilder::visitNotexpr(DplParser::NotexprContext* parseNode) {
     return unaryExpr(
-        [this]([[maybe_unused]] int unused) -> std::shared_ptr<AstNode> { return std::make_shared<NotNode>(currentNode); },
+        [this]([[maybe_unused]] size_t unused) -> std::shared_ptr<AstNode> {
+            return std::make_shared<NotNode>(currentNode);
+        },
         parseNode);
 }
 
 antlrcpp::Any AstBuilder::visitEqulexpr(DplParser::EqulexprContext* parseNode) {
     return binaryExpr(
-        [this](int operatorType) -> std::shared_ptr<AstNode> {
+        [this](size_t operatorType) -> std::shared_ptr<AstNode> {
             switch (operatorType) {
                 case DplLexer::Equal:
                     return std::make_shared<EqualExprNode>(currentNode);
@@ -206,7 +208,7 @@ antlrcpp::Any AstBuilder::visitEqulexpr(DplParser::EqulexprContext* parseNode) {
 
 antlrcpp::Any AstBuilder::visitCompexpr(DplParser::CompexprContext* parseNode) {
     return binaryExpr(
-        [this](int operatorType) -> std::shared_ptr<AstNode> {
+        [this](size_t operatorType) -> std::shared_ptr<AstNode> {
             switch (operatorType) {
                 case DplLexer::Greater:
                     return std::make_shared<GreaterExprNode>(currentNode);
@@ -226,7 +228,7 @@ antlrcpp::Any AstBuilder::visitCompexpr(DplParser::CompexprContext* parseNode) {
 
 antlrcpp::Any AstBuilder::visitPlusexpr(DplParser::PlusexprContext* parseNode) {
     return binaryExpr(
-        [this](int operatorType) -> std::shared_ptr<AstNode> {
+        [this](size_t operatorType) -> std::shared_ptr<AstNode> {
             switch (operatorType) {
                 case DplLexer::Plus:
                     return std::make_shared<PlusExprNode>(currentNode);
@@ -242,7 +244,7 @@ antlrcpp::Any AstBuilder::visitPlusexpr(DplParser::PlusexprContext* parseNode) {
 
 antlrcpp::Any AstBuilder::visitTablexpr(DplParser::TablexprContext* parseNode) {
     return binaryExpr(
-        [this](int operatorType) -> std::shared_ptr<AstNode> {
+        [this](size_t operatorType) -> std::shared_ptr<AstNode> {
             switch (operatorType) {
                 case DplLexer::Union:
                     return std::make_shared<UnionExprNode>(currentNode);
@@ -258,7 +260,7 @@ antlrcpp::Any AstBuilder::visitTablexpr(DplParser::TablexprContext* parseNode) {
 
 antlrcpp::Any AstBuilder::visitMultexpr(DplParser::MultexprContext* parseNode) {
     return binaryExpr(
-        [this](int operatorType) -> std::shared_ptr<AstNode> {
+        [this](size_t operatorType) -> std::shared_ptr<AstNode> {
             switch (operatorType) {
                 case DplLexer::Star:
                     return std::make_shared<MultExprNode>(currentNode);
@@ -276,7 +278,7 @@ antlrcpp::Any AstBuilder::visitMultexpr(DplParser::MultexprContext* parseNode) {
 
 antlrcpp::Any AstBuilder::visitPolaexpr(DplParser::PolaexprContext* parseNode) {
     return unaryExpr(
-        [this](int operatorType) -> std::shared_ptr<AstNode> {
+        [this](size_t operatorType) -> std::shared_ptr<AstNode> {
             switch (operatorType) {
                 case DplLexer::Plus:
                     return std::make_shared<PlusNode>(currentNode);
@@ -291,11 +293,15 @@ antlrcpp::Any AstBuilder::visitPolaexpr(DplParser::PolaexprContext* parseNode) {
 }
 
 antlrcpp::Any AstBuilder::visitExpoexpr(DplParser::ExpoexprContext* parseNode) {
-    return binaryExpr([this]([[maybe_unused]] int unused) { return std::make_shared<ExpoExprNode>(currentNode); }, parseNode);
+    return binaryExpr(
+        [this]([[maybe_unused]] size_t unused) {
+            return std::make_shared<ExpoExprNode>(currentNode);
+        },
+        parseNode);
 }
 
 antlrcpp::Any AstBuilder::visitList(DplParser::ListContext* parseNode) {
-    int index =
+    size_t index =
         (parseNode->children.size() == 3) ? 1 : 9;  // dirty way to not vitit children if empty list
     return unaryNode([this]() { return std::make_shared<ListNode>(currentNode); }, parseNode, index,
                      "[] List");
@@ -376,7 +382,7 @@ void AstBuilder::initNewNode(antlr4::ParserRuleContext* parseNode,
 }
 
 antlrcpp::Any AstBuilder::unaryNode(const std::function<std::shared_ptr<AstNode>()>& createNode,
-                                    antlr4::ParserRuleContext* parseNode, int childIndex,
+                                    antlr4::ParserRuleContext* parseNode, size_t childIndex,
                                     const std::string& text, bool restoreOldCurrent) {
     std::shared_ptr<AstNode> oldNode = currentNode;
     std::shared_ptr<AstNode> newNode = createNode();
@@ -412,8 +418,8 @@ antlrcpp::Any AstBuilder::unaryNodeList(const std::function<std::shared_ptr<AstN
 }
 
 antlrcpp::Any AstBuilder::binaryNode(const std::function<std::shared_ptr<AstNode>()>& createNode,
-                                     antlr4::ParserRuleContext* parseNode, int leftIndex,
-                                     int rightIndex, bool restoreOldCurrent,
+                                     antlr4::ParserRuleContext* parseNode, size_t leftIndex,
+                                     size_t rightIndex, bool restoreOldCurrent,
                                      const std::string& text) {
     std::shared_ptr<AstNode> oldNode = currentNode;
     std::shared_ptr<AstNode> newNode = createNode();
@@ -429,8 +435,9 @@ antlrcpp::Any AstBuilder::binaryNode(const std::function<std::shared_ptr<AstNode
     return nullptr;
 }
 
-antlrcpp::Any AstBuilder::unaryExpr(const std::function<std::shared_ptr<AstNode>(int)>& createNode,
-                                    antlr4::ParserRuleContext* parseNode) {
+antlrcpp::Any AstBuilder::unaryExpr(
+    const std::function<std::shared_ptr<AstNode>(size_t)>& createNode,
+    antlr4::ParserRuleContext* parseNode) {
     size_t childAmount = parseNode->children.size();
     if (childAmount == 1) {
         return parseNode->children[0]->accept(this);
@@ -452,8 +459,9 @@ antlrcpp::Any AstBuilder::unaryExpr(const std::function<std::shared_ptr<AstNode>
     return nullptr;
 }
 
-antlrcpp::Any AstBuilder::binaryExpr(const std::function<std::shared_ptr<AstNode>(int)>& createNode,
-                                     antlr4::ParserRuleContext* parseNode) {
+antlrcpp::Any AstBuilder::binaryExpr(
+    const std::function<std::shared_ptr<AstNode>(size_t)>& createNode,
+    antlr4::ParserRuleContext* parseNode) {
     size_t childAmount = parseNode->children.size();
     if (childAmount == 1) {
         return parseNode->children[0]->accept(this);
@@ -481,7 +489,7 @@ antlrcpp::Any AstBuilder::binaryExpr(const std::function<std::shared_ptr<AstNode
     return nullptr;
 }
 
-antlr4::Token* AstBuilder::getChildToken(antlr4::tree::ParseTree* parseNode, int childIndex) {
+antlr4::Token* AstBuilder::getChildToken(antlr4::tree::ParseTree* parseNode, size_t childIndex) {
     antlr4::tree::TerminalNode* terminalNode =
         dynamic_cast<antlr4::tree::TerminalNode*>(parseNode->children[childIndex]);
     if (terminalNode != nullptr) {

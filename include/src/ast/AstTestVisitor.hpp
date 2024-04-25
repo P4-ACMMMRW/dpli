@@ -5,143 +5,143 @@
 
 class AstTestVisitor : public AstVisitor {
    public:
-    std::any visit(std::shared_ptr<AndExprNode> node) override {
+    std::any visit(const std::shared_ptr<AndExprNode> &node) override {
         std::cout << "Visiting " << node->getText() << '\n';
         return AstVisitor::visit(node);
     };
-    std::any visit(std::shared_ptr<AssignNode> node) override {
+    std::any visit(const std::shared_ptr<AssignNode> &node) override {
         std::cout << "Visiting " << node->getText() << '\n';
         return AstVisitor::visit(node);
     };
-    std::any visit(std::shared_ptr<ColumnNode> node) {
+    std::any visit(const std::shared_ptr<ColumnNode> &node) {
         std::cout << "Visiting " << node->getText() << '\n';
         return AstVisitor::visit(node);
     };
-    std::any visit(std::shared_ptr<DivExprNode> node) override {
+    std::any visit(const std::shared_ptr<DivExprNode> &node) override {
         std::cout << "Visiting " << node->getText() << '\n';
         return AstVisitor::visit(node);
     };
-    std::any visit(std::shared_ptr<ElseNode> node) override {
+    std::any visit(const std::shared_ptr<ElseNode> &node) override {
         std::cout << "Visiting " << node->getText() << '\n';
         return AstVisitor::visit(node);
     };
-    std::any visit(std::shared_ptr<EqualExprNode> node) override {
+    std::any visit(const std::shared_ptr<EqualExprNode> &node) override {
         std::cout << "Visiting " << node->getText() << '\n';
         return AstVisitor::visit(node);
     };
-    std::any visit(std::shared_ptr<ExpoExprNode> node) override {
+    std::any visit(const std::shared_ptr<ExpoExprNode> &node) override {
         std::cout << "Visiting " << node->getText() << '\n';
         return AstVisitor::visit(node);
     };
-    std::any visit(std::shared_ptr<FilterNode> node) override {
+    std::any visit(const std::shared_ptr<FilterNode> &node) override {
         std::cout << "Visiting " << node->getText() << '\n';
         return AstVisitor::visit(node);
     };
-    std::any visit(std::shared_ptr<GreaterEqualExprNode> node) override {
+    std::any visit(const std::shared_ptr<GreaterEqualExprNode> &node) override {
         std::cout << "Visiting " << node->getText() << '\n';
         return AstVisitor::visit(node);
     };
-    std::any visit(std::shared_ptr<GreaterExprNode> node) override {
+    std::any visit(const std::shared_ptr<GreaterExprNode> &node) override {
         std::cout << "Visiting " << node->getText() << '\n';
         return AstVisitor::visit(node);
     };
-    std::any visit(std::shared_ptr<HeaderIndexNode> node) override {
+    std::any visit(const std::shared_ptr<HeaderIndexNode> &node) override {
         std::cout << "Visiting " << node->getText() << '\n';
         return AstVisitor::visit(node);
     };
-    std::any visit(std::shared_ptr<IfNode> node) override {
+    std::any visit(const std::shared_ptr<IfNode> &node) override {
         std::cout << "Visiting " << node->getText() << '\n';
         return AstVisitor::visit(node);
     };
-    std::any visit(std::shared_ptr<IndexNode> node) override {
+    std::any visit(const std::shared_ptr<IndexNode> &node) override {
         std::cout << "Visiting " << node->getText() << '\n';
         return AstVisitor::visit(node);
     };
-    std::any visit(std::shared_ptr<IntersectionExprNode> node) override {
+    std::any visit(const std::shared_ptr<IntersectionExprNode> &node) override {
         std::cout << "Visiting " << node->getText() << '\n';
         return AstVisitor::visit(node);
     };
-    std::any visit(std::shared_ptr<LeafNode> node) override {
+    std::any visit(const std::shared_ptr<LeafNode> &node) override {
         std::cout << "Visiting " << node->getText() << '\n';
         return AstVisitor::visit(node);
     };
-    std::any visit(std::shared_ptr<LessEqualExprNode> node) override {
+    std::any visit(const std::shared_ptr<LessEqualExprNode> &node) override {
         std::cout << "Visiting " << node->getText() << '\n';
         return AstVisitor::visit(node);
     };
-    std::any visit(std::shared_ptr<LessExprNode> node) override {
+    std::any visit(const std::shared_ptr<LessExprNode> &node) override {
         std::cout << "Visiting " << node->getText() << '\n';
         return AstVisitor::visit(node);
     };
-    std::any visit(std::shared_ptr<ListNode> node) override {
+    std::any visit(const std::shared_ptr<ListNode> &node) override {
         std::cout << "Visiting " << node->getText() << '\n';
         return AstVisitor::visit(node);
     };
-    std::any visit(std::shared_ptr<MinusExprNode> node) override {
+    std::any visit(const std::shared_ptr<MinusExprNode> &node) override {
         std::cout << "Visiting " << node->getText() << '\n';
         return AstVisitor::visit(node);
     };
-    std::any visit(std::shared_ptr<MinusNode> node) override {
+    std::any visit(const std::shared_ptr<MinusNode> &node) override {
         std::cout << "Visiting " << node->getText() << '\n';
         return AstVisitor::visit(node);
     };
-    std::any visit(std::shared_ptr<ModExprNode> node) override {
+    std::any visit(const std::shared_ptr<ModExprNode> &node) override {
         std::cout << "Visiting " << node->getText() << '\n';
         return AstVisitor::visit(node);
     };
-    std::any visit(std::shared_ptr<MultExprNode> node) override {
+    std::any visit(const std::shared_ptr<MultExprNode> &node) override {
         std::cout << "Visiting " << node->getText() << '\n';
         return AstVisitor::visit(node);
     };
-    std::any visit(std::shared_ptr<NotNode> node) override {
+    std::any visit(const std::shared_ptr<NotNode> &node) override {
         std::cout << "Visiting " << node->getText() << '\n';
         return AstVisitor::visit(node);
     };
-    std::any visit(std::shared_ptr<OrExprNode> node) override {
+    std::any visit(const std::shared_ptr<OrExprNode> &node) override {
         std::cout << "Visiting " << node->getText() << '\n';
         return AstVisitor::visit(node);
     };
-    std::any visit(std::shared_ptr<ParNode> node) override {
+    std::any visit(const std::shared_ptr<ParNode> &node) override {
         std::cout << "Visiting " << node->getText() << '\n';
         return AstVisitor::visit(node);
     };
-    std::any visit(std::shared_ptr<PlusExprNode> node) override {
+    std::any visit(const std::shared_ptr<PlusExprNode> &node) override {
         std::cout << "Visiting " << node->getText() << '\n';
         return AstVisitor::visit(node);
     };
-    std::any visit(std::shared_ptr<PlusNode> node) override {
+    std::any visit(const std::shared_ptr<PlusNode> &node) override {
         std::cout << "Visiting " << node->getText() << '\n';
         return AstVisitor::visit(node);
     };
-    std::any visit(std::shared_ptr<ProcCallNode> node) override {
+    std::any visit(const std::shared_ptr<ProcCallNode> &node) override {
         std::cout << "Visiting " << node->getText() << '\n';
         return AstVisitor::visit(node);
     };
-    std::any visit(std::shared_ptr<ProcDecNode> node) override {
+    std::any visit(const std::shared_ptr<ProcDecNode> &node) override {
         std::cout << "Visiting " << node->getText() << '\n';
         return AstVisitor::visit(node);
     };
-    std::any visit(std::shared_ptr<ProgNode> node) override {
+    std::any visit(const std::shared_ptr<ProgNode> &node) override {
         std::cout << "Visiting " << node->getText() << '\n';
         return AstVisitor::visit(node);
     };
-    std::any visit(std::shared_ptr<ReturnNode> node) override {
+    std::any visit(const std::shared_ptr<ReturnNode> &node) override {
         std::cout << "Visiting " << node->getText() << '\n';
         return AstVisitor::visit(node);
     };
-    std::any visit(std::shared_ptr<TableNode> node) override {
+    std::any visit(const std::shared_ptr<TableNode> &node) override {
         std::cout << "Visiting " << node->getText() << '\n';
         return AstVisitor::visit(node);
     };
-    std::any visit(std::shared_ptr<UnaryExprNode> node) override {
+    std::any visit(const std::shared_ptr<UnaryExprNode> &node) override {
         std::cout << "Visiting " << node->getText() << '\n';
         return AstVisitor::visit(node);
     };
-    std::any visit(std::shared_ptr<UnionExprNode> node) override {
+    std::any visit(const std::shared_ptr<UnionExprNode> &node) override {
         std::cout << "Visiting " << node->getText() << '\n';
         return AstVisitor::visit(node);
     };
-    std::any visit(std::shared_ptr<WhileNode> node) override {
+    std::any visit(const std::shared_ptr<WhileNode> &node) override {
         std::cout << "Visiting " << node->getText() << '\n';
         return AstVisitor::visit(node);
     };
