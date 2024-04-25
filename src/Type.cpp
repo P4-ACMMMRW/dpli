@@ -46,5 +46,7 @@ std::string TypeUtil::typeToString(Type type) {
             return "table";
         case Type::NONETYPE:
             return "NoneType";
+        default:
+            return "";
     }
 }

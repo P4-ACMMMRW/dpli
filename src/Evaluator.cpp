@@ -2,9 +2,9 @@
 
 using namespace dplsrc;
 
-void Evaluator::visit(std::shared_ptr<AndExprNode> node) {}
+void Evaluator::visit(const std::shared_ptr<AndExprNode> &node) {}
 
-void Evaluator::visit(std::shared_ptr<AssignNode> node) {
+void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
     // Assume left node is a leaf node
     std::shared_ptr<LeafNode> leftNode = std::dynamic_pointer_cast<LeafNode>(node->getLeftNode());
 
@@ -20,29 +20,29 @@ void Evaluator::visit(std::shared_ptr<AssignNode> node) {
     vtable.bind(Variable(leftNode->getText(), rightNode->getVal(), rightNode->getType()));
 }
 
-void Evaluator::visit(std::shared_ptr<ColumnNode> node) {}
+void Evaluator::visit(const std::shared_ptr<ColumnNode> &node) {}
 
-void Evaluator::visit(std::shared_ptr<DivExprNode> node) {}
+void Evaluator::visit(const std::shared_ptr<DivExprNode> &node) {}
 
-void Evaluator::visit(std::shared_ptr<ElseNode> node) {}
+void Evaluator::visit(const std::shared_ptr<ElseNode> &node) {}
 
-void Evaluator::visit(std::shared_ptr<EqualExprNode> node) {}
+void Evaluator::visit(const std::shared_ptr<EqualExprNode> &node) {}
 
-void Evaluator::visit(std::shared_ptr<ExpoExprNode> node) {}
+void Evaluator::visit(const std::shared_ptr<ExpoExprNode> &node) {}
 
-void Evaluator::visit(std::shared_ptr<FilterNode> node) {}
+void Evaluator::visit(const std::shared_ptr<FilterNode> &node) {}
 
-void Evaluator::visit(std::shared_ptr<GreaterEqualExprNode> node) {}
+void Evaluator::visit(const std::shared_ptr<GreaterEqualExprNode> &node) {}
 
-void Evaluator::visit(std::shared_ptr<GreaterExprNode> node) {}
+void Evaluator::visit(const std::shared_ptr<GreaterExprNode> &node) {}
 
-void Evaluator::visit(std::shared_ptr<HeaderIndexNode> node) {}
+void Evaluator::visit(const std::shared_ptr<HeaderIndexNode> &node) {}
 
-void Evaluator::visit(std::shared_ptr<IfNode> node) {}
+void Evaluator::visit(const std::shared_ptr<IfNode> &node) {}
 
-void Evaluator::visit(std::shared_ptr<IndexNode> node) {}
+void Evaluator::visit(const std::shared_ptr<IndexNode> &node) {}
 
-void Evaluator::visit(std::shared_ptr<LeafNode> node) {
+void Evaluator::visit(const std::shared_ptr<LeafNode> &node) {
     if (node->getIsIdentifier() && !node->getIsFunctionCall()) {
         try {
             Variable *var = vtable.lookup(node->getText());
@@ -67,33 +67,33 @@ void Evaluator::visit(std::shared_ptr<LeafNode> node) {
     }
 }
 
-void Evaluator::visit(std::shared_ptr<LessEqualExprNode> node) {}
+void Evaluator::visit(const std::shared_ptr<LessEqualExprNode> &node) {}
 
-void Evaluator::visit(std::shared_ptr<LessExprNode> node) {}
+void Evaluator::visit(const std::shared_ptr<LessExprNode> &node) {}
 
-void Evaluator::visit(std::shared_ptr<ListNode> node) {}
+void Evaluator::visit(const std::shared_ptr<ListNode> &node) {}
 
-void Evaluator::visit(std::shared_ptr<MinusExprNode> node) {}
+void Evaluator::visit(const std::shared_ptr<MinusExprNode> &node) {}
 
-void Evaluator::visit(std::shared_ptr<MinusNode> node) {}
+void Evaluator::visit(const std::shared_ptr<MinusNode> &node) {}
 
-void Evaluator::visit(std::shared_ptr<ModExprNode> node) {}
+void Evaluator::visit(const std::shared_ptr<ModExprNode> &node) {}
 
-void Evaluator::visit(std::shared_ptr<MultExprNode> node) {}
+void Evaluator::visit(const std::shared_ptr<MultExprNode> &node) {}
 
-void Evaluator::visit(std::shared_ptr<NotEqualExprNode> node) {}
+void Evaluator::visit(const std::shared_ptr<NotEqualExprNode> &node) {}
 
-void Evaluator::visit(std::shared_ptr<NotNode> node) {}
+void Evaluator::visit(const std::shared_ptr<NotNode> &node) {}
 
-void Evaluator::visit(std::shared_ptr<OrExprNode> node) {}
+void Evaluator::visit(const std::shared_ptr<OrExprNode> &node) {}
 
-void Evaluator::visit(std::shared_ptr<ParNode> node) {}
+void Evaluator::visit(const std::shared_ptr<ParNode> &node) {}
 
-void Evaluator::visit(std::shared_ptr<PlusExprNode> node) {}
+void Evaluator::visit(const std::shared_ptr<PlusExprNode> &node) {}
 
-void Evaluator::visit(std::shared_ptr<PlusNode> node) {}
+void Evaluator::visit(const std::shared_ptr<PlusNode> &node) {}
 
-void Evaluator::visit(std::shared_ptr<ProcCallNode> node) {
+void Evaluator::visit(const std::shared_ptr<ProcCallNode> &node) {
     vtable.enterScope();
 
     std::shared_ptr<LeafNode> procNode = std::dynamic_pointer_cast<LeafNode>(node->getChildNode());
@@ -148,7 +148,7 @@ void Evaluator::visit(std::shared_ptr<ProcCallNode> node) {
     vtable.exitScope();
 }
 
-void Evaluator::visit(std::shared_ptr<ProcDecNode> node) {
+void Evaluator::visit(const std::shared_ptr<ProcDecNode> &node) {
     std::vector<std::shared_ptr<AstNode>> paramNodes = node->getParamNodes();
     std::vector<std::string> params;
     for (size_t i = 0; i < paramNodes.size(); ++i) {
@@ -160,7 +160,7 @@ void Evaluator::visit(std::shared_ptr<ProcDecNode> node) {
     ptable.bind(Procedure(node->getNameNode()->getText(), params, bodyNodes));
 }
 
-void Evaluator::visit(std::shared_ptr<ProgNode> node) {
+void Evaluator::visit(const std::shared_ptr<ProgNode> &node) {
     init();
 
     std::vector<std::shared_ptr<AstNode>> childNodes = node->getChildNodeList();
@@ -169,37 +169,34 @@ void Evaluator::visit(std::shared_ptr<ProgNode> node) {
     }
 }
 
-void Evaluator::visit(std::shared_ptr<ReturnNode> node) {
+void Evaluator::visit(const std::shared_ptr<ReturnNode> &node) {
     std::shared_ptr<AstNode> childNode = node->getChildNode();
     childNode->accept(shared_from_this());
     node->setVal(childNode->getVal());
     node->setType(childNode->getType());
 }
 
-void Evaluator::visit(std::shared_ptr<TableNode> node) {}
+void Evaluator::visit(const std::shared_ptr<TableNode> &node) {}
 
-void Evaluator::visit(std::shared_ptr<UnaryExprNode> node) {}
+void Evaluator::visit(const std::shared_ptr<UnaryExprNode> &node) {}
 
-void Evaluator::visit(std::shared_ptr<WhileNode> node) {}
+void Evaluator::visit(const std::shared_ptr<WhileNode> &node) {}
 
 void Evaluator::init() {
     Procedure::ProcType print = [](std::vector<std::shared_ptr<AstNode>> arg) {
-        std::cout << arg[0]->getVal() << '\n'; 
-        std::pair<Type, std::string> result(Type::NONETYPE, "None");      
-        return std::any(result);
+        std::cout << arg[0]->getVal() << '\n';
+        return std::pair(Type::NONETYPE, "None");
     };
 
     Procedure::ProcType input = [](std::vector<std::shared_ptr<AstNode>> arg) {
         std::cout << arg[0]->getVal();
         std::string inputStr;
         std::getline(std::cin, inputStr);
-        std::pair<Type, std::string> result(Type::STR, inputStr);
-        return std::any(result);
+        return std::pair(Type::STR, inputStr);
     };
 
     Procedure::ProcType type = [](std::vector<std::shared_ptr<AstNode>> arg) {
-        std::pair<Type, std::string> result(Type::STR, TypeUtil::typeToString(arg[0]->getType()));
-        return std::any(result);
+        return std::pair(Type::STR, TypeUtil::typeToString(arg[0]->getType()));
     };
 
     ptable.bind(Procedure("print", {"arg"}, print));

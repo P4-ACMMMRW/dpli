@@ -18,8 +18,8 @@ enum Type {
 };
 
 class TypeUtil {
-    public:
-        static std::string typeToString(Type type);
+   public:
+    static std::string typeToString(Type type);
 };
 
 // Overload << operator so we can print the enum string for debugging

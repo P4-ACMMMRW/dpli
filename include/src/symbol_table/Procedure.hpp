@@ -1,10 +1,10 @@
 #ifndef PROCEDURE_HPP
 #define PROCEDURE_HPP
 
+#include <any>
+#include <functional>
 #include <memory>
 #include <vector>
-#include <functional>
-#include <any>
 
 #include "Symbol.hpp"
 
@@ -12,6 +12,7 @@ namespace dplsrc {
 class Procedure : public Symbol {
    public:
     /**
+     * Constructor for user-defined procedures
      * @param id the id of the procedure
      * @param params the parameters of the procedure
      * @param bodyNodes the body nodes of the procedure to be executed
@@ -19,16 +20,29 @@ class Procedure : public Symbol {
     Procedure(std::string id, std::vector<std::string> params,
               std::vector<std::shared_ptr<AstNode>> bodyNodes)
         : Symbol(std::move(id) + "_" + std::to_string(params.size())),
+          ariety(params.size()),
           params(std::move(params)),
-          bodyNodes(std::move(bodyNodes)) {
-        ariety = this->params.size();
-    }
+          bodyNodes(std::move(bodyNodes)) {}
 
-    using ProcType = std::function<std::any(std::vector<std::shared_ptr<AstNode>>)>;
+    /**
+     * Function type for built-in procedures that take a vector of shared pointers to AstNodes as
+     * input and return any type
+     */
+    using ProcType =
+        std::function<std::pair<Type, std::string>(std::vector<std::shared_ptr<AstNode>>)>;
+
+    /**
+     * Constructor for built-in procedures
+     * @param id the id of the procedure
+     * @param params the parameters of the procedure
+     * @param proc the built-in procedure to be executed
+     */
     Procedure(std::string id, std::vector<std::string> params, ProcType proc)
-        : Symbol(std::move(id) + "_" + std::to_string(params.size())), params(std::move(params)), proc(std::move(proc)), isBuiltin(true) {
-        ariety = this->params.size();
-        }
+        : Symbol(std::move(id) + "_" + std::to_string(params.size())),
+          ariety(params.size()),
+          params(std::move(params)),
+          proc(std::move(proc)),
+          isBuiltin(true) {}
 
     /**
      * @return the ariety of the procedure
@@ -53,8 +67,8 @@ class Procedure : public Symbol {
     size_t ariety = 0;
     std::vector<std::string> params;
     std::vector<std::shared_ptr<AstNode>> bodyNodes;
-    bool isBuiltin = false;
     ProcType proc;
+    bool isBuiltin = false;
 };
 }  // namespace dplsrc
 

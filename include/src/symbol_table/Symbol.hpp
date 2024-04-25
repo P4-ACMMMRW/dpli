@@ -9,7 +9,12 @@
 namespace dplsrc {
 class Symbol {
    public:
+    // Rule of five
     virtual ~Symbol() = default;
+    Symbol(const Symbol& other) = default;
+    Symbol(Symbol&& other) noexcept = default;
+    Symbol& operator=(const Symbol& other) = default;
+    Symbol& operator=(Symbol&& other) noexcept = default;
 
     /**
      * @param id the id of the symbol
