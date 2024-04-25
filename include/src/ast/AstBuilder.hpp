@@ -72,22 +72,22 @@ class AstBuilder : public DplParserBaseVisitor {
     void initNewNode(antlr4::ParserRuleContext *parseNode, const std::shared_ptr<AstNode> &newNode,
                      const std::string &text = "");
 
-    antlrcpp::Any unaryNode(const std::function<std::shared_ptr<AstNode>()> &createNode,
+    antlrcpp::Any unaryNode(const std::function<std::shared_ptr<AstNode>()>& createNode,
                             antlr4::ParserRuleContext *parseNode, int childIndex,
                             const std::string &text = "", bool restoreOldCurrent = true);
 
-    antlrcpp::Any unaryNodeList(const std::function<std::shared_ptr<AstNode>()> &createNode,
-                                antlr4::ParserRuleContext *parseNode, int startIndex, int interval,
-                                const std::string &text = "");
+    antlrcpp::Any unaryNodeList(const std::function<std::shared_ptr<AstNode>()>& createNode,
+                                antlr4::ParserRuleContext *parseNode, size_t startIndex,
+                                size_t interval, const std::string &text = "");
 
-    antlrcpp::Any binaryNode(const std::function<std::shared_ptr<AstNode>()> &createNode,
+    antlrcpp::Any binaryNode(const std::function<std::shared_ptr<AstNode>()>& createNode,
                              antlr4::ParserRuleContext *parseNode, int leftIndex, int rightIndex,
                              bool restoreOldCurrent = true, const std::string &text = "");
 
-    antlrcpp::Any unaryExpr(const std::function<std::shared_ptr<AstNode>(int)> &createNode,
+    antlrcpp::Any unaryExpr(const std::function<std::shared_ptr<AstNode>(int)>& createNode,
                             antlr4::ParserRuleContext *parseNode);
 
-    antlrcpp::Any binaryExpr(const std::function<std::shared_ptr<AstNode>(int)> &createNode,
+    antlrcpp::Any binaryExpr(const std::function<std::shared_ptr<AstNode>(int)>& createNode,
                              antlr4::ParserRuleContext *parseNode);
 
     static antlr4::Token *getChildToken(antlr4::tree::ParseTree *parseNode, int childIndex);

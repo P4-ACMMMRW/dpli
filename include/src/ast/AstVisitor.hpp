@@ -1,8 +1,8 @@
 #ifndef ASTVISITOR_HPP
 #define ASTVISITOR_HPP
 
-#include <memory>
 #include <any>
+#include <memory>
 
 // Forward declaration to avoid circular dependencies
 class AstNode;
@@ -96,9 +96,9 @@ class AstVisitor : public std::enable_shared_from_this<AstVisitor> {
     virtual std::any visit(std::shared_ptr<WhileNode> node);
 
    private:
-    std::any visit(const std::shared_ptr<BinaryNode> node);
-    std::any visit(const std::shared_ptr<UnaryNode> node);
-    std::any visit(const std::shared_ptr<UnaryNodeList> node);
+    std::any visit(const std::shared_ptr<BinaryNode>& node);
+    std::any visit(const std::shared_ptr<UnaryNode>& node);
+    std::any visit(const std::shared_ptr<UnaryNodeList>& node);
 };
 
 #endif
