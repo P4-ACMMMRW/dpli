@@ -42,7 +42,7 @@ class AstNode : public std::enable_shared_from_this<AstNode> {
     size_t rule{};
     std::shared_ptr<AstNode> parent;
     std::string text;
-    dplsrc::Type type = dplsrc::Type::UNKNOWN;
+    dplsrc::Type type = dplsrc::Type::NONETYPE;
     std::string value;
 };
 

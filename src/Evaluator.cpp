@@ -17,7 +17,7 @@ void Evaluator::visit(std::shared_ptr<AssignNode> node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    vtable.bind(Symbol(leftNode->getText(), rightNode->getVal(), rightNode->getType()));
+    vtable.bind(Variable(leftNode->getText(), rightNode->getVal(), rightNode->getType()));
 }
 
 void Evaluator::visit(std::shared_ptr<ColumnNode> node) {}
@@ -44,20 +44,20 @@ void Evaluator::visit(std::shared_ptr<IndexNode> node) {}
 
 void Evaluator::visit(std::shared_ptr<LeafNode> node) {
     if (node->getIsIdentifier()) {
-        // TODO: there should probably be two table classes, one for variables and one for procedures. also two different entry types
+        // TODO: there should probably be two table classes, one for variables and one for
+        // procedures. also two different entry types
         if (node->getIsFunctionCall()) {
             try {
-                Symbol *sym = ptable.lookup(node->getText());
-                node->setType(sym->getType());
-                node->setVal(sym->getVal());
+                Procedure *proc = ptable.lookup(node->getText());
             } catch (const std::out_of_range &e) {
-                throw std::runtime_error("Error: undefined procedure \"" + node->getText() + "\"\n");
+                throw std::runtime_error("Error: undefined procedure \"" + node->getText() +
+                                         "\"\n");
             }
         } else {
             try {
-                Symbol *sym = vtable.lookup(node->getText());
-                node->setType(sym->getType());
-                node->setVal(sym->getVal());
+                Variable *var = vtable.lookup(node->getText());
+                node->setType(var->getType());
+                node->setVal(var->getVal());
             } catch (const std::out_of_range &e) {
                 // TODO: call undefined variable error from error handler
                 throw std::runtime_error("Error: undefined variable \"" + node->getText() + "\"\n");
@@ -66,6 +66,10 @@ void Evaluator::visit(std::shared_ptr<LeafNode> node) {
     } else {
         node->setVal(node->getText());
     }
+
+    if (node->getType() == Type::NONETYPE) {
+        node->setVal("None");
+    }       
 }
 
 void Evaluator::visit(std::shared_ptr<LessEqualExprNode> node) {}
@@ -105,7 +109,23 @@ void Evaluator::visit(std::shared_ptr<ProcCallNode> node) {
     }
 }
 
-void Evaluator::visit(std::shared_ptr<ProcDecNode> node) {}
+void Evaluator::visit(std::shared_ptr<ProcDecNode> node) {
+    vtable.enterScope();
+
+    std::vector<std::shared_ptr<AstNode>> paramNodes = node->getParamNodes();
+    for (size_t i = 0; i < paramNodes.size(); ++i) {
+        vtable.bind(Variable(paramNodes[i]->getText()));
+    }
+
+    ptable.bind(Procedure(node->getNameNode()->getText(), paramNodes.size()));
+
+    std::vector<std::shared_ptr<AstNode>> bodyNodes = node->getBodyNodes();
+    for (size_t i = 0; i < bodyNodes.size(); ++i) {
+        bodyNodes[i]->accept(shared_from_this());
+    }
+
+    vtable.exitScope();
+}
 
 void Evaluator::visit(std::shared_ptr<ProgNode> node) {
     AstVisitor::visit(std::static_pointer_cast<UnaryNodeList>(node));

@@ -5,7 +5,6 @@
 
 namespace dplsrc {
 enum Type {
-    UNKNOWN,
     INT,
     FLOAT,
     STR,

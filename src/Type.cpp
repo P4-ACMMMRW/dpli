@@ -3,9 +3,6 @@
 namespace dplsrc {
 std::ostream& operator<<(std::ostream& os, const Type& type) {
     switch (type) {
-        case Type::UNKNOWN:
-            os << "UNKNOWN";
-            break;
         case Type::INT:
             os << "INT";
             break;

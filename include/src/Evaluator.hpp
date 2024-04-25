@@ -5,7 +5,8 @@
 
 #include "AllNodeIncludes.hpp"
 #include "AstVisitor.hpp"
-#include "SymbolTable.hpp"
+#include "ProcedureTable.hpp"
+#include "VariableTable.hpp"
 
 namespace dplsrc {
 class Evaluator : public AstVisitor {
@@ -45,12 +46,12 @@ class Evaluator : public AstVisitor {
     void visit(std::shared_ptr<UnaryExprNode> node) override;
     void visit(std::shared_ptr<WhileNode> node) override;
 
-    SymbolTable getVtable() { return vtable; }
-    SymbolTable getPtable() { return ptable; }
+    VariableTable getVtable() { return vtable; }
+    ProcedureTable getPtable() { return ptable; }
 
    private:
-    SymbolTable vtable = SymbolTable();
-    SymbolTable ptable = SymbolTable();
+    VariableTable vtable = VariableTable();
+    ProcedureTable ptable = ProcedureTable();
 };
 
 }  // namespace dplsrc
