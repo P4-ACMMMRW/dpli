@@ -43,22 +43,17 @@ void Evaluator::visit(std::shared_ptr<IfNode> node) {}
 void Evaluator::visit(std::shared_ptr<IndexNode> node) {}
 
 void Evaluator::visit(std::shared_ptr<LeafNode> node) {
-    if (node->getIsIdentifier()) {
+    if (node->getIsIdentifier() && !node->getIsFunctionCall()) {
         try {
-            if (node->getIsFunctionCall()) {
-                Procedure *proc = ptable.lookup(node->getText());
-                // TODO: Do something with proc
-            } else {
-                Variable *var = vtable.lookup(node->getText());
-                node->setType(var->getType());
-                node->setVal(var->getVal());
-            }
+            Variable *var = vtable.lookup(node->getText());
+            node->setType(var->getType());
+            node->setVal(var->getVal());
         } catch (const std::out_of_range &e) {
             std::string symbol = node->getIsFunctionCall() ? "procedure" : "variable";
             throw std::runtime_error("Error: undefined " + symbol + " \"" + node->getText() +
                                      "\"\n");
         }
-    } else {
+    } else if (!node->getIsIdentifier()) {
         node->setVal(node->getText());
     }
 
@@ -98,6 +93,12 @@ void Evaluator::visit(std::shared_ptr<ProcCallNode> node) {
     procNode->setIsFunctionCall(true);
     procNode->accept(shared_from_this());
 
+    Procedure *proc = ptable.lookup(procNode->getText());
+    if (proc->getAriety() != node->getChildNodeList().size()) {
+        throw std::runtime_error("Error: procedure \"" + procNode->getText() +
+                                 "\" called with incorrect number of arguments\n");
+    }
+
     std::vector<std::shared_ptr<AstNode>> argNodes = node->getChildNodeList();
     for (size_t i = 0; i < argNodes.size(); ++i) {
         argNodes[i]->accept(shared_from_this());
@@ -108,11 +109,15 @@ void Evaluator::visit(std::shared_ptr<ProcDecNode> node) {
     vtable.enterScope();
 
     std::vector<std::shared_ptr<AstNode>> paramNodes = node->getParamNodes();
+
+    std::vector<std::string> params;
     for (size_t i = 0; i < paramNodes.size(); ++i) {
-        vtable.bind(Variable(paramNodes[i]->getText()));
+        Variable var = Variable(paramNodes[i]->getText());
+        params.emplace_back(paramNodes[i]->getText());
+        vtable.bind(var);
     }
 
-    ptable.bind(Procedure(node->getNameNode()->getText(), paramNodes.size()));
+    ptable.bind(Procedure(node->getNameNode()->getText(), params));
 
     std::vector<std::shared_ptr<AstNode>> bodyNodes = node->getBodyNodes();
     for (size_t i = 0; i < bodyNodes.size(); ++i) {
@@ -126,7 +131,15 @@ void Evaluator::visit(std::shared_ptr<ProgNode> node) {
     AstVisitor::visit(std::static_pointer_cast<UnaryNodeList>(node));
 }
 
-void Evaluator::visit(std::shared_ptr<ReturnNode> node) {}
+void Evaluator::visit(std::shared_ptr<ReturnNode> node) {
+    std::shared_ptr<AstNode> childNode = node->getChildNode();
+    childNode->accept(shared_from_this());
+    node->setVal(childNode->getVal());
+    node->setType(childNode->getType());
+    vtable.print();
+    std::cout << "Return value: " << node->getVal() << '\n';
+    std::cout << "Return type: " << node->getType() << '\n';
+}
 
 void Evaluator::visit(std::shared_ptr<TableNode> node) {}
 
