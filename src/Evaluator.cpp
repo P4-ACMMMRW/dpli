@@ -54,7 +54,12 @@ void Evaluator::visit(std::shared_ptr<LeafNode> node) {
                                      "\"\n");
         }
     } else if (!node->getIsIdentifier()) {
-        node->setVal(node->getText());
+        if (node->getType() == Type::STR) {
+            // Remove quotes from string
+            node->setVal(node->getText().substr(1, node->getText().size() - 2));
+        } else {
+            node->setVal(node->getText());
+        }
     }
 
     if (node->getType() == Type::NONETYPE) {
@@ -116,6 +121,18 @@ void Evaluator::visit(std::shared_ptr<ProcCallNode> node) {
         vtable.bind(Variable(proc->getParams()[i], argNodes[i]->getVal(), argNodes[i]->getType()));
     }
 
+    if (proc->isBuiltinProcedure()) {
+        std::any result = proc->getProc()(argNodes);
+
+        // Handle return value and type
+        std::pair<Type, std::any> returnVal = std::any_cast<std::pair<Type, std::string>>(result);
+        node->setVal(std::any_cast<std::string>(returnVal.second));
+        node->setType(returnVal.first);
+
+        vtable.exitScope();
+        return;
+    }
+
     std::vector<std::shared_ptr<AstNode>> bodyNodes = proc->getBodyNodes();
     for (size_t i = 0; i < bodyNodes.size(); ++i) {
         bodyNodes[i]->accept(shared_from_this());
@@ -139,11 +156,17 @@ void Evaluator::visit(std::shared_ptr<ProcDecNode> node) {
     }
 
     std::vector<std::shared_ptr<AstNode>> bodyNodes = node->getBodyNodes();
+
     ptable.bind(Procedure(node->getNameNode()->getText(), params, bodyNodes));
 }
 
 void Evaluator::visit(std::shared_ptr<ProgNode> node) {
-    AstVisitor::visit(std::static_pointer_cast<UnaryNodeList>(node));
+    init();
+
+    std::vector<std::shared_ptr<AstNode>> childNodes = node->getChildNodeList();
+    for (size_t i = 0; i < childNodes.size(); ++i) {
+        childNodes[i]->accept(shared_from_this());
+    }
 }
 
 void Evaluator::visit(std::shared_ptr<ReturnNode> node) {
@@ -158,3 +181,28 @@ void Evaluator::visit(std::shared_ptr<TableNode> node) {}
 void Evaluator::visit(std::shared_ptr<UnaryExprNode> node) {}
 
 void Evaluator::visit(std::shared_ptr<WhileNode> node) {}
+
+void Evaluator::init() {
+    Procedure::ProcType print = [](std::vector<std::shared_ptr<AstNode>> arg) {
+        std::cout << arg[0]->getVal() << '\n'; 
+        std::pair<Type, std::string> result(Type::NONETYPE, "None");      
+        return std::any(result);
+    };
+
+    Procedure::ProcType input = [](std::vector<std::shared_ptr<AstNode>> arg) {
+        std::cout << arg[0]->getVal();
+        std::string inputStr;
+        std::getline(std::cin, inputStr);
+        std::pair<Type, std::string> result(Type::STR, inputStr);
+        return std::any(result);
+    };
+
+    Procedure::ProcType type = [](std::vector<std::shared_ptr<AstNode>> arg) {
+        std::pair<Type, std::string> result(Type::STR, TypeUtil::typeToString(arg[0]->getType()));
+        return std::any(result);
+    };
+
+    ptable.bind(Procedure("print", {"arg"}, print));
+    ptable.bind(Procedure("input", {"arg"}, input));
+    ptable.bind(Procedure("type", {"arg"}, type));
+}

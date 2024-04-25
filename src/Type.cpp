@@ -1,31 +1,50 @@
 #include "Type.hpp"
 
-namespace dplsrc {
-std::ostream& operator<<(std::ostream& os, const Type& type) {
+using namespace dplsrc;
+
+std::ostream& dplsrc::operator<<(std::ostream& os, const Type& type) {
     switch (type) {
         case Type::INT:
-            os << "INT";
+            os << "int";
             break;
         case Type::FLOAT:
-            os << "FLOAT";
+            os << "float";
             break;
         case Type::STR:
-            os << "STR";
+            os << "str";
             break;
         case Type::LIST:
-            os << "LIST";
+            os << "list";
             break;
         case Type::BOOL:
-            os << "BOOL";
+            os << "bool";
             break;
         case Type::TABLE:
-            os << "TABLE";
+            os << "table";
             break;
         case Type::NONETYPE:
-            os << "NONETYPE";
+            os << "NoneType";
             break;
     }
 
     return os;
 }
-}  // namespace dplsrc
+
+std::string TypeUtil::typeToString(Type type) {
+    switch (type) {
+        case Type::INT:
+            return "int";
+        case Type::FLOAT:
+            return "float";
+        case Type::STR:
+            return "str";
+        case Type::LIST:
+            return "list";
+        case Type::BOOL:
+            return "bool";
+        case Type::TABLE:
+            return "table";
+        case Type::NONETYPE:
+            return "NoneType";
+    }
+}

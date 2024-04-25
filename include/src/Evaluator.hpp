@@ -46,6 +46,8 @@ class Evaluator : public AstVisitor {
     void visit(std::shared_ptr<UnaryExprNode> node) override;
     void visit(std::shared_ptr<WhileNode> node) override;
 
+    void init();
+
     VariableTable getVtable() { return vtable; }
     ProcedureTable getPtable() { return ptable; }
 

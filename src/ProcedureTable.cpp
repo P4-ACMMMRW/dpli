@@ -7,7 +7,7 @@ void ProcedureTable::bind(Procedure proc) { procedures.insert_or_assign(proc.get
 Procedure *ProcedureTable::lookup(const std::string &id) { return &procedures.at(id); }
 
 void ProcedureTable::print() {
-    std::cout << "\nProcedure Table\n────────────────────\n";
+    std::cout << "\nProcedure Table\n────────────────────────────────────────\n";
 
     if (procedures.empty()) {
         std::cout << "EMPTY\n";
@@ -30,5 +30,5 @@ void ProcedureTable::print() {
         }
     }
 
-    std::cout << "────────────────────\n";
+    std::cout << "────────────────────────────────────────\n";
 }
