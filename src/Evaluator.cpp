@@ -40,7 +40,13 @@ void Evaluator::visit(const std::shared_ptr<HeaderIndexNode> &node) {}
 
 void Evaluator::visit(const std::shared_ptr<IfNode> &node) {}
 
-void Evaluator::visit(const std::shared_ptr<IndexNode> &node) {}
+void Evaluator::visit(const std::shared_ptr<IndexNode> &node) {
+    std::shared_ptr<AstNode> leftNode = node->getLeftNode();
+    std::shared_ptr<AstNode> rightNode = node->getRightNode();
+
+    leftNode->accept(shared_from_this());
+    rightNode->accept(shared_from_this());    
+}
 
 void Evaluator::visit(const std::shared_ptr<LeafNode> &node) {
     if (node->getIsIdentifier() && !node->getIsFunctionCall()) {
@@ -71,7 +77,24 @@ void Evaluator::visit(const std::shared_ptr<LessEqualExprNode> &node) {}
 
 void Evaluator::visit(const std::shared_ptr<LessExprNode> &node) {}
 
-void Evaluator::visit(const std::shared_ptr<ListNode> &node) {}
+void Evaluator::visit(const std::shared_ptr<ListNode> &node) {
+    std::vector<std::shared_ptr<AstNode>> childNodes = node->getChildNodeList();
+    std::string vals = "[";
+
+    for (size_t i = 0; i < childNodes.size(); ++i) {
+        childNodes[i]->accept(shared_from_this());
+        vals += childNodes[i]->getVal();
+
+        if (i != childNodes.size() - 1) {
+            vals += ", ";
+        }
+    }
+
+    vals += "]";
+
+    node->setType(Type::LIST);
+    node->setVal(vals);
+}
 
 void Evaluator::visit(const std::shared_ptr<MinusExprNode> &node) {}
 
