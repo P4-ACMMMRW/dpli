@@ -9,8 +9,16 @@
 namespace dplsrc {
 class Symbol {
    public:
+    virtual ~Symbol() = default;
+
+    /**
+     * @param id the id of the symbol
+    */
     Symbol(std::string id) : id(std::move(id)) {}
 
+    /**
+     * @return the id of the symbol
+    */
     std::string getId() const { return id; }
 
    private:

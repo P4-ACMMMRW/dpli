@@ -4,7 +4,7 @@ using namespace dplsrc;
 
 void VariableTable::bind(Variable var) { scopes.top().insert_or_assign(var.getId(), var); }
 
-Variable *VariableTable::lookup(const std::string &name) { return &scopes.top().at(name); }
+Variable *VariableTable::lookup(const std::string &id) { return &scopes.top().at(id); }
 
 void VariableTable::print() {
     std::string scopeLevel =
@@ -37,6 +37,6 @@ void VariableTable::exitScope() {
     if (scopes.size() > 1) {
         scopes.pop();
     } else {
-        throw std::logic_error("Error: cannot exit global scope");
+        throw std::runtime_error("Error: cannot exit global scope");
     }
 }

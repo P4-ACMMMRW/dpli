@@ -7,8 +7,22 @@
 namespace dplsrc {
 class ProcedureTable : public SymbolTable {
    public:
+    /**
+     * Binds a procedure to the table
+     * @param proc The procedure to bind
+    */
     void bind(Procedure proc);
-    Procedure *lookup(const std::string &name);
+
+    /**
+     * Looks up a procedure in the table by id
+     * @param id The id of the procedure to look up
+     * @return A pointer to the procedure
+    */
+    Procedure *lookup(const std::string &id);
+
+    /**  
+    * Prints the state of the table to stdout
+    */
     void print() override;
 
    private:

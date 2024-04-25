@@ -4,7 +4,7 @@ using namespace dplsrc;
 
 void ProcedureTable::bind(Procedure proc) { procedures.insert_or_assign(proc.getId(), proc); }
 
-Procedure *ProcedureTable::lookup(const std::string &name) { return &procedures.at(name); }
+Procedure *ProcedureTable::lookup(const std::string &id) { return &procedures.at(id); }
 
 void ProcedureTable::print() {
     std::cout << "\nProcedure Table\n────────────────────\n";
