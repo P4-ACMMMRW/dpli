@@ -55,3 +55,8 @@ target_include_directories(dpli PRIVATE ${PROJECT_SOURCE_DIR}/include ${PROJECT_
 target_link_libraries(dpli PRIVATE dpllib antlr4_static)
 
 add_subdirectory(tests)
+
+# Strip debug symbols in Release mode
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    add_custom_command(TARGET dpli POST_BUILD COMMAND ${CMAKE_STRIP} $<TARGET_FILE:dpli>)
+endif()
