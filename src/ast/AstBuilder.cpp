@@ -93,7 +93,7 @@ antlrcpp::Any AstBuilder::visitParams(DplParser::ParamsContext* parseNode) {
     return nullptr;
 }
 
-antlrcpp::Any AstBuilder::visitIfstm(DplParser::IfstmContext* parseNode) {
+antlrcpp::Any AstBuilder::visitIfstm(DplParser::IfstmContext* parseNode) {   
     std::shared_ptr<AstNode> oldNode = currentNode;
     binaryNode([this]() {
         return std::make_shared<IfNode>(currentNode);
