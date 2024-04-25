@@ -45,9 +45,10 @@ antlrcpp::Any AstBuilder::visitProcdec(DplParser::ProcdecContext* parseNode) {
     parseNode->children[1]->accept(this);
 
     size_t blockIndex = 5;  // if no params
-    if (parseNode->children.size() > blockIndex) {
+    if (parseNode->children.size() - 1 > blockIndex) {
+        std::cout << "params found\n" << std::endl;
         parseNode->children[3]->accept(this);
-        blockIndex++;  // if params
+        blockIndex = 6;     // if params
     }
     procDecNewNode->stopVisitingParams();
     parseNode->children[blockIndex]->accept(this);
