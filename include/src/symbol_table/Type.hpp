@@ -6,7 +6,7 @@
 namespace dplsrc {
 /**
  * Enum class to represent the type of a variable
-*/
+ */
 enum Type {
     INT,
     FLOAT,

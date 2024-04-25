@@ -15,7 +15,7 @@ void ProcedureTable::print() {
         for (const std::pair<const std::string, dplsrc::Procedure> &entry : procedures) {
             std::string idWithoutArity = entry.first.substr(0, entry.first.rfind('_'));
             std::cout << idWithoutArity << "(";
-            
+
             std::string paramsStr;
             for (const std::string &param : entry.second.getParams()) {
                 paramsStr += param + ", ";

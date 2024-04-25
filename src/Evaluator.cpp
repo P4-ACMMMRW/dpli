@@ -102,10 +102,9 @@ void Evaluator::visit(std::shared_ptr<ProcCallNode> node) {
     try {
         proc = ptable.lookup(id);
     } catch (const std::out_of_range &e) {
-        throw std::runtime_error("Error: undefined procedure \"" + procNode->getText() +
-                                 "\"\n");
+        throw std::runtime_error("Error: undefined procedure \"" + procNode->getText() + "\"\n");
     }
-    
+
     if (proc->getAriety() != node->getChildNodeList().size()) {
         throw std::runtime_error("Error: procedure \"" + procNode->getText() +
                                  "\" called with incorrect number of arguments\n");
@@ -120,7 +119,8 @@ void Evaluator::visit(std::shared_ptr<ProcCallNode> node) {
     std::vector<std::shared_ptr<AstNode>> bodyNodes = proc->getBodyNodes();
     for (size_t i = 0; i < bodyNodes.size(); ++i) {
         bodyNodes[i]->accept(shared_from_this());
-        std::shared_ptr<ReturnNode> returnNode = std::dynamic_pointer_cast<ReturnNode>(bodyNodes[i]);
+        std::shared_ptr<ReturnNode> returnNode =
+            std::dynamic_pointer_cast<ReturnNode>(bodyNodes[i]);
         if (returnNode) {
             node->setVal(returnNode->getVal());
             node->setType(returnNode->getType());
