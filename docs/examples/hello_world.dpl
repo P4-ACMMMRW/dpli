@@ -1,4 +1,1 @@
-#print("\"Hello World\"")
-
-def test():
-    return
+print("\"Hello World\"")
