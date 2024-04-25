@@ -6,8 +6,7 @@
 namespace dplsrc {
 class Procedure : public Symbol {
    public:
-    Procedure(std::string id, int ariety)
-        : Symbol(std::move(id)), ariety(ariety) {}
+    Procedure(std::string id, int ariety) : Symbol(std::move(id)), ariety(ariety) {}
 
     int getAriety() const { return ariety; }
 

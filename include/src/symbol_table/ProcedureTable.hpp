@@ -1,8 +1,8 @@
 #ifndef PROCEDURETABLE_HPP
 #define PROCEDURETABLE_HPP
 
-#include "SymbolTable.hpp"
 #include "Procedure.hpp"
+#include "SymbolTable.hpp"
 
 namespace dplsrc {
 class ProcedureTable : public SymbolTable {

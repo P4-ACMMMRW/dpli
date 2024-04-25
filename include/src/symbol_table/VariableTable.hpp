@@ -2,6 +2,7 @@
 #define VARIABLETABLE_HPP
 
 #include <stack>
+
 #include "SymbolTable.hpp"
 #include "Variable.hpp"
 

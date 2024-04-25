@@ -44,24 +44,19 @@ void Evaluator::visit(std::shared_ptr<IndexNode> node) {}
 
 void Evaluator::visit(std::shared_ptr<LeafNode> node) {
     if (node->getIsIdentifier()) {
-        // TODO: there should probably be two table classes, one for variables and one for
-        // procedures. also two different entry types
-        if (node->getIsFunctionCall()) {
-            try {
+        try {
+            if (node->getIsFunctionCall()) {
                 Procedure *proc = ptable.lookup(node->getText());
-            } catch (const std::out_of_range &e) {
-                throw std::runtime_error("Error: undefined procedure \"" + node->getText() +
-                                         "\"\n");
-            }
-        } else {
-            try {
+                // TODO: Do something with proc
+            } else {
                 Variable *var = vtable.lookup(node->getText());
                 node->setType(var->getType());
                 node->setVal(var->getVal());
-            } catch (const std::out_of_range &e) {
-                // TODO: call undefined variable error from error handler
-                throw std::runtime_error("Error: undefined variable \"" + node->getText() + "\"\n");
             }
+        } catch (const std::out_of_range &e) {
+            std::string symbol = node->getIsFunctionCall() ? "procedure" : "variable";
+            throw std::runtime_error("Error: undefined " + symbol + " \"" + node->getText() +
+                                     "\"\n");
         }
     } else {
         node->setVal(node->getText());
@@ -69,7 +64,7 @@ void Evaluator::visit(std::shared_ptr<LeafNode> node) {
 
     if (node->getType() == Type::NONETYPE) {
         node->setVal("None");
-    }       
+    }
 }
 
 void Evaluator::visit(std::shared_ptr<LessEqualExprNode> node) {}

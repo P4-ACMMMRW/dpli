@@ -2,14 +2,13 @@
 
 using namespace dplsrc;
 
-void VariableTable::bind(Variable var) {
-    scopes.top().insert_or_assign(var.getId(), var);
-}
+void VariableTable::bind(Variable var) { scopes.top().insert_or_assign(var.getId(), var); }
 
 Variable *VariableTable::lookup(const std::string &name) { return &scopes.top().at(name); }
 
 void VariableTable::print() {
-    std::cout << "\nVariable Table\n----------------\n" << "Current scope: " << scopes.size() << '\n';
+    std::cout << "\nVariable Table\n----------------\n"
+              << "Current scope: " << scopes.size() << '\n';
 
     if (scopes.top().empty()) {
         std::cout << "EMPTY\n";
@@ -35,6 +34,6 @@ void VariableTable::exitScope() {
     if (scopes.size() > 1) {
         scopes.pop();
     } else {
-        std::logic_error("Error: cannot exit global scope");
+        throw std::logic_error("Error: cannot exit global scope");
     }
 }

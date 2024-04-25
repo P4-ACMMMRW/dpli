@@ -84,7 +84,7 @@ int main(int argc, char **argv) {
     root->accept(evaluator);
 
     if (debug) {
-        //std::cout << tree->toStringTree(&parser, true) << "\n\n";
+        // std::cout << tree->toStringTree(&parser, true) << "\n\n";
 
         // Ast print
         builder.getRoot()->print();
