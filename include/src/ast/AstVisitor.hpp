@@ -50,14 +50,6 @@ class UnaryNodeList;
 
 class AstVisitor : public std::enable_shared_from_this<AstVisitor> {
    public:
-    // Rule of five
-    AstVisitor() = default;
-    virtual ~AstVisitor() = default;
-    AstVisitor(const AstVisitor &other) = delete;
-    AstVisitor &operator=(const AstVisitor &other) = delete;
-    AstVisitor(AstVisitor &&other) = default;
-    AstVisitor &operator=(AstVisitor &&other) = default;
-
     virtual std::any visit(const std::shared_ptr<AndExprNode> &node);
     virtual std::any visit(const std::shared_ptr<AssignNode> &node);
     virtual std::any visit(const std::shared_ptr<ColumnNode> &node);
