@@ -1,7 +1,7 @@
 #ifndef TEST_HPP
 #define TEST_HPP
 
-/*#include <catch2/catch_test_macros.hpp>
+#include <catch2/catch_test_macros.hpp>
 #include <fstream>
 #include <filesystem>
 #include <iostream>
@@ -21,7 +21,7 @@ namespace dplutil {
             std::vector<size_t> expectedTreeNodes;
 
         public:
-            TestVisitor(DplParser* parser, std::vector<size_t> expectedTreeNodes) 
+            TestVisitor(dplgrammar::DplParser* parser, std::vector<size_t> expectedTreeNodes) 
                 : parser(parser), expectedTreeNodes(expectedTreeNodes) {} 
 
             void printTokens(int ruleIndex);
@@ -37,6 +37,6 @@ namespace dplutil {
         private:
             static constexpr std::string_view exampleLocation = "../../docs/examples/"; 
     };
-}*/
+}
 
 #endif

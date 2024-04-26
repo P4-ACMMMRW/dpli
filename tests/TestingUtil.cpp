@@ -18,6 +18,7 @@ antlrcpp::Any TestVisitor::visitChildren(antlr4::tree::ParseTree *tree) {
     for (size_t i = 0; i < tree->children.size(); ++i) {
         antlr4::ParserRuleContext* ctx = dynamic_cast<antlr4::ParserRuleContext*>(tree->children[i]);
         if (ctx) {
+            //printTokens(ctx->getRuleIndex());
             testNode(ctx);
         }
 
@@ -56,7 +57,7 @@ void TestingUtil::testTokens(std::string testFileName, std::vector<size_t> expec
     }
 }
 
-void TestingUtil::testParser(std::string testFileName, std::vector<int> expectedTreeNodes) {
+void TestingUtil::testParser(std::string testFileName, std::vector<size_t> expectedTreeNodes) {
     std::string filePath = std::filesystem::path(std::string{exampleLocation} + testFileName).string();
 
     if (!std::filesystem::exists(filePath)) {
