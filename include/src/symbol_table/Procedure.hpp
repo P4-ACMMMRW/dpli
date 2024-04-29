@@ -8,6 +8,7 @@
 
 #include "Symbol.hpp"
 #include "Value.hpp"
+#include "VariableTable.hpp"
 
 namespace dplsrc {
 class Procedure : public Symbol {
@@ -24,6 +25,21 @@ class Procedure : public Symbol {
           arity(params.size()),
           params(std::move(params)),
           bodyNodes(std::move(bodyNodes)) {}
+
+    /**
+     * Constructor for user-defined procedures
+     * @param id the id of the procedure
+     * @param params the parameters of the procedure
+     * @param bodyNodes the body nodes of the procedure to be executed
+     * @param scope the variable table of the procedure at the time of definition
+    */
+    Procedure(std::string id, std::vector<std::string> params,
+              std::vector<std::shared_ptr<AstNode>> bodyNodes, VariableTable::Scope scope)
+        : Symbol(std::move(id) + "_" + std::to_string(params.size())),
+          arity(params.size()),
+          params(std::move(params)),
+          bodyNodes(std::move(bodyNodes)),
+          scope(std::move(scope)) {}
 
     /**
      * Function type for built-in procedures that take a vector of shared pointers to AstNodes as
@@ -63,12 +79,15 @@ class Procedure : public Symbol {
 
     ProcType getProc() const { return proc; }
 
+    VariableTable::Scope getScope() const { return scope; }
+
    private:
     size_t arity = 0;
     std::vector<std::string> params;
     std::vector<std::shared_ptr<AstNode>> bodyNodes;
     ProcType proc;
     bool isBuiltin = false;
+    VariableTable::Scope scope;
 };
 }  // namespace dplsrc
 

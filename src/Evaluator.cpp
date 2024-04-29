@@ -49,14 +49,13 @@ void Evaluator::visit(const std::shared_ptr<IndexNode> &node) {
 }
 
 void Evaluator::visit(const std::shared_ptr<LeafNode> &node) {
-    if (node->getIsIdentifier() && !node->getIsFunctionCall()) {
+    if (node->getIsIdentifier()) {
         try {
             Variable *var = vtable.lookup(node->getText());
             node->setType(var->getType());
             node->setVal(var->getVal());
         } catch (const std::out_of_range &e) {
-            std::string symbol = node->getIsFunctionCall() ? "procedure" : "variable";
-            throw std::runtime_error("Error: undefined " + symbol + " \"" + node->getText() +
+            throw std::runtime_error("Error: undefined variable \"" + node->getText() +
                                      "\"\n");
         }
     } else if (!node->getIsIdentifier()) {
@@ -111,33 +110,39 @@ void Evaluator::visit(const std::shared_ptr<PlusExprNode> &node) {}
 void Evaluator::visit(const std::shared_ptr<PlusNode> &node) {}
 
 void Evaluator::visit(const std::shared_ptr<ProcCallNode> &node) {
-    vtable.enterScope();
-
     std::shared_ptr<LeafNode> procNode = std::dynamic_pointer_cast<LeafNode>(node->getChildNode());
-    procNode->setIsFunctionCall(true);
-    procNode->accept(shared_from_this());
 
     std::string arityStr = std::to_string(node->getChildNodeList().size());
     std::string id = procNode->getText() + "_" + arityStr;
 
     Procedure *proc = nullptr;
     try {
-        proc = ptable.lookup(ProcId(procNode->getText(), node->getChildNodeList().size()));
+        proc = ptable.lookup(procNode->getText(), node->getChildNodeList().size());
+        
     } catch (const std::out_of_range &e) {
         throw std::runtime_error("Error: undefined procedure \"" + procNode->getText() + "\"\n");
     }
 
+    // Check if amount of arguments is correct
     if (proc->getArity() != node->getChildNodeList().size()) {
         throw std::runtime_error("Error: procedure \"" + procNode->getText() +
                                  "\" called with incorrect number of arguments\n");
     }
 
+    // Evaluate params
     std::vector<std::shared_ptr<AstNode>> argNodes = node->getChildNodeList();
     for (size_t i = 0; i < argNodes.size(); ++i) {
         argNodes[i]->accept(shared_from_this());
+    }
+   
+    vtable.enterScope(proc->getScope());
+
+    // Bind actual params to formal params
+    for (size_t i = 0; i < argNodes.size(); ++i) {
         vtable.bind(Variable(proc->getParams()[i], argNodes[i]->getVal(), argNodes[i]->getType()));
     }
 
+    // If procedure written in cpp execute it and return
     if (proc->isBuiltinProcedure()) {
         std::pair<Type, Value> result = proc->getProc()(argNodes);
 
@@ -148,6 +153,7 @@ void Evaluator::visit(const std::shared_ptr<ProcCallNode> &node) {
         return;
     }
 
+    // Evaluate body
     std::vector<std::shared_ptr<AstNode>> bodyNodes = proc->getBodyNodes();
     for (size_t i = 0; i < bodyNodes.size(); ++i) {
         bodyNodes[i]->accept(shared_from_this());
@@ -172,7 +178,7 @@ void Evaluator::visit(const std::shared_ptr<ProcDecNode> &node) {
 
     std::vector<std::shared_ptr<AstNode>> bodyNodes = node->getBodyNodes();
 
-    ptable.bind(Procedure(node->getNameNode()->getText(), params, bodyNodes));
+    ptable.bind(Procedure(node->getNameNode()->getText(), params, bodyNodes, vtable.top()));
 }
 
 void Evaluator::visit(const std::shared_ptr<ProgNode> &node) {
