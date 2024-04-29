@@ -200,7 +200,7 @@ void Evaluator::visit(const std::shared_ptr<WhileNode> &node) {}
 void Evaluator::init() {
     Procedure::ProcType print = [](std::vector<std::shared_ptr<AstNode>> arg) {
         std::cout << arg[0]->getVal().toString() << '\n';
-        return std::pair(Type::NONETYPE, "None");
+        return std::pair(Type::NONETYPE, nullptr);
     };
 
     Procedure::ProcType input = [](std::vector<std::shared_ptr<AstNode>> arg) {
