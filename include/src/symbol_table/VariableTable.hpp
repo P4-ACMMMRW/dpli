@@ -33,11 +33,6 @@ class VariableTable : public SymbolTable {
     void print() override;
 
     /**
-     * Enters a new variable scope
-     */
-    void enterScope();
-
-    /**
      * Maps ids to variables
     */
     using Scope = std::unordered_map<std::string, Variable>;
