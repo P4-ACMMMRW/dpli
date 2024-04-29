@@ -117,17 +117,17 @@ void Evaluator::visit(const std::shared_ptr<ProcCallNode> &node) {
     procNode->setIsFunctionCall(true);
     procNode->accept(shared_from_this());
 
-    std::string arietyStr = std::to_string(node->getChildNodeList().size());
-    std::string id = procNode->getText() + "_" + arietyStr;
+    std::string arityStr = std::to_string(node->getChildNodeList().size());
+    std::string id = procNode->getText() + "_" + arityStr;
 
     Procedure *proc = nullptr;
     try {
-        proc = ptable.lookup(id);
+        proc = ptable.lookup(ProcId(procNode->getText(), node->getChildNodeList().size()));
     } catch (const std::out_of_range &e) {
         throw std::runtime_error("Error: undefined procedure \"" + procNode->getText() + "\"\n");
     }
 
-    if (proc->getAriety() != node->getChildNodeList().size()) {
+    if (proc->getArity() != node->getChildNodeList().size()) {
         throw std::runtime_error("Error: procedure \"" + procNode->getText() +
                                  "\" called with incorrect number of arguments\n");
     }
