@@ -6,6 +6,7 @@
 #include "AllNodeIncludes.hpp"
 #include "AstVisitor.hpp"
 #include "ProcedureTable.hpp"
+#include "Value.hpp"
 #include "VariableTable.hpp"
 
 namespace dplsrc {
@@ -48,12 +49,12 @@ class Evaluator : public AstVisitor {
 
     /**
      * @return the variable table
-    */
+     */
     VariableTable getVtable() { return vtable; }
 
     /**
      * @return the procedure table
-    */
+     */
     ProcedureTable getPtable() { return ptable; }
 
    private:
@@ -62,7 +63,7 @@ class Evaluator : public AstVisitor {
 
     /**
      * Initializes the procedures from the standard library of the language
-    */
+     */
     void initPtable();
 };
 

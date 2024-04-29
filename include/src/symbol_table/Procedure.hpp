@@ -32,7 +32,7 @@ class Procedure : public Symbol {
      * @param params the parameters of the procedure
      * @param bodyNodes the body nodes of the procedure to be executed
      * @param scope the variable table of the procedure at the time of definition
-    */
+     */
     Procedure(std::string id, std::vector<std::string> params,
               std::vector<std::shared_ptr<AstNode>> bodyNodes, VariableTable::Scope scope)
         : Symbol(std::move(id) + "_" + std::to_string(params.size())),

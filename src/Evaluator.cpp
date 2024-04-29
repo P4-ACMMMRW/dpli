@@ -41,11 +41,40 @@ void Evaluator::visit(const std::shared_ptr<HeaderIndexNode> &node) {}
 void Evaluator::visit(const std::shared_ptr<IfNode> &node) {}
 
 void Evaluator::visit(const std::shared_ptr<IndexNode> &node) {
-    std::shared_ptr<AstNode> leftNode = node->getLeftNode();
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
+    std::shared_ptr<AstNode> leftNode = node->getLeftNode();
 
-    leftNode->accept(shared_from_this());
     rightNode->accept(shared_from_this());
+    leftNode->accept(shared_from_this());
+
+    int index = leftNode->getVal().get<int>();
+    switch (rightNode->getType()) {
+        case Type::STR: {
+            std::string str = rightNode->getVal().get<std::string>();
+            node->setType(Type::STR);
+
+            if (index < 0 || index >= str.size()) {
+                throw std::runtime_error("Error: index out of range\n");
+            }
+            
+            node->setVal(std::string{str[index]});
+            break;
+        }
+        case Type::LIST: {
+            Value::List list = rightNode->getVal().get<Value::List>();
+            // TODO: set element of individual types here
+
+            if (index < 0 || index >= list.size()) {
+                throw std::runtime_error("Error: index out of range\n");
+            }
+
+            node->setVal(list[index]);
+            break;
+        }
+        default:
+            throw std::runtime_error("Error: invalid index operation\n");
+            break;
+    }
 }
 
 void Evaluator::visit(const std::shared_ptr<LeafNode> &node) {
@@ -55,8 +84,7 @@ void Evaluator::visit(const std::shared_ptr<LeafNode> &node) {
             node->setType(var->getType());
             node->setVal(var->getVal());
         } catch (const std::out_of_range &e) {
-            throw std::runtime_error("Error: undefined variable \"" + node->getText() +
-                                     "\"\n");
+            throw std::runtime_error("Error: undefined variable \"" + node->getText() + "\"\n");
         }
     } else if (!node->getIsIdentifier()) {
         if (node->getType() == Type::STR) {
@@ -64,7 +92,19 @@ void Evaluator::visit(const std::shared_ptr<LeafNode> &node) {
             std::string text = node->getText();
             node->setVal(text.substr(1, text.size() - 2));
         } else {
-            node->setVal(node->getText());
+            switch (node->getType()) {
+                case Type::INT:
+                    node->setVal(std::stoi(node->getText()));
+                    break;
+                case Type::FLOAT:
+                    node->setVal(std::stod(node->getText()));
+                    break;
+                case Type::BOOL:
+                    node->setVal(node->getText() == "True");
+                    break;
+                default:
+                    node->setVal(node->getText());
+            }
         }
     }
 
@@ -115,7 +155,7 @@ void Evaluator::visit(const std::shared_ptr<ProcCallNode> &node) {
     Procedure *proc = nullptr;
     try {
         proc = ptable.lookup(procNode->getText(), node->getChildNodeList().size());
-        
+
     } catch (const std::out_of_range &e) {
         throw std::runtime_error("Error: undefined procedure \"" + procNode->getText() + "\"\n");
     }
@@ -131,7 +171,7 @@ void Evaluator::visit(const std::shared_ptr<ProcCallNode> &node) {
     for (size_t i = 0; i < argNodes.size(); ++i) {
         argNodes[i]->accept(shared_from_this());
     }
-   
+
     vtable.enterScope(proc->getScope());
 
     // Bind actual params to formal params
