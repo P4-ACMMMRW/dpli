@@ -2,6 +2,7 @@
 #define VARIABLE_HPP
 
 #include "Symbol.hpp"
+#include "Value.hpp"
 
 namespace dplsrc {
 class Variable : public Symbol {
@@ -16,13 +17,13 @@ class Variable : public Symbol {
      * @param val the value of the variable
      * @param type the type of the variable
      */
-    Variable(std::string id, std::string val, Type type)
+    Variable(std::string id, Value val, Type type)
         : Symbol(std::move(id)), val(std::move(val)), type(type) {}
 
     /**
      * @return the value of the variable
      */
-    std::string getVal() const { return val; }
+    Value getVal() const { return val; }
 
     /**
      * @return the type of the variable
@@ -32,7 +33,7 @@ class Variable : public Symbol {
     /**
      * @param val the value of the variable
      */
-    void setVal(std::string val) { this->val = std::move(val); }
+    void setVal(Value val) { this->val = std::move(val); }
 
     /**
      * @param type the type of the variable
@@ -40,7 +41,7 @@ class Variable : public Symbol {
     void setType(Type type) { this->type = type; }
 
    private:
-    std::string val = "None";
+    Value val;
     Type type = Type::NONETYPE;
 };
 }  // namespace dplsrc

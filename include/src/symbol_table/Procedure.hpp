@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "Symbol.hpp"
+#include "Value.hpp"
 
 namespace dplsrc {
 class Procedure : public Symbol {
@@ -29,7 +30,7 @@ class Procedure : public Symbol {
      * input and return any type
      */
     using ProcType =
-        std::function<std::pair<Type, std::string>(std::vector<std::shared_ptr<AstNode>>)>;
+        std::function<std::pair<Type, Value>(std::vector<std::shared_ptr<AstNode>>)>;
 
     /**
      * Constructor for built-in procedures

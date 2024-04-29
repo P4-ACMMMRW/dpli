@@ -17,7 +17,7 @@ void VariableTable::print() {
         std::cout << "EMPTY\n";
     } else {
         for (const std::pair<const std::string, dplsrc::Variable> &entry : scopes.top()) {
-            std::cout << entry.first << " -> " << entry.second.getVal()
+            std::cout << entry.first << " -> " << entry.second.getVal().toString()
                       << " | type: " << entry.second.getType() << '\n';
         }
     }
