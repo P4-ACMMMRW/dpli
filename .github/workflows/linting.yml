@@ -2,7 +2,8 @@ name: Linting
 on:
   pull_request:
     branches: [main]
-    paths: ['**/*.cpp', '**/*.hpp', '!lib/**', '!tests/**']
+    paths: ['**.cpp', '**.hpp']
+    paths-ignore: ['lib/**', 'tests/**']
 
 jobs:
   lint:
