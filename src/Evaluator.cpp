@@ -79,7 +79,15 @@ void Evaluator::visit(const std::shared_ptr<LessEqualExprNode> &node) {}
 void Evaluator::visit(const std::shared_ptr<LessExprNode> &node) {}
 
 void Evaluator::visit(const std::shared_ptr<ListNode> &node) {
-    
+    std::vector<std::shared_ptr<AstNode>> childNodes = node->getChildNodeList();
+    std::vector<Value> values;
+    for (size_t i = 0; i < childNodes.size(); ++i) {
+        childNodes[i]->accept(shared_from_this());
+        values.emplace_back(childNodes[i]->getVal());
+    }
+
+    node->setType(Type::LIST);
+    node->setVal(values);
 }
 
 void Evaluator::visit(const std::shared_ptr<MinusExprNode> &node) {}
@@ -109,17 +117,17 @@ void Evaluator::visit(const std::shared_ptr<ProcCallNode> &node) {
     procNode->setIsFunctionCall(true);
     procNode->accept(shared_from_this());
 
-    std::string arietyStr = std::to_string(node->getChildNodeList().size());
-    std::string id = procNode->getText() + "_" + arietyStr;
+    std::string arityStr = std::to_string(node->getChildNodeList().size());
+    std::string id = procNode->getText() + "_" + arityStr;
 
     Procedure *proc = nullptr;
     try {
-        proc = ptable.lookup(id);
+        proc = ptable.lookup(ProcId(procNode->getText(), node->getChildNodeList().size()));
     } catch (const std::out_of_range &e) {
         throw std::runtime_error("Error: undefined procedure \"" + procNode->getText() + "\"\n");
     }
 
-    if (proc->getAriety() != node->getChildNodeList().size()) {
+    if (proc->getArity() != node->getChildNodeList().size()) {
         throw std::runtime_error("Error: procedure \"" + procNode->getText() +
                                  "\" called with incorrect number of arguments\n");
     }
@@ -168,7 +176,7 @@ void Evaluator::visit(const std::shared_ptr<ProcDecNode> &node) {
 }
 
 void Evaluator::visit(const std::shared_ptr<ProgNode> &node) {
-    init();
+    initPtable();
 
     std::vector<std::shared_ptr<AstNode>> childNodes = node->getChildNodeList();
     for (size_t i = 0; i < childNodes.size(); ++i) {
@@ -189,10 +197,10 @@ void Evaluator::visit(const std::shared_ptr<UnaryExprNode> &node) {}
 
 void Evaluator::visit(const std::shared_ptr<WhileNode> &node) {}
 
-void Evaluator::init() {
+void Evaluator::initPtable() {
     Procedure::ProcType print = [](std::vector<std::shared_ptr<AstNode>> arg) {
         std::cout << arg[0]->getVal().toString() << '\n';
-        return std::pair(Type::NONETYPE, "None");
+        return std::pair(Type::NONETYPE, nullptr);
     };
 
     Procedure::ProcType input = [](std::vector<std::shared_ptr<AstNode>> arg) {

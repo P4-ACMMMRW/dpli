@@ -2,6 +2,7 @@
 #define PROCEDURETABLE_HPP
 
 #include "Procedure.hpp"
+#include "ProcId.hpp"
 #include "SymbolTable.hpp"
 
 namespace dplsrc {
@@ -18,7 +19,7 @@ class ProcedureTable : public SymbolTable {
      * @param id The id of the procedure to look up
      * @return A pointer to the procedure
      */
-    Procedure *lookup(const std::string &id);
+    Procedure *lookup(const ProcId &id);
 
     /**
      * Prints the state of the table to stdout

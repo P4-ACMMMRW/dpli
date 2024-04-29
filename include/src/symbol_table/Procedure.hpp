@@ -21,7 +21,7 @@ class Procedure : public Symbol {
     Procedure(std::string id, std::vector<std::string> params,
               std::vector<std::shared_ptr<AstNode>> bodyNodes)
         : Symbol(std::move(id) + "_" + std::to_string(params.size())),
-          ariety(params.size()),
+          arity(params.size()),
           params(std::move(params)),
           bodyNodes(std::move(bodyNodes)) {}
 
@@ -39,15 +39,15 @@ class Procedure : public Symbol {
      */
     Procedure(std::string id, std::vector<std::string> params, ProcType proc)
         : Symbol(std::move(id) + "_" + std::to_string(params.size())),
-          ariety(params.size()),
+          arity(params.size()),
           params(std::move(params)),
           proc(std::move(proc)),
           isBuiltin(true) {}
 
     /**
-     * @return the ariety of the procedure
+     * @return the arity of the procedure
      */
-    size_t getAriety() const { return ariety; }
+    size_t getArity() const { return arity; }
 
     /**
      * @return the parameters of the procedure as a vector of strings
@@ -64,7 +64,7 @@ class Procedure : public Symbol {
     ProcType getProc() const { return proc; }
 
    private:
-    size_t ariety = 0;
+    size_t arity = 0;
     std::vector<std::string> params;
     std::vector<std::shared_ptr<AstNode>> bodyNodes;
     ProcType proc;
