@@ -112,9 +112,6 @@ void Evaluator::visit(const std::shared_ptr<PlusNode> &node) {}
 void Evaluator::visit(const std::shared_ptr<ProcCallNode> &node) {
     std::shared_ptr<LeafNode> procNode = std::dynamic_pointer_cast<LeafNode>(node->getChildNode());
 
-    std::string arityStr = std::to_string(node->getChildNodeList().size());
-    std::string id = procNode->getText() + "_" + arityStr;
-
     Procedure *proc = nullptr;
     try {
         proc = ptable.lookup(procNode->getText(), node->getChildNodeList().size());
