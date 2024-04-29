@@ -46,14 +46,24 @@ class Evaluator : public AstVisitor {
     void visit(const std::shared_ptr<UnaryExprNode> &node) override;
     void visit(const std::shared_ptr<WhileNode> &node) override;
 
-    void init();
-
+    /**
+     * @return the variable table
+    */
     VariableTable getVtable() { return vtable; }
+
+    /**
+     * @return the procedure table
+    */
     ProcedureTable getPtable() { return ptable; }
 
    private:
     VariableTable vtable = VariableTable();
     ProcedureTable ptable = ProcedureTable();
+
+    /**
+     * Initializes the procedures from the standard library of the language
+    */
+    void initPtable();
 };
 
 }  // namespace dplsrc
