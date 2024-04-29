@@ -2,6 +2,7 @@
 #define LISTNODE_HPP
 
 #include <UnaryNodeList.hpp>
+#include "Type.hpp"
 
 class ListNode : public UnaryNodeList {
    public:

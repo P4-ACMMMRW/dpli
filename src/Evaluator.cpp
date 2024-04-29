@@ -79,7 +79,16 @@ void Evaluator::visit(const std::shared_ptr<LessEqualExprNode> &node) {}
 void Evaluator::visit(const std::shared_ptr<LessExprNode> &node) {}
 
 void Evaluator::visit(const std::shared_ptr<ListNode> &node) {
-    
+    std::vector<std::shared_ptr<AstNode>> childNodes = node->getChildNodeList();
+    std::vector<Value> values;
+    std::vector<Type> types;
+    for (size_t i = 0; i < childNodes.size(); ++i) {
+        childNodes[i]->accept(shared_from_this());
+        values.emplace_back(childNodes[i]->getVal());
+    }
+
+    node->setType(Type::LIST);
+    node->setVal(values);
 }
 
 void Evaluator::visit(const std::shared_ptr<MinusExprNode> &node) {}
