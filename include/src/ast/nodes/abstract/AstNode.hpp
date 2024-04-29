@@ -7,10 +7,11 @@
 #include <string>
 
 #include "Type.hpp"
+#include "Value.hpp"
 
 class AstNode : public std::enable_shared_from_this<AstNode> {
    public:
-    AstNode() {}
+    AstNode() = default;
     AstNode(std::shared_ptr<AstNode> parent) : parent(std::move(parent)) {}
 
     // Rule of five
@@ -30,8 +31,8 @@ class AstNode : public std::enable_shared_from_this<AstNode> {
     void setType(dplsrc::Type type) { this->type = type; }
     dplsrc::Type getType() const { return type; }
 
-    void setVal(std::string value) { this->value = std::move(value); }
-    std::string getVal() { return value; }
+    void setVal(dplsrc::Value val) { this->val = val; }
+    dplsrc::Value getVal() { return val; }
 
     virtual std::string print(std::string indent = "", std::string prefix = "");
     virtual void addChild(std::shared_ptr<AstNode> child) = 0;
@@ -42,7 +43,7 @@ class AstNode : public std::enable_shared_from_this<AstNode> {
     std::shared_ptr<AstNode> parent;
     std::string text;
     dplsrc::Type type = dplsrc::Type::NONETYPE;
-    std::string value;
+    dplsrc::Value val;
 };
 
 #endif

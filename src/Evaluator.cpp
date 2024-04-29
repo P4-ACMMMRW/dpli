@@ -45,7 +45,7 @@ void Evaluator::visit(const std::shared_ptr<IndexNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
 
     leftNode->accept(shared_from_this());
-    rightNode->accept(shared_from_this());    
+    rightNode->accept(shared_from_this());
 }
 
 void Evaluator::visit(const std::shared_ptr<LeafNode> &node) {
@@ -61,15 +61,16 @@ void Evaluator::visit(const std::shared_ptr<LeafNode> &node) {
         }
     } else if (!node->getIsIdentifier()) {
         if (node->getType() == Type::STR) {
-            // Remove quotes from string
-            node->setVal(node->getText().substr(1, node->getText().size() - 2));
+            // If string we have to remove quotes from value
+            std::string text = node->getText();
+            node->setVal(text.substr(1, text.size() - 2));
         } else {
             node->setVal(node->getText());
         }
     }
 
     if (node->getType() == Type::NONETYPE) {
-        node->setVal("None");
+        node->setVal(nullptr);
     }
 }
 
@@ -77,24 +78,7 @@ void Evaluator::visit(const std::shared_ptr<LessEqualExprNode> &node) {}
 
 void Evaluator::visit(const std::shared_ptr<LessExprNode> &node) {}
 
-void Evaluator::visit(const std::shared_ptr<ListNode> &node) {
-    std::vector<std::shared_ptr<AstNode>> childNodes = node->getChildNodeList();
-    std::string vals = "[";
-
-    for (size_t i = 0; i < childNodes.size(); ++i) {
-        childNodes[i]->accept(shared_from_this());
-        vals += childNodes[i]->getVal();
-
-        if (i != childNodes.size() - 1) {
-            vals += ", ";
-        }
-    }
-
-    vals += "]";
-
-    node->setType(Type::LIST);
-    node->setVal(vals);
-}
+void Evaluator::visit(const std::shared_ptr<ListNode> &node) {}
 
 void Evaluator::visit(const std::shared_ptr<MinusExprNode> &node) {}
 
@@ -145,12 +129,10 @@ void Evaluator::visit(const std::shared_ptr<ProcCallNode> &node) {
     }
 
     if (proc->isBuiltinProcedure()) {
-        std::any result = proc->getProc()(argNodes);
+        std::pair<Type, Value> result = proc->getProc()(argNodes);
 
-        // Handle return value and type
-        std::pair<Type, std::any> returnVal = std::any_cast<std::pair<Type, std::string>>(result);
-        node->setVal(std::any_cast<std::string>(returnVal.second));
-        node->setType(returnVal.first);
+        node->setType(result.first);
+        node->setVal(result.second);
 
         vtable.exitScope();
         return;
@@ -207,12 +189,12 @@ void Evaluator::visit(const std::shared_ptr<WhileNode> &node) {}
 
 void Evaluator::init() {
     Procedure::ProcType print = [](std::vector<std::shared_ptr<AstNode>> arg) {
-        std::cout << arg[0]->getVal() << '\n';
+        std::cout << arg[0]->getVal().toString() << '\n';
         return std::pair(Type::NONETYPE, "None");
     };
 
     Procedure::ProcType input = [](std::vector<std::shared_ptr<AstNode>> arg) {
-        std::cout << arg[0]->getVal();
+        std::cout << arg[0]->getVal().toString();
         std::string inputStr;
         std::getline(std::cin, inputStr);
         return std::pair(Type::STR, inputStr);
