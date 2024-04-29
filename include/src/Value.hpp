@@ -1,6 +1,7 @@
 #ifndef VALUE_HPP
 #define VALUE_HPP
 
+#include <stdexcept>
 #include <string>
 #include <variant>
 #include <vector>
@@ -35,37 +36,10 @@ class Value {
         return std::get<T>(innerValue);
     }
 
-    std::string toString() const {
-        if (is<int>()) {
-            return std::to_string(get<int>());
-        } else if (is<double>()) {
-            return std::to_string(get<double>());
-        } else if (is<std::string>()) {
-            return get<std::string>();
-        } else if (is<bool>()) {
-            return get<bool>() ? "True" : "False";
-        } else if (is<std::nullptr_t>()) {
-            return "None";
-        } else if (is<List>()) {
-            std::string result = "[";
-
-            for (const Value &elem : get<List>()) {
-                result += elem.toString() + ", ";
-            }
-
-            // Remove trailing comma and space
-            if (result.size() > 1) {
-                result.pop_back();
-                result.pop_back();
-            }
-
-            result += "]";
-
-            return result;
-        }
-
-        throw std::runtime_error("Error: unknown value type");
-    }
+    /**
+     * Prints string representation of value
+     */
+    std::string toString() const;
 
    private:
     using List = std::vector<Value>;

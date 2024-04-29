@@ -78,7 +78,9 @@ void Evaluator::visit(const std::shared_ptr<LessEqualExprNode> &node) {}
 
 void Evaluator::visit(const std::shared_ptr<LessExprNode> &node) {}
 
-void Evaluator::visit(const std::shared_ptr<ListNode> &node) {}
+void Evaluator::visit(const std::shared_ptr<ListNode> &node) {
+    
+}
 
 void Evaluator::visit(const std::shared_ptr<MinusExprNode> &node) {}
 
