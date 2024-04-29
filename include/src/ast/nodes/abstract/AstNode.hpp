@@ -5,6 +5,7 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <utility>
 
 #include "Type.hpp"
 #include "Value.hpp"
@@ -31,7 +32,7 @@ class AstNode : public std::enable_shared_from_this<AstNode> {
     void setType(dplsrc::Type type) { this->type = type; }
     dplsrc::Type getType() const { return type; }
 
-    void setVal(dplsrc::Value val) { this->val = val; }
+    void setVal(dplsrc::Value val) { this->val = std::move(val); }
     dplsrc::Value getVal() { return val; }
 
     virtual std::string print(std::string indent = "", std::string prefix = "");
