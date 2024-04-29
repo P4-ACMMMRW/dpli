@@ -41,8 +41,12 @@ class Value {
      */
     std::string toString() const;
 
-   private:
+    /**
+     * List type
+     */
     using List = std::vector<Value>;
+
+   private:
     std::variant<int, double, std::string, bool, List, std::nullptr_t> innerValue;
 };
 }  // namespace dplsrc

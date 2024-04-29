@@ -25,17 +25,7 @@ void VariableTable::print() {
     std::cout << "────────────────────────────────────────\n";
 }
 
-void VariableTable::enterScope() {
-    if (scopes.empty()) {
-        scopes.push(std::unordered_map<std::string, Variable>());
-    } else {
-        scopes.push(scopes.top());
-    }
-}
-
-void VariableTable::enterScope(Scope scope) {
-    scopes.push(scope);
-}
+void VariableTable::enterScope(Scope scope) { scopes.push(scope); }
 
 void VariableTable::exitScope() {
     if (scopes.size() > 1) {

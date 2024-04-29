@@ -10,9 +10,9 @@ namespace dplsrc {
 class VariableTable : public SymbolTable {
    public:
     /**
-     * Default constructor
+     * Sets up table and initializes the global scope
      */
-    VariableTable() { enterScope(); }
+    VariableTable() { scopes.push(Scope()); }
 
     /**
      * Binds a variable to the table
@@ -33,8 +33,8 @@ class VariableTable : public SymbolTable {
     void print() override;
 
     /**
-     * Maps ids to variables
-    */
+     * Variable scope where identifiers are bound to variables
+     */
     using Scope = std::unordered_map<std::string, Variable>;
 
     /**
@@ -50,9 +50,9 @@ class VariableTable : public SymbolTable {
 
     /**
      * @return The top scope of the vtable
-    */
+     */
     Scope top() { return scopes.top(); }
-    
+
    private:
     std::stack<Scope> scopes;
 };
