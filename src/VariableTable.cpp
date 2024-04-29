@@ -33,6 +33,10 @@ void VariableTable::enterScope() {
     }
 }
 
+void VariableTable::enterScope(Scope scope) {
+    scopes.push(scope);
+}
+
 void VariableTable::exitScope() {
     if (scopes.size() > 1) {
         scopes.pop();

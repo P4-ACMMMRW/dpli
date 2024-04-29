@@ -38,12 +38,28 @@ class VariableTable : public SymbolTable {
     void enterScope();
 
     /**
+     * Maps ids to variables
+    */
+    using Scope = std::unordered_map<std::string, Variable>;
+
+    /**
+     * Enters a new variable scope
+     * @param VariableTable The table to copy the scope from
+     */
+    void enterScope(Scope scope);
+
+    /**
      * Exits the current variable scope
      */
     void exitScope();
 
+    /**
+     * @return The top scope of the vtable
+    */
+    Scope top() { return scopes.top(); }
+    
    private:
-    std::stack<std::unordered_map<std::string, Variable>> scopes;
+    std::stack<Scope> scopes;
 };
 }  // namespace dplsrc
 
