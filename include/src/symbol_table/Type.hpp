@@ -22,6 +22,9 @@ class TypeUtil {
     static std::string typeToString(Type type);
 };
 
+// String to bool
+bool stob(const std::string& input) { return input != "False"; }
+
 // Overload << operator so we can print the enum string for debugging
 std::ostream& operator<<(std::ostream& os, const Type& type);
 }  // namespace dplsrc
