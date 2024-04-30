@@ -257,7 +257,12 @@ void Evaluator::initPtable() {
         return std::pair(Type::STR, TypeUtil::typeToString(arg[0]->getType()));
     };
 
-    ptable.bind(Procedure("print", {"arg"}, print));
-    ptable.bind(Procedure("input", {"arg"}, input));
-    ptable.bind(Procedure("type", {"arg"}, type));
+    Procedure::ProcType str = [](std::vector<std::shared_ptr<AstNode>> arg) {
+        return std::pair(Type::STR, arg[0]->getVal().toString());
+    };
+
+    ptable.bind(Procedure("print", {"msg"}, print));
+    ptable.bind(Procedure("input", {"msg"}, input));
+    ptable.bind(Procedure("type", {"x"}, type));
+    ptable.bind(Procedure("str", {"x"}, str));
 }
