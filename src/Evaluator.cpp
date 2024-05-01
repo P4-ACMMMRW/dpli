@@ -32,9 +32,6 @@ void Evaluator::visit(const std::shared_ptr<AndExprNode> &node) {
 
     // Always sets the type to bool for comparisons
     node->setType(Type::BOOL);
-
-    // Binds to the vtable
-    vtable.bind(Variable(node->getText(), node->getVal(), node->getType()));
 }
 
 void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
@@ -122,9 +119,6 @@ void Evaluator::visit(const std::shared_ptr<DivExprNode> &node) {
 
     // Always sets type to float fo division
     node->setType(Type::FLOAT);
-
-    // Binds to the vtable
-    vtable.bind(Variable(node->getText(), node->getVal(), node->getType()));
 }
 
 void Evaluator::visit(const std::shared_ptr<ElseNode> &node) {}
@@ -183,9 +177,6 @@ void Evaluator::visit(const std::shared_ptr<EqualExprNode> &node) {
 
     // Always sets the type to bool for comparisons
     node->setType(Type::BOOL);
-
-    // Binds to the vtable
-    vtable.bind(Variable(node->getText(), node->getVal(), node->getType()));
 }
 
 void Evaluator::visit(const std::shared_ptr<ExpoExprNode> &node) {
@@ -262,9 +253,6 @@ void Evaluator::visit(const std::shared_ptr<ExpoExprNode> &node) {
             throw std::runtime_error("Error: Couldn't convert string to value of nodes");
             break;
     }
-
-    // Binds to the vtable
-    vtable.bind(Variable(node->getText(), node->getVal(), node->getType()));
 }
 
 void Evaluator::visit(const std::shared_ptr<FilterNode> &node) {}
@@ -318,9 +306,6 @@ void Evaluator::visit(const std::shared_ptr<GreaterEqualExprNode> &node) {
 
     // Always sets the type to bool for comparisons
     node->setType(Type::BOOL);
-
-    // Binds to the vtable
-    vtable.bind(Variable(node->getText(), node->getVal(), node->getType()));
 }
 
 void Evaluator::visit(const std::shared_ptr<GreaterExprNode> &node) {
@@ -372,9 +357,6 @@ void Evaluator::visit(const std::shared_ptr<GreaterExprNode> &node) {
 
     // Always sets the type to bool for comparisons
     node->setType(Type::BOOL);
-
-    // Binds to the vtable
-    vtable.bind(Variable(node->getText(), node->getVal(), node->getType()));
 }
 
 void Evaluator::visit(const std::shared_ptr<HeaderIndexNode> &node) {}
@@ -503,9 +485,6 @@ void Evaluator::visit(const std::shared_ptr<LessEqualExprNode> &node) {
 
     // Always sets the type to bool for comparisons
     node->setType(Type::BOOL);
-
-    // Binds to the vtable
-    vtable.bind(Variable(node->getText(), node->getVal(), node->getType()));
 }
 
 void Evaluator::visit(const std::shared_ptr<LessExprNode> &node) {
@@ -557,9 +536,6 @@ void Evaluator::visit(const std::shared_ptr<LessExprNode> &node) {
 
     // Always sets the type to bool for comparisons
     node->setType(Type::BOOL);
-
-    // Binds to the vtable
-    vtable.bind(Variable(node->getText(), node->getVal(), node->getType()));
 }
 
 void Evaluator::visit(const std::shared_ptr<ListNode> &node) {
@@ -629,9 +605,6 @@ void Evaluator::visit(const std::shared_ptr<MinusExprNode> &node) {
             throw std::runtime_error("Error: Couldn't convert string to value of nodes");
             break;
     }
-
-    // Binds to the vtable
-    vtable.bind(Variable(node->getText(), node->getVal(), node->getType()));
 }
 
 void Evaluator::visit(const std::shared_ptr<MinusNode> &node) {
@@ -663,9 +636,6 @@ void Evaluator::visit(const std::shared_ptr<MinusNode> &node) {
             throw std::runtime_error("Error: Couldn't convert string to value of nodes");
             break;
     }
-
-    // Binds to the vtable
-    vtable.bind(Variable(node->getText(), node->getVal(), node->getType()));
 }
 
 void Evaluator::visit(const std::shared_ptr<ModExprNode> &node) {
@@ -722,9 +692,6 @@ void Evaluator::visit(const std::shared_ptr<ModExprNode> &node) {
 
     // Always sets the type to bool for comparisons
     node->setType(Type::BOOL);
-
-    // Binds to the vtable
-    vtable.bind(Variable(node->getText(), node->getVal(), node->getType()));
 }
 
 void Evaluator::visit(const std::shared_ptr<MultExprNode> &node) {
@@ -791,9 +758,6 @@ void Evaluator::visit(const std::shared_ptr<MultExprNode> &node) {
             throw std::runtime_error("Error: Couldn't convert string to value of nodes");
             break;
     }
-
-    // Binds to the vtable
-    vtable.bind(Variable(node->getText(), node->getVal(), node->getType()));
 }
 
 void Evaluator::visit(const std::shared_ptr<NotEqualExprNode> &node) {
@@ -851,9 +815,6 @@ void Evaluator::visit(const std::shared_ptr<NotEqualExprNode> &node) {
 
     // Always sets the type to bool for comparisons
     node->setType(Type::BOOL);
-
-    // Binds to the vtable
-    vtable.bind(Variable(node->getText(), node->getVal(), node->getType()));
 }
 
 void Evaluator::visit(const std::shared_ptr<NotNode> &node) {
@@ -897,9 +858,6 @@ void Evaluator::visit(const std::shared_ptr<NotNode> &node) {
 
     // Always sets the type to bool for comparisons
     node->setType(Type::BOOL);
-
-    // Binds to the vtable
-    vtable.bind(Variable(node->getText(), node->getVal(), node->getType()));
 }
 
 void Evaluator::visit(const std::shared_ptr<OrExprNode> &node) {
@@ -929,9 +887,6 @@ void Evaluator::visit(const std::shared_ptr<OrExprNode> &node) {
 
     // Always sets the type to bool for comparisons
     node->setType(Type::BOOL);
-
-    // Binds to the vtable
-    vtable.bind(Variable(node->getText(), node->getVal(), node->getType()));
 }
 
 void Evaluator::visit(const std::shared_ptr<ParNode> &node) {
@@ -999,9 +954,6 @@ void Evaluator::visit(const std::shared_ptr<PlusExprNode> &node) {
             throw std::runtime_error("Error: Couldn't convert string to value of nodes");
             break;
     }
-
-    // Binds to the vtable
-    vtable.bind(Variable(node->getText(), node->getVal(), node->getType()));
 }
 
 void Evaluator::visit(const std::shared_ptr<PlusNode> &node) {
@@ -1018,9 +970,9 @@ void Evaluator::visit(const std::shared_ptr<PlusNode> &node) {
     // Evaluates the value of the expression
     switch (childNode->getType()) {
         case Type::INT:
-            if (childNode->getVal().get<int>() == 69)
-                throw std::runtime_error(
-                    "Why would you ever use this kind of operator without lambda functions?!?");
+            if (childNode->getVal().get<int>() == 69) {
+                throw std::runtime_error("Why would you ever use this kind of operator without lambda functions?!?");
+            }
             node->setVal(childNode->getVal().get<int>());
             node->setType(Type::INT);
             break;
@@ -1036,9 +988,6 @@ void Evaluator::visit(const std::shared_ptr<PlusNode> &node) {
             throw std::runtime_error("Error: Couldn't convert string to value of nodes");
             break;
     }
-
-    // Binds to the vtable
-    vtable.bind(Variable(node->getText(), node->getVal(), node->getType()));
 }
 
 void Evaluator::visit(const std::shared_ptr<ProcCallNode> &node) {
