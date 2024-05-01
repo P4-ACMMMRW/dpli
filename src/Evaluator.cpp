@@ -4,7 +4,34 @@
 
 using namespace dplsrc;
 
-void Evaluator::visit(const std::shared_ptr<AndExprNode> &node) {}
+void Evaluator::visit(const std::shared_ptr<AndExprNode> &node) {
+    // Get left and right node
+    std::shared_ptr<AstNode> leftNode = node->getLeftNode();
+    leftNode->accept(shared_from_this());
+    std::shared_ptr<AstNode> rightNode = node->getRightNode();
+    rightNode->accept(shared_from_this());
+
+    if (leftNode->getType() != Type::BOOL || rightNode->getType() != Type::BOOL){
+        // TODO: move to error handler at some point
+        throw std::runtime_error("Cannot compare the used types");
+    }
+
+    // Evaluates the value of the expression
+    switch (leftNode->getType()) {
+        case Type::BOOL: 
+            if (leftNode->getVal().get<bool>() == 1 && rightNode->getVal().get<bool>() == 1) node->setVal(1);
+            else node->setVal(0);
+        default:
+            throw std::runtime_error("Error: Couldn't convert string to value of nodes");
+            break;
+    }
+
+    // Always sets the type to bool for comparisons
+    node->setType(Type::BOOL);
+
+    // Binds to the vtable
+    vtable.bind(Variable(node->getText(), node->getVal(), node->getType()));
+}
 
 void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
     // Assume left node is a leaf node
@@ -729,7 +756,34 @@ void Evaluator::visit(const std::shared_ptr<NotEqualExprNode> &node) {
 
 void Evaluator::visit(const std::shared_ptr<NotNode> &node) {}
 
-void Evaluator::visit(const std::shared_ptr<OrExprNode> &node) {}
+void Evaluator::visit(const std::shared_ptr<OrExprNode> &node) {
+    // Get left and right node
+    std::shared_ptr<AstNode> leftNode = node->getLeftNode();
+    leftNode->accept(shared_from_this());
+    std::shared_ptr<AstNode> rightNode = node->getRightNode();
+    rightNode->accept(shared_from_this());
+
+    if (leftNode->getType() != Type::BOOL || rightNode->getType() != Type::BOOL){
+        // TODO: move to error handler at some point
+        throw std::runtime_error("Cannot compare the used types");
+    }
+
+    // Evaluates the value of the expression
+    switch (leftNode->getType()) {
+        case Type::BOOL: 
+            if (leftNode->getVal().get<bool>() == 1 || rightNode->getVal().get<bool>() == 1) node->setVal(1);
+            else node->setVal(0);
+        default:
+            throw std::runtime_error("Error: Couldn't convert string to value of nodes");
+            break;
+    }
+
+    // Always sets the type to bool for comparisons
+    node->setType(Type::BOOL);
+
+    // Binds to the vtable
+    vtable.bind(Variable(node->getText(), node->getVal(), node->getType()));
+}
 
 void Evaluator::visit(const std::shared_ptr<ParNode> &node) {}
 
