@@ -56,7 +56,8 @@ target_include_directories(dpllib PUBLIC
     ${PROJECT_SOURCE_DIR}/include/src/symbol_table
     ${PROJECT_SOURCE_DIR}/include/src/ast
     ${PROJECT_SOURCE_DIR}/include/src/ast/nodes
-    ${PROJECT_SOURCE_DIR}/include/src/ast/nodes/abstract)
+    ${PROJECT_SOURCE_DIR}/include/src/ast/nodes/abstract
+)
 
 target_link_libraries(dpllib PUBLIC antlr4_static)
 
@@ -66,7 +67,7 @@ target_include_directories(dpli PRIVATE ${PROJECT_SOURCE_DIR}/include)
 
 target_link_libraries(dpli PRIVATE dpllib antlr4_static)
 
-# add_subdirectory(tests)
+add_subdirectory(tests)
 
 # Strip debug symbols in Release mode
 if(CMAKE_BUILD_TYPE STREQUAL "Release")

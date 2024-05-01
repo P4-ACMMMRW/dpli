@@ -46,7 +46,6 @@ void AstVisitor::visit(const std::shared_ptr<HeaderIndexNode> &node) {
 }
 
 void AstVisitor::visit(const std::shared_ptr<IfNode> &node) {
-    std::cout << "Visiting " << node->getText() << '\n';
     std::shared_ptr<AstNode> condNode = node->getCondNode();
     std::vector<std::shared_ptr<AstNode>> bodyNodes = node->getBodyNodes();
     std::shared_ptr<AstNode> elseNode = node->getElseNode();
@@ -66,7 +65,11 @@ void AstVisitor::visit(const std::shared_ptr<IndexNode> &node) {
     visit(std::static_pointer_cast<BinaryNode>(node));
 }
 
-void AstVisitor::visit(const std::shared_ptr<LeafNode> &node) {}
+void AstVisitor::visit(const std::shared_ptr<IntersectionExprNode> &node) {
+    visit(std::static_pointer_cast<BinaryNode>(node));
+}
+
+void AstVisitor::visit([[maybe_unused]] const std::shared_ptr<LeafNode> &node) {}
 
 void AstVisitor::visit(const std::shared_ptr<LessEqualExprNode> &node) {
     visit(std::static_pointer_cast<BinaryNode>(node));
@@ -121,7 +124,6 @@ void AstVisitor::visit(const std::shared_ptr<PlusNode> &node) {
 }
 
 void AstVisitor::visit(const std::shared_ptr<ProcCallNode> &node) {
-    std::cout << "Visiting " << node->getText() << '\n';
     std::shared_ptr<AstNode> procNode = node->getChildNode();
     if (procNode != nullptr) {
         procNode->accept(shared_from_this());
@@ -134,7 +136,6 @@ void AstVisitor::visit(const std::shared_ptr<ProcCallNode> &node) {
 }
 
 void AstVisitor::visit(const std::shared_ptr<ProcDecNode> &node) {
-    std::cout << "Visiting " << node->getText() << '\n';
     std::vector<std::shared_ptr<AstNode>> paramNodes = node->getParamNodes();
     for (size_t i = 0; i < paramNodes.size(); ++i) {
         paramNodes[i]->accept(shared_from_this());
@@ -162,8 +163,11 @@ void AstVisitor::visit(const std::shared_ptr<UnaryExprNode> &node) {
     visit(std::static_pointer_cast<UnaryNode>(node));
 }
 
+void AstVisitor::visit(const std::shared_ptr<UnionExprNode> &node) {
+    visit(std::static_pointer_cast<BinaryNode>(node));
+}
+
 void AstVisitor::visit(const std::shared_ptr<WhileNode> &node) {
-    std::cout << "Visiting " << node->getText() << '\n';
     std::shared_ptr<AstNode> condNode = node->getChildNode();
     if (condNode != nullptr) {
         condNode->accept(shared_from_this());

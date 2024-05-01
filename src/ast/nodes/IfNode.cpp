@@ -3,9 +3,12 @@
 #include <IfNode.hpp>
 
 void IfNode::addChild(std::shared_ptr<AstNode> node) {
+    antlr4::ParserRuleContext* parserRuleContext = dynamic_cast<antlr4::ParserRuleContext*>(
+        node.get());  // need to do this since parser and lexer rules are in same range.
     if (condNode->getChildNode() == nullptr) {
         condNode->addChild(node);
-    } else if (node->getRule() == dplgrammar::DplParser::RuleElsestm) {
+    } else if (parserRuleContext != nullptr &&
+               parserRuleContext->getRuleIndex() == dplgrammar::DplParser::RuleElsestm) {
         elseNode->addChild(node);
     } else {
         bodyNodeList->addChild(node);
@@ -17,9 +20,13 @@ std::string IfNode::print(std::string indent = "", std::string prefix = "") {
 
     condNode->print(childIndent, "├── Condition: ");
 
-    bodyNodeList->print(childIndent, "├── Body: ");
+    bool elseNodeExists = elseNode->getChildNode() != nullptr;
+
+    std::string bodyPrefix = (!elseNodeExists) ? "└── " : "├── Body:";
+    bodyNodeList->print(childIndent, bodyPrefix);
 
     elseNode->print(childIndent, "└── ");
+
     return "";
 }
 
