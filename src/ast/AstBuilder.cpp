@@ -47,7 +47,7 @@ antlrcpp::Any AstBuilder::visitProcdec(DplParser::ProcdecContext* parseNode) {
     size_t blockIndex = 5;  // if no params
     if (parseNode->children.size() - 1 > blockIndex) {
         parseNode->children[3]->accept(this);
-        blockIndex = 6;     // if params
+        blockIndex = 6;  // if params
     }
     procDecNewNode->stopVisitingParams();
     parseNode->children[blockIndex]->accept(this);
@@ -302,7 +302,7 @@ antlrcpp::Any AstBuilder::visitExpoexpr(DplParser::ExpoexprContext* parseNode) {
 
 antlrcpp::Any AstBuilder::visitList(DplParser::ListContext* parseNode) {
     size_t index =
-        (parseNode->children.size() == 3) ? 1 : 9;  // dirty way to not vitit children if empty list
+        (parseNode->children.size() == 3) ? 1 : 9;  // dirty way to not visit children if empty list
     return unaryNode([this]() { return std::make_shared<ListNode>(currentNode); }, parseNode, index,
                      "[] List");
 }

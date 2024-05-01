@@ -6,6 +6,7 @@
 #include <DplParserBaseVisitor.h>
 
 #include <AllNodeIncludes.hpp>
+#include <functional>
 #include <memory>
 
 using namespace antlr4;
