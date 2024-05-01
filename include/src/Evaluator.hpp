@@ -71,8 +71,6 @@ class Evaluator : public AstVisitor {
     void initPtable();
 };
 
-
-
 }  // namespace dplsrc
 
 #endif

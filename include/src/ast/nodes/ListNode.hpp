@@ -11,15 +11,11 @@ class ListNode : public UnaryNodeList {
         visitor->visit(std::static_pointer_cast<ListNode>(shared_from_this()));
     };
 
-    void setTypes(const std::vector<dplsrc::Type> &types) {
-        this->types = types;
-    }
+    void setTypes(const std::vector<dplsrc::Type> &types) { this->types = types; }
 
-    std::vector<dplsrc::Type> getTypes() {
-        return types;
-    }
+    std::vector<dplsrc::Type> getTypes() { return types; }
 
-  private:
+   private:
     std::vector<dplsrc::Type> types;
 };
 
