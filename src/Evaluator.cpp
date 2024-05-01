@@ -971,7 +971,8 @@ void Evaluator::visit(const std::shared_ptr<PlusNode> &node) {
     switch (childNode->getType()) {
         case Type::INT:
             if (childNode->getVal().get<int>() == 69) {
-                throw std::runtime_error("Why would you ever use this kind of operator without lambda functions?!?");
+                throw std::runtime_error(
+                    "Why would you ever use this kind of operator without lambda functions?!?");
             }
             node->setVal(childNode->getVal().get<int>());
             node->setType(Type::INT);
