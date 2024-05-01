@@ -164,10 +164,6 @@ void AstVisitor::visit(const std::shared_ptr<TableNode> &node) {
     visit(std::static_pointer_cast<UnaryNodeList>(node));
 }
 
-void AstVisitor::visit(const std::shared_ptr<UnaryExprNode> &node) {
-    visit(std::static_pointer_cast<UnaryNode>(node));
-}
-
 void AstVisitor::visit(const std::shared_ptr<UnionExprNode> &node) {
     visit(std::static_pointer_cast<BinaryNode>(node));
 }

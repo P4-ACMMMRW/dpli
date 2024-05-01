@@ -171,11 +171,6 @@ class AstTestVisitor : public AstVisitor {
         test(astNode);
         AstVisitor::visit(node);
     };
-    void visit(const std::shared_ptr<UnaryExprNode> &node) override {
-        std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
-        test(astNode);
-        AstVisitor::visit(node);
-    };
     void visit(const std::shared_ptr<UnionExprNode> &node) override {
         std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
         test(astNode);

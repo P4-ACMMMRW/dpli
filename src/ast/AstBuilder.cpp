@@ -359,15 +359,20 @@ antlrcpp::Any AstBuilder::visitHeaderindex(DplParser::HeaderindexContext* parseN
                      2, "[$] Header Indexing", false);
 }
 
+
+
+
+
 antlrcpp::Any AstBuilder::visitFiltering(DplParser::FilteringContext* parseNode) {
-    return unaryNode([this]() { return std::make_shared<FilterNode>(currentNode); }, parseNode, 1,
-                     "[] Filter", false);
+    parseNode->children[1]->accept(this);
+    return nullptr;              
 }
 // To here
 
 antlrcpp::Any AstBuilder::visitUnaryexpr(DplParser::UnaryexprContext* parseNode) {
-    return unaryNode([this]() { return std::make_shared<UnaryExprNode>(currentNode); }, parseNode,
-                     1, parseNode->children[0]->getText());
+    std::string text = "[" + parseNode->children[0]->getText() + "] Filter";
+    return unaryNode([this]() { return std::make_shared<FilterNode>(currentNode); }, parseNode,
+                     1, text, false);
 }
 
 std::shared_ptr<AstNode> AstBuilder::getRoot() { return root; }
