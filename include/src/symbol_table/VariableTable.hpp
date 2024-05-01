@@ -12,7 +12,7 @@ class VariableTable : public SymbolTable {
     /**
      * Sets up table and initializes the global scope
      */
-    VariableTable() { scopes.push(Scope()); }
+    VariableTable() = default;
 
     /**
      * Binds a variable to the table
@@ -51,10 +51,17 @@ class VariableTable : public SymbolTable {
     /**
      * @return The top scope of the vtable
      */
-    Scope top() { return scopes.top(); }
+    Scope top() { 
+        if (scopes.empty()) {
+            return Scope();
+        } else {
+            return scopes.top(); 
+        }
+    }
 
    private:
-    std::stack<Scope> scopes;
+    std::stack<Scope> scopes = std::stack<Scope>();
+    Scope globalScope;
 };
 }  // namespace dplsrc
 

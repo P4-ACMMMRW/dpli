@@ -183,7 +183,7 @@ void Evaluator::visit(const std::shared_ptr<ProcCallNode> &node) {
     for (size_t i = 0; i < argNodes.size(); ++i) {
         vtable.bind(Variable(proc->getParams()[i], argNodes[i]->getVal(), argNodes[i]->getType()));
     }
-
+    
     // If procedure written in cpp execute it and return
     if (proc->isBuiltinProcedure()) {
         std::pair<Type, Value> result = proc->getProc()(argNodes);
