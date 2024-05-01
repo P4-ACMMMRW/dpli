@@ -11,180 +11,180 @@ class AstTestVisitor : public AstVisitor {
                   : parser(parser), lexer(lexer), expectedTreeNodes(expectedTreeNodes) {}
 
 
-    std::any visit(const std::shared_ptr<AndExprNode> &node) override {
+    void visit(const std::shared_ptr<AndExprNode> &node) override {
         std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
         test(astNode);
-        return AstVisitor::visit(node);
+        AstVisitor::visit(node);
     };
-    std::any visit(const std::shared_ptr<AssignNode> &node) override {
+    void visit(const std::shared_ptr<AssignNode> &node) override {
         std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
         test(astNode);
-        return AstVisitor::visit(node);
+        AstVisitor::visit(node);
     };
-    std::any visit(const std::shared_ptr<ColumnNode> &node) override {
+    void visit(const std::shared_ptr<ColumnNode> &node) override {
         std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
         test(astNode);
-        return AstVisitor::visit(node);
+        AstVisitor::visit(node);
     };
-    std::any visit(const std::shared_ptr<DivExprNode> &node) override {
+    void visit(const std::shared_ptr<DivExprNode> &node) override {
         std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
         test(astNode);
-        return AstVisitor::visit(node);
+        AstVisitor::visit(node);
     };
-    std::any visit(const std::shared_ptr<ElseNode> &node) override {
+    void visit(const std::shared_ptr<ElseNode> &node) override {
         std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
         test(astNode);
-        return AstVisitor::visit(node);
+        AstVisitor::visit(node);
     };
-    std::any visit(const std::shared_ptr<EqualExprNode> &node) override {
+    void visit(const std::shared_ptr<EqualExprNode> &node) override {
         std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
         test(astNode);
-        return AstVisitor::visit(node);
+        AstVisitor::visit(node);
     };
-    std::any visit(const std::shared_ptr<ExpoExprNode> &node) override {
+    void visit(const std::shared_ptr<ExpoExprNode> &node) override {
         std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
         test(astNode);
-        return AstVisitor::visit(node);
+        AstVisitor::visit(node);
     };
-    std::any visit(const std::shared_ptr<FilterNode> &node) override {
+    void visit(const std::shared_ptr<FilterNode> &node) override {
         std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
         test(astNode);
-        return AstVisitor::visit(node);
+        AstVisitor::visit(node);
     };
-    std::any visit(const std::shared_ptr<GreaterEqualExprNode> &node) override {
+    void visit(const std::shared_ptr<GreaterEqualExprNode> &node) override {
         std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
         test(astNode);
-        return AstVisitor::visit(node);
+        AstVisitor::visit(node);
     };
-    std::any visit(const std::shared_ptr<GreaterExprNode> &node) override {
+    void visit(const std::shared_ptr<GreaterExprNode> &node) override {
         std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
         test(astNode);
-        return AstVisitor::visit(node);
+        AstVisitor::visit(node);
     };
-    std::any visit(const std::shared_ptr<HeaderIndexNode> &node) override {
+    void visit(const std::shared_ptr<HeaderIndexNode> &node) override {
         std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
         test(astNode);
-        return AstVisitor::visit(node);
+        AstVisitor::visit(node);
     };
-    std::any visit(const std::shared_ptr<IfNode> &node) override {
+    void visit(const std::shared_ptr<IfNode> &node) override {
         std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
         test(astNode);
-        return AstVisitor::visit(node);
+        AstVisitor::visit(node);
     };
-    std::any visit(const std::shared_ptr<IndexNode> &node) override {
+    void visit(const std::shared_ptr<IndexNode> &node) override {
         std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
         test(astNode);
-        return AstVisitor::visit(node);
+        AstVisitor::visit(node);
     };
-    std::any visit(const std::shared_ptr<IntersectionExprNode> &node) override {
+    void visit(const std::shared_ptr<IntersectionExprNode> &node) override {
         std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
         test(astNode);
-        return AstVisitor::visit(node);
+        AstVisitor::visit(node);
     };
-    std::any visit(const std::shared_ptr<LeafNode> &node) override {
+    void visit(const std::shared_ptr<LeafNode> &node) override {
         std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
         test(astNode);
-        return AstVisitor::visit(node);
+        AstVisitor::visit(node);
     };
-    std::any visit(const std::shared_ptr<LessEqualExprNode> &node) override {
+    void visit(const std::shared_ptr<LessEqualExprNode> &node) override {
         std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
         test(astNode);
-        return AstVisitor::visit(node);
+        AstVisitor::visit(node);
     };
-    std::any visit(const std::shared_ptr<LessExprNode> &node) override {
+    void visit(const std::shared_ptr<LessExprNode> &node) override {
         std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
         test(astNode);
-        return AstVisitor::visit(node);
+        AstVisitor::visit(node);
     };
-    std::any visit(const std::shared_ptr<ListNode> &node) override {
+    void visit(const std::shared_ptr<ListNode> &node) override {
         std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
         test(astNode);
-        return AstVisitor::visit(node);
+        AstVisitor::visit(node);
     };
-    std::any visit(const std::shared_ptr<MinusExprNode> &node) override {
+    void visit(const std::shared_ptr<MinusExprNode> &node) override {
         std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
         test(astNode);
-        return AstVisitor::visit(node);
+        AstVisitor::visit(node);
     };
-    std::any visit(const std::shared_ptr<MinusNode> &node) override {
+    void visit(const std::shared_ptr<MinusNode> &node) override {
         std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
         test(astNode);
-        return AstVisitor::visit(node);
+        AstVisitor::visit(node);
     };
-    std::any visit(const std::shared_ptr<ModExprNode> &node) override {
+    void visit(const std::shared_ptr<ModExprNode> &node) override {
         std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
         test(astNode);
-        return AstVisitor::visit(node);
+        AstVisitor::visit(node);
     };
-    std::any visit(const std::shared_ptr<MultExprNode> &node) override {
+    void visit(const std::shared_ptr<MultExprNode> &node) override {
         std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
         test(astNode);
-        return AstVisitor::visit(node);
+        AstVisitor::visit(node);
     };
-    std::any visit(const std::shared_ptr<NotNode> &node) override {
+    void visit(const std::shared_ptr<NotNode> &node) override {
         std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
         test(astNode);
-        return AstVisitor::visit(node);
+        AstVisitor::visit(node);
     };
-    std::any visit(const std::shared_ptr<OrExprNode> &node) override {
+    void visit(const std::shared_ptr<OrExprNode> &node) override {
         std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
         test(astNode);
-        return AstVisitor::visit(node);
+        AstVisitor::visit(node);
     };
-    std::any visit(const std::shared_ptr<ParNode> &node) override {
+    void visit(const std::shared_ptr<ParNode> &node) override {
         std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
         test(astNode);
-        return AstVisitor::visit(node);
+        AstVisitor::visit(node);
     };
-    std::any visit(const std::shared_ptr<PlusExprNode> &node) override {
+    void visit(const std::shared_ptr<PlusExprNode> &node) override {
         std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
         test(astNode);
-        return AstVisitor::visit(node);
+        AstVisitor::visit(node);
     };
-    std::any visit(const std::shared_ptr<PlusNode> &node) override {
+    void visit(const std::shared_ptr<PlusNode> &node) override {
         std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
         test(astNode);
-        return AstVisitor::visit(node);
+        AstVisitor::visit(node);
     };
-    std::any visit(const std::shared_ptr<ProcCallNode> &node) override {
+    void visit(const std::shared_ptr<ProcCallNode> &node) override {
         std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
         test(astNode);
-        return AstVisitor::visit(node);
+        AstVisitor::visit(node);
     };
-    std::any visit(const std::shared_ptr<ProcDecNode> &node) override {
+    void visit(const std::shared_ptr<ProcDecNode> &node) override {
         std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
         test(astNode);
-        return AstVisitor::visit(node);
+        AstVisitor::visit(node);
     };
-    std::any visit(const std::shared_ptr<ProgNode> &node) override {
+    void visit(const std::shared_ptr<ProgNode> &node) override {
         std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
         test(astNode);
-        return AstVisitor::visit(node);
+        AstVisitor::visit(node);
     };
-    std::any visit(const std::shared_ptr<ReturnNode> &node) override {
+    void visit(const std::shared_ptr<ReturnNode> &node) override {
         std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
         test(astNode);
-        return AstVisitor::visit(node);
+        AstVisitor::visit(node);
     };
-    std::any visit(const std::shared_ptr<TableNode> &node) override {
+    void visit(const std::shared_ptr<TableNode> &node) override {
         std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
         test(astNode);
-        return AstVisitor::visit(node);
+        AstVisitor::visit(node);
     };
-    std::any visit(const std::shared_ptr<UnaryExprNode> &node) override {
+    void visit(const std::shared_ptr<UnaryExprNode> &node) override {
         std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
         test(astNode);
-        return AstVisitor::visit(node);
+        AstVisitor::visit(node);
     };
-    std::any visit(const std::shared_ptr<UnionExprNode> &node) override {
+    void visit(const std::shared_ptr<UnionExprNode> &node) override {
         std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
         test(astNode);
-        return AstVisitor::visit(node);
+        AstVisitor::visit(node);
     };
-    std::any visit(const std::shared_ptr<WhileNode> &node) override {
+    void visit(const std::shared_ptr<WhileNode> &node) override {
         std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
         test(astNode);
-        return AstVisitor::visit(node);
+        AstVisitor::visit(node);
     };
    private:
     dplgrammar::DplParser* parser;
