@@ -22,7 +22,6 @@ class TypeUtil {
     static std::string typeToString(Type type);
 };
 
-
 // Overload << operator so we can print the enum string for debugging
 std::ostream& operator<<(std::ostream& os, const Type& type);
 }  // namespace dplsrc
