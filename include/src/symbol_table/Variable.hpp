@@ -9,11 +9,6 @@ class Variable : public Symbol {
    public:
     /**
      * @param id the id of the variable
-     */
-    Variable(std::string id) : Symbol(std::move(id)) {}
-
-    /**
-     * @param id the id of the variable
      * @param val the value of the variable
      * @param type the type of the variable
      */
