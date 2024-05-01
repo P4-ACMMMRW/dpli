@@ -5,13 +5,14 @@ using namespace dplsrc;
 void Evaluator::visit(const std::shared_ptr<AndExprNode> &node) {}
 
 void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
-    // Assume left node is a leaf node
     std::shared_ptr<LeafNode> leafNode = std::dynamic_pointer_cast<LeafNode>(node->getLeftNode());
     bool isLeaf = leafNode != nullptr;
-    bool isIndex = std::dynamic_pointer_cast<IndexNode>(node->getLeftNode()) != nullptr;
+    bool isIndexing = std::dynamic_pointer_cast<IndexNode>(node->getLeftNode()) != nullptr;
     std::shared_ptr<AstNode> leftNode = node->getLeftNode();
 
-    bool error = !isLeaf && !isIndex || (isLeaf && !leafNode->getIsIdentifier());
+    // If left is not a leaf or index node, throw error
+    // Also if left is a leaf node but not an identifier, throw error
+    bool error = !isLeaf && !isIndexing || (isLeaf && !leafNode->getIsIdentifier());
     if (error) {
         // TODO: move to error handler at some point
         throw std::runtime_error("Error: left side of assignment must be a reference\n");
@@ -21,7 +22,8 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    if (isIndex) {
+    // If indexing
+    if (isIndexing) {
         std::shared_ptr<IndexNode> indexNode = std::dynamic_pointer_cast<IndexNode>(leftNode);
         std::shared_ptr<AstNode> identifierNode = indexNode->getRightNode();
 
@@ -30,6 +32,12 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
         Type type = var->getType();
 
         int index = indexNode->getLeftNode()->getVal().get<int>();
+
+        // For some types indexing is read-only
+        if (!type.is<Type::List>()) {
+            throw std::runtime_error("Error: list assigment not allowed for this type\n");
+        }
+
         val.getMut<Value::List>()[index] = rightNode->getVal();
         type.getMut<Type::List>()[index] = rightNode->getType();
 

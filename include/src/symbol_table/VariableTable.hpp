@@ -43,6 +43,7 @@ class VariableTable : public SymbolTable {
      */
     void enterScope(Scope scope);
 
+
     /**
      * Exits the current variable scope
      */
