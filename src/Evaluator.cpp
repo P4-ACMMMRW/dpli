@@ -143,7 +143,12 @@ void Evaluator::visit(const std::shared_ptr<NotNode> &node) {}
 
 void Evaluator::visit(const std::shared_ptr<OrExprNode> &node) {}
 
-void Evaluator::visit(const std::shared_ptr<ParNode> &node) {}
+void Evaluator::visit(const std::shared_ptr<ParNode> &node) {
+    std::shared_ptr<AstNode> childNode = node->getChildNode();
+    childNode->accept(shared_from_this());
+    node->setType(childNode->getType());
+    node->setVal(childNode->getVal());
+}
 
 void Evaluator::visit(const std::shared_ptr<PlusExprNode> &node) {}
 
