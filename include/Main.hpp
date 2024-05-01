@@ -6,7 +6,6 @@
 #include <antlr4-runtime.h>
 
 #include <AstBuilder.hpp>
-#include <AstTestVisitor.hpp>
 #include <argz.hpp>
 #include <filesystem>
 #include <fstream>

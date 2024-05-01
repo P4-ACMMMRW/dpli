@@ -41,27 +41,27 @@ void Evaluator::visit(const std::shared_ptr<HeaderIndexNode> &node) {}
 void Evaluator::visit(const std::shared_ptr<IfNode> &node) {}
 
 void Evaluator::visit(const std::shared_ptr<IndexNode> &node) {
-    std::shared_ptr<AstNode> rightNode = node->getRightNode();
-    std::shared_ptr<AstNode> leftNode = node->getLeftNode();
+    std::shared_ptr<AstNode> identifierNode = node->getRightNode();
+    std::shared_ptr<AstNode> indexNode = node->getLeftNode();
 
-    rightNode->accept(shared_from_this());
-    leftNode->accept(shared_from_this());
+    identifierNode->accept(shared_from_this());
+    indexNode->accept(shared_from_this());
 
-    int index = leftNode->getVal().get<int>();
-    switch (rightNode->getType()) {
+    size_t index = indexNode->getVal().get<int>();
+    switch (identifierNode->getType()) {
         case Type::STR: {
-            std::string str = rightNode->getVal().get<std::string>();
+            std::string str = identifierNode->getVal().get<std::string>();
             node->setType(Type::STR);
 
             if (index < 0 || index >= str.size()) {
                 throw std::runtime_error("Error: index out of range\n");
             }
-            
+
             node->setVal(std::string{str[index]});
             break;
         }
         case Type::LIST: {
-            Value::List list = rightNode->getVal().get<Value::List>();
+            Value::List list = identifierNode->getVal().get<Value::List>();
             // TODO: set element of individual types here
 
             if (index < 0 || index >= list.size()) {
@@ -143,7 +143,12 @@ void Evaluator::visit(const std::shared_ptr<NotNode> &node) {}
 
 void Evaluator::visit(const std::shared_ptr<OrExprNode> &node) {}
 
-void Evaluator::visit(const std::shared_ptr<ParNode> &node) {}
+void Evaluator::visit(const std::shared_ptr<ParNode> &node) {
+    std::shared_ptr<AstNode> childNode = node->getChildNode();
+    childNode->accept(shared_from_this());
+    node->setType(childNode->getType());
+    node->setVal(childNode->getVal());
+}
 
 void Evaluator::visit(const std::shared_ptr<PlusExprNode> &node) {}
 
@@ -257,7 +262,12 @@ void Evaluator::initPtable() {
         return std::pair(Type::STR, TypeUtil::typeToString(arg[0]->getType()));
     };
 
-    ptable.bind(Procedure("print", {"arg"}, print));
-    ptable.bind(Procedure("input", {"arg"}, input));
-    ptable.bind(Procedure("type", {"arg"}, type));
+    Procedure::ProcType str = [](std::vector<std::shared_ptr<AstNode>> arg) {
+        return std::pair(Type::STR, arg[0]->getVal().toString());
+    };
+
+    ptable.bind(Procedure("print", {"msg"}, print));
+    ptable.bind(Procedure("input", {"msg"}, input));
+    ptable.bind(Procedure("type", {"x"}, type));
+    ptable.bind(Procedure("str", {"x"}, str));
 }

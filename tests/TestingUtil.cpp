@@ -56,7 +56,7 @@ void TestingUtil::testTokens(std::string testFileName, std::vector<size_t> expec
     }
 }
 
-void TestingUtil::testParser(std::string testFileName, std::vector<int> expectedTreeNodes) {
+void TestingUtil::testParser(std::string testFileName, std::vector<size_t> expectedTreeNodes) {
     std::string filePath = std::filesystem::path(std::string{exampleLocation} + testFileName).string();
 
     if (!std::filesystem::exists(filePath)) {
@@ -80,4 +80,36 @@ void TestingUtil::testParser(std::string testFileName, std::vector<int> expected
     TestVisitor visitor(&parser, expectedTreeNodes);
     antlr4::tree::ParseTree* tree = parser.prog();
     visitor.visit(tree);
+}
+
+void TestingUtil::testAst(std::string testFileName, std::vector<size_t> expectedTreeNodes) {
+     std::string filePath = std::filesystem::path(std::string{exampleLocation} + testFileName).string();
+
+    if (!std::filesystem::exists(filePath)) {
+        FAIL("File does not exist: " + filePath);
+    }
+
+    std::ifstream file{filePath};
+    if (!file.is_open()) {
+        FAIL("Failed to open file: " + filePath);
+    }
+
+    antlr4::ANTLRInputStream input(file);
+
+    dplgrammar::DplLexer lexer(&input);
+    antlr4::CommonTokenStream tokens(&lexer);
+
+    tokens.fill();
+
+    dplgrammar::DplParser parser(&tokens);
+    
+
+    dplgrammar::DplParser::ProgContext* tree = parser.prog();
+
+    AstBuilder builder{&parser, &lexer};
+    builder.visit(tree);
+
+    std::shared_ptr<AstNode> root = builder.getRoot();
+    std::shared_ptr<AstTestVisitor> visitor = std::make_shared<AstTestVisitor>(expectedTreeNodes, &parser, &lexer);
+    root->accept(visitor);
 }
