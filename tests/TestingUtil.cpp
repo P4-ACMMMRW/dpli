@@ -18,7 +18,6 @@ antlrcpp::Any TestVisitor::visitChildren(antlr4::tree::ParseTree *tree) {
     for (size_t i = 0; i < tree->children.size(); ++i) {
         antlr4::ParserRuleContext* ctx = dynamic_cast<antlr4::ParserRuleContext*>(tree->children[i]);
         if (ctx) {
-            //printTokens(ctx->getRuleIndex());
             testNode(ctx);
         }
 

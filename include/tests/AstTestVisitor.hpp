@@ -197,7 +197,6 @@ class AstTestVisitor : public AstVisitor {
             return;
         }
         std::shared_ptr<LeafNode> leafNode = std::dynamic_pointer_cast<LeafNode>(node);
-        //printRule(node);
         std::cout << "Expected: " << expectedTreeNodes[index] << " Actual: " << node->getRule() << std::endl;
         REQUIRE(node->getRule() == expectedTreeNodes[index]);
         index++;
