@@ -15,10 +15,10 @@ class Value {
     Value() = default;
 
     /**
-     * Generic constructor
+     * Set the inner value
      */
     template <typename T>
-    Value(const T &value) : innerValue(value) {}
+    Value(const T &innerValue) : innerValue(innerValue) {}
 
     /**
      * Check if the value is of type T
@@ -29,10 +29,18 @@ class Value {
     }
 
     /**
-     * Get the value as type T
+     * Get the value as type T read-only
      */
     template <typename T>
     const T &get() const {
+        return std::get<T>(innerValue);
+    }
+
+    /**
+     * Get the value as type T mutable
+    */
+    template <typename T>
+    T &getMut() {
         return std::get<T>(innerValue);
     }
 
@@ -47,7 +55,7 @@ class Value {
     using List = std::vector<Value>;
 
    private:
-    std::variant<int, double, std::string, bool, List, std::nullptr_t> innerValue;
+    mutable std::variant<int, double, std::string, bool, List, std::nullptr_t> innerValue;
 };
 }  // namespace dplsrc
 

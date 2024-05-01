@@ -29,7 +29,7 @@ class Type {
     }
 
     /**
-     * Get the value as type T
+     * Get the type as type T read-only
      */
     template <typename T>
     const T &get() const {
@@ -37,7 +37,15 @@ class Type {
     }
 
     /**
-     * Prints string representation of value
+     * Get the type as type T mutable
+     */
+    template <typename T>
+    T &getMut() const {
+        return std::get<T>(innerType);
+    }
+
+    /**
+     * Prints string representation of type
      * @param verbose Whether to expand composite types or not
      */
     std::string toString(bool verbose = false) const;
@@ -50,7 +58,7 @@ class Type {
     enum class Primitive { INT, FLOAT, STR, BOOL, NONETYPE };
 
    private:
-    std::variant<Primitive, List> innerType;
+    mutable std::variant<Primitive, List> innerType;
 };
 }  // namespace dplsrc
 

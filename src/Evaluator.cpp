@@ -22,10 +22,21 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
     rightNode->accept(shared_from_this());
 
     if (isIndex) {
-        // TODO: implement index assignment
-    }
+        std::shared_ptr<IndexNode> indexNode = std::dynamic_pointer_cast<IndexNode>(leftNode);
+        std::shared_ptr<AstNode> identifierNode = indexNode->getRightNode();
 
-    vtable.bind(Variable(leftNode->getText(), rightNode->getVal(), rightNode->getType()));
+        Variable *var = vtable.lookup(identifierNode->getText());
+        Value val = var->getVal();
+        Type type = var->getType();
+
+        int index = indexNode->getLeftNode()->getVal().get<int>();
+        val.getMut<Value::List>()[index] = rightNode->getVal();
+        type.getMut<Type::List>()[index] = rightNode->getType();
+
+        vtable.bind(Variable(identifierNode->getText(), val, type));
+    } else {
+        vtable.bind(Variable(leftNode->getText(), rightNode->getVal(), rightNode->getType()));
+    }
 }
 
 void Evaluator::visit(const std::shared_ptr<ColumnNode> &node) {}

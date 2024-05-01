@@ -34,7 +34,7 @@ std::string Type::toString(bool verbose) const {
 
         result += "]";
         return result;
-    } else {
-        throw std::runtime_error("Error: unknown type cannot be converted to string");
     }
+
+    throw std::runtime_error("Error: unknown type cannot be converted to string");
 }
