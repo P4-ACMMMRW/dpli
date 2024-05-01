@@ -1,3 +1,4 @@
+
 #include <Main.hpp>
 
 using namespace antlr4;
@@ -75,11 +76,12 @@ int main(int argc, char **argv) {
     tree::ParseTree *tree = parser.prog();
 
     if (debug) {
-        for (antlr4::Token *token : tokens.getTokens()) {
-            std::cout << token->toString() << '\n';
-        }
+        // std::cout << tree->toStringTree(&parser, true) << "\n\n";
 
-        std::cout << tree->toStringTree(&parser, true) << "\n\n";
+        // Ast print
+        AstBuilder builder{&parser, &lexer};
+        builder.visit(tree);
+        builder.getRoot()->print();
     }
 
     return EXIT_SUCCESS;

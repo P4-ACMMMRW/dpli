@@ -1,48 +1,10 @@
 #include <TestingUtil.hpp>
 
 using namespace dplgrammar;
-/*
-def quicksort(A, lo, hi):
-    if lo >= 0 and lo < hi:
-        p = partition(A, lo, hi)
-        quicksort(A, lo, p[0] - 1)
-        quicksort(A, p[1] + 1, hi)
-
-def partition(A, lo, hi):
-    pivot = A[(lo + hi) / 2]
-
-    lt = lo
-    eq = lo
-    gt = hi
-
-    while eq <= gt:
-        if A[eq] < pivot:
-            swap(A, eq, lt)
-            lt = lt + 1
-            eq = eq + 1
-        else:
-            if A[eq] > pivot:
-                swap(A, eq, gt)
-                gt = gt - 1
-            else:
-                eq = eq + 1
-    
-    return [lt, gt]
-
-def swap(A, i, j):
-    temp = A[i]
-    A[i] = A[j]
-    A[j] = temp
-
-A = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5]
-quicksort(A, 0, len(A) - 1)
-
-print("Sorted list: " + A)
-*/
-
 
 LEXER_TEST("quicksort.dpl") {
     std::vector<size_t> expectedTokens = {
+        DplLexer::Newline,
         DplLexer::Def,
         DplLexer::Identifier,
         DplLexer::OpenPar,
@@ -54,6 +16,7 @@ LEXER_TEST("quicksort.dpl") {
         DplLexer::ClosePar,
         DplLexer::Colon,
         DplLexer::Indent,
+        DplLexer::Newline,
         DplLexer::If,
         DplLexer::Identifier,
         DplLexer::GreaterEqual,
@@ -64,7 +27,7 @@ LEXER_TEST("quicksort.dpl") {
         DplLexer::Identifier,
         DplLexer::Colon,
         DplLexer::Indent,
-
+        DplLexer::Newline,
         DplLexer::Identifier,
         DplLexer::Assign,
         DplLexer::Identifier,
@@ -75,6 +38,7 @@ LEXER_TEST("quicksort.dpl") {
         DplLexer::Comma,
         DplLexer::Identifier,
         DplLexer::ClosePar,
+        DplLexer::Newline,
         DplLexer::Identifier,
         DplLexer::OpenPar,
         DplLexer::Identifier,
@@ -88,6 +52,7 @@ LEXER_TEST("quicksort.dpl") {
         DplLexer::Minus,
         DplLexer::Integer,
         DplLexer::ClosePar,
+        DplLexer::Newline,
         DplLexer::Identifier,
         DplLexer::OpenPar,
         DplLexer::Identifier,
@@ -101,8 +66,10 @@ LEXER_TEST("quicksort.dpl") {
         DplLexer::Comma,
         DplLexer::Identifier,
         DplLexer::ClosePar,
+        DplLexer::Newline,
         DplLexer::Dedent,
         DplLexer::Dedent, // Dedent for if statement
+        DplLexer::Newline,
         DplLexer::Def,
         DplLexer::Identifier,
         DplLexer::OpenPar,
@@ -114,6 +81,7 @@ LEXER_TEST("quicksort.dpl") {
         DplLexer::ClosePar,
         DplLexer::Colon,
         DplLexer::Indent, // Indent for partition function
+        DplLexer::Newline,
         DplLexer::Identifier,
         DplLexer::Assign,
         DplLexer::Identifier,
@@ -126,21 +94,28 @@ LEXER_TEST("quicksort.dpl") {
         DplLexer::Slash,
         DplLexer::Integer,
         DplLexer::CloseSquare,
+        DplLexer::Newline,
+        DplLexer::Newline,
         DplLexer::Identifier,
         DplLexer::Assign,
         DplLexer::Identifier,
+        DplLexer::Newline,
         DplLexer::Identifier,
         DplLexer::Assign,
         DplLexer::Identifier,
+        DplLexer::Newline,
         DplLexer::Identifier,
         DplLexer::Assign,
         DplLexer::Identifier,
+        DplLexer::Newline,
+        DplLexer::Newline,
         DplLexer::While,
         DplLexer::Identifier,
         DplLexer::LessEqual,
         DplLexer::Identifier,
         DplLexer::Colon,
         DplLexer::Indent, // Indent for while loop
+        DplLexer::Newline,
         DplLexer::If,
         DplLexer::Identifier,
         DplLexer::OpenSquare,
@@ -150,6 +125,7 @@ LEXER_TEST("quicksort.dpl") {
         DplLexer::Identifier,
         DplLexer::Colon,
         DplLexer::Indent,
+        DplLexer::Newline,
         DplLexer::Identifier,
         DplLexer::OpenPar,
         DplLexer::Identifier,
@@ -158,20 +134,24 @@ LEXER_TEST("quicksort.dpl") {
         DplLexer::Comma,
         DplLexer::Identifier,
         DplLexer::ClosePar,
+        DplLexer::Newline,
         DplLexer::Identifier,
         DplLexer::Assign,
         DplLexer::Identifier,
         DplLexer::Plus,
         DplLexer::Integer,
+        DplLexer::Newline,
         DplLexer::Identifier,
         DplLexer::Assign,
         DplLexer::Identifier,
         DplLexer::Plus,
         DplLexer::Integer,
         DplLexer::Dedent, // Dedent for if statement
+        DplLexer::Newline,
         DplLexer::Else,
         DplLexer::Colon,
         DplLexer::Indent, // Indent for else statement
+        DplLexer::Newline,
         DplLexer::If,
         DplLexer::Identifier,
         DplLexer::OpenSquare,
@@ -181,6 +161,7 @@ LEXER_TEST("quicksort.dpl") {
         DplLexer::Identifier,
         DplLexer::Colon,
         DplLexer::Indent, // Indent for if statement
+        DplLexer::Newline,
         DplLexer::Identifier,
         DplLexer::OpenPar,
         DplLexer::Identifier,
@@ -189,30 +170,37 @@ LEXER_TEST("quicksort.dpl") {
         DplLexer::Comma,
         DplLexer::Identifier,
         DplLexer::ClosePar,
+        DplLexer::Newline,
         DplLexer::Identifier,
         DplLexer::Assign,
         DplLexer::Identifier,
         DplLexer::Minus,
         DplLexer::Integer,
         DplLexer::Dedent, // Dedent for if statement
+        DplLexer::Newline,
         DplLexer::Else,
         DplLexer::Colon,
         DplLexer::Indent, // Indent for else statement
+        DplLexer::Newline,
         DplLexer::Identifier,
         DplLexer::Assign,
         DplLexer::Identifier,
         DplLexer::Plus,
         DplLexer::Integer,
+        DplLexer::Newline,
         DplLexer::Dedent, // Dedent for else statement
         DplLexer::Dedent,
         DplLexer::Dedent,
+        DplLexer::Newline,
         DplLexer::Return,
         DplLexer::OpenSquare,
         DplLexer::Identifier,
         DplLexer::Comma,
         DplLexer::Identifier,
         DplLexer::CloseSquare,
+        DplLexer::Newline,
         DplLexer::Dedent, // Dedent for partition function
+        DplLexer::Newline,
         DplLexer::Def,
         DplLexer::Identifier,
         DplLexer::OpenPar,
@@ -224,12 +212,14 @@ LEXER_TEST("quicksort.dpl") {
         DplLexer::ClosePar,
         DplLexer::Colon,
         DplLexer::Indent, // Indent for swap function
+        DplLexer::Newline,
         DplLexer::Identifier,
         DplLexer::Assign,
         DplLexer::Identifier,
         DplLexer::OpenSquare,
         DplLexer::Identifier,
         DplLexer::CloseSquare,
+        DplLexer::Newline,
         DplLexer::Identifier,
         DplLexer::OpenSquare,
         DplLexer::Identifier,
@@ -239,13 +229,16 @@ LEXER_TEST("quicksort.dpl") {
         DplLexer::OpenSquare,
         DplLexer::Identifier,
         DplLexer::CloseSquare,
+        DplLexer::Newline,
         DplLexer::Identifier,
         DplLexer::OpenSquare,
         DplLexer::Identifier,
         DplLexer::CloseSquare,
         DplLexer::Assign,
         DplLexer::Identifier,
+        DplLexer::Newline,
         DplLexer::Dedent, // Dedent for swap function
+        DplLexer::Newline,
         DplLexer::Identifier,
         DplLexer::Assign,
         DplLexer::OpenSquare,
@@ -271,6 +264,7 @@ LEXER_TEST("quicksort.dpl") {
         DplLexer::Comma,
         DplLexer::Integer,
         DplLexer::CloseSquare,
+        DplLexer::Newline,
         DplLexer::Identifier,
         DplLexer::OpenPar,
         DplLexer::Identifier,
@@ -284,14 +278,15 @@ LEXER_TEST("quicksort.dpl") {
         DplLexer::Minus,
         DplLexer::Integer,
         DplLexer::ClosePar,
+        DplLexer::Newline,
+        DplLexer::Newline,
         DplLexer::Identifier,
         DplLexer::OpenPar,
         DplLexer::String,
         DplLexer::Plus,
         DplLexer::Identifier,
         DplLexer::ClosePar,
-        
-
+        DplLexer::Newline
     };
 
     dplutil::TestingUtil::testTokens("quicksort.dpl", expectedTokens);

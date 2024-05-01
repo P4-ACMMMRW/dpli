@@ -5,6 +5,7 @@
 #include <DplParser.h>
 #include <antlr4-runtime.h>
 
+#include <AstBuilder.hpp>
 #include <argz.hpp>
 #include <filesystem>
 #include <fstream>

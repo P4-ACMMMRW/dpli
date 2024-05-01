@@ -22,7 +22,6 @@ fi
 for file in $(find . -name '*.cpp' -o -name '*.hpp' | grep -v -e './lib' -e './build' -e './tests'); do
     echo "Running clang-format on: $file"
     clang-format -i $file
-    echo "Running clang-tidy on: $file"
 
     # If arg format-only skip clang-tidy
     if [ "$1" == "format-only" ]; then
@@ -30,6 +29,7 @@ for file in $(find . -name '*.cpp' -o -name '*.hpp' | grep -v -e './lib' -e './b
         continue
     fi
     
+    echo "Running clang-tidy on: $file"
     clang-tidy -p build -checks='boost-*,bugprone-*,performance-*,readability-*,portability-*,clang-analyzer-*,cppcoreguidelines-*' -fix -extra-arg=-std=c++17 $file
     echo ""
 done

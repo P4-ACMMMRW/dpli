@@ -4,141 +4,102 @@ options {
 	tokenVocab = DplLexer;
 }
 
-// These are all supported parser sections:
+prog: (stm Newline? | procdec Newline? | Newline)+ EOF;
 
-// Parser file header. Appears at the top in all parser related files. Use e.g. for copyrights.
-@parser::header {/* parser/listener/visitor header section */}
 
-// Appears before any #include in h + cpp files.
-@parser::preinclude {/* parser precinclude section */}
+procdec: Def Identifier OpenPar ClosePar Colon block 
+       | Def Identifier OpenPar params ClosePar Colon block;
 
-// Follows directly after the standard #includes in h + cpp files.
-@parser::postinclude {
-/* parser postinclude section */
-#ifndef _WIN32
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-#endif
-}
 
-// Directly preceeds the parser class declaration in the h file (e.g. for additional types etc.).
-@parser::context {/* parser context section */}
-
-// Appears in the private part of the parser in the h file.
-// The function bodies could also appear in the definitions section, but I want to maximize
-// Java compatibility, so we can also create a Java parser from this grammar.
-// Still, some tweaking is necessary after the Java file generation (e.g. bool -> boolean).
-@parser::members {
-/* public parser declarations/members section */
-bool myAction() { return true; }
-bool doesItBlend() { return true; }
-void cleanUp() {}
-void doInit() {}
-void doAfter() {}
-}
-
-// Actual grammar start.
-prog: (stm | procdec)+;
-
-// Statement 
-stm: Indent stm+ Dedent
-   | expr
-   | Identifier
-   | listdec
-   | tabledec
-   | ctrlstm
-   | loopstm
-   | flowstm
+params: Identifier (Comma Identifier)*;
+ 
+// Stms
+stm: ifstm
+   | whilestm
    | assignstm
-   | Replace expr With expr;
+   | flowstm
+   | returnstm
+   | juncexpr;
 
-// Control Statements
-ctrlstm: If expr Colon stm+
-       | If expr Colon stm+ Else Colon stm+;
+stms: (stm Newline? | Newline)+;
 
-// Loop Statements
-loopstm: While expr Colon stm+
-       | While expr Star Colon stm+;
+block: Indent Newline? stms Dedent Newline?;
 
-// Flow Statements
+
+// If
+ifstm: If juncexpr Colon block elsestm?;
+
+elsestm: Else Colon block;
+
+
+// While
+whilestm: While juncexpr Colon block;
+
+
+// Assign
+assignstm: subscript Assign juncexpr;
+
+// Flow
 flowstm: Break
-       | Continue
-       | Return
-       | Return expr;
+       | Continue;
 
-assignstm: (Identifier | tablecall | listcall) Assign expr;
+// Return
+returnstm: Return juncexpr
+         | Return;
 
 // Expressions
-expr: Not expr
-    | OpenPar expr ClosePar
-    | expr arthexpr
-    | expr boolexpr
-    | Identifier
-    | tablecall
-    | listcall
-    | proccall
-    | literal;
+juncexpr: notexpr ((And | Or) notexpr)*;
 
-arthexpr: (Plus | Minus | Star | Slash | Mod | Exponent) expr;
+notexpr: Not notexpr 
+       | equlexpr;
 
-boolexpr: (junctionopr | compareopr) expr;
+equlexpr: compexpr ((Equal | NotEqual) compexpr)*;
 
+compexpr: plusexpr ((Greater | GreaterEqual | Less | LessEqual) plusexpr)*;
 
-// Table Unary Expression
-unaryexpr: compareopr expr (junctionopr expr)*;
+plusexpr: tablexpr ((Plus | Minus)  tablexpr)*;
 
+tablexpr: multexpr ((Union | Intersection) multexpr)*; 
 
+multexpr: polaexpr ((Star | Slash |  Mod) polaexpr)*;
 
-// Table Non-Terminals
-table:  OpenCurly (String Colon list (Comma String Colon list)*)? CloseCurly; 
+polaexpr: (Plus | Minus) polaexpr
+        | expoexpr;
 
-tabledec: Identifier Assign table;
+expoexpr: <assoc = right> term (Exponent term)*;
+         
+term: OpenPar juncexpr ClosePar
+    | list
+    | table
+    | Float
+    | Integer
+    | Bool 
+    | String 
+    | None
+    | subscript; 
 
-tablecall: OpenPar tablecall ClosePar
-         | Identifier (OpenSquare expr CloseSquare (OpenSquare unaryexpr CloseSquare)?)? 
-         | tablecall  OpenSquare expr CloseSquare (OpenSquare unaryexpr CloseSquare)?;
+subscript: Identifier (proccall | headerindex | index | filtering)*;
 
+list: OpenSquare args CloseSquare
+    | OpenSquare CloseSquare;
 
+table: OpenCurly column (Comma column)* CloseCurly
+     | OpenCurly CloseCurly; 
 
-// List Non-Terminals 
-list: OpenSquare args CloseSquare;
+column: String Colon list;
 
-listdec: Identifier Assign list;
+// Trailers
+index: (OpenSquare juncexpr CloseSquare);
 
-listcall: Identifier (OpenSquare Integer CloseSquare)+;
+headerindex: (OpenSquare Dollar juncexpr CloseSquare);
 
-
-
-// Procedures Non-Terminals
-procdec: Def Identifier OpenPar params ClosePar Colon stm+;
-
-proccall: Identifier OpenPar args ClosePar;
-
-
-
-// Args
-args: (expr (Comma expr)*)?;
-
-// Params
-params: (Identifier (Comma Identifier)*)?;
+filtering: (OpenSquare unaryexpr CloseSquare);
 
 
+unaryexpr: (Equal | NotEqual | Greater | GreaterEqual | Less | Less) juncexpr;
 
 
+proccall: OpenPar ClosePar  
+        | OpenPar args ClosePar;
 
-// Compare Operators
-compareopr : (Equal | NotEqual | Less | Greater | LessEqual | GreaterEqual);
-
-// Junction Operator
-junctionopr: (And | Or);
-
-
-
-// Literals
-literal: Float 
-       | Integer
-       | Bool
-       | String
-       | list
-       | table
-       | None;
-
+args: juncexpr (Comma juncexpr)*;
