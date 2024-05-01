@@ -61,11 +61,17 @@ class Evaluator : public AstVisitor {
     VariableTable vtable = VariableTable();
     ProcedureTable ptable = ProcedureTable();
 
+    bool isNumeric(Type type) {
+        return type == Type::FLOAT || type == Type::INT || type == Type::BOOL;
+    }
+
     /**
      * Initializes the procedures from the standard library of the language
      */
     void initPtable();
 };
+
+
 
 }  // namespace dplsrc
 

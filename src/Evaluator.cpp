@@ -62,40 +62,35 @@ void Evaluator::visit(const std::shared_ptr<DivExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    if (!((leftNode->getType() == Type::FLOAT || leftNode->getType() == Type::INT ||
-           leftNode->getType() == Type::BOOL) &&
-          (rightNode->getType() == Type::FLOAT || rightNode->getType() == Type::INT ||
-           rightNode->getType() == Type::BOOL)) ||
-        leftNode->getType() == Type::TABLE || rightNode->getType() == Type::TABLE ||
-        leftNode->getType() == Type::NONETYPE || rightNode->getType() == Type::NONETYPE ||
-        leftNode->getType() == Type::STR || rightNode->getType() == Type::STR) {
+    if (!(isNumeric(leftNode->getType()) && isNumeric(rightNode->getType()))) {
         // TODO: move to error handler at some point
         throw std::runtime_error("Cannot divide with the types");
     }
 
     // Divide with 0 check
     if (rightNode->getType() == Type::INT) {
-
         if (rightNode->getVal().get<int>() == 0) {
             throw std::runtime_error("Cannot divide with 0");
-        } else if (rightNode->getType() == Type::FLOAT) {
+        }}
+    else if (rightNode->getType() == Type::FLOAT) {
             if (rightNode->getVal().get<double>() == 0) {
                 throw std::runtime_error("Cannot divide with 0");
-            } else if (rightNode->getVal().get<bool>() == 0) {
-                throw std::runtime_error("Cannot divide with 0");
-            }
-        }
+        } 
     }
+    else if (rightNode->getVal().get<bool>() == 0) {
+        throw std::runtime_error("Cannot divide with 0");
+    }
+    
 
     // Evaluates the value of the expression
     switch (leftNode->getType()) {
         case Type::INT:
             if (rightNode->getType() == Type::BOOL) {
-                node->setVal(leftNode->getVal().get<int>() / rightNode->getVal().get<bool>());
+                node->setVal(static_cast<double>(leftNode->getVal().get<int>()) / rightNode->getVal().get<bool>());
             } else if (rightNode->getType() == Type::INT) {
-                node->setVal(leftNode->getVal().get<int>() / rightNode->getVal().get<int>());
+                node->setVal(static_cast<double>(leftNode->getVal().get<int>()) / rightNode->getVal().get<int>());
             } else {
-                node->setVal(leftNode->getVal().get<int>() / rightNode->getVal().get<double>());
+                node->setVal(static_cast<double>(leftNode->getVal().get<int>()) / rightNode->getVal().get<double>());
             }
             break;
         case Type::FLOAT:
@@ -109,11 +104,11 @@ void Evaluator::visit(const std::shared_ptr<DivExprNode> &node) {
             break;
         case Type::BOOL:
             if (rightNode->getType() == Type::BOOL) {
-                node->setVal(leftNode->getVal().get<bool>() / rightNode->getVal().get<bool>());
+                node->setVal(static_cast<double>(leftNode->getVal().get<bool>()) / rightNode->getVal().get<bool>());
             } else if (rightNode->getType() == Type::INT) {
-                node->setVal(leftNode->getVal().get<bool>() / rightNode->getVal().get<int>());
+                node->setVal(static_cast<double>(leftNode->getVal().get<bool>()) / rightNode->getVal().get<int>());
             } else {
-                node->setVal(leftNode->getVal().get<bool>() / rightNode->getVal().get<double>());
+                node->setVal(static_cast<double>(leftNode->getVal().get<bool>()) / rightNode->getVal().get<double>());
             }
             break;
         default:
@@ -137,12 +132,8 @@ void Evaluator::visit(const std::shared_ptr<EqualExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    if (!((leftNode->getType() == Type::FLOAT || leftNode->getType() == Type::INT ||
-           leftNode->getType() == Type::BOOL) &&
-          (rightNode->getType() == Type::FLOAT || rightNode->getType() == Type::INT ||
-           rightNode->getType() == Type::BOOL)) ||
-        leftNode->getType() == Type::TABLE || rightNode->getType() == Type::TABLE ||
-        leftNode->getType() == Type::NONETYPE || rightNode->getType() == Type::NONETYPE) {
+    if (!(isNumeric(leftNode->getType()) && isNumeric(rightNode->getType())) ||
+        (leftNode->getType() == Type::STR && rightNode->getType() == Type::STR)) {
         // TODO: move to error handler at some point
         throw std::runtime_error("Cannot compare the used types");
     }
@@ -219,8 +210,14 @@ void Evaluator::visit(const std::shared_ptr<ExpoExprNode> &node) {
                 node->setVal(std::pow(leftNode->getVal().get<int>(), rightNode->getVal().get<bool>()));
                 node->setType(Type::INT);
             } else if (rightNode->getType() == Type::INT) {
-                node->setVal(std::pow(leftNode->getVal().get<int>(), rightNode->getVal().get<int>()));
-                node->setType(Type::INT);
+                if (rightNode->getVal().get<int>() >= 0) {
+                    node->setVal((int)round(std::pow(leftNode->getVal().get<int>(), rightNode->getVal().get<int>())));
+                    node->setType(Type::INT);
+                }
+                else {
+                    node->setVal(std::pow(leftNode->getVal().get<int>(), rightNode->getVal().get<int>()));
+                    node->setType(Type::FLOAT);
+                }
             } else {
                 node->setVal(std::pow(leftNode->getVal().get<int>(), rightNode->getVal().get<double>()));
                 node->setType(Type::FLOAT);
@@ -269,13 +266,7 @@ void Evaluator::visit(const std::shared_ptr<GreaterEqualExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    if (!((leftNode->getType() == Type::FLOAT || leftNode->getType() == Type::INT ||
-           leftNode->getType() == Type::BOOL) &&
-          (rightNode->getType() == Type::FLOAT || rightNode->getType() == Type::INT ||
-           rightNode->getType() == Type::BOOL)) ||
-        leftNode->getType() == Type::TABLE || rightNode->getType() == Type::TABLE ||
-        leftNode->getType() == Type::NONETYPE || rightNode->getType() == Type::NONETYPE ||
-        leftNode->getType() == Type::STR || rightNode->getType() == Type::STR) {
+    if (!(isNumeric(leftNode->getType()) && isNumeric(rightNode->getType()))) {
         // TODO: move to error handler at some point
         throw std::runtime_error("Cannot compare the used types");
     }
@@ -329,13 +320,7 @@ void Evaluator::visit(const std::shared_ptr<GreaterExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    if (!((leftNode->getType() == Type::FLOAT || leftNode->getType() == Type::INT ||
-           leftNode->getType() == Type::BOOL) &&
-          (rightNode->getType() == Type::FLOAT || rightNode->getType() == Type::INT ||
-           rightNode->getType() == Type::BOOL)) ||
-        leftNode->getType() == Type::TABLE || rightNode->getType() == Type::TABLE ||
-        leftNode->getType() == Type::NONETYPE || rightNode->getType() == Type::NONETYPE ||
-        leftNode->getType() == Type::STR || rightNode->getType() == Type::STR) {
+    if (!(isNumeric(leftNode->getType()) && isNumeric(rightNode->getType()))) {
         // TODO: move to error handler at some point
         throw std::runtime_error("Cannot compare the used types");
     }
@@ -466,13 +451,7 @@ void Evaluator::visit(const std::shared_ptr<LessEqualExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    if (!((leftNode->getType() == Type::FLOAT || leftNode->getType() == Type::INT ||
-           leftNode->getType() == Type::BOOL) &&
-          (rightNode->getType() == Type::FLOAT || rightNode->getType() == Type::INT ||
-           rightNode->getType() == Type::BOOL)) ||
-        leftNode->getType() == Type::TABLE || rightNode->getType() == Type::TABLE ||
-        leftNode->getType() == Type::NONETYPE || rightNode->getType() == Type::NONETYPE ||
-        leftNode->getType() == Type::STR || rightNode->getType() == Type::STR) {
+    if (!(isNumeric(leftNode->getType()) && isNumeric(rightNode->getType()))) {
         // TODO: move to error handler at some point
         throw std::runtime_error("Cannot compare the used types");
     }
@@ -526,13 +505,7 @@ void Evaluator::visit(const std::shared_ptr<LessExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    if (!((leftNode->getType() == Type::FLOAT || leftNode->getType() == Type::INT ||
-           leftNode->getType() == Type::BOOL) &&
-          (rightNode->getType() == Type::FLOAT || rightNode->getType() == Type::INT ||
-           rightNode->getType() == Type::BOOL)) ||
-        leftNode->getType() == Type::TABLE || rightNode->getType() == Type::TABLE ||
-        leftNode->getType() == Type::NONETYPE || rightNode->getType() == Type::NONETYPE ||
-        leftNode->getType() == Type::STR || rightNode->getType() == Type::STR) {
+    if (!(isNumeric(leftNode->getType()) && isNumeric(rightNode->getType()))) {
         // TODO: move to error handler at some point
         throw std::runtime_error("Cannot compare the used types");
     }
@@ -601,13 +574,7 @@ void Evaluator::visit(const std::shared_ptr<MinusExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    if (!((leftNode->getType() == Type::FLOAT || leftNode->getType() == Type::INT ||
-           leftNode->getType() == Type::BOOL) &&
-          (rightNode->getType() == Type::FLOAT || rightNode->getType() == Type::INT ||
-           rightNode->getType() == Type::BOOL)) ||
-        leftNode->getType() == Type::TABLE || rightNode->getType() == Type::TABLE ||
-        leftNode->getType() == Type::NONETYPE || rightNode->getType() == Type::NONETYPE ||
-        leftNode->getType() == Type::STR || rightNode->getType() == Type::STR) {
+    if (!(isNumeric(leftNode->getType()) && isNumeric(rightNode->getType()))) {
         // TODO: move to error handler at some point
         throw std::runtime_error("Cannot do substraction with the used types");
     }
@@ -698,13 +665,7 @@ void Evaluator::visit(const std::shared_ptr<ModExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    if (!((leftNode->getType() == Type::FLOAT || leftNode->getType() == Type::INT ||
-           leftNode->getType() == Type::BOOL) &&
-          (rightNode->getType() == Type::FLOAT || rightNode->getType() == Type::INT ||
-           rightNode->getType() == Type::BOOL)) ||
-        leftNode->getType() == Type::TABLE || rightNode->getType() == Type::TABLE ||
-        leftNode->getType() == Type::NONETYPE || rightNode->getType() == Type::NONETYPE ||
-        leftNode->getType() == Type::STR || rightNode->getType() == Type::STR) {
+    if (!(isNumeric(leftNode->getType()) && isNumeric(rightNode->getType()))) {
         // TODO: move to error handler at some point
         throw std::runtime_error("Cannot compare the used types");
     }
@@ -763,13 +724,9 @@ void Evaluator::visit(const std::shared_ptr<MultExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    if (!((leftNode->getType() == Type::FLOAT || leftNode->getType() == Type::INT ||
-           leftNode->getType() == Type::BOOL) &&
-          (rightNode->getType() == Type::FLOAT || rightNode->getType() == Type::INT ||
-           rightNode->getType() == Type::BOOL)) ||
-        leftNode->getType() == Type::TABLE || rightNode->getType() == Type::TABLE ||
-        leftNode->getType() == Type::NONETYPE || rightNode->getType() == Type::NONETYPE ||
-        leftNode->getType() == Type::STR || rightNode->getType() == Type::STR) {
+    if (!((isNumeric(leftNode->getType()) && isNumeric(rightNode->getType())) || 
+        (leftNode->getType() == Type::INT && rightNode->getType() == Type::STR) ||
+        (leftNode->getType() == Type::STR && rightNode->getType() == Type::INT))) {
         // TODO: move to error handler at some point
         throw std::runtime_error("Cannot multiply with the used types");
     }
@@ -784,9 +741,12 @@ void Evaluator::visit(const std::shared_ptr<MultExprNode> &node) {
             } else if (rightNode->getType() == Type::INT) {
                 node->setVal(leftNode->getVal().get<int>() * rightNode->getVal().get<int>());
                 node->setType(Type::INT);
-            } else {
+            } else if (rightNode->getType() == Type::FLOAT) {
                 node->setVal(leftNode->getVal().get<int>() * rightNode->getVal().get<double>());
                 node->setType(Type::FLOAT);
+            } else {
+                for (size_t i = 0; i < leftNode->getVal().get<int>(); i++) 
+                node->setVal(node->getVal().get<std::string>() + rightNode->getVal().get<std::string>());
             }
             break;
         case Type::FLOAT:
@@ -810,6 +770,10 @@ void Evaluator::visit(const std::shared_ptr<MultExprNode> &node) {
                 node->setVal(leftNode->getVal().get<bool>() * rightNode->getVal().get<double>());
                 node->setType(Type::FLOAT);
             }
+            break;
+        case Type::STR:
+            for (size_t i = 0; i < rightNode->getVal().get<int>(); i++) 
+                node->setVal(node->getVal().get<std::string>() + leftNode->getVal().get<std::string>());
             break;
         default:
             throw std::runtime_error("Error: Couldn't convert string to value of nodes");
@@ -885,12 +849,33 @@ void Evaluator::visit(const std::shared_ptr<NotNode> &node) {
     std::shared_ptr<AstNode> childNode = node->getChildNode();
     childNode->accept(shared_from_this());
 
-    if (childNode->getType() != Type::BOOL) {
+    if (!(isNumeric(childNode->getType()) )) {
         // TODO: move to error handler at some point
-        throw std::runtime_error("Cannot compare the used types");
+        throw std::runtime_error("Cannot negate the used type");
     }
 
     // Evaluates the value of the expression
+    switch (childNode->getType())
+    {
+    case Type::INT:
+        if (childNode->getVal().get<int>() != 0)
+            node->setVal(0);
+        else node->setVal(1);
+        break;
+    case Type::FLOAT:
+        if (childNode->getVal().get<double>() != 0)
+            node->setVal(0);
+        else node->setVal(1);
+        break;
+    case Type::BOOL:
+        if (childNode->getVal().get<bool>() != 0)
+            node->setVal(0);
+        else node->setVal(1);
+        break;
+    default:
+        throw std::runtime_error("Couldn't evaluate negation");
+        break;
+    }
     if (childNode->getVal().get<bool>() == 1)
         childNode->setVal(0);
     else
@@ -949,12 +934,8 @@ void Evaluator::visit(const std::shared_ptr<PlusExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    if (!((leftNode->getType() == Type::FLOAT || leftNode->getType() == Type::INT ||
-           leftNode->getType() == Type::BOOL) &&
-          (rightNode->getType() == Type::FLOAT || rightNode->getType() == Type::INT ||
-           rightNode->getType() == Type::BOOL)) ||
-        leftNode->getType() == Type::TABLE || rightNode->getType() == Type::TABLE ||
-        leftNode->getType() == Type::NONETYPE || rightNode->getType() == Type::NONETYPE) {
+    if  (!((isNumeric(leftNode->getType()) && isNumeric(rightNode->getType())) || 
+        (leftNode->getType() == Type::STR && rightNode->getType() == Type::STR))) {
         // TODO: move to error handler at some point
         throw std::runtime_error("Cannot do addition with the used types");
     }
@@ -1163,3 +1144,4 @@ void Evaluator::initPtable() {
     ptable.bind(Procedure("type", {"x"}, type));
     ptable.bind(Procedure("str", {"x"}, str));
 }
+
