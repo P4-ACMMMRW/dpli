@@ -42,7 +42,7 @@ class Value {
     std::string toString() const;
 
     /**
-     * List type
+     * List value type
      */
     using List = std::vector<Value>;
 

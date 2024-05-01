@@ -1,5 +1,7 @@
 #include <AstBuilder.hpp>
 
+using namespace dplsrc;
+
 antlrcpp::Any AstBuilder::visitProg(DplParser::ProgContext* parseNode) {
     std::shared_ptr<AstNode> newNode = std::make_shared<ProgNode>();
     newNode->setRule(parseNode->getRuleIndex());
@@ -121,16 +123,17 @@ antlrcpp::Any AstBuilder::visitTerminal(tree::TerminalNode* node) {
     if (!isIdentifier) {
         switch (node->getSymbol()->getType()) {
             case DplLexer::Integer:
-                newNode->setType(dplsrc::Type::INT);
+                newNode->setType(Type(Type::Primitive::INT));
                 break;
             case DplLexer::Float:
-                newNode->setType(dplsrc::Type::FLOAT);
+                newNode->setType(Type(Type::Primitive::FLOAT));
                 break;
             case DplLexer::String:
-                newNode->setType(dplsrc::Type::STR);
+                newNode->setType(Type(Type::Primitive::STR));
                 break;
             case DplLexer::Bool:
-                newNode->setType(dplsrc::Type::BOOL);
+                newNode->setType(Type(Type::Primitive::BOOL));
+                break;
         }
     }
 

@@ -6,7 +6,18 @@ std::string Value::toString() const {
     if (is<int>()) {
         return std::to_string(get<int>());
     } else if (is<double>()) {
-        return std::to_string(get<double>());
+        std::string doubleStr = std::to_string(get<double>());
+
+        // Remove trailing zeros
+        doubleStr.erase(doubleStr.find_last_not_of('0') + 1, std::string::npos);
+
+        // If the last character is a decimal point, add a zero to make it obvious that it's a
+        // floating point number
+        if (doubleStr.back() == '.') {
+            doubleStr.push_back('0');
+        }
+
+        return doubleStr;
     } else if (is<std::string>()) {
         return get<std::string>();
     } else if (is<bool>()) {

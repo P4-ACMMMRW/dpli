@@ -37,7 +37,7 @@ class Variable : public Symbol {
 
    private:
     Value val;
-    Type type = Type::NONETYPE;
+    Type type = Type::Primitive::NONETYPE;
 };
 }  // namespace dplsrc
 

@@ -10,7 +10,7 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
 
     if (!leftNode->getIsIdentifier()) {
         // TODO: move to error handler at some point
-        throw std::runtime_error("Error: left side of assignment must be an identifier\n");
+        throw std::runtime_error("Error: left side of assignment must be a reference\n");
     }
 
     // Compute type of right node
@@ -47,37 +47,37 @@ void Evaluator::visit(const std::shared_ptr<IndexNode> &node) {
     identifierNode->accept(shared_from_this());
     indexNode->accept(shared_from_this());
 
-    size_t index = indexNode->getVal().get<int>();
-    switch (identifierNode->getType()) {
-        case Type::STR: {
-            std::string str = identifierNode->getVal().get<std::string>();
-            node->setType(Type::STR);
+    int index = indexNode->getVal().get<int>();
 
-            if (index < 0 || index >= str.size()) {
-                throw std::runtime_error("Error: index out of range\n");
-            }
+    Type type = identifierNode->getType();
 
-            node->setVal(std::string{str[index]});
-            break;
+    if (type.is<Type::Primitive>() && type.get<Type::Primitive>() == Type::Primitive::STR) {
+        std::string str = identifierNode->getVal().get<std::string>();
+
+        if (index < 0 || static_cast<size_t>(index) >= str.size()) {
+            throw std::runtime_error("Error: index out of range\n");
         }
-        case Type::LIST: {
-            Value::List list = identifierNode->getVal().get<Value::List>();
-            // TODO: set element of individual types here
 
-            if (index < 0 || index >= list.size()) {
-                throw std::runtime_error("Error: index out of range\n");
-            }
+        node->setVal(std::string{str[index]});
+        node->setType(Type::Primitive::STR);
+    } else if (type.is<Type::List>()) {
+        Value::List list = identifierNode->getVal().get<Value::List>();
+        Type::List elemTypes = type.get<Type::List>();
 
-            node->setVal(list[index]);
-            break;
+        if (index < 0 || index >= list.size()) {
+            throw std::runtime_error("Error: index out of range\n");
         }
-        default:
-            throw std::runtime_error("Error: invalid index operation\n");
-            break;
+
+        node->setVal(list[index]);
+        node->setType(elemTypes[index]);
+    } else {
+        throw std::runtime_error("Error: invalid index operation\n");
     }
 }
 
 void Evaluator::visit(const std::shared_ptr<LeafNode> &node) {
+    if (node->getText() == "<EOF>") return;
+
     if (node->getIsIdentifier()) {
         try {
             Variable *var = vtable.lookup(node->getText());
@@ -87,28 +87,32 @@ void Evaluator::visit(const std::shared_ptr<LeafNode> &node) {
             throw std::runtime_error("Error: undefined variable \"" + node->getText() + "\"\n");
         }
     } else if (!node->getIsIdentifier()) {
-        if (node->getType() == Type::STR) {
+        Type type = node->getType();
+        if (type.is<Type::Primitive>() && type.get<Type::Primitive>() == Type::Primitive::STR) {
             // If string we have to remove quotes from value
             std::string text = node->getText();
             node->setVal(text.substr(1, text.size() - 2));
         } else {
-            switch (node->getType()) {
-                case Type::INT:
+            Type::Primitive primitiveType = type.get<Type::Primitive>();
+            switch (primitiveType) {
+                case Type::Primitive::INT:
                     node->setVal(std::stoi(node->getText()));
                     break;
-                case Type::FLOAT:
+                case Type::Primitive::FLOAT:
                     node->setVal(std::stod(node->getText()));
                     break;
-                case Type::BOOL:
+                case Type::Primitive::BOOL:
                     node->setVal(node->getText() == "True");
                     break;
                 default:
                     node->setVal(node->getText());
+                    break;
             }
         }
     }
 
-    if (node->getType() == Type::NONETYPE) {
+    Type type = node->getType();
+    if (type.is<Type::Primitive>() && type.get<Type::Primitive>() == Type::Primitive::NONETYPE) {
         node->setVal(nullptr);
     }
 }
@@ -120,16 +124,17 @@ void Evaluator::visit(const std::shared_ptr<LessExprNode> &node) {}
 void Evaluator::visit(const std::shared_ptr<ListNode> &node) {
     std::vector<std::shared_ptr<AstNode>> childNodes = node->getChildNodeList();
     std::vector<Value> values;
-    std::vector<Type> types;
+
+    Type::List elemTypes;
     for (size_t i = 0; i < childNodes.size(); ++i) {
         childNodes[i]->accept(shared_from_this());
         values.emplace_back(childNodes[i]->getVal());
-        types.emplace_back(childNodes[i]->getType());
+        elemTypes.push_back(childNodes[i]->getType());
     }
 
-    node->setType(Type::LIST);
-    node->setTypes(types);
+    node->setType(elemTypes);
     node->setVal(values);
+    std::cout << "List: " << node->getType().toString() << '\n';
 }
 
 void Evaluator::visit(const std::shared_ptr<MinusExprNode> &node) {}
@@ -251,22 +256,22 @@ void Evaluator::visit(const std::shared_ptr<WhileNode> &node) {}
 void Evaluator::initPtable() {
     Procedure::ProcType print = [](std::vector<std::shared_ptr<AstNode>> arg) {
         std::cout << arg[0]->getVal().toString() << '\n';
-        return std::pair(Type::NONETYPE, nullptr);
+        return std::pair(Type::Primitive::NONETYPE, nullptr);
     };
 
     Procedure::ProcType input = [](std::vector<std::shared_ptr<AstNode>> arg) {
         std::cout << arg[0]->getVal().toString();
         std::string inputStr;
         std::getline(std::cin, inputStr);
-        return std::pair(Type::STR, inputStr);
+        return std::pair(Type::Primitive::STR, inputStr);
     };
 
     Procedure::ProcType type = [](std::vector<std::shared_ptr<AstNode>> arg) {
-        return std::pair(Type::STR, TypeUtil::typeToString(arg[0]->getType()));
+        return std::pair(Type::Primitive::STR, arg[0]->getType().toString());
     };
 
     Procedure::ProcType str = [](std::vector<std::shared_ptr<AstNode>> arg) {
-        return std::pair(Type::STR, arg[0]->getVal().toString());
+        return std::pair(Type::Primitive::STR, arg[0]->getVal().toString());
     };
 
     ptable.bind(Procedure("print", {"msg"}, print));
