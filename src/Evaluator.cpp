@@ -6,9 +6,13 @@ void Evaluator::visit(const std::shared_ptr<AndExprNode> &node) {}
 
 void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
     // Assume left node is a leaf node
-    std::shared_ptr<LeafNode> leftNode = std::dynamic_pointer_cast<LeafNode>(node->getLeftNode());
+    std::shared_ptr<LeafNode> leafNode = std::dynamic_pointer_cast<LeafNode>(node->getLeftNode());
+    bool isLeaf = leafNode != nullptr;
+    bool isIndex = std::dynamic_pointer_cast<IndexNode>(node->getLeftNode()) != nullptr;
+    std::shared_ptr<AstNode> leftNode = node->getLeftNode();
 
-    if (!leftNode->getIsIdentifier()) {
+    bool error = !isLeaf && !isIndex || (isLeaf && !leafNode->getIsIdentifier());
+    if (error) {
         // TODO: move to error handler at some point
         throw std::runtime_error("Error: left side of assignment must be a reference\n");
     }
@@ -16,6 +20,10 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
     // Compute type of right node
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
+
+    if (isIndex) {
+        // TODO: implement index assignment
+    }
 
     vtable.bind(Variable(leftNode->getText(), rightNode->getVal(), rightNode->getType()));
 }
@@ -134,7 +142,6 @@ void Evaluator::visit(const std::shared_ptr<ListNode> &node) {
 
     node->setType(elemTypes);
     node->setVal(values);
-    std::cout << "List: " << node->getType().toString() << '\n';
 }
 
 void Evaluator::visit(const std::shared_ptr<MinusExprNode> &node) {}
