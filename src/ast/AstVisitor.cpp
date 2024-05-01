@@ -59,7 +59,6 @@ void AstVisitor::visit(const std::shared_ptr<IfNode> &node) {
     if (elseNode != nullptr) {
         elseNode->accept(shared_from_this());
     }
-    
 }
 
 void AstVisitor::visit(const std::shared_ptr<IndexNode> &node) {
@@ -70,9 +69,7 @@ void AstVisitor::visit(const std::shared_ptr<IntersectionExprNode> &node) {
     visit(std::static_pointer_cast<BinaryNode>(node));
 }
 
-void AstVisitor::visit([[maybe_unused]] const std::shared_ptr<LeafNode> &node) {
-    
-}
+void AstVisitor::visit([[maybe_unused]] const std::shared_ptr<LeafNode> &node) {}
 
 void AstVisitor::visit(const std::shared_ptr<LessEqualExprNode> &node) {
     visit(std::static_pointer_cast<BinaryNode>(node));
@@ -136,7 +133,6 @@ void AstVisitor::visit(const std::shared_ptr<ProcCallNode> &node) {
     for (size_t i = 0; i < argNodes.size(); ++i) {
         argNodes[i]->accept(shared_from_this());
     }
-    
 }
 
 void AstVisitor::visit(const std::shared_ptr<ProcDecNode> &node) {
@@ -149,7 +145,6 @@ void AstVisitor::visit(const std::shared_ptr<ProcDecNode> &node) {
     for (size_t i = 0; i < bodyNodes.size(); ++i) {
         bodyNodes[i]->accept(shared_from_this());
     }
-    
 }
 
 void AstVisitor::visit(const std::shared_ptr<ProgNode> &node) {
@@ -182,7 +177,6 @@ void AstVisitor::visit(const std::shared_ptr<WhileNode> &node) {
     for (size_t i = 0; i < stmNodes.size(); ++i) {
         stmNodes[i]->accept(shared_from_this());
     }
-    
 }
 
 // Util
@@ -197,7 +191,6 @@ void AstVisitor::visit(const std::shared_ptr<BinaryNode> &node) {
     if (rightNode != nullptr) {
         rightNode->accept(shared_from_this());
     }
-    
 }
 
 void AstVisitor::visit(const std::shared_ptr<UnaryNode> &node) {
@@ -205,7 +198,6 @@ void AstVisitor::visit(const std::shared_ptr<UnaryNode> &node) {
     if (childNode != nullptr) {
         childNode->accept(shared_from_this());
     }
-    
 }
 
 void AstVisitor::visit(const std::shared_ptr<UnaryNodeList> &node) {
@@ -213,5 +205,4 @@ void AstVisitor::visit(const std::shared_ptr<UnaryNodeList> &node) {
     for (size_t i = 0; i < childNodes.size(); ++i) {
         childNodes[i]->accept(shared_from_this());
     }
-    
 }
