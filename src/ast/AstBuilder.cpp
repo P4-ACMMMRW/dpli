@@ -179,7 +179,7 @@ antlrcpp::Any AstBuilder::visitJuncexpr(DplParser::JuncexprContext* parseNode) {
 
 antlrcpp::Any AstBuilder::visitNotexpr(DplParser::NotexprContext* parseNode) {
     return unaryExpr(
-        [this](size_t unused) -> std::shared_ptr<AstNode> {
+        [this]([[maybe_unused]] size_t unused) -> std::shared_ptr<AstNode> {
             return std::make_shared<NotNode>(currentNode);
         },
         parseNode);
@@ -288,8 +288,11 @@ antlrcpp::Any AstBuilder::visitPolaexpr(DplParser::PolaexprContext* parseNode) {
 }
 
 antlrcpp::Any AstBuilder::visitExpoexpr(DplParser::ExpoexprContext* parseNode) {
-    return binaryExpr([this](size_t unused) { return std::make_shared<ExpoExprNode>(currentNode); },
-                      parseNode);
+    return binaryExpr(
+        [this]([[maybe_unused]] size_t unused) {
+            return std::make_shared<ExpoExprNode>(currentNode);
+        },
+        parseNode);
 }
 
 antlrcpp::Any AstBuilder::visitList(DplParser::ListContext* parseNode) {

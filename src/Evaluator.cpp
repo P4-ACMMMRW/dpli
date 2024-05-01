@@ -47,7 +47,7 @@ void Evaluator::visit(const std::shared_ptr<IndexNode> &node) {
     identifierNode->accept(shared_from_this());
     indexNode->accept(shared_from_this());
 
-    int index = indexNode->getVal().get<int>();
+    size_t index = indexNode->getVal().get<int>();
     switch (identifierNode->getType()) {
         case Type::STR: {
             std::string str = identifierNode->getVal().get<std::string>();

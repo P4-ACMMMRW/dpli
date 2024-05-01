@@ -13,6 +13,6 @@ std::string ChildNode::print(std::string indent, std::string prefix) {
     return "";
 }
 
-void ChildNode::accept(std::shared_ptr<AstVisitor> visitor) {
+void ChildNode::accept([[maybe_unused]] std::shared_ptr<AstVisitor> visitor) {
     throw std::runtime_error("Can't accept composite node");
 }
