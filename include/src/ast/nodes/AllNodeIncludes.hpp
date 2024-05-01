@@ -16,6 +16,7 @@
 #include <HeaderIndexNode.hpp>
 #include <IfNode.hpp>
 #include <IndexNode.hpp>
+#include <IntersectionExprNode.hpp>
 #include <LeafNode.hpp>
 #include <LessEqualExprNode.hpp>
 #include <LessExprNode.hpp>
@@ -36,6 +37,7 @@
 #include <ReturnNode.hpp>
 #include <TableNode.hpp>
 #include <UnaryExprNode.hpp>
+#include <UnionExprNode.hpp>
 #include <WhileNode.hpp>
 
 #endif
