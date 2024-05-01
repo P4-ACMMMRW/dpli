@@ -2,15 +2,15 @@
 
 using namespace dplsrc;
 
-void VariableTable::bind(Variable var) { 
-    if (scopes.empty()) { 
+void VariableTable::bind(Variable var) {
+    if (scopes.empty()) {
         globalScope.insert_or_assign(var.getId(), var);
     } else {
         scopes.top().insert_or_assign(var.getId(), var);
     }
 }
 
-Variable *VariableTable::lookup(const std::string &id) { 
+Variable *VariableTable::lookup(const std::string &id) {
     if (scopes.empty()) {
         return &globalScope.at(id);
     } else {
@@ -23,8 +23,7 @@ Variable *VariableTable::lookup(const std::string &id) {
 }
 
 void VariableTable::print() {
-    std::string scopeLevel =
-        scopes.empty() ? "GLOBAL" : "lvl. " + std::to_string(scopes.size());
+    std::string scopeLevel = scopes.empty() ? "GLOBAL" : "lvl. " + std::to_string(scopes.size());
 
     std::cout << "\nVariable Table\n────────────────────────────────────────\n"
               << "Current scope: " << scopeLevel << "\n----------------------------------------\n";
@@ -35,7 +34,7 @@ void VariableTable::print() {
         } else {
             for (const std::pair<const std::string, dplsrc::Variable> &entry : globalScope) {
                 std::cout << entry.first << " -> " << entry.second.getVal().toString()
-                        << " | type: " << entry.second.getType() << '\n';
+                          << " | type: " << entry.second.getType() << '\n';
             }
         }
     } else {
@@ -44,7 +43,7 @@ void VariableTable::print() {
         } else {
             for (const std::pair<const std::string, dplsrc::Variable> &entry : scopes.top()) {
                 std::cout << entry.first << " -> " << entry.second.getVal().toString()
-                        << " | type: " << entry.second.getType() << '\n';
+                          << " | type: " << entry.second.getType() << '\n';
             }
         }
     }

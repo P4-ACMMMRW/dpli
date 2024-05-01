@@ -51,11 +51,11 @@ class VariableTable : public SymbolTable {
     /**
      * @return The top scope of the vtable
      */
-    Scope top() { 
+    Scope top() {
         if (scopes.empty()) {
             return Scope();
         } else {
-            return scopes.top(); 
+            return scopes.top();
         }
     }
 

@@ -41,27 +41,27 @@ void Evaluator::visit(const std::shared_ptr<HeaderIndexNode> &node) {}
 void Evaluator::visit(const std::shared_ptr<IfNode> &node) {}
 
 void Evaluator::visit(const std::shared_ptr<IndexNode> &node) {
-    std::shared_ptr<AstNode> rightNode = node->getRightNode();
-    std::shared_ptr<AstNode> leftNode = node->getLeftNode();
+    std::shared_ptr<AstNode> identifierNode = node->getRightNode();
+    std::shared_ptr<AstNode> indexNode = node->getLeftNode();
 
-    rightNode->accept(shared_from_this());
-    leftNode->accept(shared_from_this());
+    identifierNode->accept(shared_from_this());
+    indexNode->accept(shared_from_this());
 
-    int index = leftNode->getVal().get<int>();
-    switch (rightNode->getType()) {
+    int index = indexNode->getVal().get<int>();
+    switch (identifierNode->getType()) {
         case Type::STR: {
-            std::string str = rightNode->getVal().get<std::string>();
+            std::string str = identifierNode->getVal().get<std::string>();
             node->setType(Type::STR);
 
             if (index < 0 || index >= str.size()) {
                 throw std::runtime_error("Error: index out of range\n");
             }
-            
+
             node->setVal(std::string{str[index]});
             break;
         }
         case Type::LIST: {
-            Value::List list = rightNode->getVal().get<Value::List>();
+            Value::List list = identifierNode->getVal().get<Value::List>();
             // TODO: set element of individual types here
 
             if (index < 0 || index >= list.size()) {
@@ -183,7 +183,7 @@ void Evaluator::visit(const std::shared_ptr<ProcCallNode> &node) {
     for (size_t i = 0; i < argNodes.size(); ++i) {
         vtable.bind(Variable(proc->getParams()[i], argNodes[i]->getVal(), argNodes[i]->getType()));
     }
-    
+
     // If procedure written in cpp execute it and return
     if (proc->isBuiltinProcedure()) {
         std::pair<Type, Value> result = proc->getProc()(argNodes);
