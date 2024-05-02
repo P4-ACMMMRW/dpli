@@ -359,10 +359,6 @@ antlrcpp::Any AstBuilder::visitHeaderindex(DplParser::HeaderindexContext* parseN
                      2, "[$] Header Indexing", false);
 }
 
-
-
-
-
 antlrcpp::Any AstBuilder::visitFiltering(DplParser::FilteringContext* parseNode) {
     parseNode->children[1]->accept(this);
     return nullptr;              
