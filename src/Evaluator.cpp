@@ -724,6 +724,8 @@ void Evaluator::visit(const std::shared_ptr<MultExprNode> &node) {
                 node->setVal(leftNode->getVal().get<int>() * rightNode->getVal().get<double>());
                 node->setType(Type::FLOAT);
             } else {
+                node->setType(Type::STR);
+                node->setVal("");
                 for (size_t i = 0; i < leftNode->getVal().get<int>(); i++)
                     node->setVal(node->getVal().get<std::string>() +
                                  rightNode->getVal().get<std::string>());
@@ -750,18 +752,22 @@ void Evaluator::visit(const std::shared_ptr<MultExprNode> &node) {
                 node->setVal(leftNode->getVal().get<bool>() * rightNode->getVal().get<double>());
                 node->setType(Type::FLOAT);
             } else {
+                node->setType(Type::STR);
+                node->setVal("");
                 for (size_t i = 0; i < leftNode->getVal().get<bool>(); i++)
                     node->setVal(node->getVal().get<std::string>() +
                                  rightNode->getVal().get<std::string>());
             }
             break;
         case Type::STR:
+            node->setType(Type::STR);
+            node->setVal("");
             if (rightNode->getType() == Type::INT) {
                 for (size_t i = 0; i < rightNode->getVal().get<int>(); i++)
                 node->setVal(node->getVal().get<std::string>() +
                              leftNode->getVal().get<std::string>());
             } else {
-                for (size_t i = 0; i < rightNode->getVal().get<int>(); i++)
+                for (size_t i = 0; i < rightNode->getVal().get<bool>(); i++)
                     node->setVal(node->getVal().get<std::string>() +
                         leftNode->getVal().get<std::string>());
             }
