@@ -3,8 +3,8 @@
 using namespace dplsrc;
 
 std::string Value::toString() const {
-    if (is<int>()) {
-        return std::to_string(get<int>());
+    if (is<long>()) {
+        return std::to_string(get<long>());
     } else if (is<double>()) {
         std::string doubleStr = std::to_string(get<double>());
 

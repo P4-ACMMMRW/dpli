@@ -55,7 +55,7 @@ class Value {
     using List = std::vector<Value>;
 
    private:
-    mutable std::variant<int, double, std::string, bool, List, std::nullptr_t> innerValue;
+    mutable std::variant<long, double, std::string, bool, List, std::nullptr_t> innerValue;
 };
 }  // namespace dplsrc
 

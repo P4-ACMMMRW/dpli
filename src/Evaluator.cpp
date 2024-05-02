@@ -31,7 +31,7 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
         Value val = var->getVal();
         Type type = var->getType();
 
-        int index = indexNode->getLeftNode()->getVal().get<int>();
+        int index = indexNode->getLeftNode()->getVal().get<long>();
 
         // For some types indexing is read-only
         if (!type.is<Type::List>()) {
@@ -74,7 +74,7 @@ void Evaluator::visit(const std::shared_ptr<IndexNode> &node) {
     identifierNode->accept(shared_from_this());
     indexNode->accept(shared_from_this());
 
-    int index = indexNode->getVal().get<int>();
+    int index = indexNode->getVal().get<long>();
 
     Type type = identifierNode->getType();
 
@@ -123,7 +123,7 @@ void Evaluator::visit(const std::shared_ptr<LeafNode> &node) {
             Type::Primitive primitiveType = type.get<Type::Primitive>();
             switch (primitiveType) {
                 case Type::Primitive::INT:
-                    node->setVal(std::stoi(node->getText()));
+                    node->setVal(std::stol(node->getText()));
                     break;
                 case Type::Primitive::FLOAT:
                     node->setVal(std::stod(node->getText()));
