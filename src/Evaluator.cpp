@@ -703,7 +703,9 @@ void Evaluator::visit(const std::shared_ptr<MultExprNode> &node) {
 
     if (!((isNumeric(leftNode->getType()) && isNumeric(rightNode->getType())) ||
           (leftNode->getType() == Type::INT && rightNode->getType() == Type::STR) ||
-          (leftNode->getType() == Type::STR && rightNode->getType() == Type::INT))) {
+          (leftNode->getType() == Type::STR && rightNode->getType() == Type::INT) ||
+          (leftNode->getType() == Type::STR && rightNode->getType() == Type::BOOL) ||
+          (leftNode->getType() == Type::BOOL && rightNode->getType() == Type::STR))) {
         // TODO: move to error handler at some point
         throw std::runtime_error("Cannot multiply with the used types");
     }
@@ -744,15 +746,25 @@ void Evaluator::visit(const std::shared_ptr<MultExprNode> &node) {
             } else if (rightNode->getType() == Type::INT) {
                 node->setVal(leftNode->getVal().get<bool>() * rightNode->getVal().get<int>());
                 node->setType(Type::INT);
-            } else {
+            } else if (rightNode->getType() == Type::FLOAT) {
                 node->setVal(leftNode->getVal().get<bool>() * rightNode->getVal().get<double>());
                 node->setType(Type::FLOAT);
+            } else {
+                for (size_t i = 0; i < leftNode->getVal().get<bool>(); i++)
+                    node->setVal(node->getVal().get<std::string>() +
+                                 rightNode->getVal().get<std::string>());
             }
             break;
         case Type::STR:
-            for (size_t i = 0; i < rightNode->getVal().get<int>(); i++)
+            if (rightNode->getType() == Type::INT) {
+                for (size_t i = 0; i < rightNode->getVal().get<int>(); i++)
                 node->setVal(node->getVal().get<std::string>() +
                              leftNode->getVal().get<std::string>());
+            } else {
+                for (size_t i = 0; i < rightNode->getVal().get<int>(); i++)
+                    node->setVal(node->getVal().get<std::string>() +
+                        leftNode->getVal().get<std::string>());
+            }
             break;
         default:
             throw std::runtime_error("Error: Couldn't convert string to value of nodes");
