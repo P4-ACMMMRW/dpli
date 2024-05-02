@@ -329,6 +329,17 @@ antlrcpp::Any AstBuilder::visitTerm(DplParser::TermContext* parseNode) {
         parseNode, 1, "() Parenthesis");
 }
 
+antlrcpp::Any AstBuilder::visitNumber(DplParser::NumberContext* parseNode) {
+    if (parseNode->children.size() < 2) {
+        return parseNode->children[0]->accept(this);
+    }
+    return unaryExpr(
+        [this]([[maybe_unused]] size_t unused) -> std::shared_ptr<AstNode> {
+            return std::make_shared<MinusNode>(currentNode); 
+        }, 
+        parseNode);
+}
+
 antlrcpp::Any AstBuilder::visitSubscript(DplParser::SubscriptContext* parseNode) {
     size_t childAmount = parseNode->children.size();
     if (childAmount < 2) {

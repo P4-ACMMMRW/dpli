@@ -28,6 +28,7 @@ PARSER_TEST("gcd.dpl") {
         DplParser::RulePolaexpr,
         DplParser::RuleExpoexpr,
         DplParser::RuleTerm,
+        DplParser::RuleNumber,
         DplParser::RuleBlock,
         DplParser::RuleStms,
         DplParser::RuleStm,
@@ -121,6 +122,7 @@ PARSER_TEST("gcd.dpl") {
         DplParser::RulePolaexpr,
         DplParser::RuleExpoexpr,
         DplParser::RuleTerm,
+        DplParser::RuleNumber,
         DplParser::RuleJuncexpr,
         DplParser::RuleNotexpr,
         DplParser::RuleEqulexpr,
@@ -130,7 +132,8 @@ PARSER_TEST("gcd.dpl") {
         DplParser::RuleMultexpr,
         DplParser::RulePolaexpr,
         DplParser::RuleExpoexpr,
-        DplParser::RuleTerm
+        DplParser::RuleTerm,
+        DplParser::RuleNumber
     };
     
     dplutil::TestingUtil::testParser("gcd.dpl", expectedNodeRules);

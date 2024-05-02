@@ -17,6 +17,7 @@ PARSER_TEST("break.dpl") {
         DplParser::RulePolaexpr,
         DplParser::RuleExpoexpr,
         DplParser::RuleTerm,
+        DplParser::RuleNumber,
         DplParser::RuleStm,
         DplParser::RuleWhilestm,
         DplParser::RuleJuncexpr,
@@ -50,6 +51,7 @@ PARSER_TEST("break.dpl") {
         DplParser::RulePolaexpr,
         DplParser::RuleExpoexpr,
         DplParser::RuleTerm,
+        DplParser::RuleNumber,
         DplParser::RuleStm,
         DplParser::RuleIfstm,
         DplParser::RuleJuncexpr,
@@ -70,6 +72,7 @@ PARSER_TEST("break.dpl") {
         DplParser::RulePolaexpr,
         DplParser::RuleExpoexpr,
         DplParser::RuleTerm,
+        DplParser::RuleNumber,
         DplParser::RuleBlock,
         DplParser::RuleStms,
         DplParser::RuleStm,
@@ -97,7 +100,7 @@ PARSER_TEST("break.dpl") {
         DplParser::RuleMultexpr,
         DplParser::RulePolaexpr,
         DplParser::RuleExpoexpr,
-        DplParser::RuleTerm,
+        DplParser::RuleTerm
     };
     
     dplutil::TestingUtil::testParser("break.dpl", expectedNodeRules);

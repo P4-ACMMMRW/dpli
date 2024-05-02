@@ -71,12 +71,14 @@ expoexpr: <assoc = right> term (Exponent term)*;
 term: OpenPar juncexpr ClosePar
     | list
     | table
-    | Float
-    | Integer
+    | number
     | Bool 
     | String 
     | None
     | subscript; 
+
+number: Minus (Integer | Float)
+      | (Integer | Float);
 
 subscript: Identifier (proccall | headerindex | index | filtering)*;
 
