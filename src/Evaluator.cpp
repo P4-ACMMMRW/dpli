@@ -243,7 +243,15 @@ void Evaluator::visit(const std::shared_ptr<ReturnNode> &node) {
     node->setVal(childNode->getVal());
 }
 
-void Evaluator::visit(const std::shared_ptr<TableNode> &node) {}
+void Evaluator::visit(const std::shared_ptr<TableNode> &node) {
+    std::cout << "tablenode";
+    std::vector<std::shared_ptr<AstNode>> childNodes = node->getChildNodeList();
+    for (size_t i = 0; i < childNodes.size(); ++i) {
+        childNodes[i]->accept(shared_from_this());
+    }
+
+    node->setVal(nullptr);
+}
 
 void Evaluator::visit(const std::shared_ptr<UnaryExprNode> &node) {}
 
@@ -255,7 +263,7 @@ void Evaluator::initPtable() {
         return nullptr;
     };
 
-    Procedure::ProcType input0 = [](std::vector<std::shared_ptr<AstNode>> arg) {
+    Procedure::ProcType input0 = []([[maybe_unused]] std::vector<std::shared_ptr<AstNode>> arg) {
         std::string inputStr;
         std::getline(std::cin, inputStr);
         return inputStr;

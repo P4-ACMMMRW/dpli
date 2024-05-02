@@ -39,6 +39,8 @@ std::string Value::toString() const {
         result += "]";
 
         return result;
+    } else if (is<TABLE>()) {
+        throw std::runtime_error("Not implemented");
     }
 
     throw std::runtime_error("Error: unknown value type");
@@ -72,6 +74,8 @@ std::string Value::toTypeString(bool verbose) const {
         listStr += "]";
 
         return listStr;
+    } else if (is<TABLE>()) {
+        throw std::runtime_error("Not implemented");
     }
 
     throw std::runtime_error("Error: unknown type cannot be converted to a string");

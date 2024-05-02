@@ -5,6 +5,7 @@
 #include <string>
 #include <variant>
 #include <vector>
+#include <unordered_map>
 
 namespace dplsrc {
 class Value {
@@ -64,9 +65,10 @@ class Value {
     using STR = std::string;
     using NONETYPE = std::nullptr_t;
     using LIST = std::vector<Value>;
+    using TABLE = std::unordered_map<STR, LIST>;
 
    private:
-    mutable std::variant<INT, FLOAT, STR, BOOL, LIST, NONETYPE> innerValue;
+    mutable std::variant<INT, FLOAT, STR, BOOL, NONETYPE, LIST, TABLE> innerValue;
 };
 }  // namespace dplsrc
 
