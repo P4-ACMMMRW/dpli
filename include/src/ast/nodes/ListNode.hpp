@@ -4,8 +4,6 @@
 #include <UnaryNodeList.hpp>
 #include <vector>
 
-#include "Type.hpp"
-
 class ListNode : public UnaryNodeList {
    public:
     ListNode(std::shared_ptr<AstNode> parent) : UnaryNodeList(std::move(parent)) {}

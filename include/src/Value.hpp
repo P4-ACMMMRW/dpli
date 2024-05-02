@@ -49,13 +49,20 @@ class Value {
      */
     std::string toString() const;
 
+    std::string toTypeString(bool verbose = false) const;
+
     /**
-     * List value type
+     * DPL Types
      */
-    using List = std::vector<Value>;
+    using INT = long;
+    using FLOAT = double;
+    using BOOL = bool;
+    using STR = std::string;
+    using NONETYPE = std::nullptr_t;
+    using LIST = std::vector<Value>;
 
    private:
-    mutable std::variant<long, double, std::string, bool, List, std::nullptr_t> innerValue;
+    mutable std::variant<INT, FLOAT, STR, BOOL, LIST, NONETYPE> innerValue;
 };
 }  // namespace dplsrc
 
