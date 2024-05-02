@@ -1,5 +1,5 @@
-#ifndef EVALUATOR
-#define EVALUATOR
+#ifndef EVALUATOR_HPP
+#define EVALUATOR_HPP
 
 #include <DplLexer.h>
 

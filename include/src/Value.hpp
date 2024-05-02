@@ -38,7 +38,7 @@ class Value {
 
     /**
      * Get the value as type T mutable
-    */
+     */
     template <typename T>
     T &getMut() {
         return std::get<T>(innerValue);

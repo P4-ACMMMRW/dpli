@@ -55,7 +55,7 @@ std::string Value::toTypeString(bool verbose) const {
         return "bool";
     } else if (is<NONETYPE>()) {
         return "NoneType";
-    } else if(is<LIST>()) {
+    } else if (is<LIST>()) {
         if (!verbose) return "list";
 
         std::string listStr = "list -> [";

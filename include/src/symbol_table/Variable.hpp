@@ -1,5 +1,5 @@
-#ifndef VARIABLE
-#define VARIABLE
+#ifndef VARIABLE_HPP
+#define VARIABLE_HPP
 
 #include "Symbol.hpp"
 #include "Value.hpp"
@@ -7,14 +7,11 @@
 namespace dplsrc {
 class Variable : public Symbol {
    public:
-    
     /**
      * @param id the id of the variable
      * @param val the value of the variable
-     * @param type the type of the variable
      */
-    Variable(std::string id, Value val)
-        : Symbol(std::move(id)), val(std::move(val)) {}
+    Variable(std::string id, Value val) : Symbol(std::move(id)), val(std::move(val)) {}
 
     /**
      * @return the value of the variable
