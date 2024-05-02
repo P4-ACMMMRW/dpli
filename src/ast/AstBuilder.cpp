@@ -330,13 +330,18 @@ antlrcpp::Any AstBuilder::visitTerm(DplParser::TermContext* parseNode) {
 }
 
 antlrcpp::Any AstBuilder::visitNumber(DplParser::NumberContext* parseNode) {
-    if (parseNode->children.size() < 2) {
-        return parseNode->children[0]->accept(this);
-    }
     return unaryExpr(
-        [this]([[maybe_unused]] size_t unused) -> std::shared_ptr<AstNode> {
-            return std::make_shared<MinusNode>(currentNode); 
-        }, 
+        [this](size_t operatorType) -> std::shared_ptr<AstNode> {
+            switch (operatorType) {
+                case DplLexer::Plus:
+                    return std::make_shared<PlusNode>(currentNode);
+                case DplLexer::Minus:
+                    return std::make_shared<MinusNode>(currentNode);
+                default:
+                    throw std::runtime_error("Numberexpr was not valid operator");
+            }
+            return nullptr;
+        },
         parseNode);
 }
 

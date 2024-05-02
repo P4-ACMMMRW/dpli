@@ -77,7 +77,7 @@ term: OpenPar juncexpr ClosePar
     | None
     | subscript; 
 
-number: Minus (Integer | Float)
+number: (Minus | Plus) number
       | (Integer | Float);
 
 subscript: Identifier (proccall | headerindex | index | filtering)*;
