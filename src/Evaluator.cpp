@@ -250,28 +250,33 @@ void Evaluator::visit(const std::shared_ptr<UnaryExprNode> &node) {}
 void Evaluator::visit(const std::shared_ptr<WhileNode> &node) {}
 
 void Evaluator::initPtable() {
-    Procedure::ProcType print = [](std::vector<std::shared_ptr<AstNode>> arg) {
+    Procedure::ProcType print1 = [](std::vector<std::shared_ptr<AstNode>> arg) {
         std::cout << arg[0]->getVal().toString() << '\n';
         return nullptr;
     };
 
-    Procedure::ProcType input = [](std::vector<std::shared_ptr<AstNode>> arg) {
-        std::cout << arg[0]->getVal().toString();
+    Procedure::ProcType input0 = [](std::vector<std::shared_ptr<AstNode>> arg) {
         std::string inputStr;
         std::getline(std::cin, inputStr);
         return inputStr;
     };
 
-    Procedure::ProcType type = [](std::vector<std::shared_ptr<AstNode>> arg) {
+    Procedure::ProcType input1 = [input0](std::vector<std::shared_ptr<AstNode>> arg) {
+        std::cout << arg[0]->getVal().toString();
+        return input0(arg);
+    };
+
+    Procedure::ProcType type1 = [](std::vector<std::shared_ptr<AstNode>> arg) {
         return arg[0]->getVal().toTypeString();
     };
 
-    Procedure::ProcType str = [](std::vector<std::shared_ptr<AstNode>> arg) {
+    Procedure::ProcType str1 = [](std::vector<std::shared_ptr<AstNode>> arg) {
         return arg[0]->getVal().toString();
     };
 
-    ptable.bind(Procedure("print", {"msg"}, print));
-    ptable.bind(Procedure("input", {"msg"}, input));
-    ptable.bind(Procedure("type", {"x"}, type));
-    ptable.bind(Procedure("str", {"x"}, str));
+    ptable.bind(Procedure("print", {"msg"}, print1));
+    ptable.bind(Procedure("input", {}, input0));
+    ptable.bind(Procedure("input", {"msg"}, input1));
+    ptable.bind(Procedure("type", {"x"}, type1));
+    ptable.bind(Procedure("str", {"x"}, str1));
 }
