@@ -47,26 +47,8 @@ std::string VariableTable::generatePrintString(const Scope &scope) {
     }
 
     for (const std::pair<const std::string, dplsrc::Variable> &entry : scope) {
-        Type type = entry.second.getType();
-        printStr += entry.first + " -> " + entry.second.getVal().toString() + " | ";
-        if (type.is<Type::List>()) {
-            printStr += "list -> [";
-            std::string typeStr;
-            for (const Type &elemType : type.get<Type::List>()) {
-                typeStr += elemType.toString() + ", ";
-            }
-
-            if (!typeStr.empty()) {
-                typeStr.pop_back();
-                typeStr.pop_back();
-            }
-
-            printStr += typeStr + "]";
-        } else {
-            printStr += type.toString();
-        }
-
-        printStr += "\n";
+        Value val = entry.second.getVal();
+        printStr += entry.first + " -> " + val.toString() + " | " + val.toTypeString() + '\n';
     }
 
     return printStr;

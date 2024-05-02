@@ -84,14 +84,8 @@ int main(int argc, char **argv) {
     root->accept(evaluator);
 
     if (debug) {
-        // std::cout << tree->toStringTree(&parser, true) << "\n\n";
-
         // Ast print
         builder.getRoot()->print();
-
-        // Visitor
-        // 7std::shared_ptr<AstTestVisitor> visitor = std::make_shared<AstTestVisitor>();
-        // root->accept(visitor);
 
         // print eval
         evaluator->getVtable().print();

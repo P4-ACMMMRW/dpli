@@ -7,7 +7,6 @@
 #include <string>
 #include <utility>
 
-#include "Type.hpp"
 #include "Value.hpp"
 
 class AstNode : public std::enable_shared_from_this<AstNode> {
@@ -29,9 +28,6 @@ class AstNode : public std::enable_shared_from_this<AstNode> {
     void setText(std::string text) { this->text = std::move(text); }
     void setParent(std::shared_ptr<AstNode> parent) { this->parent = std::move(parent); }
 
-    void setType(dplsrc::Type type) { this->type = type; }
-    dplsrc::Type getType() const { return type; }
-
     void setVal(dplsrc::Value val) { this->val = std::move(val); }
     dplsrc::Value getVal() { return val; }
 
@@ -43,7 +39,6 @@ class AstNode : public std::enable_shared_from_this<AstNode> {
     size_t rule{};
     std::shared_ptr<AstNode> parent;
     std::string text;
-    dplsrc::Type type;
     dplsrc::Value val;
 };
 

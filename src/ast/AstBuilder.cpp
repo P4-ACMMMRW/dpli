@@ -123,16 +123,16 @@ antlrcpp::Any AstBuilder::visitTerminal(tree::TerminalNode* node) {
     if (!isIdentifier) {
         switch (node->getSymbol()->getType()) {
             case DplLexer::Integer:
-                newNode->setType(Type(Type::Primitive::INT));
+                newNode->setVal(0);
                 break;
             case DplLexer::Float:
-                newNode->setType(Type(Type::Primitive::FLOAT));
+                newNode->setVal(0.0);
                 break;
             case DplLexer::String:
-                newNode->setType(Type(Type::Primitive::STR));
+                newNode->setVal("");
                 break;
             case DplLexer::Bool:
-                newNode->setType(Type(Type::Primitive::BOOL));
+                newNode->setVal(false);
                 break;
         }
     }
