@@ -5,10 +5,12 @@ using namespace dplsrc;
 void Evaluator::visit(const std::shared_ptr<AndExprNode> &node) {}
 
 void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
-    std::shared_ptr<LeafNode> leafNode = std::dynamic_pointer_cast<LeafNode>(node->getLeftNode());
-    bool isLeaf = leafNode != nullptr;
-    bool isIndexing = std::dynamic_pointer_cast<IndexNode>(node->getLeftNode()) != nullptr;
     std::shared_ptr<AstNode> leftNode = node->getLeftNode();
+    std::shared_ptr<LeafNode> leafNode = std::dynamic_pointer_cast<LeafNode>(leftNode);
+    std::shared_ptr<IndexNode> indexNode = std::dynamic_pointer_cast<IndexNode>(leftNode);
+
+    bool isLeaf = leafNode != nullptr;
+    bool isIndexing = indexNode != nullptr;
 
     // If left is not a leaf or index node, throw error
     // Also if left is a leaf node but not an identifier, throw error
@@ -24,7 +26,6 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
 
     // If indexing
     if (isIndexing) {
-        std::shared_ptr<IndexNode> indexNode = std::dynamic_pointer_cast<IndexNode>(leftNode);
         std::shared_ptr<AstNode> identifierNode = indexNode->getRightNode();
 
         Variable *var = vtable.lookup(identifierNode->getText());
@@ -108,20 +109,19 @@ void Evaluator::visit(const std::shared_ptr<LeafNode> &node) {
         }
     } else {
         Value val = node->getVal();
+
         if (val.is<Value::STR>()) {
             // If string we have to remove quotes from value
             std::string text = node->getText();
             node->setVal(text.substr(1, text.size() - 2));
+        } else if (val.is<Value::INT>()) {
+            node->setVal(std::stol(node->getText()));
+        } else if (val.is<Value::FLOAT>()) {
+            node->setVal(std::stod(node->getText()));
+        } else if (val.is<Value::BOOL>()) {
+            node->setVal(node->getText() == "True");
         } else {
-            if (val.is<Value::INT>()) {
-                node->setVal(std::stol(node->getText()));
-            } else if (val.is<Value::FLOAT>()) {
-                node->setVal(std::stod(node->getText()));
-            } else if (val.is<Value::BOOL>()) {
-                node->setVal(node->getText() == "True");
-            } else {
-                node->setVal(nullptr);
-            }
+            node->setVal(nullptr);
         }
     }
 }
@@ -132,8 +132,8 @@ void Evaluator::visit(const std::shared_ptr<LessExprNode> &node) {}
 
 void Evaluator::visit(const std::shared_ptr<ListNode> &node) {
     std::vector<std::shared_ptr<AstNode>> childNodes = node->getChildNodeList();
-    std::vector<Value> values;
 
+    std::vector<Value> values;
     for (size_t i = 0; i < childNodes.size(); ++i) {
         childNodes[i]->accept(shared_from_this());
         values.emplace_back(childNodes[i]->getVal());

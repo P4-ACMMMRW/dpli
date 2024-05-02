@@ -45,10 +45,14 @@ class Value {
     }
 
     /**
-     * Prints string representation of value
+     * @return String representation of value
      */
     std::string toString() const;
 
+    /** 
+     * @param Whether expand types of composite types
+     * @return String representation of type 
+     */
     std::string toTypeString(bool verbose = false) const;
 
     /**

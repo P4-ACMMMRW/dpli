@@ -134,6 +134,9 @@ antlrcpp::Any AstBuilder::visitTerminal(tree::TerminalNode* node) {
             case DplLexer::Bool:
                 newNode->setVal(false);
                 break;
+            default:
+                newNode->setVal(nullptr);
+                break;
         }
     }
 
