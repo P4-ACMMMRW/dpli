@@ -10,7 +10,7 @@ void AstVisitor::visit(const std::shared_ptr<AssignNode> &node) {
 }
 
 void AstVisitor::visit(const std::shared_ptr<ColumnNode> &node) {
-    visit(std::static_pointer_cast<UnaryNode>(node));
+    visit(std::static_pointer_cast<BinaryNode>(node));
 }
 
 void AstVisitor::visit(const std::shared_ptr<DivExprNode> &node) {

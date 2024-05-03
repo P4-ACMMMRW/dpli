@@ -1,7 +1,0 @@
-3**+--99
-
-
-if True:
-    return False
-else:
-    return True

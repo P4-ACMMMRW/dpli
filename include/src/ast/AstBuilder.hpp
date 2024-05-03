@@ -41,7 +41,8 @@ class AstBuilder : public DplParserBaseVisitor {
     antlrcpp::Any visitWhilestm(DplParser::WhilestmContext *parseNode) override;
 
     // Expressions  The expressions isn't correctly sequenced
-    antlrcpp::Any visitJuncexpr(DplParser::JuncexprContext *parseNode) override;
+    antlrcpp::Any visitOrexpr(DplParser::OrexprContext *parseNode) override;
+    antlrcpp::Any visitAndexpr(DplParser::AndexprContext *parseNode) override;
     antlrcpp::Any visitNotexpr(DplParser::NotexprContext *parseNode) override;
     antlrcpp::Any visitEqulexpr(DplParser::EqulexprContext *parseNode) override;
     antlrcpp::Any visitCompexpr(DplParser::CompexprContext *parseNode) override;

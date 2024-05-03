@@ -10,7 +10,7 @@ AST_TEST("quicksort.dpl") {
        DplLexer::Identifier,
        DplLexer::Identifier,
        DplParser::RuleIfstm,
-       DplParser::RuleJuncexpr,
+       DplParser::RuleAndexpr,
        DplParser::RuleCompexpr,
        DplLexer::Identifier,
        DplLexer::Integer,
