@@ -167,18 +167,18 @@ antlrcpp::Any AstBuilder::visitWhilestm(DplParser::WhilestmContext* parseNode) {
                       3, true);
 }
 
-antlrcpp::Any AstBuilder::visitJuncexpr(DplParser::JuncexprContext* parseNode) {
+antlrcpp::Any AstBuilder::visitOrexpr(DplParser::OrexprContext* parseNode) {
     return binaryExpr(
-        [this](size_t operatorType) -> std::shared_ptr<AstNode> {
-            switch (operatorType) {
-                case DplLexer::And:
-                    return std::make_shared<AndExprNode>(currentNode);
-                case DplLexer::Or:
-                    return std::make_shared<OrExprNode>(currentNode);
-                default:
-                    throw std::runtime_error("Junc expr was not valid operator");
-            }
-            return nullptr;
+        [this]([[maybe_unused]] size_t unused) -> std::shared_ptr<AstNode> {
+            return std::make_shared<OrExprNode>(currentNode);
+        },
+        parseNode);
+}
+
+antlrcpp::Any AstBuilder::visitAndexpr(DplParser::AndexprContext* parseNode) {
+    return binaryExpr(
+        [this]([[maybe_unused]] size_t unused) -> std::shared_ptr<AstNode> {
+            return std::make_shared<AndExprNode>(currentNode);
         },
         parseNode);
 }
@@ -314,9 +314,8 @@ antlrcpp::Any AstBuilder::visitTable(DplParser::TableContext* parseNode) {
 }
 
 antlrcpp::Any AstBuilder::visitColumn(DplParser::ColumnContext* parseNode) {
-    std::string text = parseNode->children[0]->getText() + ":";
-    return unaryNode([this]() { return std::make_shared<ColumnNode>(currentNode); }, parseNode, 2,
-                     text);
+    return binaryNode([this]() { return std::make_shared<ColumnNode>(currentNode); }, parseNode, 0,
+                      2, true, "Column");
 }
 
 antlrcpp::Any AstBuilder::visitTerm(DplParser::TermContext* parseNode) {
@@ -328,6 +327,22 @@ antlrcpp::Any AstBuilder::visitTerm(DplParser::TermContext* parseNode) {
             return std::make_shared<ParNode>(currentNode);
         },
         parseNode, 1, "() Parenthesis");
+}
+
+antlrcpp::Any AstBuilder::visitNumber(DplParser::NumberContext* parseNode) {
+    return unaryExpr(
+        [this](size_t operatorType) -> std::shared_ptr<AstNode> {
+            switch (operatorType) {
+                case DplLexer::Plus:
+                    return std::make_shared<PlusNode>(currentNode);
+                case DplLexer::Minus:
+                    return std::make_shared<MinusNode>(currentNode);
+                default:
+                    throw std::runtime_error("Numberexpr was not valid operator");
+            }
+            return nullptr;
+        },
+        parseNode);
 }
 
 antlrcpp::Any AstBuilder::visitSubscript(DplParser::SubscriptContext* parseNode) {
@@ -361,14 +376,15 @@ antlrcpp::Any AstBuilder::visitHeaderindex(DplParser::HeaderindexContext* parseN
 }
 
 antlrcpp::Any AstBuilder::visitFiltering(DplParser::FilteringContext* parseNode) {
-    return unaryNode([this]() { return std::make_shared<FilterNode>(currentNode); }, parseNode, 1,
-                     "[] Filter", false);
+    parseNode->children[1]->accept(this);
+    return nullptr;
 }
 // To here
 
 antlrcpp::Any AstBuilder::visitUnaryexpr(DplParser::UnaryexprContext* parseNode) {
-    return unaryNode([this]() { return std::make_shared<UnaryExprNode>(currentNode); }, parseNode,
-                     1, parseNode->children[0]->getText());
+    std::string text = "[" + parseNode->children[0]->getText() + "] Filter";
+    return unaryNode([this]() { return std::make_shared<FilterNode>(currentNode); }, parseNode, 1,
+                     text, false);
 }
 
 std::shared_ptr<AstNode> AstBuilder::getRoot() { return root; }
