@@ -313,7 +313,8 @@ antlrcpp::Any AstBuilder::visitTable(DplParser::TableContext* parseNode) {
 }
 
 antlrcpp::Any AstBuilder::visitColumn(DplParser::ColumnContext* parseNode) {
-    return binaryNode([this]() { return std::make_shared<ColumnNode>(currentNode); }, parseNode, 0, 2, true, "Column");
+    return binaryNode([this]() { return std::make_shared<ColumnNode>(currentNode); }, parseNode, 0,
+                      2, true, "Column");
 }
 
 antlrcpp::Any AstBuilder::visitTerm(DplParser::TermContext* parseNode) {
@@ -375,14 +376,14 @@ antlrcpp::Any AstBuilder::visitHeaderindex(DplParser::HeaderindexContext* parseN
 
 antlrcpp::Any AstBuilder::visitFiltering(DplParser::FilteringContext* parseNode) {
     parseNode->children[1]->accept(this);
-    return nullptr;              
+    return nullptr;
 }
 // To here
 
 antlrcpp::Any AstBuilder::visitUnaryexpr(DplParser::UnaryexprContext* parseNode) {
     std::string text = "[" + parseNode->children[0]->getText() + "] Filter";
-    return unaryNode([this]() { return std::make_shared<FilterNode>(currentNode); }, parseNode,
-                     1, text, false);
+    return unaryNode([this]() { return std::make_shared<FilterNode>(currentNode); }, parseNode, 1,
+                     text, false);
 }
 
 std::shared_ptr<AstNode> AstBuilder::getRoot() { return root; }

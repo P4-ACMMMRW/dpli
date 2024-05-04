@@ -54,7 +54,7 @@ class AstBuilder : public DplParserBaseVisitor {
 
     // Terms
     antlrcpp::Any visitTerminal(tree::TerminalNode *node) override;
-    antlrcpp::Any visitNumber(DplParser::NumberContext* parseNode) override;
+    antlrcpp::Any visitNumber(DplParser::NumberContext *parseNode) override;
     antlrcpp::Any visitList(DplParser::ListContext *parseNode) override;
     antlrcpp::Any visitTable(DplParser::TableContext *parseNode) override;
     antlrcpp::Any visitColumn(DplParser::ColumnContext *parseNode) override;
