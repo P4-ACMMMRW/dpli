@@ -18,7 +18,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           style: 'file'
-          ignore: tests | lib
+          ignore: 'tests | lib'
           tidy-checks: '-*' 
           thread-comments: ${{ github.event_name == 'pull_request' && 'update' }}
           lines-changed-only: true
