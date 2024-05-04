@@ -282,9 +282,24 @@ void Evaluator::initPtable() {
         return arg[0]->getVal().toString();
     };
 
+    Procedure::ProcType len1 = [](std::vector<std::shared_ptr<AstNode>> arg) {
+        Value val = arg[0]->getVal();
+
+        if (!(val.is<Value::STR>() || val.is<Value::LIST>())) {
+            throw std::runtime_error("Error: len() called with invalid type");
+        }
+
+        if (val.is<Value::STR>()) {
+            return static_cast<long>(val.get<Value::STR>().size());
+        } else {
+            return static_cast<long>(val.get<Value::LIST>().size());
+        }
+    };
+
     ptable.bind(Procedure("print", {"msg"}, print1));
     ptable.bind(Procedure("input", {}, input0));
     ptable.bind(Procedure("input", {"msg"}, input1));
     ptable.bind(Procedure("type", {"x"}, type1));
     ptable.bind(Procedure("str", {"x"}, str1));
+    ptable.bind(Procedure("len", {"x"}, len1));
 }

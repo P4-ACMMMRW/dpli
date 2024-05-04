@@ -36,7 +36,6 @@
 #include <ProgNode.hpp>
 #include <ReturnNode.hpp>
 #include <TableNode.hpp>
-#include <UnaryExprNode.hpp>
 #include <UnionExprNode.hpp>
 #include <WhileNode.hpp>
 
