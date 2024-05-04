@@ -26,19 +26,20 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
 
     // If indexing
     if (isIndexing) {
-        std::shared_ptr<AstNode> identifierNode = indexNode->getRightNode();
+        indexNode->accept(shared_from_this());
+        std::shared_ptr<AstNode> identifierNode = indexNode->getLeftNode();
 
         Variable *var = vtable.lookup(identifierNode->getText());
         Value val = var->getVal();
 
-        int index = indexNode->getLeftNode()->getVal().get<long>();
+        Value::INT index = indexNode->getRightNode()->getVal().get<Value::INT>();
 
         // For some types indexing is read-only
         if (!val.is<Value::LIST>()) {
             throw std::runtime_error("Error: list assigment not allowed for this type\n");
         }
 
-        val.getMut<Value::LIST>()[index] = rightNode->getVal();
+        (*(val.getMut<Value::LIST>()))[index] = rightNode->getVal();
 
         vtable.bind(Variable(identifierNode->getText(), val));
     } else {
@@ -67,13 +68,13 @@ void Evaluator::visit(const std::shared_ptr<HeaderIndexNode> &node) {}
 void Evaluator::visit(const std::shared_ptr<IfNode> &node) {}
 
 void Evaluator::visit(const std::shared_ptr<IndexNode> &node) {
-    std::shared_ptr<AstNode> identifierNode = node->getRightNode();
-    std::shared_ptr<AstNode> indexNode = node->getLeftNode();
+    std::shared_ptr<AstNode> identifierNode = node->getLeftNode();
+    std::shared_ptr<AstNode> indexNode = node->getRightNode();
 
     identifierNode->accept(shared_from_this());
     indexNode->accept(shared_from_this());
 
-    int index = indexNode->getVal().get<Value::INT>();
+    Value::INT index = indexNode->getVal().get<Value::INT>();
 
     Value val = identifierNode->getVal();
     if (val.is<Value::STR>()) {
@@ -87,11 +88,11 @@ void Evaluator::visit(const std::shared_ptr<IndexNode> &node) {
     } else if (val.is<Value::LIST>()) {
         Value::LIST list = val.get<Value::LIST>();
 
-        if (index < 0 || index >= list.size()) {
+        if (index < 0 || (size_t)index >= list->size()) {
             throw std::runtime_error("Error: index out of range\n");
         }
 
-        node->setVal(list[index]);
+        node->setVal((*list)[index]);
     } else {
         throw std::runtime_error("Error: invalid index operation\n");
     }
@@ -135,10 +136,10 @@ void Evaluator::visit(const std::shared_ptr<LessExprNode> &node) {}
 void Evaluator::visit(const std::shared_ptr<ListNode> &node) {
     std::vector<std::shared_ptr<AstNode>> childNodes = node->getChildNodeList();
 
-    std::vector<Value> values;
+    std::shared_ptr<std::vector<Value>> values = std::make_shared<std::vector<Value>>();
     for (size_t i = 0; i < childNodes.size(); ++i) {
         childNodes[i]->accept(shared_from_this());
-        values.emplace_back(childNodes[i]->getVal());
+        values->emplace_back(childNodes[i]->getVal());
     }
 
     node->setVal(values);
@@ -292,9 +293,9 @@ void Evaluator::initPtable() {
         }
 
         if (val.is<Value::STR>()) {
-            return static_cast<long>(val.get<Value::STR>().size());
+            return static_cast<Value::INT>(val.get<Value::STR>().size());
         } else {
-            return static_cast<long>(val.get<Value::LIST>().size());
+            return static_cast<Value::INT>(val.get<Value::LIST>()->size());
         }
     };
 

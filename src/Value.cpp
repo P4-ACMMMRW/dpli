@@ -27,7 +27,7 @@ std::string Value::toString() const {
     } else if (is<LIST>()) {
         std::string result = "[";
 
-        for (const Value &elem : get<LIST>()) {
+        for (const Value &elem : *get<LIST>()) {
             result += elem.toString() + ", ";
         }
 
@@ -62,11 +62,11 @@ std::string Value::toTypeString(bool verbose) const {
 
         std::string listStr = "list -> [";
         Value::LIST list = get<LIST>();
-        for (Value val : list) {
+        for (Value val : *list) {
             listStr += val.toTypeString(true) + ", ";
         }
 
-        if (list.size() > 1) {
+        if (list->size() > 1) {
             listStr.pop_back();
             listStr.pop_back();
         }

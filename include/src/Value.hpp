@@ -6,6 +6,7 @@
 #include <variant>
 #include <vector>
 #include <unordered_map>
+#include <memory>
 
 namespace dplsrc {
 class Value {
@@ -64,7 +65,7 @@ class Value {
     using BOOL = bool;
     using STR = std::string;
     using NONETYPE = std::nullptr_t;
-    using LIST = std::vector<Value>;
+    using LIST = std::shared_ptr<std::vector<Value>>;
     using TABLE = std::unordered_map<STR, LIST>;
 
    private:
