@@ -39,7 +39,6 @@ class ProcDecNode;
 class ProgNode;
 class ReturnNode;
 class TableNode;
-class UnaryExprNode;
 class UnionExprNode;
 class WhileNode;
 
@@ -83,7 +82,6 @@ class AstVisitor : public std::enable_shared_from_this<AstVisitor> {
     virtual void visit(const std::shared_ptr<ProgNode> &node);
     virtual void visit(const std::shared_ptr<ReturnNode> &node);
     virtual void visit(const std::shared_ptr<TableNode> &node);
-    virtual void visit(const std::shared_ptr<UnaryExprNode> &node);
     virtual void visit(const std::shared_ptr<UnionExprNode> &node);
     virtual void visit(const std::shared_ptr<WhileNode> &node);
 

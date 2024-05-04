@@ -19,7 +19,7 @@ stm: ifstm
    | assignstm
    | flowstm
    | returnstm
-   | juncexpr;
+   | orexpr;
 
 stms: (stm Newline? | Newline)+;
 
@@ -27,28 +27,30 @@ block: Indent Newline? stms Dedent Newline?;
 
 
 // If
-ifstm: If juncexpr Colon block elsestm?;
+ifstm: If orexpr Colon block elsestm?;
 
 elsestm: Else Colon block;
 
 
 // While
-whilestm: While juncexpr Colon block;
+whilestm: While orexpr Colon block;
 
 
 // Assign
-assignstm: subscript Assign juncexpr;
+assignstm: subscript Assign orexpr;
 
 // Flow
 flowstm: Break
        | Continue;
 
 // Return
-returnstm: Return juncexpr
+returnstm: Return orexpr
          | Return;
 
 // Expressions
-juncexpr: notexpr ((And | Or) notexpr)*;
+orexpr: andexpr (Or andexpr)*;
+
+andexpr: notexpr (And notexpr)*;
 
 notexpr: Not notexpr 
        | equlexpr;
@@ -68,15 +70,17 @@ polaexpr: (Plus | Minus) polaexpr
 
 expoexpr: <assoc = right> term (Exponent term)*;
          
-term: OpenPar juncexpr ClosePar
+term: OpenPar orexpr ClosePar
     | list
     | table
-    | Float
-    | Integer
+    | number
     | Bool 
     | String 
     | None
     | subscript; 
+
+number: (Minus | Plus) number
+      | (Integer | Float);
 
 subscript: Identifier (proccall | headerindex | index | filtering)*;
 
@@ -86,20 +90,20 @@ list: OpenSquare args CloseSquare
 table: OpenCurly column (Comma column)* CloseCurly
      | OpenCurly CloseCurly; 
 
-column: String Colon list;
+column: orexpr Colon list;
 
 // Trailers
-index: (OpenSquare juncexpr CloseSquare);
+index: (OpenSquare orexpr CloseSquare);
 
-headerindex: (OpenSquare Dollar juncexpr CloseSquare);
+headerindex: (OpenSquare Dollar orexpr CloseSquare);
 
 filtering: (OpenSquare unaryexpr CloseSquare);
 
 
-unaryexpr: (Equal | NotEqual | Greater | GreaterEqual | Less | Less) juncexpr;
+unaryexpr: (Equal | NotEqual | Greater | GreaterEqual | Less | Less) orexpr;
 
 
 proccall: OpenPar ClosePar  
         | OpenPar args ClosePar;
 
-args: juncexpr (Comma juncexpr)*;
+args: orexpr (Comma orexpr)*;

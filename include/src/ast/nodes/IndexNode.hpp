@@ -7,6 +7,8 @@ class IndexNode : public BinaryNode {
    public:
     IndexNode(std::shared_ptr<AstNode> parent) : BinaryNode(std::move(parent)) {}
 
+    void addChild(std::shared_ptr<AstNode> child) override;
+
     void accept(std::shared_ptr<AstVisitor> visitor) override {
         visitor->visit(std::static_pointer_cast<IndexNode>(shared_from_this()));
     };
