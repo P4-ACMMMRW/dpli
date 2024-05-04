@@ -97,6 +97,8 @@ void Evaluator::visit(const std::shared_ptr<IndexNode> &node) {
     }
 }
 
+void Evaluator::visit(const std::shared_ptr<IntersectionExprNode> &node) {}
+
 void Evaluator::visit(const std::shared_ptr<LeafNode> &node) {
     if (node->getText() == "<EOF>") return;
 
@@ -245,7 +247,7 @@ void Evaluator::visit(const std::shared_ptr<ReturnNode> &node) {
 
 void Evaluator::visit(const std::shared_ptr<TableNode> &node) {}
 
-void Evaluator::visit(const std::shared_ptr<UnaryExprNode> &node) {}
+void Evaluator::visit(const std::shared_ptr<UnionExprNode> &node) {}
 
 void Evaluator::visit(const std::shared_ptr<WhileNode> &node) {}
 

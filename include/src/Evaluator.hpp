@@ -27,6 +27,7 @@ class Evaluator : public AstVisitor {
     void visit(const std::shared_ptr<HeaderIndexNode> &node) override;
     void visit(const std::shared_ptr<IfNode> &node) override;
     void visit(const std::shared_ptr<IndexNode> &node) override;
+    void visit(const std::shared_ptr<IntersectionExprNode> &node) override;
     void visit(const std::shared_ptr<LeafNode> &node) override;
     void visit(const std::shared_ptr<LessEqualExprNode> &node) override;
     void visit(const std::shared_ptr<LessExprNode> &node) override;
@@ -46,7 +47,7 @@ class Evaluator : public AstVisitor {
     void visit(const std::shared_ptr<ProgNode> &node) override;
     void visit(const std::shared_ptr<ReturnNode> &node) override;
     void visit(const std::shared_ptr<TableNode> &node) override;
-    void visit(const std::shared_ptr<UnaryExprNode> &node) override;
+    void visit(const std::shared_ptr<UnionExprNode> &node) override;
     void visit(const std::shared_ptr<WhileNode> &node) override;
 
     /**
