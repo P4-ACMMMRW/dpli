@@ -5,19 +5,45 @@ using namespace dplsrc;
 void Evaluator::visit(const std::shared_ptr<AndExprNode> &node) {}
 
 void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
-    // Assume left node is a leaf node
-    std::shared_ptr<LeafNode> leftNode = std::dynamic_pointer_cast<LeafNode>(node->getLeftNode());
+    std::shared_ptr<AstNode> leftNode = node->getLeftNode();
+    std::shared_ptr<LeafNode> leafNode = std::dynamic_pointer_cast<LeafNode>(leftNode);
+    std::shared_ptr<IndexNode> indexNode = std::dynamic_pointer_cast<IndexNode>(leftNode);
 
-    if (!leftNode->getIsIdentifier()) {
+    bool isLeaf = leafNode != nullptr;
+    bool isIndexing = indexNode != nullptr;
+
+    // If left is not a leaf or index node, throw error
+    // Also if left is a leaf node but not an identifier, throw error
+    bool error = !isLeaf && !isIndexing || (isLeaf && !leafNode->getIsIdentifier());
+    if (error) {
         // TODO: move to error handler at some point
-        throw std::runtime_error("Error: left side of assignment must be an identifier\n");
+        throw std::runtime_error("Error: left side of assignment must be a reference\n");
     }
 
     // Compute type of right node
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    vtable.bind(Variable(leftNode->getText(), rightNode->getVal(), rightNode->getType()));
+    // If indexing
+    if (isIndexing) {
+        std::shared_ptr<AstNode> identifierNode = indexNode->getRightNode();
+
+        Variable *var = vtable.lookup(identifierNode->getText());
+        Value val = var->getVal();
+
+        int index = indexNode->getLeftNode()->getVal().get<long>();
+
+        // For some types indexing is read-only
+        if (!val.is<Value::LIST>()) {
+            throw std::runtime_error("Error: list assigment not allowed for this type\n");
+        }
+
+        val.getMut<Value::LIST>()[index] = rightNode->getVal();
+
+        vtable.bind(Variable(identifierNode->getText(), val));
+    } else {
+        vtable.bind(Variable(leftNode->getText(), rightNode->getVal()));
+    }
 }
 
 void Evaluator::visit(const std::shared_ptr<ColumnNode> &node) {}
@@ -47,69 +73,56 @@ void Evaluator::visit(const std::shared_ptr<IndexNode> &node) {
     identifierNode->accept(shared_from_this());
     indexNode->accept(shared_from_this());
 
-    size_t index = indexNode->getVal().get<int>();
-    switch (identifierNode->getType()) {
-        case Type::STR: {
-            std::string str = identifierNode->getVal().get<std::string>();
-            node->setType(Type::STR);
+    int index = indexNode->getVal().get<Value::INT>();
 
-            if (index < 0 || index >= str.size()) {
-                throw std::runtime_error("Error: index out of range\n");
-            }
+    Value val = identifierNode->getVal();
+    if (val.is<Value::STR>()) {
+        Value::STR str = val.get<Value::STR>();
 
-            node->setVal(std::string{str[index]});
-            break;
+        if (index < 0 || static_cast<size_t>(index) >= str.size()) {
+            throw std::runtime_error("Error: index out of range\n");
         }
-        case Type::LIST: {
-            Value::List list = identifierNode->getVal().get<Value::List>();
-            // TODO: set element of individual types here
 
-            if (index < 0 || index >= list.size()) {
-                throw std::runtime_error("Error: index out of range\n");
-            }
+        node->setVal(Value::STR{str[index]});
+    } else if (val.is<Value::LIST>()) {
+        Value::LIST list = val.get<Value::LIST>();
 
-            node->setVal(list[index]);
-            break;
+        if (index < 0 || index >= list.size()) {
+            throw std::runtime_error("Error: index out of range\n");
         }
-        default:
-            throw std::runtime_error("Error: invalid index operation\n");
-            break;
+
+        node->setVal(list[index]);
+    } else {
+        throw std::runtime_error("Error: invalid index operation\n");
     }
 }
 
 void Evaluator::visit(const std::shared_ptr<LeafNode> &node) {
+    if (node->getText() == "<EOF>") return;
+
     if (node->getIsIdentifier()) {
         try {
             Variable *var = vtable.lookup(node->getText());
-            node->setType(var->getType());
             node->setVal(var->getVal());
         } catch (const std::out_of_range &e) {
             throw std::runtime_error("Error: undefined variable \"" + node->getText() + "\"\n");
         }
-    } else if (!node->getIsIdentifier()) {
-        if (node->getType() == Type::STR) {
+    } else {
+        Value val = node->getVal();
+
+        if (val.is<Value::STR>()) {
             // If string we have to remove quotes from value
             std::string text = node->getText();
             node->setVal(text.substr(1, text.size() - 2));
+        } else if (val.is<Value::INT>()) {
+            node->setVal(std::stol(node->getText()));
+        } else if (val.is<Value::FLOAT>()) {
+            node->setVal(std::stod(node->getText()));
+        } else if (val.is<Value::BOOL>()) {
+            node->setVal(node->getText() == "True");
         } else {
-            switch (node->getType()) {
-                case Type::INT:
-                    node->setVal(std::stoi(node->getText()));
-                    break;
-                case Type::FLOAT:
-                    node->setVal(std::stod(node->getText()));
-                    break;
-                case Type::BOOL:
-                    node->setVal(node->getText() == "True");
-                    break;
-                default:
-                    node->setVal(node->getText());
-            }
+            node->setVal(nullptr);
         }
-    }
-
-    if (node->getType() == Type::NONETYPE) {
-        node->setVal(nullptr);
     }
 }
 
@@ -119,13 +132,13 @@ void Evaluator::visit(const std::shared_ptr<LessExprNode> &node) {}
 
 void Evaluator::visit(const std::shared_ptr<ListNode> &node) {
     std::vector<std::shared_ptr<AstNode>> childNodes = node->getChildNodeList();
+
     std::vector<Value> values;
     for (size_t i = 0; i < childNodes.size(); ++i) {
         childNodes[i]->accept(shared_from_this());
         values.emplace_back(childNodes[i]->getVal());
     }
 
-    node->setType(Type::LIST);
     node->setVal(values);
 }
 
@@ -146,7 +159,6 @@ void Evaluator::visit(const std::shared_ptr<OrExprNode> &node) {}
 void Evaluator::visit(const std::shared_ptr<ParNode> &node) {
     std::shared_ptr<AstNode> childNode = node->getChildNode();
     childNode->accept(shared_from_this());
-    node->setType(childNode->getType());
     node->setVal(childNode->getVal());
 }
 
@@ -181,16 +193,12 @@ void Evaluator::visit(const std::shared_ptr<ProcCallNode> &node) {
 
     // Bind actual params to formal params
     for (size_t i = 0; i < argNodes.size(); ++i) {
-        vtable.bind(Variable(proc->getParams()[i], argNodes[i]->getVal(), argNodes[i]->getType()));
+        vtable.bind(Variable(proc->getParams()[i], argNodes[i]->getVal()));
     }
 
     // If procedure written in cpp execute it and return
     if (proc->isBuiltinProcedure()) {
-        std::pair<Type, Value> result = proc->getProc()(argNodes);
-
-        node->setType(result.first);
-        node->setVal(result.second);
-
+        node->setVal(proc->getProc()(argNodes));
         vtable.exitScope();
         return;
     }
@@ -203,7 +211,6 @@ void Evaluator::visit(const std::shared_ptr<ProcCallNode> &node) {
             std::dynamic_pointer_cast<ReturnNode>(bodyNodes[i]);
         if (returnNode) {
             node->setVal(returnNode->getVal());
-            node->setType(returnNode->getType());
             break;
         }
     }
@@ -224,8 +231,6 @@ void Evaluator::visit(const std::shared_ptr<ProcDecNode> &node) {
 }
 
 void Evaluator::visit(const std::shared_ptr<ProgNode> &node) {
-    initPtable();
-
     std::vector<std::shared_ptr<AstNode>> childNodes = node->getChildNodeList();
     for (size_t i = 0; i < childNodes.size(); ++i) {
         childNodes[i]->accept(shared_from_this());
@@ -236,7 +241,6 @@ void Evaluator::visit(const std::shared_ptr<ReturnNode> &node) {
     std::shared_ptr<AstNode> childNode = node->getChildNode();
     childNode->accept(shared_from_this());
     node->setVal(childNode->getVal());
-    node->setType(childNode->getType());
 }
 
 void Evaluator::visit(const std::shared_ptr<TableNode> &node) {}
@@ -246,28 +250,48 @@ void Evaluator::visit(const std::shared_ptr<UnaryExprNode> &node) {}
 void Evaluator::visit(const std::shared_ptr<WhileNode> &node) {}
 
 void Evaluator::initPtable() {
-    Procedure::ProcType print = [](std::vector<std::shared_ptr<AstNode>> arg) {
+    Procedure::ProcType print1 = [](std::vector<std::shared_ptr<AstNode>> arg) {
         std::cout << arg[0]->getVal().toString() << '\n';
-        return std::pair(Type::NONETYPE, nullptr);
+        return nullptr;
     };
 
-    Procedure::ProcType input = [](std::vector<std::shared_ptr<AstNode>> arg) {
-        std::cout << arg[0]->getVal().toString();
+    Procedure::ProcType input0 = []([[maybe_unused]] std::vector<std::shared_ptr<AstNode>> arg) {
         std::string inputStr;
         std::getline(std::cin, inputStr);
-        return std::pair(Type::STR, inputStr);
+        return inputStr;
     };
 
-    Procedure::ProcType type = [](std::vector<std::shared_ptr<AstNode>> arg) {
-        return std::pair(Type::STR, TypeUtil::typeToString(arg[0]->getType()));
+    Procedure::ProcType input1 = [input0](std::vector<std::shared_ptr<AstNode>> arg) {
+        std::cout << arg[0]->getVal().toString();
+        return input0(arg);
     };
 
-    Procedure::ProcType str = [](std::vector<std::shared_ptr<AstNode>> arg) {
-        return std::pair(Type::STR, arg[0]->getVal().toString());
+    Procedure::ProcType type1 = [](std::vector<std::shared_ptr<AstNode>> arg) {
+        return arg[0]->getVal().toTypeString();
     };
 
-    ptable.bind(Procedure("print", {"msg"}, print));
-    ptable.bind(Procedure("input", {"msg"}, input));
-    ptable.bind(Procedure("type", {"x"}, type));
-    ptable.bind(Procedure("str", {"x"}, str));
+    Procedure::ProcType str1 = [](std::vector<std::shared_ptr<AstNode>> arg) {
+        return arg[0]->getVal().toString();
+    };
+
+    Procedure::ProcType len1 = [](std::vector<std::shared_ptr<AstNode>> arg) {
+        Value val = arg[0]->getVal();
+
+        if (!(val.is<Value::STR>() || val.is<Value::LIST>())) {
+            throw std::runtime_error("Error: len() called with invalid type");
+        }
+
+        if (val.is<Value::STR>()) {
+            return static_cast<long>(val.get<Value::STR>().size());
+        } else {
+            return static_cast<long>(val.get<Value::LIST>().size());
+        }
+    };
+
+    ptable.bind(Procedure("print", {"msg"}, print1));
+    ptable.bind(Procedure("input", {}, input0));
+    ptable.bind(Procedure("input", {"msg"}, input1));
+    ptable.bind(Procedure("type", {"x"}, type1));
+    ptable.bind(Procedure("str", {"x"}, str1));
+    ptable.bind(Procedure("len", {"x"}, len1));
 }

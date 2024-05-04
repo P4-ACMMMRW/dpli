@@ -15,10 +15,10 @@ class Value {
     Value() = default;
 
     /**
-     * Generic constructor
+     * Set the inner value
      */
     template <typename T>
-    Value(const T &value) : innerValue(value) {}
+    Value(const T &innerValue) : innerValue(innerValue) {}
 
     /**
      * Check if the value is of type T
@@ -29,7 +29,7 @@ class Value {
     }
 
     /**
-     * Get the value as type T
+     * Get the value as type T read-only
      */
     template <typename T>
     const T &get() const {
@@ -37,17 +37,36 @@ class Value {
     }
 
     /**
-     * Prints string representation of value
+     * Get the value as type T mutable
+     */
+    template <typename T>
+    T &getMut() {
+        return std::get<T>(innerValue);
+    }
+
+    /**
+     * @return String representation of value
      */
     std::string toString() const;
 
-    /**
-     * List type
+    /** 
+     * @param Whether expand types of composite types
+     * @return String representation of type 
      */
-    using List = std::vector<Value>;
+    std::string toTypeString(bool verbose = false) const;
+
+    /**
+     * DPL Types
+     */
+    using INT = long;
+    using FLOAT = double;
+    using BOOL = bool;
+    using STR = std::string;
+    using NONETYPE = std::nullptr_t;
+    using LIST = std::vector<Value>;
 
    private:
-    std::variant<int, double, std::string, bool, List, std::nullptr_t> innerValue;
+    mutable std::variant<INT, FLOAT, STR, BOOL, LIST, NONETYPE> innerValue;
 };
 }  // namespace dplsrc
 

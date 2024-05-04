@@ -12,6 +12,8 @@
 namespace dplsrc {
 class Evaluator : public AstVisitor {
    public:
+    Evaluator(bool verbose = false) : verbose(verbose) { initPtable(); }
+
     void visit(const std::shared_ptr<AndExprNode> &node) override;
     void visit(const std::shared_ptr<AssignNode> &node) override;
     void visit(const std::shared_ptr<ColumnNode> &node) override;
@@ -60,6 +62,7 @@ class Evaluator : public AstVisitor {
    private:
     VariableTable vtable = VariableTable();
     ProcedureTable ptable = ProcedureTable();
+    bool verbose;
 
     /**
      * Initializes the procedures from the standard library of the language
