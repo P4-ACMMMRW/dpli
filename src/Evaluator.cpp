@@ -74,7 +74,22 @@ void Evaluator::visit(const std::shared_ptr<EqualExprNode> &node) {}
 
 void Evaluator::visit(const std::shared_ptr<ExpoExprNode> &node) {}
 
-void Evaluator::visit(const std::shared_ptr<FilterNode> &node) {}
+void Evaluator::visit(const std::shared_ptr<FilterNode> &node) {
+    std::shared_ptr<AstNode> leftNode = node->getLeftNode();
+    std::shared_ptr<AstNode> rightNode = node->getRightNode();
+
+    leftNode->accept(shared_from_this());
+    rightNode->accept(shared_from_this());
+
+    Value identifierVal = leftNode->getVal();
+    Value filterVal = rightNode->getVal();
+
+    if (val.is<Value::COLUMN>) {
+        Value::COLUMN col = val.get<Value::COLUMN>();
+    } else {
+        throw std::runtime_error("Error: filter operation not allowed for this type\n");
+    }
+}
 
 void Evaluator::visit(const std::shared_ptr<GreaterEqualExprNode> &node) {}
 
@@ -294,7 +309,7 @@ void Evaluator::visit(const std::shared_ptr<ReturnNode> &node) {
 void Evaluator::visit(const std::shared_ptr<TableNode> &node) {
     Value::TABLE table = std::make_shared<std::unordered_map<Value::STR, Value::COLUMN>>();
     std::vector<std::shared_ptr<AstNode>> childNodes = node->getChildNodeList();
-    
+
     long size = 0;
     bool sizeSet;
     for (std::shared_ptr<AstNode>& child : childNodes) {
