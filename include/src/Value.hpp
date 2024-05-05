@@ -67,14 +67,14 @@ class Value {
     using BOOL = bool;
     using STR = std::string;
     using NONETYPE = std::nullptr_t;
-    using LIST = std::shared_ptr<std::vector<Value>>;
+    using LIST = std::shared_ptr<std::vector<std::shared_ptr<Value>>>;
     struct COL_STRUCT;
     using COLUMN = std::shared_ptr<COL_STRUCT>;
     using TABLE = std::shared_ptr<std::unordered_map<STR, COLUMN>>;
     struct COL_STRUCT {
         TABLE parent;
         STR header;
-        std::vector<std::shared_ptr<Value>> data;
+        LIST data;
         INT size;
     };
 

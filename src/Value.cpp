@@ -27,8 +27,8 @@ std::string Value::toString() const {
     } else if (is<LIST>()) {
         std::string result = "[";
 
-        for (const Value &elem : *get<LIST>()) {
-            result += elem.toString() + ", ";
+        for (const std::shared_ptr<Value> &elem : *get<LIST>()) {
+            result += elem->toString() + ", ";
         }
 
         // Remove trailing comma and space
@@ -59,7 +59,7 @@ std::string Value::toString() const {
     } else if (is<COLUMN>()) {
         std::string result = static_cast<Value>(get<COLUMN>()->header).toString() + ": [";
 
-        for (const std::shared_ptr<Value>& valPtr : get<COLUMN>()->data) {
+        for (const std::shared_ptr<Value>& valPtr : *get<COLUMN>()->data) {
             result += valPtr->toString() + ", ";
         }
 
@@ -93,8 +93,8 @@ std::string Value::toTypeString(bool verbose) const {
 
         std::string listStr = "list -> [";
         Value::LIST list = get<LIST>();
-        for (Value val : *list) {
-            listStr += val.toTypeString(verbose) + ", ";
+        for (const std::shared_ptr<Value> &elem : *list) {
+            listStr += elem->toTypeString(verbose) + ", ";
         }
 
         // Remove trailing comma and space
@@ -130,7 +130,7 @@ std::string Value::toTypeString(bool verbose) const {
         std::string result = "column -> " + static_cast<Value>(get<COLUMN>()->header).toTypeString(verbose) +
                ": [";
 
-        for (const std::shared_ptr<Value>& valPtr : get<COLUMN>()->data) {
+        for (const std::shared_ptr<Value>& valPtr : *get<COLUMN>()->data) {
             result += valPtr->toTypeString(verbose) + ", ";
         }
 

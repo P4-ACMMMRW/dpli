@@ -17,7 +17,7 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
     bool error = (!isLeaf && !isIndexing) || (isLeaf && !leafNode->getIsIdentifier());
     if (error) {
         // TODO: move to error handler at some point
-        throw std::runtime_error("Error: left side of assignment must be a reference\n");
+        throw std::runtime_error("Error: left side of assignment must be a stored reference\n");
     }
 
     // Compute type of right node
@@ -27,7 +27,6 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
     // If indexing
     if (isIndexing) {
         indexNode->accept(shared_from_this());
-
         // Identifier node is always the leftmost node, so we can find it by traversing left nodes until we reach a leaf node
         std::shared_ptr<AstNode> identifierNode = indexNode->getLeftNode();
         while (std::dynamic_pointer_cast<IndexNode>(identifierNode) != nullptr) {
@@ -37,27 +36,41 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
         Variable *var = vtable.lookup(identifierNode->getText());
         Value val = var->getVal();
 
-        Value::INT index = indexNode->getRightNode()->getVal().get<Value::INT>();
-
-        if (val.is<Value::LIST>()) {
-            Value::LIST list = val.getMut<Value::LIST>();
-            if (index < 0 || static_cast<size_t>(index) >= list->size()) {
-                throw std::runtime_error("Error: index out of range\n");
-            }
-
-            (*list)[index] = rightNode->getVal();
-        } else if (val.is<Value::COLUMN>()) {
-            std::vector<std::shared_ptr<Value>> valPtrs = val.getMut<Value::COLUMN>()->data;
-            if (index < 0 || static_cast<size_t>(index) >= valPtrs.size()) {
-                throw std::runtime_error("Error: index out of range\n");
-            }
-
-            *valPtrs[index] = rightNode->getVal();
-        } else {
-            throw std::runtime_error("Error: index assignment not allowed for this type\n");
+        // Store indices in a temporary vector
+        std::vector<Value::INT> indices;
+        while (indexNode != nullptr) {
+            indices.emplace_back(indexNode->getRightNode()->getVal().get<Value::INT>());
+            indexNode = std::dynamic_pointer_cast<IndexNode>(indexNode->getLeftNode());
         }
 
-        vtable.bind(Variable(identifierNode->getText(), val));
+        // Get the pointer to the innermost list or column
+        Value::LIST list = nullptr;
+        Value::INT lastIndex = 0;
+        for (int i = indices.size() - 1; i >= 0; --i) {
+            Value::INT index = indices[i];
+            if (val.is<Value::LIST>()) {
+                list = val.getMut<Value::LIST>();
+                if (index < 0 || static_cast<size_t>(index) >= list->size()) {
+                    throw std::runtime_error("Error: index out of range\n");
+                }
+
+                lastIndex = index;
+                val = *(*list)[index];
+            } else if (val.is<Value::COLUMN>()) {
+                list = val.getMut<Value::COLUMN>()->data;
+                if (index < 0 || static_cast<size_t>(index) >= list->size()) {
+                    throw std::runtime_error("Error: index out of range\n");
+                }
+
+                lastIndex = index;
+                val = *(*list)[index];
+            } else {
+                throw std::runtime_error("Error: index assignment not allowed for this type\n");
+            }
+        }
+
+        // Assign value to innermost list or column
+        *(*list)[lastIndex] = rightNode->getVal();
     } else {
         vtable.bind(Variable(leftNode->getText(), rightNode->getVal()));
     }
@@ -67,7 +80,6 @@ void Evaluator::visit(const std::shared_ptr<ColumnNode> &node) {
     std::shared_ptr<AstNode> leftNode = node->getLeftNode();
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
 
-    leftNode->accept(shared_from_this());
     rightNode->accept(shared_from_this());
 }
 
@@ -95,8 +107,8 @@ void Evaluator::visit(const std::shared_ptr<FilterNode> &node) {
         Value::COLUMN col = identifierVal.get<Value::COLUMN>();
 
         std::vector<Value::INT> indicesToKeep;
-        for (size_t i = 0; i < col->data.size(); ++i) {
-            Value val = *col->data[i];
+        for (size_t i = 0; i < col->data->size(); ++i) {
+            Value val = *(*col->data)[i];
             if (val == filterVal) indicesToKeep.push_back(i);
         }
 
@@ -104,16 +116,16 @@ void Evaluator::visit(const std::shared_ptr<FilterNode> &node) {
         Value::TABLE newTable = std::make_shared<std::unordered_map<Value::STR, Value::COLUMN>>();
 
         for (const std::pair<const Value::STR, Value::COLUMN> &entry : *table) {
-            std::vector<std::shared_ptr<Value>> newData;
+            Value::LIST newData = std::make_shared<std::vector<std::shared_ptr<Value>>>();
             for (Value::INT index : indicesToKeep) {
-                newData.emplace_back(entry.second->data[index]);
+                newData->emplace_back((*entry.second->data)[index]);
             }
 
             Value::COLUMN newCol = std::make_shared<Value::COL_STRUCT>();
             newCol->parent = newTable;
             newCol->header = entry.first;
             newCol->data = newData;
-            newCol->size = newData.size();
+            newCol->size = newData->size();
             newTable->insert({entry.first, newCol});
         }
 
@@ -176,15 +188,15 @@ void Evaluator::visit(const std::shared_ptr<IndexNode> &node) {
             throw std::runtime_error("Error: index out of range\n");
         }
 
-        node->setVal((*list)[index]);
+        node->setVal(*(*list)[index]);
     } else if (val.is<Value::COLUMN>()) {
         Value::COLUMN col = val.get<Value::COLUMN>();
 
-        if (index < 0 || static_cast<size_t>(index) >= col->data.size()) {
+        if (index < 0 || static_cast<size_t>(index) >= col->data->size()) {
             throw std::runtime_error("Error: index out of range\n");
         }
 
-        node->setVal(*col->data[index]);
+        node->setVal(*(*col->data)[index]);
     } else {
         throw std::runtime_error("Error: invalid index operation\n");
     }
@@ -228,10 +240,10 @@ void Evaluator::visit(const std::shared_ptr<LessExprNode> &node) {}
 void Evaluator::visit(const std::shared_ptr<ListNode> &node) {
     std::vector<std::shared_ptr<AstNode>> childNodes = node->getChildNodeList();
 
-    Value::LIST values = std::make_shared<std::vector<Value>>();
+    Value::LIST values = std::make_shared<std::vector<std::shared_ptr<Value>>>();
     for (size_t i = 0; i < childNodes.size(); ++i) {
         childNodes[i]->accept(shared_from_this());
-        values->emplace_back(childNodes[i]->getVal());
+        values->emplace_back(std::make_shared<Value>(childNodes[i]->getVal()));
     }
 
     node->setVal(values);
@@ -359,16 +371,11 @@ void Evaluator::visit(const std::shared_ptr<TableNode> &node) {
         }
 
         Value::LIST val = columnNode->getRightNode()->getVal().get<Value::LIST>();
-        std::vector<std::shared_ptr<Value>> valPtrs;
-
-        for (Value &v : *val) {
-            valPtrs.emplace_back(std::make_shared<Value>(v));
-        }
 
         Value::COLUMN col = std::make_shared<Value::COL_STRUCT>();
         col->parent = table;
         col->header = header;
-        col->data = valPtrs;
+        col->data = val;
 
         if (!sizeSet) {
             sizeSet = true;
@@ -423,7 +430,7 @@ void Evaluator::initPtable() {
         } else if (val.is<Value::TABLE>()) {
             return static_cast<Value::INT>(val.get<Value::TABLE>()->size());
         } else if (val.is<Value::COLUMN>()) {
-            return static_cast<Value::INT>(val.get<Value::COLUMN>()->data.size());
+            return static_cast<Value::INT>(val.get<Value::COLUMN>()->data->size());
         }
 
         throw std::runtime_error("Error: len() called with invalid type");
