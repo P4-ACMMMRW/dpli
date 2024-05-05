@@ -27,7 +27,12 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
     // If indexing
     if (isIndexing) {
         indexNode->accept(shared_from_this());
+
+        // Identifier node is always the leftmost node, so we can find it by traversing left nodes until we reach a leaf node
         std::shared_ptr<AstNode> identifierNode = indexNode->getLeftNode();
+        while (std::dynamic_pointer_cast<IndexNode>(identifierNode) != nullptr) {
+            identifierNode = std::dynamic_pointer_cast<IndexNode>(identifierNode)->getLeftNode();
+        }
 
         Variable *var = vtable.lookup(identifierNode->getText());
         Value val = var->getVal();
@@ -42,12 +47,12 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
 
             (*list)[index] = rightNode->getVal();
         } else if (val.is<Value::COLUMN>()) {
-            Value::LIST list = val.getMut<Value::COLUMN>()->data;
-            if (index < 0 || static_cast<size_t>(index) >= list->size()) {
+            std::vector<std::shared_ptr<Value>> valPtrs = val.getMut<Value::COLUMN>()->data;
+            if (index < 0 || static_cast<size_t>(index) >= valPtrs.size()) {
                 throw std::runtime_error("Error: index out of range\n");
             }
 
-            (*list)[index] = rightNode->getVal();
+            *valPtrs[index] = rightNode->getVal();
         } else {
             throw std::runtime_error("Error: index assignment not allowed for this type\n");
         }
@@ -90,31 +95,25 @@ void Evaluator::visit(const std::shared_ptr<FilterNode> &node) {
         Value::COLUMN col = identifierVal.get<Value::COLUMN>();
 
         std::vector<Value::INT> indicesToKeep;
-        for (size_t i = 0; i < col->data->size(); ++i) {
-            Value val = (*(col->data))[i];
+        for (size_t i = 0; i < col->data.size(); ++i) {
+            Value val = *col->data[i];
             if (val == filterVal) indicesToKeep.push_back(i);
         }
-
-        for (Value::INT index : indicesToKeep) {
-            std::cout << index << ' ';
-        }
-
-        std::cout << '\n';
 
         Value::TABLE table = col->parent;
         Value::TABLE newTable = std::make_shared<std::unordered_map<Value::STR, Value::COLUMN>>();
 
         for (const std::pair<const Value::STR, Value::COLUMN> &entry : *table) {
-            Value::LIST newData = std::make_shared<std::vector<Value>>();
+            std::vector<std::shared_ptr<Value>> newData;
             for (Value::INT index : indicesToKeep) {
-                newData->emplace_back((*entry.second->data)[index]);
+                newData.emplace_back(entry.second->data[index]);
             }
 
             Value::COLUMN newCol = std::make_shared<Value::COL_STRUCT>();
             newCol->parent = newTable;
             newCol->header = entry.first;
             newCol->data = newData;
-            newCol->size = newData->size();
+            newCol->size = newData.size();
             newTable->insert({entry.first, newCol});
         }
 
@@ -181,11 +180,11 @@ void Evaluator::visit(const std::shared_ptr<IndexNode> &node) {
     } else if (val.is<Value::COLUMN>()) {
         Value::COLUMN col = val.get<Value::COLUMN>();
 
-        if (index < 0 || static_cast<size_t>(index) >= col->data->size()) {
+        if (index < 0 || static_cast<size_t>(index) >= col->data.size()) {
             throw std::runtime_error("Error: index out of range\n");
         }
 
-        node->setVal((*(col->data))[index]);
+        node->setVal(*col->data[index]);
     } else {
         throw std::runtime_error("Error: invalid index operation\n");
     }
@@ -360,11 +359,16 @@ void Evaluator::visit(const std::shared_ptr<TableNode> &node) {
         }
 
         Value::LIST val = columnNode->getRightNode()->getVal().get<Value::LIST>();
+        std::vector<std::shared_ptr<Value>> valPtrs;
+
+        for (Value &v : *val) {
+            valPtrs.emplace_back(std::make_shared<Value>(v));
+        }
 
         Value::COLUMN col = std::make_shared<Value::COL_STRUCT>();
         col->parent = table;
         col->header = header;
-        col->data = val;
+        col->data = valPtrs;
 
         if (!sizeSet) {
             sizeSet = true;
@@ -419,7 +423,7 @@ void Evaluator::initPtable() {
         } else if (val.is<Value::TABLE>()) {
             return static_cast<Value::INT>(val.get<Value::TABLE>()->size());
         } else if (val.is<Value::COLUMN>()) {
-            return static_cast<Value::INT>(val.get<Value::COLUMN>()->data->size());
+            return static_cast<Value::INT>(val.get<Value::COLUMN>()->data.size());
         }
 
         throw std::runtime_error("Error: len() called with invalid type");

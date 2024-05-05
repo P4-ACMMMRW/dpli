@@ -74,7 +74,7 @@ class Value {
     struct COL_STRUCT {
         TABLE parent;
         STR header;
-        LIST data;
+        std::vector<std::shared_ptr<Value>> data;
         INT size;
     };
 

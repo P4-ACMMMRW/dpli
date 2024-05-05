@@ -44,7 +44,7 @@ std::string Value::toString() const {
         std::string result = "{ ";
 
         for (const std::pair<const std::string, Value::COLUMN> &entry : *get<TABLE>()) {
-            result += entry.first + ": " + static_cast<Value>(entry.second->data).toString() + ", ";
+            result += entry.first + ": " + static_cast<Value>(entry.second).toString() + ", ";
         }
 
         // Remove trailing comma and space
@@ -57,8 +57,21 @@ std::string Value::toString() const {
 
         return result;
     } else if (is<COLUMN>()) {
-        return static_cast<Value>(get<COLUMN>()->header).toString() + ": " +
-               static_cast<Value>(get<COLUMN>()->data).toString();
+        std::string result = static_cast<Value>(get<COLUMN>()->header).toString() + ": [";
+
+        for (const std::shared_ptr<Value>& valPtr : get<COLUMN>()->data) {
+            result += valPtr->toString() + ", ";
+        }
+
+        // Remove trailing comma and space
+        if (result.size() > 1) {
+            result.pop_back();
+            result.pop_back();
+        }
+
+        result += "]";
+
+        return result;
     }
 
     throw std::runtime_error("Error: unknown value type");
@@ -99,8 +112,7 @@ std::string Value::toTypeString(bool verbose) const {
         std::string tableStr = "table -> { ";
         Value::TABLE table = get<TABLE>();
         for (const std::pair<const std::string, Value::COLUMN> &entry : *table) {
-            tableStr += entry.first + ": " +
-                        static_cast<Value>(entry.second->data).toTypeString(verbose) + ", ";
+            tableStr += "{ " + static_cast<Value>(entry.second).toTypeString(verbose) + ", ";
         }
 
         // Remove trailing comma and space
@@ -115,8 +127,22 @@ std::string Value::toTypeString(bool verbose) const {
     } else if (is<COLUMN>()) {
         if (!verbose) return "column";
 
-        return "column -> " + static_cast<Value>(get<COLUMN>()->header).toTypeString(verbose) +
-               ": " + static_cast<Value>(get<COLUMN>()->data).toTypeString(verbose);
+        std::string result = "column -> " + static_cast<Value>(get<COLUMN>()->header).toTypeString(verbose) +
+               ": [";
+
+        for (const std::shared_ptr<Value>& valPtr : get<COLUMN>()->data) {
+            result += valPtr->toTypeString(verbose) + ", ";
+        }
+
+        // Remove trailing comma and space
+        if (result.size() > 1) {
+            result.pop_back();
+            result.pop_back();
+        }
+
+        result += "]";
+
+        return result;
     }
 
     throw std::runtime_error("Error: unknown type cannot be converted to a string");
