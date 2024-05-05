@@ -47,7 +47,13 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
     }
 }
 
-void Evaluator::visit(const std::shared_ptr<ColumnNode> &node) {}
+void Evaluator::visit(const std::shared_ptr<ColumnNode> &node) {
+    std::shared_ptr<AstNode> leftNode = node->getLeftNode();
+    std::shared_ptr<AstNode> rightNode = node->getRightNode();
+
+    leftNode->accept(shared_from_this());
+    rightNode->accept(shared_from_this());
+}
 
 void Evaluator::visit(const std::shared_ptr<DivExprNode> &node) {}
 
@@ -136,7 +142,7 @@ void Evaluator::visit(const std::shared_ptr<LessExprNode> &node) {}
 void Evaluator::visit(const std::shared_ptr<ListNode> &node) {
     std::vector<std::shared_ptr<AstNode>> childNodes = node->getChildNodeList();
 
-    std::shared_ptr<std::vector<Value>> values = std::make_shared<std::vector<Value>>();
+    Value::LIST values = std::make_shared<std::vector<Value>>();
     for (size_t i = 0; i < childNodes.size(); ++i) {
         childNodes[i]->accept(shared_from_this());
         values->emplace_back(childNodes[i]->getVal());
@@ -248,12 +254,28 @@ void Evaluator::visit(const std::shared_ptr<ReturnNode> &node) {
 
 void Evaluator::visit(const std::shared_ptr<TableNode> &node) {
     std::cout << "tablenode";
+    Value::TABLE table = std::make_shared<std::unordered_map<Value::STR, Value::LIST>>();
     std::vector<std::shared_ptr<AstNode>> childNodes = node->getChildNodeList();
-    for (size_t i = 0; i < childNodes.size(); ++i) {
-        childNodes[i]->accept(shared_from_this());
+    for (std::shared_ptr<AstNode>& child : childNodes) {
+        std::shared_ptr<ColumnNode> columnNode = std::dynamic_pointer_cast<ColumnNode>(child);
+        columnNode->accept(shared_from_this());
+
+        if (!columnNode->getLeftNode()->getVal().is<Value::STR>()) {
+            throw std::runtime_error("Error: table key must be a string\n");
+        }
+
+        Value::STR key = columnNode->getLeftNode()->getVal().get<Value::STR>();
+
+        if (!columnNode->getRightNode()->getVal().is<Value::LIST>()) {
+            throw std::runtime_error("Error: table value must be a list\n");
+        }
+
+        Value::LIST value = columnNode->getRightNode()->getVal().get<Value::LIST>();
+
+        table->insert({key, value});
     }
 
-    node->setVal(nullptr);
+    node->setVal(table);
 }
 
 void Evaluator::visit(const std::shared_ptr<UnionExprNode> &node) {}

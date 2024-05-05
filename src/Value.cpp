@@ -33,14 +33,29 @@ std::string Value::toString() const {
 
         // Remove trailing comma and space
         if (result.size() > 1) {
-            result.erase(result.size() - 2);
+            result.pop_back();
+            result.pop_back();
         }
 
         result += "]";
 
         return result;
     } else if (is<TABLE>()) {
-        throw std::runtime_error("Not implemented");
+        std::string result = "{ ";
+
+        for (const std::pair<const std::string, Value::LIST> &entry : *get<TABLE>()) {
+            result += entry.first + ": " + entry.second->at(0).toString() + ", ";
+        }
+
+        // Remove trailing comma and space
+        if (result.size() > 1) {
+            result.pop_back();
+            result.pop_back();
+        }
+
+        result += " }";
+
+        return result;
     }
 
     throw std::runtime_error("Error: unknown value type");
@@ -63,9 +78,10 @@ std::string Value::toTypeString(bool verbose) const {
         std::string listStr = "list -> [";
         Value::LIST list = get<LIST>();
         for (Value val : *list) {
-            listStr += val.toTypeString(true) + ", ";
+            listStr += val.toTypeString(verbose) + ", ";
         }
 
+        // Remove trailing comma and space
         if (list->size() > 1) {
             listStr.pop_back();
             listStr.pop_back();
@@ -75,7 +91,23 @@ std::string Value::toTypeString(bool verbose) const {
 
         return listStr;
     } else if (is<TABLE>()) {
-        throw std::runtime_error("Not implemented");
+        if (!verbose) return "table";
+
+        std::string tableStr = "table -> { ";
+        Value::TABLE table = get<TABLE>();
+        for (const std::pair<const std::string, Value::LIST> &entry : *table) {
+            tableStr += entry.first + ": " + entry.second->at(0).toTypeString(verbose) + ", ";
+        }
+
+        // Remove trailing comma and space
+        if (table->size() > 1) {
+            tableStr.pop_back();
+            tableStr.pop_back();
+        }
+
+        tableStr += "} ";
+
+        return tableStr;
     }
 
     throw std::runtime_error("Error: unknown type cannot be converted to a string");

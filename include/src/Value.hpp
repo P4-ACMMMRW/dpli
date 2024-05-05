@@ -66,7 +66,7 @@ class Value {
     using STR = std::string;
     using NONETYPE = std::nullptr_t;
     using LIST = std::shared_ptr<std::vector<Value>>;
-    using TABLE = std::unordered_map<STR, LIST>;
+    using TABLE = std::shared_ptr<std::unordered_map<STR, LIST>>;
 
    private:
     mutable std::variant<INT, FLOAT, STR, BOOL, NONETYPE, LIST, TABLE> innerValue;
