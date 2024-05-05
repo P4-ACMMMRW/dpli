@@ -34,12 +34,23 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
 
         Value::INT index = indexNode->getRightNode()->getVal().get<Value::INT>();
 
-        // For some types indexing is read-only
-        if (!val.is<Value::LIST>()) {
-            throw std::runtime_error("Error: list assigment not allowed for this type\n");
-        }
+        if (val.is<Value::LIST>()) {
+            Value::LIST list = val.getMut<Value::LIST>();
+            if (index < 0 || static_cast<size_t>(index) >= list->size()) {
+                throw std::runtime_error("Error: index out of range\n");
+            }
 
-        (*(val.getMut<Value::LIST>()))[index] = rightNode->getVal();
+            (*list)[index] = rightNode->getVal();
+        } else if (val.is<Value::COLUMN>()) {
+            Value::LIST list = val.getMut<Value::COLUMN>()->data;
+            if (index < 0 || static_cast<size_t>(index) >= list->size()) {
+                throw std::runtime_error("Error: index out of range\n");
+            }
+
+            (*list)[index] = rightNode->getVal();
+        } else {
+            throw std::runtime_error("Error: index assignment not allowed for this type\n");
+        }
 
         vtable.bind(Variable(identifierNode->getText(), val));
     } else {
@@ -119,6 +130,14 @@ void Evaluator::visit(const std::shared_ptr<IndexNode> &node) {
         }
 
         node->setVal((*list)[index]);
+    } else if (val.is<Value::COLUMN>()) {
+        Value::COLUMN col = val.get<Value::COLUMN>();
+
+        if (index < 0 || static_cast<size_t>(index) >= col->data->size()) {
+            throw std::runtime_error("Error: index out of range\n");
+        }
+
+        node->setVal((*(col->data))[index]);
     } else {
         throw std::runtime_error("Error: invalid index operation\n");
     }
@@ -273,7 +292,7 @@ void Evaluator::visit(const std::shared_ptr<ReturnNode> &node) {
 }
 
 void Evaluator::visit(const std::shared_ptr<TableNode> &node) {
-    Value::TABLE table = std::make_shared<std::unordered_map<Value::STR, Value::LIST>>();
+    Value::TABLE table = std::make_shared<std::unordered_map<Value::STR, Value::COLUMN>>();
     std::vector<std::shared_ptr<AstNode>> childNodes = node->getChildNodeList();
     for (std::shared_ptr<AstNode>& child : childNodes) {
         std::shared_ptr<ColumnNode> columnNode = std::dynamic_pointer_cast<ColumnNode>(child);
@@ -283,7 +302,7 @@ void Evaluator::visit(const std::shared_ptr<TableNode> &node) {
             throw std::runtime_error("Error: table key must be a string\n");
         }
 
-        Value::STR key = columnNode->getLeftNode()->getVal().get<Value::STR>();
+        Value::STR header = columnNode->getLeftNode()->getVal().get<Value::STR>();
 
         if (!columnNode->getRightNode()->getVal().is<Value::LIST>()) {
             throw std::runtime_error("Error: table value must be a list\n");
@@ -291,7 +310,12 @@ void Evaluator::visit(const std::shared_ptr<TableNode> &node) {
 
         Value::LIST value = columnNode->getRightNode()->getVal().get<Value::LIST>();
 
-        table->insert({key, value});
+        Value::COLUMN col = std::make_shared<Value::COL_STRUCT>();
+        col->parent = table;
+        col->header = header;
+        col->data = value;
+
+        table->insert({header, col});
     }
 
     node->setVal(table);
@@ -329,15 +353,17 @@ void Evaluator::initPtable() {
     Procedure::ProcType len1 = [](std::vector<std::shared_ptr<AstNode>> arg) {
         Value val = arg[0]->getVal();
 
-        if (!(val.is<Value::STR>() || val.is<Value::LIST>())) {
-            throw std::runtime_error("Error: len() called with invalid type");
-        }
-
         if (val.is<Value::STR>()) {
             return static_cast<Value::INT>(val.get<Value::STR>().size());
-        } else {
+        } else if (val.is<Value::LIST>()) {
             return static_cast<Value::INT>(val.get<Value::LIST>()->size());
+        } else if (val.is<Value::TABLE>()) {
+            return static_cast<Value::INT>(val.get<Value::TABLE>()->size());
+        } else if (val.is<Value::COLUMN>()) {
+            return static_cast<Value::INT>(val.get<Value::COLUMN>()->data->size());
         }
+
+        throw std::runtime_error("Error: len() called with invalid type");
     };
 
     ptable.bind(Procedure("print", {"msg"}, print1));

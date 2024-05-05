@@ -43,8 +43,8 @@ std::string Value::toString() const {
     } else if (is<TABLE>()) {
         std::string result = "{ ";
 
-        for (const std::pair<const std::string, Value::LIST> &entry : *get<TABLE>()) {
-            result += entry.first + ": " + entry.second->at(0).toString() + ", ";
+        for (const std::pair<const std::string, Value::COLUMN> &entry : *get<TABLE>()) {
+            result += entry.first + ": " + static_cast<Value>(entry.second->data).toString() + ", ";
         }
 
         // Remove trailing comma and space
@@ -56,6 +56,8 @@ std::string Value::toString() const {
         result += " }";
 
         return result;
+    } else if (is<COLUMN>()) {
+        return static_cast<Value>(get<COLUMN>()->header).toString() + ": " + static_cast<Value>(get<COLUMN>()->data).toString();
     }
 
     throw std::runtime_error("Error: unknown value type");
@@ -95,8 +97,8 @@ std::string Value::toTypeString(bool verbose) const {
 
         std::string tableStr = "table -> { ";
         Value::TABLE table = get<TABLE>();
-        for (const std::pair<const std::string, Value::LIST> &entry : *table) {
-            tableStr += entry.first + ": " + entry.second->at(0).toTypeString(verbose) + ", ";
+        for (const std::pair<const std::string, Value::COLUMN> &entry : *table) {
+            tableStr += entry.first + ": " + static_cast<Value>(entry.second->data).toTypeString(verbose) + ", ";
         }
 
         // Remove trailing comma and space
@@ -108,6 +110,11 @@ std::string Value::toTypeString(bool verbose) const {
         tableStr += "} ";
 
         return tableStr;
+    } else if (is<COLUMN>()) {
+        if (!verbose) return "column";
+
+        return "column -> " + static_cast<Value>(get<COLUMN>()->header).toTypeString(verbose) + ": " +
+               static_cast<Value>(get<COLUMN>()->data).toTypeString(verbose);
     }
 
     throw std::runtime_error("Error: unknown type cannot be converted to a string");

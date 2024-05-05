@@ -66,10 +66,17 @@ class Value {
     using STR = std::string;
     using NONETYPE = std::nullptr_t;
     using LIST = std::shared_ptr<std::vector<Value>>;
-    using TABLE = std::shared_ptr<std::unordered_map<STR, LIST>>;
+    struct COL_STRUCT;
+    using COLUMN = std::shared_ptr<COL_STRUCT>;
+    using TABLE = std::shared_ptr<std::unordered_map<STR, COLUMN>>;
+    struct COL_STRUCT {
+        TABLE parent;
+        STR header;
+        LIST data;
+    };
 
    private:
-    mutable std::variant<INT, FLOAT, STR, BOOL, NONETYPE, LIST, TABLE> innerValue;
+    mutable std::variant<INT, FLOAT, STR, BOOL, NONETYPE, LIST, TABLE, COLUMN> innerValue;
 };
 }  // namespace dplsrc
 
