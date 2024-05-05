@@ -57,6 +57,8 @@ class Value {
      */
     std::string toTypeString(bool verbose = false) const;
 
+    bool operator==(const Value& other) const;
+
     /**
      * DPL Types
      */

@@ -14,7 +14,7 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
 
     // If left is not a leaf or index node, throw error
     // Also if left is a leaf node but not an identifier, throw error
-    bool error = !isLeaf && !isIndexing || isLeaf && !leafNode->getIsIdentifier();
+    bool error = (!isLeaf && !isIndexing) || (isLeaf && !leafNode->getIsIdentifier());
     if (error) {
         // TODO: move to error handler at some point
         throw std::runtime_error("Error: left side of assignment must be a reference\n");
@@ -88,6 +88,37 @@ void Evaluator::visit(const std::shared_ptr<FilterNode> &node) {
         //? is it possible to use on list?
     } else if (identifierVal.is<Value::COLUMN>()) {
         Value::COLUMN col = identifierVal.get<Value::COLUMN>();
+
+        std::vector<Value::INT> indicesToKeep;
+        for (size_t i = 0; i < col->data->size(); ++i) {
+            Value val = (*(col->data))[i];
+            if (val == filterVal) indicesToKeep.push_back(i);
+        }
+
+        for (Value::INT index : indicesToKeep) {
+            std::cout << index << ' ';
+        }
+
+        std::cout << '\n';
+
+        Value::TABLE table = col->parent;
+        Value::TABLE newTable = std::make_shared<std::unordered_map<Value::STR, Value::COLUMN>>();
+
+        for (const std::pair<const Value::STR, Value::COLUMN> &entry : *table) {
+            Value::LIST newData = std::make_shared<std::vector<Value>>();
+            for (Value::INT index : indicesToKeep) {
+                newData->emplace_back((*entry.second->data)[index]);
+            }
+
+            Value::COLUMN newCol = std::make_shared<Value::COL_STRUCT>();
+            newCol->parent = newTable;
+            newCol->header = entry.first;
+            newCol->data = newData;
+            newCol->size = newData->size();
+            newTable->insert({entry.first, newCol});
+        }
+
+        node->setVal(newTable);
     } else {
         throw std::runtime_error("Error: filter operation not allowed for this type\n");
     }
@@ -339,7 +370,7 @@ void Evaluator::visit(const std::shared_ptr<TableNode> &node) {
             sizeSet = true;
             size = val->size();
             col->size = size;
-        } else if (val->size() != size) {
+        } else if (val->size() != static_cast<size_t>(size)) {
             throw std::runtime_error("Error: all columns in a table must have the same size\n");
         }
 

@@ -121,3 +121,25 @@ std::string Value::toTypeString(bool verbose) const {
 
     throw std::runtime_error("Error: unknown type cannot be converted to a string");
 }
+
+bool Value::operator==(const Value& other) const {
+    if (is<INT>() && other.is<INT>()) {
+        return get<INT>() == other.get<INT>();
+    } else if (is<FLOAT>() && other.is<FLOAT>()) {
+        return get<FLOAT>() == other.get<FLOAT>();
+    } else if (is<STR>() && other.is<STR>()) {
+        return get<STR>() == other.get<STR>();
+    } else if (is<BOOL>() && other.is<BOOL>()) {
+        return get<BOOL>() == other.get<BOOL>();
+    } else if (is<NONETYPE>() && other.is<NONETYPE>()) {
+        return true;
+    } else if (is<LIST>() && other.is<LIST>()) {
+        return *get<LIST>() == *other.get<LIST>();
+    } else if (is<TABLE>() && other.is<TABLE>()) {
+        return *get<TABLE>() == *other.get<TABLE>();
+    } else if (is<COLUMN>() && other.is<COLUMN>()) {
+        return get<COLUMN>()->data == other.get<COLUMN>()->data;
+    }
+
+    return false;
+}
