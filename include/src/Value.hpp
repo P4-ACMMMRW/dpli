@@ -73,6 +73,7 @@ class Value {
         TABLE parent;
         STR header;
         LIST data;
+        INT size;
     };
 
    private:

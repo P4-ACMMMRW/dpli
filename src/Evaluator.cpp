@@ -294,6 +294,9 @@ void Evaluator::visit(const std::shared_ptr<ReturnNode> &node) {
 void Evaluator::visit(const std::shared_ptr<TableNode> &node) {
     Value::TABLE table = std::make_shared<std::unordered_map<Value::STR, Value::COLUMN>>();
     std::vector<std::shared_ptr<AstNode>> childNodes = node->getChildNodeList();
+    
+    long size = 0;
+    bool sizeSet;
     for (std::shared_ptr<AstNode>& child : childNodes) {
         std::shared_ptr<ColumnNode> columnNode = std::dynamic_pointer_cast<ColumnNode>(child);
         columnNode->accept(shared_from_this());
@@ -308,12 +311,20 @@ void Evaluator::visit(const std::shared_ptr<TableNode> &node) {
             throw std::runtime_error("Error: table value must be a list\n");
         }
 
-        Value::LIST value = columnNode->getRightNode()->getVal().get<Value::LIST>();
+        Value::LIST val = columnNode->getRightNode()->getVal().get<Value::LIST>();
 
         Value::COLUMN col = std::make_shared<Value::COL_STRUCT>();
         col->parent = table;
         col->header = header;
-        col->data = value;
+        col->data = val;
+        
+        if (!sizeSet) {
+            sizeSet = true;
+            size = val->size();
+            col->size = size;
+        } else if (val->size() != size) {
+            throw std::runtime_error("Error: all columns in a table must have the same size\n");
+        }
 
         table->insert({header, col});
     }
