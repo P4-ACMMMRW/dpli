@@ -37,18 +37,28 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
         Value val = var->getVal();
 
         // Store indices in a temporary vector
-        std::vector<Value::INT> indices;
+        std::vector<Value> indices;
         while (indexNode != nullptr) {
-            indices.emplace_back(indexNode->getRightNode()->getVal().get<Value::INT>());
+            if (indexNode->getRightNode()->getVal().is<Value::INT>()) {
+                indices.emplace_back(indexNode->getRightNode()->getVal().get<Value::INT>());
+            } else if (indexNode->getRightNode()->getVal().is<Value::STR>()) {
+                indices.emplace_back(indexNode->getRightNode()->getVal().get<Value::STR>());
+            }
+
             indexNode = std::dynamic_pointer_cast<IndexNode>(indexNode->getLeftNode());
         }
-
+        
         // Get the pointer to the innermost list or column
         Value::LIST list = nullptr;
         Value::INT lastIndex = 0;
         for (int i = indices.size() - 1; i >= 0; --i) {
-            Value::INT index = indices[i];
             if (val.is<Value::LIST>()) {
+                if (!indices[i].is<Value::INT>()) {
+                    throw std::runtime_error("Error: header indexing cannot be used on lists\n");
+                }
+                
+                Value::INT index = indices[i].get<Value::INT>();
+
                 list = val.getMut<Value::LIST>();
                 if (index < 0 || static_cast<size_t>(index) >= list->size()) {
                     throw std::runtime_error("Error: index out of range\n");
@@ -57,6 +67,12 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
                 lastIndex = index;
                 val = *(*list)[index];
             } else if (val.is<Value::COLUMN>()) {
+                if (!indices[i].is<Value::INT>()) {
+                    throw std::runtime_error("Error: header indexing cannot be used on columns\n");
+                }
+                
+                Value::INT index = indices[i].get<Value::INT>();
+
                 list = val.getMut<Value::COLUMN>()->data;
                 if (index < 0 || static_cast<size_t>(index) >= list->size()) {
                     throw std::runtime_error("Error: index out of range\n");
@@ -64,6 +80,24 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
 
                 lastIndex = index;
                 val = *(*list)[index];
+            } else if (val.is<Value::TABLE>()) {
+                // tables can index by column name
+                Value::TABLE table = val.get<Value::TABLE>();
+
+                if (!indices[i].is<Value::STR>()) {
+                    throw std::runtime_error("Error: Integer indexing cannot be used on tables\n");
+                }
+                
+                Value::STR header = indices[i].get<Value::STR>();
+
+                for (const std::pair<const Value::STR, Value::COLUMN> &entry : *table) {
+                    if (entry.second->header == indices[i].get<Value::STR>()) {
+                        val = entry.second;
+                        break;
+                    }
+                }
+
+
             } else {
                 throw std::runtime_error("Error: index assignment not allowed for this type\n");
             }
@@ -80,6 +114,7 @@ void Evaluator::visit(const std::shared_ptr<ColumnNode> &node) {
     std::shared_ptr<AstNode> leftNode = node->getLeftNode();
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
 
+    leftNode->accept(shared_from_this());
     rightNode->accept(shared_from_this());
 }
 
