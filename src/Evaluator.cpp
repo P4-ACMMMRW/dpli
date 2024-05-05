@@ -14,7 +14,7 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
 
     // If left is not a leaf or index node, throw error
     // Also if left is a leaf node but not an identifier, throw error
-    bool error = !isLeaf && !isIndexing || (isLeaf && !leafNode->getIsIdentifier());
+    bool error = !isLeaf && !isIndexing || isLeaf && !leafNode->getIsIdentifier();
     if (error) {
         // TODO: move to error handler at some point
         throw std::runtime_error("Error: left side of assignment must be a reference\n");
@@ -69,7 +69,27 @@ void Evaluator::visit(const std::shared_ptr<GreaterEqualExprNode> &node) {}
 
 void Evaluator::visit(const std::shared_ptr<GreaterExprNode> &node) {}
 
-void Evaluator::visit(const std::shared_ptr<HeaderIndexNode> &node) {}
+void Evaluator::visit(const std::shared_ptr<HeaderIndexNode> &node) {
+    std::shared_ptr<AstNode> identifierNode = node->getLeftNode();
+    std::shared_ptr<AstNode> headerNode = node->getRightNode();
+
+    identifierNode->accept(shared_from_this());
+    headerNode->accept(shared_from_this());
+
+    Value val = identifierNode->getVal();
+    if (val.is<Value::TABLE>()) {
+        Value::TABLE table = val.get<Value::TABLE>();
+        Value::STR header = headerNode->getVal().get<Value::STR>();
+        
+        try {
+            node->setVal(table->at(header));
+        } catch (const std::out_of_range &e) {
+            throw std::runtime_error("Error: header not found in table\n");
+        }
+    } else {
+        throw std::runtime_error("Error: invalid index operation\n");
+    }
+}
 
 void Evaluator::visit(const std::shared_ptr<IfNode> &node) {}
 
@@ -94,7 +114,7 @@ void Evaluator::visit(const std::shared_ptr<IndexNode> &node) {
     } else if (val.is<Value::LIST>()) {
         Value::LIST list = val.get<Value::LIST>();
 
-        if (index < 0 || (size_t)index >= list->size()) {
+        if (index < 0 || static_cast<size_t>(index) >= list->size()) {
             throw std::runtime_error("Error: index out of range\n");
         }
 
@@ -253,7 +273,6 @@ void Evaluator::visit(const std::shared_ptr<ReturnNode> &node) {
 }
 
 void Evaluator::visit(const std::shared_ptr<TableNode> &node) {
-    std::cout << "tablenode";
     Value::TABLE table = std::make_shared<std::unordered_map<Value::STR, Value::LIST>>();
     std::vector<std::shared_ptr<AstNode>> childNodes = node->getChildNodeList();
     for (std::shared_ptr<AstNode>& child : childNodes) {
