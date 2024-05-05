@@ -75,17 +75,19 @@ void Evaluator::visit(const std::shared_ptr<EqualExprNode> &node) {}
 void Evaluator::visit(const std::shared_ptr<ExpoExprNode> &node) {}
 
 void Evaluator::visit(const std::shared_ptr<FilterNode> &node) {
-    std::shared_ptr<AstNode> leftNode = node->getLeftNode();
-    std::shared_ptr<AstNode> rightNode = node->getRightNode();
+    std::shared_ptr<AstNode> identifierNode = node->getLeftNode();
+    std::shared_ptr<AstNode> filterNode = node->getRightNode();
 
-    leftNode->accept(shared_from_this());
-    rightNode->accept(shared_from_this());
+    identifierNode->accept(shared_from_this());
+    filterNode->accept(shared_from_this());
 
-    Value identifierVal = leftNode->getVal();
-    Value filterVal = rightNode->getVal();
+    Value identifierVal = identifierNode->getVal();
+    Value filterVal = filterNode->getVal();
 
-    if (val.is<Value::COLUMN>) {
-        Value::COLUMN col = val.get<Value::COLUMN>();
+    if (identifierVal.is<Value::LIST>()) {
+        //? is it possible to use on list?
+    } else if (identifierVal.is<Value::COLUMN>()) {
+        Value::COLUMN col = identifierVal.get<Value::COLUMN>();
     } else {
         throw std::runtime_error("Error: filter operation not allowed for this type\n");
     }
