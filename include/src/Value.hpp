@@ -1,12 +1,12 @@
 #ifndef VALUE_HPP
 #define VALUE_HPP
 
+#include <memory>
 #include <stdexcept>
 #include <string>
+#include <unordered_map>
 #include <variant>
 #include <vector>
-#include <unordered_map>
-#include <memory>
 
 namespace dplsrc {
 class Value {
@@ -51,9 +51,9 @@ class Value {
      */
     std::string toString() const;
 
-    /** 
+    /**
      * @param Whether expand types of composite types
-     * @return String representation of type 
+     * @return String representation of type
      */
     std::string toTypeString(bool verbose = false) const;
 

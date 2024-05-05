@@ -108,7 +108,7 @@ void Evaluator::visit(const std::shared_ptr<HeaderIndexNode> &node) {
     if (val.is<Value::TABLE>()) {
         Value::TABLE table = val.get<Value::TABLE>();
         Value::STR header = headerNode->getVal().get<Value::STR>();
-        
+
         try {
             node->setVal(table->at(header));
         } catch (const std::out_of_range &e) {
@@ -314,7 +314,7 @@ void Evaluator::visit(const std::shared_ptr<TableNode> &node) {
 
     long size = 0;
     bool sizeSet;
-    for (std::shared_ptr<AstNode>& child : childNodes) {
+    for (std::shared_ptr<AstNode> &child : childNodes) {
         std::shared_ptr<ColumnNode> columnNode = std::dynamic_pointer_cast<ColumnNode>(child);
         columnNode->accept(shared_from_this());
 
@@ -334,7 +334,7 @@ void Evaluator::visit(const std::shared_ptr<TableNode> &node) {
         col->parent = table;
         col->header = header;
         col->data = val;
-        
+
         if (!sizeSet) {
             sizeSet = true;
             size = val->size();
