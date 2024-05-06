@@ -156,15 +156,16 @@ void Evaluator::visit(const std::shared_ptr<FilterNode> &node) {
 
         std::string op = node->getText();
 
+        // Compute indices to keep
         std::vector<Value::INT> indicesToKeep;
         for (size_t i = 0; i < col->data->size(); ++i) {
             Value val = *(*col->data)[i];
             if (ops[op](val, filterVal)) indicesToKeep.push_back(i);
         }
 
+        // Create new columns with filtered data and insert into new table
         Value::TABLE table = col->parent;
         Value::TABLE newTable = std::make_shared<std::unordered_map<Value::STR, Value::COLUMN>>();
-
         for (const std::pair<const Value::STR, Value::COLUMN> &entry : *table) {
             Value::LIST newData = std::make_shared<std::vector<std::shared_ptr<Value>>>();
             for (Value::INT index : indicesToKeep) {
