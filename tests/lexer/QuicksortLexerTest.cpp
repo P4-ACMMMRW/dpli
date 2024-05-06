@@ -86,6 +86,8 @@ LEXER_TEST("quicksort.dpl") {
         DplLexer::Assign,
         DplLexer::Identifier,
         DplLexer::OpenSquare,
+        DplLexer::Identifier,
+        DplLexer::OpenPar,
         DplLexer::OpenPar,
         DplLexer::Identifier,
         DplLexer::Plus,
@@ -93,6 +95,7 @@ LEXER_TEST("quicksort.dpl") {
         DplLexer::ClosePar,
         DplLexer::Slash,
         DplLexer::Integer,
+        DplLexer::ClosePar,
         DplLexer::CloseSquare,
         DplLexer::Newline,
         DplLexer::Newline,
@@ -285,6 +288,9 @@ LEXER_TEST("quicksort.dpl") {
         DplLexer::String,
         DplLexer::Plus,
         DplLexer::Identifier,
+        DplLexer::OpenPar,
+        DplLexer::Identifier,
+        DplLexer::ClosePar,
         DplLexer::ClosePar,
         DplLexer::Newline
     };
