@@ -301,15 +301,17 @@ antlrcpp::Any AstBuilder::visitExpoexpr(DplParser::ExpoexprContext* parseNode) {
 }
 
 antlrcpp::Any AstBuilder::visitList(DplParser::ListContext* parseNode) {
-    size_t index =
-        (parseNode->children.size() == 3) ? 1 : 9;  // dirty way to not visit children if empty list
-    return unaryNode([this]() { return std::make_shared<ListNode>(currentNode); }, parseNode, index,
-                     "[] List");
+    bool hasChild =
+        (parseNode->children.size() > 2) ? true : false;  // dirty way to not visit children if empty list
+    return unaryNode([this]() { return std::make_shared<ListNode>(currentNode); }, parseNode, 1,
+                     "[] List", true, hasChild);
 }
 
 antlrcpp::Any AstBuilder::visitTable(DplParser::TableContext* parseNode) {
+     bool hasChild =
+        (parseNode->children.size() > 2) ? true : false; 
     return unaryNodeList([this]() { return std::make_shared<TableNode>(currentNode); }, parseNode,
-                         1, 2, "{} Table");
+                         1, 2, "{} Table", hasChild);
 }
 
 antlrcpp::Any AstBuilder::visitColumn(DplParser::ColumnContext* parseNode) {
@@ -399,10 +401,14 @@ void AstBuilder::initNewNode(antlr4::ParserRuleContext* parseNode,
 
 antlrcpp::Any AstBuilder::unaryNode(const std::function<std::shared_ptr<AstNode>()>& createNode,
                                     antlr4::ParserRuleContext* parseNode, size_t childIndex,
-                                    const std::string& text, bool restoreOldCurrent) {
+                                    const std::string& text, bool restoreOldCurrent, bool hasChild) {
     std::shared_ptr<AstNode> oldNode = currentNode;
     std::shared_ptr<AstNode> newNode = createNode();
     initNewNode(parseNode, newNode, text);
+
+    if (!hasChild) {
+        return nullptr;
+    }
 
     tree::ParseTree* child = parseNode->children[childIndex];
 
@@ -419,10 +425,14 @@ antlrcpp::Any AstBuilder::unaryNode(const std::function<std::shared_ptr<AstNode>
 
 antlrcpp::Any AstBuilder::unaryNodeList(const std::function<std::shared_ptr<AstNode>()>& createNode,
                                         antlr4::ParserRuleContext* parseNode, size_t startIndex,
-                                        size_t interval, const std::string& text) {
+                                        size_t interval, const std::string& text, bool hasChild) {
     std::shared_ptr<AstNode> oldNode = currentNode;
     std::shared_ptr<AstNode> newNode = createNode();
     initNewNode(parseNode, newNode, text);
+
+    if (!hasChild) {
+        return nullptr;
+    }
 
     for (size_t i = startIndex; i < parseNode->children.size(); i = i + interval) {
         parseNode->children[i]->accept(this);
