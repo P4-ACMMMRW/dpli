@@ -4,6 +4,7 @@
 #include <DplLexer.h>
 
 #include <filesystem>
+#include <cmath>
 
 #include "AllNodeIncludes.hpp"
 #include "AstVisitor.hpp"

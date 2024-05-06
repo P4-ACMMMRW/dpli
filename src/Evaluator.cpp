@@ -495,6 +495,26 @@ void Evaluator::initPtable() {
         throw std::runtime_error("Error: len called with invalid type");
     };
 
+    Procedure::ProcType ceil1 = [](std::vector<std::shared_ptr<AstNode>> args) {
+        Value val = args[0]->getVal();
+
+        if (val.is<Value::FLOAT>()) {
+            return static_cast<Value::INT>(std::ceil(val.get<Value::FLOAT>()));
+        }
+
+        throw std::runtime_error("Error: ceil called with invalid type " + val.toTypeString() + ". Expected: " + Value(0.0).toTypeString() + "\n");
+    };
+    
+    Procedure::ProcType floor1 = [](std::vector<std::shared_ptr<AstNode>> args) {
+        Value val = args[0]->getVal();
+
+        if (val.is<Value::FLOAT>()) {
+            return static_cast<Value::INT>(std::floor(val.get<Value::FLOAT>()));
+        }
+
+        throw std::runtime_error("Error: floor called with invalid type " + val.toTypeString() + ". Expected: " + Value(0.0).toTypeString() + "\n");
+    };
+
     Procedure::ProcType readFile1 = [](std::vector<std::shared_ptr<AstNode>> args) {
         Value fileName = args[0]->getVal();
 
@@ -708,6 +728,8 @@ void Evaluator::initPtable() {
     ptable.bind(Procedure("type", {"x"}, type1));
     ptable.bind(Procedure("str", {"x"}, str1));
     ptable.bind(Procedure("len", {"x"}, len1));
+    ptable.bind(Procedure("ceil", {"x"}, ceil1));
+    ptable.bind(Procedure("floor", {"x"}, floor1));
     ptable.bind(Procedure("readFile", {"filename"}, readFile1));
     ptable.bind(Procedure("writeFile", {"filename", "content"}, writeFile2));
     ptable.bind(Procedure("readCsv", {"filename"}, readCsv1));
