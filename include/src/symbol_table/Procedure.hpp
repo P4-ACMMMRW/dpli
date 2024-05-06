@@ -45,7 +45,7 @@ class Procedure : public Symbol {
      * Function type for built-in procedures that take a vector of shared pointers to AstNodes as
      * input and return any type
      */
-    using ProcType = std::function<std::pair<Type, Value>(std::vector<std::shared_ptr<AstNode>>)>;
+    using ProcType = std::function<Value(std::vector<std::shared_ptr<AstNode>>)>;
 
     /**
      * Constructor for built-in procedures

@@ -10,7 +10,7 @@ void AstVisitor::visit(const std::shared_ptr<AssignNode> &node) {
 }
 
 void AstVisitor::visit(const std::shared_ptr<ColumnNode> &node) {
-    visit(std::static_pointer_cast<UnaryNode>(node));
+    visit(std::static_pointer_cast<BinaryNode>(node));
 }
 
 void AstVisitor::visit(const std::shared_ptr<DivExprNode> &node) {
@@ -69,7 +69,7 @@ void AstVisitor::visit(const std::shared_ptr<IntersectionExprNode> &node) {
     visit(std::static_pointer_cast<BinaryNode>(node));
 }
 
-void AstVisitor::visit(const std::shared_ptr<LeafNode> &node) {}
+void AstVisitor::visit([[maybe_unused]] const std::shared_ptr<LeafNode> &node) {}
 
 void AstVisitor::visit(const std::shared_ptr<LessEqualExprNode> &node) {
     visit(std::static_pointer_cast<BinaryNode>(node));
@@ -157,10 +157,6 @@ void AstVisitor::visit(const std::shared_ptr<ReturnNode> &node) {
 
 void AstVisitor::visit(const std::shared_ptr<TableNode> &node) {
     visit(std::static_pointer_cast<UnaryNodeList>(node));
-}
-
-void AstVisitor::visit(const std::shared_ptr<UnaryExprNode> &node) {
-    visit(std::static_pointer_cast<UnaryNode>(node));
 }
 
 void AstVisitor::visit(const std::shared_ptr<UnionExprNode> &node) {

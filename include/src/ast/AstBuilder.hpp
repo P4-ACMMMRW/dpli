@@ -41,7 +41,8 @@ class AstBuilder : public DplParserBaseVisitor {
     antlrcpp::Any visitWhilestm(DplParser::WhilestmContext *parseNode) override;
 
     // Expressions  The expressions isn't correctly sequenced
-    antlrcpp::Any visitJuncexpr(DplParser::JuncexprContext *parseNode) override;
+    antlrcpp::Any visitOrexpr(DplParser::OrexprContext *parseNode) override;
+    antlrcpp::Any visitAndexpr(DplParser::AndexprContext *parseNode) override;
     antlrcpp::Any visitNotexpr(DplParser::NotexprContext *parseNode) override;
     antlrcpp::Any visitEqulexpr(DplParser::EqulexprContext *parseNode) override;
     antlrcpp::Any visitCompexpr(DplParser::CompexprContext *parseNode) override;
@@ -53,6 +54,7 @@ class AstBuilder : public DplParserBaseVisitor {
 
     // Terms
     antlrcpp::Any visitTerminal(tree::TerminalNode *node) override;
+    antlrcpp::Any visitNumber(DplParser::NumberContext *parseNode) override;
     antlrcpp::Any visitList(DplParser::ListContext *parseNode) override;
     antlrcpp::Any visitTable(DplParser::TableContext *parseNode) override;
     antlrcpp::Any visitColumn(DplParser::ColumnContext *parseNode) override;
@@ -75,11 +77,11 @@ class AstBuilder : public DplParserBaseVisitor {
 
     antlrcpp::Any unaryNode(const std::function<std::shared_ptr<AstNode>()> &createNode,
                             antlr4::ParserRuleContext *parseNode, size_t childIndex,
-                            const std::string &text = "", bool restoreOldCurrent = true);
+                            const std::string &text = "", bool restoreOldCurrent = true, bool hasChild = true);
 
     antlrcpp::Any unaryNodeList(const std::function<std::shared_ptr<AstNode>()> &createNode,
                                 antlr4::ParserRuleContext *parseNode, size_t startIndex,
-                                size_t interval, const std::string &text = "");
+                                size_t interval, const std::string &text = "", bool hasChild = true);
 
     antlrcpp::Any binaryNode(const std::function<std::shared_ptr<AstNode>()> &createNode,
                              antlr4::ParserRuleContext *parseNode, size_t leftIndex,

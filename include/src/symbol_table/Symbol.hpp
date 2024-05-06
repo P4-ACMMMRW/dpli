@@ -4,7 +4,6 @@
 #include <string>
 
 #include "AstNode.hpp"
-#include "Type.hpp"
 
 namespace dplsrc {
 class Symbol {

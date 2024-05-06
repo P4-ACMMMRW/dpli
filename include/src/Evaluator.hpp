@@ -12,6 +12,8 @@
 namespace dplsrc {
 class Evaluator : public AstVisitor {
    public:
+    Evaluator(bool verbose = false) : verbose(verbose) { initPtable(); }
+
     void visit(const std::shared_ptr<AndExprNode> &node) override;
     void visit(const std::shared_ptr<AssignNode> &node) override;
     void visit(const std::shared_ptr<ColumnNode> &node) override;
@@ -25,6 +27,7 @@ class Evaluator : public AstVisitor {
     void visit(const std::shared_ptr<HeaderIndexNode> &node) override;
     void visit(const std::shared_ptr<IfNode> &node) override;
     void visit(const std::shared_ptr<IndexNode> &node) override;
+    void visit(const std::shared_ptr<IntersectionExprNode> &node) override;
     void visit(const std::shared_ptr<LeafNode> &node) override;
     void visit(const std::shared_ptr<LessEqualExprNode> &node) override;
     void visit(const std::shared_ptr<LessExprNode> &node) override;
@@ -44,7 +47,7 @@ class Evaluator : public AstVisitor {
     void visit(const std::shared_ptr<ProgNode> &node) override;
     void visit(const std::shared_ptr<ReturnNode> &node) override;
     void visit(const std::shared_ptr<TableNode> &node) override;
-    void visit(const std::shared_ptr<UnaryExprNode> &node) override;
+    void visit(const std::shared_ptr<UnionExprNode> &node) override;
     void visit(const std::shared_ptr<WhileNode> &node) override;
 
     /**
@@ -60,6 +63,7 @@ class Evaluator : public AstVisitor {
    private:
     VariableTable vtable = VariableTable();
     ProcedureTable ptable = ProcedureTable();
+    bool verbose;
 
     bool isNumeric(Type type) {
         return type == Type::FLOAT || type == Type::INT || type == Type::BOOL;

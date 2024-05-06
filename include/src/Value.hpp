@@ -1,8 +1,10 @@
 #ifndef VALUE_HPP
 #define VALUE_HPP
 
+#include <memory>
 #include <stdexcept>
 #include <string>
+#include <unordered_map>
 #include <variant>
 #include <vector>
 
@@ -15,10 +17,10 @@ class Value {
     Value() = default;
 
     /**
-     * Generic constructor
+     * Set the inner value
      */
     template <typename T>
-    Value(const T &value) : innerValue(value) {}
+    Value(const T &innerValue) : innerValue(innerValue) {}
 
     /**
      * Check if the value is of type T
@@ -29,7 +31,7 @@ class Value {
     }
 
     /**
-     * Get the value as type T
+     * Get the value as type T read-only
      */
     template <typename T>
     const T &get() const {
@@ -37,17 +39,54 @@ class Value {
     }
 
     /**
-     * Prints string representation of value
+     * Get the value as type T mutable
+     */
+    template <typename T>
+    T &getMut() {
+        return std::get<T>(innerValue);
+    }
+
+    /**
+     * @return String representation of value
      */
     std::string toString() const;
 
     /**
-     * List type
+     * @param Whether expand types of composite types
+     * @return String representation of type
      */
-    using List = std::vector<Value>;
+    std::string toTypeString(bool verbose = false) const;
+
+    // Operator overloadings
+    bool operator==(const Value& other) const;
+    bool operator!=(const Value& other) const;
+    bool operator<(const Value& other) const;
+    bool operator>(const Value& other) const;
+    bool operator<=(const Value& other) const;
+    bool operator>=(const Value& other) const;
+
+
+    /**
+     * DPL Types
+     */
+    using INT = long;
+    using FLOAT = double;
+    using BOOL = bool;
+    using STR = std::string;
+    using NONETYPE = std::nullptr_t;
+    using LIST = std::shared_ptr<std::vector<std::shared_ptr<Value>>>;
+    struct COL_STRUCT;
+    using COLUMN = std::shared_ptr<COL_STRUCT>;
+    using TABLE = std::shared_ptr<std::unordered_map<STR, COLUMN>>;
+    struct COL_STRUCT {
+        TABLE parent;
+        STR header;
+        LIST data;
+        INT size;
+    };
 
    private:
-    std::variant<int, double, std::string, bool, List, std::nullptr_t> innerValue;
+    mutable std::variant<INT, FLOAT, STR, BOOL, NONETYPE, LIST, TABLE, COLUMN> innerValue;
 };
 }  // namespace dplsrc
 

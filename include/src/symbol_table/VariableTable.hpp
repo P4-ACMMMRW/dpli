@@ -62,6 +62,12 @@ class VariableTable : public SymbolTable {
    private:
     std::stack<Scope> scopes = std::stack<Scope>();
     Scope globalScope;
+
+    /**
+     * Generates a string representation of a scope
+     * @param scope The scope to generate a string for
+     */
+    std::string generatePrintString(const Scope &scope);
 };
 }  // namespace dplsrc
 

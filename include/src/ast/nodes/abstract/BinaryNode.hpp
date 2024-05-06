@@ -19,9 +19,19 @@ class BinaryNode : public AstNode {
 
     void accept(std::shared_ptr<AstVisitor> visitor) override = 0;
 
+    void swapNodes() {
+        std::shared_ptr<ChildNode> temp = leftNode;
+        leftNode = rightNode;
+        rightNode = temp;
+    }
+
    private:
     std::shared_ptr<ChildNode> leftNode;
     std::shared_ptr<ChildNode> rightNode;
+
+   protected:
+    void setLeftNode(std::shared_ptr<AstNode> child) { leftNode->addChild(child); };
+    void setRightNode(std::shared_ptr<AstNode> child) { rightNode->addChild(child); };
 };
 
 #endif
