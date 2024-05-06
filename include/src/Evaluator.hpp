@@ -65,8 +65,8 @@ class Evaluator : public AstVisitor {
     ProcedureTable ptable = ProcedureTable();
     bool verbose;
 
-    bool isNumeric(Type type) {
-        return type == Type::FLOAT || type == Type::INT || type == Type::BOOL;
+    bool isNumeric(Value value) {
+        return value.is<Value::FLOAT>() || value.is<Value::INT>() || value.is<Value::BOOL>();
     }
 
     /**
