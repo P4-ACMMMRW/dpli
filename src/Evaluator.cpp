@@ -165,7 +165,7 @@ void Evaluator::visit(const std::shared_ptr<FilterNode> &node) {
 
         // Create new columns with filtered data and insert into new table
         Value::TABLE table = col->parent;
-        Value::TABLE newTable = std::make_shared<std::unordered_map<Value::STR, Value::COLUMN>>();
+        Value::TABLE newTable = std::make_shared<std::map<Value::STR, Value::COLUMN>>();
         for (const std::pair<const Value::STR, Value::COLUMN> &entry : *table) {
             Value::LIST newData = std::make_shared<std::vector<std::shared_ptr<Value>>>();
             for (Value::INT index : indicesToKeep) {
@@ -410,7 +410,7 @@ void Evaluator::visit(const std::shared_ptr<ReturnNode> &node) {
 }
 
 void Evaluator::visit(const std::shared_ptr<TableNode> &node) {
-    Value::TABLE table = std::make_shared<std::unordered_map<Value::STR, Value::COLUMN>>();
+    Value::TABLE table = std::make_shared<std::map<Value::STR, Value::COLUMN>>();
     std::vector<std::shared_ptr<AstNode>> childNodes = node->getChildNodeList();
 
     long size = 0;
@@ -455,32 +455,32 @@ void Evaluator::visit(const std::shared_ptr<UnionExprNode> &node) {}
 void Evaluator::visit(const std::shared_ptr<WhileNode> &node) {}
 
 void Evaluator::initPtable() {
-    Procedure::ProcType print1 = [](std::vector<std::shared_ptr<AstNode>> arg) {
-        std::cout << arg[0]->getVal().toString() << '\n';
+    Procedure::ProcType print1 = [](std::vector<std::shared_ptr<AstNode>> args) {
+        std::cout << args[0]->getVal().toString() << '\n';
         return nullptr;
     };
 
-    Procedure::ProcType input0 = []([[maybe_unused]] std::vector<std::shared_ptr<AstNode>> arg) {
+    Procedure::ProcType input0 = []([[maybe_unused]] std::vector<std::shared_ptr<AstNode>> args) {
         std::string inputStr;
         std::getline(std::cin, inputStr);
         return inputStr;
     };
 
-    Procedure::ProcType input1 = [input0](std::vector<std::shared_ptr<AstNode>> arg) {
-        std::cout << arg[0]->getVal().toString();
-        return input0(arg);
+    Procedure::ProcType input1 = [input0](std::vector<std::shared_ptr<AstNode>> args) {
+        std::cout << args[0]->getVal().toString();
+        return input0(args);
     };
 
-    Procedure::ProcType type1 = [](std::vector<std::shared_ptr<AstNode>> arg) {
-        return arg[0]->getVal().toTypeString();
+    Procedure::ProcType type1 = [](std::vector<std::shared_ptr<AstNode>> args) {
+        return args[0]->getVal().toTypeString();
     };
 
-    Procedure::ProcType str1 = [](std::vector<std::shared_ptr<AstNode>> arg) {
-        return arg[0]->getVal().toString();
+    Procedure::ProcType str1 = [](std::vector<std::shared_ptr<AstNode>> args) {
+        return args[0]->getVal().toString();
     };
 
-    Procedure::ProcType len1 = [](std::vector<std::shared_ptr<AstNode>> arg) {
-        Value val = arg[0]->getVal();
+    Procedure::ProcType len1 = [](std::vector<std::shared_ptr<AstNode>> args) {
+        Value val = args[0]->getVal();
 
         if (val.is<Value::STR>()) {
             return static_cast<Value::INT>(val.get<Value::STR>().size());
@@ -492,14 +492,14 @@ void Evaluator::initPtable() {
             return static_cast<Value::INT>(val.get<Value::COLUMN>()->data->size());
         }
 
-        throw std::runtime_error("Error: len() called with invalid type");
+        throw std::runtime_error("Error: len called with invalid type");
     };
 
-    Procedure::ProcType readFile1 = [](std::vector<std::shared_ptr<AstNode>> arg) {
-        Value fileName = arg[0]->getVal();
+    Procedure::ProcType readFile1 = [](std::vector<std::shared_ptr<AstNode>> args) {
+        Value fileName = args[0]->getVal();
 
         if (!fileName.is<Value::STR>()) {
-            throw std::runtime_error("Error: readFile() called with invalid type");
+            throw std::runtime_error("Error: readFile called with invalid type");
         }
 
         std::filesystem::path filePath = fileName.get<Value::STR>();
@@ -513,12 +513,12 @@ void Evaluator::initPtable() {
         return fileContents;
     };
 
-    Procedure::ProcType writeFile2 = [](std::vector<std::shared_ptr<AstNode>> arg) {
-        Value fileName = arg[0]->getVal();
-        Value content = arg[1]->getVal();
+    Procedure::ProcType writeFile2 = [](std::vector<std::shared_ptr<AstNode>> args) {
+        Value fileName = args[0]->getVal();
+        Value content = args[1]->getVal();
 
         if (!content.is<Value::STR>() || !fileName.is<Value::STR>()) {
-            throw std::runtime_error("Error: writeFile() called with invalid types");
+            throw std::runtime_error("Error: writeFile called with invalid types");
         }
 
         std::filesystem::path filePath = fileName.get<Value::STR>();
@@ -532,6 +532,176 @@ void Evaluator::initPtable() {
         return nullptr;
     };
 
+    Procedure::ProcType readCsv2 = [](std::vector<std::shared_ptr<AstNode>> args) {
+        Value fileName = args[0]->getVal();
+        Value delimiterVal = args[1]->getVal();
+
+        if (!fileName.is<Value::STR>()) {
+            throw std::runtime_error("Error: readCsv called with invalid type " + fileName.toTypeString() + ". Expected: " + Value("").toTypeString() + '\n');
+        }
+
+        if (!delimiterVal.is<Value::STR>()) {
+            throw std::runtime_error("Error: readCsv called with invalid type " + delimiterVal.toTypeString() + ". Expected: " + Value("").toTypeString() + '\n');
+        }
+
+        if (delimiterVal.get<Value::STR>().size() != 1) {
+            throw std::runtime_error("Error: delimiter must be a string of size 1\n");
+        }
+
+        char delimiter = delimiterVal.get<Value::STR>()[0];
+        std::filesystem::path filePath = fileName.get<Value::STR>();
+        std::ifstream file(filePath);
+        if (!file.is_open()) {
+            throw std::runtime_error("Error: could not open file \"" + fileName.toString() + "\"");
+        }
+
+        bool isFirstLine = true;
+        std::string line;
+        Value::TABLE table = std::make_shared<std::map<Value::STR, Value::COLUMN>>();
+        std::vector<Value::COLUMN> cols;
+        std::vector<Value::STR> headers;
+        while (std::getline(file, line)) {
+            // Split line by delimiter
+            bool inQuotes = false;
+            std::vector<Value::STR> values;
+            Value::STR value;
+            for (char c : line) {
+                if (c == '"') {
+                    inQuotes = !inQuotes;
+                } else if (c == delimiter && !inQuotes) {
+                    values.push_back(value);
+                    value.clear();
+                } else {
+                    value += c;
+                }
+            }
+
+            if (!value.empty()) {
+                values.push_back(value);
+            }
+
+            // If first line we store as headers
+            if (isFirstLine) {
+                isFirstLine = false;
+                headers = values;
+
+                // Initialize columns
+                for (size_t i = 0; i < headers.size(); ++i) {
+                    cols.emplace_back(std::make_shared<Value::COL_STRUCT>());
+                    cols[i]->data = std::make_shared<std::vector<std::shared_ptr<Value>>>();
+                }
+            } else {
+                for (size_t i = 0; i < headers.size(); ++i) {
+                    if (i >= values.size() || values[i].empty()) {
+                        cols[i]->data->emplace_back(std::make_shared<Value>(nullptr));
+                    } else {
+                        cols[i]->data->emplace_back(std::make_shared<Value>(values[i]));
+                    }
+
+                    // If header is missing then we generate a default one to ensure uniqueness
+                    if (headers[i].empty()) {
+                        std::hash<std::size_t> hash;
+                        std::string hashStr = "id" + std::to_string(hash(i));
+                        
+                        // While the hash is already in headers vector we make a new one to avoid collision
+                        size_t j = i;
+                        while (std::count(headers.begin(), headers.end(), hashStr)) {
+                            ++j;
+                            hashStr = "id" + std::to_string(hash(j));
+                        }
+
+                        headers[i] = hashStr;
+                    }
+
+                    cols[i]->header = headers[i];
+                    cols[i]->parent = table;
+                    cols[i]->size++;
+                }
+            }
+        }
+
+        // Insert columns into table
+        for (size_t i = 0; i < headers.size(); ++i) {
+            table->insert({headers[i], cols[i]});
+        }
+
+        return table;
+    };
+
+    Procedure::ProcType readCsv1 = [readCsv2](std::vector<std::shared_ptr<AstNode>> args) {
+        std::shared_ptr<LeafNode> delim = std::make_shared<LeafNode>(nullptr);
+        delim->setVal(Value(","));
+        args.emplace_back(delim);
+        return readCsv2(args);
+    };
+
+    Procedure::ProcType writeCsv3 = [](std::vector<std::shared_ptr<AstNode>> args) {
+        Value fileName = args[0]->getVal();
+        Value table = args[1]->getVal();
+        Value delimiterVal = args[2]->getVal();
+
+        if (!fileName.is<Value::STR>()) {
+            throw std::runtime_error("Error: writeCsv called with invalid type " + fileName.toTypeString() + ". Expected: " + Value("").toTypeString() + '\n');
+        }
+
+        if (!table.is<Value::TABLE>()) {
+            throw std::runtime_error("Error: writeCsv called with invalid type " + table.toTypeString() + ". Expected: " + Value("").toTypeString() + '\n');
+        }
+
+        if (!delimiterVal.is<Value::STR>()) {
+            throw std::runtime_error("Error: writeCsv called with invalid type " + delimiterVal.toTypeString() + ". Expected: " + Value("").toTypeString() + '\n');
+        }
+
+
+        if (delimiterVal.get<Value::STR>().size() != 1) {
+            throw std::runtime_error("Error: delimiter must be a string of size 1\n");
+        }
+
+        char delimiter = delimiterVal.get<Value::STR>()[0];
+
+        std::filesystem::path filePath = fileName.get<Value::STR>();
+        std::ofstream file(filePath);
+        if (!file.is_open()) {
+            throw std::runtime_error("Error: could not open file \"" + fileName.toString() + "\"");
+        }
+
+        // Write headers
+        for (const std::pair<const Value::STR, Value::COLUMN> &entry : *table.get<Value::TABLE>()) {
+            file << entry.first << delimiter;
+        }
+
+        // Overwrite last delimiter
+        if (!table.get<Value::TABLE>()->empty()) {
+            file.seekp(-1, std::ios_base::end);
+        }
+
+        file << '\n';
+
+        // Write data
+        for (size_t i = 0; i < table.get<Value::TABLE>()->begin()->second->data->size(); ++i) {
+            for (const std::pair<const Value::STR, Value::COLUMN> &entry : *table.get<Value::TABLE>()) {
+                Value::STR val = (*entry.second->data)[i]->toString();
+                file << val << delimiter;
+            }
+
+            // Overwrite last delimiter
+            if (!table.get<Value::TABLE>()->empty()) {
+                file.seekp(-1, std::ios_base::end);
+            }
+
+            file << '\n';
+        }
+
+        return nullptr;
+    };
+
+    Procedure::ProcType writeCsv2 = [writeCsv3](std::vector<std::shared_ptr<AstNode>> args) {
+        std::shared_ptr<LeafNode> delim = std::make_shared<LeafNode>(nullptr);
+        delim->setVal(Value(","));
+        args.emplace_back(delim);
+        return writeCsv3(args);
+    };
+
     ptable.bind(Procedure("print", {"msg"}, print1));
     ptable.bind(Procedure("input", {}, input0));
     ptable.bind(Procedure("input", {"msg"}, input1));
@@ -540,5 +710,9 @@ void Evaluator::initPtable() {
     ptable.bind(Procedure("len", {"x"}, len1));
     ptable.bind(Procedure("readFile", {"filename"}, readFile1));
     ptable.bind(Procedure("writeFile", {"filename", "content"}, writeFile2));
+    ptable.bind(Procedure("readCsv", {"filename"}, readCsv1));
+    ptable.bind(Procedure("readCsv", {"filename", "delimiter"}, readCsv2));
+    ptable.bind(Procedure("writeCsv", {"filename", "table"}, writeCsv2));
+    ptable.bind(Procedure("writeCsv", {"filename", "table", "delimiter"}, writeCsv3));
 }
 
