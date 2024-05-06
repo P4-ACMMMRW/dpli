@@ -13,13 +13,14 @@ void VariableTable::bind(Variable var) {
 Variable *VariableTable::lookup(const std::string &id) {
     if (scopes.empty()) {
         return &globalScope.at(id);
-    } else {
-        try {
-            return &scopes.top().at(id);
-        } catch (const std::out_of_range &e) {
-            return &globalScope.at(id);
-        }
+    }         
+    
+    try {
+        return &scopes.top().at(id);
+    } catch (const std::out_of_range &e) {
+        return &globalScope.at(id);
     }
+   
 }
 
 void VariableTable::print() {
@@ -54,12 +55,12 @@ std::string VariableTable::generatePrintString(const Scope &scope) {
     return printStr;
 }
 
-void VariableTable::enterScope(Scope scope) { scopes.push(scope); }
+void VariableTable::enterScope(const Scope& scope) { scopes.push(scope); }
 
 void VariableTable::exitScope() {
     if (scopes.empty()) {
         throw std::runtime_error("Error: cannot exit global scope");
-    } else {
-        scopes.pop();
-    }
+    }         
+    
+    scopes.pop();
 }
