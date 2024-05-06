@@ -220,6 +220,14 @@ void Evaluator::visit(const std::shared_ptr<IndexNode> &node) {
     identifierNode->accept(shared_from_this());
     indexNode->accept(shared_from_this());
 
+    if (!indexNode->getVal().is<Value::INT>()) {
+        if (indexNode->getVal().is<Value::STR>()) {
+            throw std::runtime_error("Error: index must be an integer. Did you forget '$' infront?\n");
+        }
+
+        throw std::runtime_error("Error: index must be an integer\n");
+    }
+
     Value::INT index = indexNode->getVal().get<Value::INT>();
 
     Value val = identifierNode->getVal();

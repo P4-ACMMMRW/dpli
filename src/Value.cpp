@@ -19,7 +19,7 @@ std::string Value::toString() const {
 
         return doubleStr;
     } else if (is<STR>()) {
-        return get<STR>();
+        return "\"" + get<STR>() + "\"";
     } else if (is<BOOL>()) {
         return get<BOOL>() ? "True" : "False";
     } else if (is<NONETYPE>()) {
