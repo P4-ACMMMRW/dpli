@@ -57,7 +57,14 @@ class Value {
      */
     std::string toTypeString(bool verbose = false) const;
 
+    // Operator overloadings
     bool operator==(const Value& other) const;
+    bool operator!=(const Value& other) const;
+    bool operator<(const Value& other) const;
+    bool operator>(const Value& other) const;
+    bool operator<=(const Value& other) const;
+    bool operator>=(const Value& other) const;
+
 
     /**
      * DPL Types

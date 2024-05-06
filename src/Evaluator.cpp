@@ -53,13 +53,9 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
         Value::INT lastIndex = 0;
         for (int i = indices.size() - 1; i >= 0; --i) {
             if (val.is<Value::LIST>()) {
-                if (!indices[i].is<Value::INT>()) {
-                    throw std::runtime_error("Error: header indexing cannot be used on lists\n");
-                }
-                
                 Value::INT index = indices[i].get<Value::INT>();
-
                 list = val.getMut<Value::LIST>();
+
                 if (index < 0 || static_cast<size_t>(index) >= list->size()) {
                     throw std::runtime_error("Error: index out of range\n");
                 }
@@ -67,13 +63,9 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
                 lastIndex = index;
                 val = *(*list)[index];
             } else if (val.is<Value::COLUMN>()) {
-                if (!indices[i].is<Value::INT>()) {
-                    throw std::runtime_error("Error: header indexing cannot be used on columns\n");
-                }
-                
                 Value::INT index = indices[i].get<Value::INT>();
-
                 list = val.getMut<Value::COLUMN>()->data;
+      
                 if (index < 0 || static_cast<size_t>(index) >= list->size()) {
                     throw std::runtime_error("Error: index out of range\n");
                 }
@@ -81,30 +73,41 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
                 lastIndex = index;
                 val = *(*list)[index];
             } else if (val.is<Value::TABLE>()) {
-                // tables can index by column name
+                // Tables index by header name
                 Value::TABLE table = val.get<Value::TABLE>();
-
-                if (!indices[i].is<Value::STR>()) {
-                    throw std::runtime_error("Error: Integer indexing cannot be used on tables\n");
-                }
-                
                 Value::STR header = indices[i].get<Value::STR>();
 
-                for (const std::pair<const Value::STR, Value::COLUMN> &entry : *table) {
-                    if (entry.second->header == indices[i].get<Value::STR>()) {
-                        val = entry.second;
-                        break;
-                    }
+                try {
+                    val = table->at(header);
+                } catch (const std::out_of_range &e) {
+                    throw std::runtime_error("Error: header not found in table\n");
                 }
-
-
             } else {
                 throw std::runtime_error("Error: index assignment not allowed for this type\n");
             }
         }
+        
+        // Assign value to innermost list
+        if (val.is<Value::COLUMN>()) {
+            Value::COLUMN col = val.getMut<Value::COLUMN>();
 
-        // Assign value to innermost list or column
-        *(*list)[lastIndex] = rightNode->getVal();
+            if (rightNode->getVal().is<Value::LIST>()) {
+                // Check size of right node matches size of column
+                if (col->data->size() != rightNode->getVal().get<Value::LIST>()->size()) {
+                    throw std::runtime_error("Error: size of right side of assignment does not match size of column\n");
+                }
+
+                for (size_t i = 0; i < col->data->size(); ++i) {
+                    *(*col->data)[i] = *(*rightNode->getVal().get<Value::LIST>())[i];
+                }
+            } else {
+                for (size_t i = 0; i < col->data->size(); ++i) {
+                    *(*col->data)[i] = rightNode->getVal();
+                }
+            }
+        } else {
+            *(*list)[lastIndex] = rightNode->getVal();
+        }
     } else {
         vtable.bind(Variable(leftNode->getText(), rightNode->getVal()));
     }
@@ -141,10 +144,22 @@ void Evaluator::visit(const std::shared_ptr<FilterNode> &node) {
     } else if (identifierVal.is<Value::COLUMN>()) {
         Value::COLUMN col = identifierVal.get<Value::COLUMN>();
 
+        // Map string to operator function
+        std::map<std::string, std::function<bool(const Value&, const Value&)>> ops = {
+            {"<", [](const Value& a, const Value& b) { return a < b; }},
+            {">", [](const Value& a, const Value& b) { return a > b; }},
+            {"==", [](const Value& a, const Value& b) { return a == b; }},
+            {"!=", [](const Value& a, const Value& b) { return a != b; }},
+            {">=", [](const Value& a, const Value& b) { return a >= b; }},
+            {"<=", [](const Value& a, const Value& b) { return a <= b; }},
+        };
+
+        std::string op = node->getText();
+
         std::vector<Value::INT> indicesToKeep;
         for (size_t i = 0; i < col->data->size(); ++i) {
             Value val = *(*col->data)[i];
-            if (val == filterVal) indicesToKeep.push_back(i);
+            if (ops[op](val, filterVal)) indicesToKeep.push_back(i);
         }
 
         Value::TABLE table = col->parent;
@@ -390,7 +405,7 @@ void Evaluator::visit(const std::shared_ptr<TableNode> &node) {
     std::vector<std::shared_ptr<AstNode>> childNodes = node->getChildNodeList();
 
     long size = 0;
-    bool sizeSet;
+    bool sizeSet = false;
     for (std::shared_ptr<AstNode> &child : childNodes) {
         std::shared_ptr<ColumnNode> columnNode = std::dynamic_pointer_cast<ColumnNode>(child);
         columnNode->accept(shared_from_this());

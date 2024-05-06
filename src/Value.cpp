@@ -26,13 +26,14 @@ std::string Value::toString() const {
         return "None";
     } else if (is<LIST>()) {
         std::string result = "[";
-
+        bool addedSomething = false;
         for (const std::shared_ptr<Value> &elem : *get<LIST>()) {
             result += elem->toString() + ", ";
+            addedSomething = true;
         }
 
         // Remove trailing comma and space
-        if (result.size() > 1) {
+        if (addedSomething) {
             result.pop_back();
             result.pop_back();
         }
@@ -42,13 +43,14 @@ std::string Value::toString() const {
         return result;
     } else if (is<TABLE>()) {
         std::string result = "{ ";
-
+        bool addedSomething = false;
         for (const std::pair<const std::string, Value::COLUMN> &entry : *get<TABLE>()) {
-            result += entry.first + ": " + static_cast<Value>(entry.second).toString() + ", ";
+            result += static_cast<Value>(entry.second).toString() + ", ";
+            addedSomething = true;
         }
 
         // Remove trailing comma and space
-        if (result.size() > 1) {
+        if (addedSomething) {
             result.pop_back();
             result.pop_back();
         }
@@ -58,13 +60,14 @@ std::string Value::toString() const {
         return result;
     } else if (is<COLUMN>()) {
         std::string result = static_cast<Value>(get<COLUMN>()->header).toString() + ": [";
-
+        bool addedSomething = false;
         for (const std::shared_ptr<Value>& valPtr : *get<COLUMN>()->data) {
             result += valPtr->toString() + ", ";
+            addedSomething = true;
         }
 
         // Remove trailing comma and space
-        if (result.size() > 1) {
+        if (addedSomething) {
             result.pop_back();
             result.pop_back();
         }
@@ -149,23 +152,91 @@ std::string Value::toTypeString(bool verbose) const {
 }
 
 bool Value::operator==(const Value& other) const {
-    if (is<INT>() && other.is<INT>()) {
-        return get<INT>() == other.get<INT>();
-    } else if (is<FLOAT>() && other.is<FLOAT>()) {
-        return get<FLOAT>() == other.get<FLOAT>();
+    if ((is<INT>() || is<FLOAT>() || is<BOOL>()) && (other.is<INT>() || other.is<FLOAT>() || other.is<BOOL>())) {
+        Value::FLOAT val1 = is<INT>() ? get<INT>() : (is<FLOAT>() ? get<FLOAT>() : get<BOOL>());
+        Value::FLOAT val2 = other.is<INT>() ? other.get<INT>() : (other.is<FLOAT>() ? other.get<FLOAT>() : other.get<BOOL>());
+        return val1 == val2;
     } else if (is<STR>() && other.is<STR>()) {
         return get<STR>() == other.get<STR>();
-    } else if (is<BOOL>() && other.is<BOOL>()) {
-        return get<BOOL>() == other.get<BOOL>();
     } else if (is<NONETYPE>() && other.is<NONETYPE>()) {
         return true;
     } else if (is<LIST>() && other.is<LIST>()) {
-        return *get<LIST>() == *other.get<LIST>();
-    } else if (is<TABLE>() && other.is<TABLE>()) {
-        return *get<TABLE>() == *other.get<TABLE>();
+        Value::LIST list1 = get<LIST>();
+        Value::LIST list2 = other.get<LIST>();
+
+        return *list1 == *list2;
     } else if (is<COLUMN>() && other.is<COLUMN>()) {
-        return get<COLUMN>()->data == other.get<COLUMN>()->data;
+        Value::COLUMN col1 = get<COLUMN>();
+        Value::COLUMN col2 = other.get<COLUMN>();
+
+        return *col1->data == *col2->data;
+    } else if (is<TABLE>() && other.is<TABLE>()) {
+        Value::TABLE table1 = get<TABLE>();
+        Value::TABLE table2 = other.get<TABLE>();
+
+        if (table1->size() != table2->size()) {
+            return false;
+        }
+
+        for (const std::pair<const std::string, Value::COLUMN> &entry : *table1) {
+            if (entry.second != table2->at(entry.first)) {
+                return false;
+            }
+        }
     }
 
     return false;
+}
+
+bool Value::operator!=(const Value& other) const {
+    return !(*this == other);
+}
+
+bool Value::operator<(const Value& other) const {
+    if ((is<INT>() || is<FLOAT>() || is<BOOL>()) && (other.is<INT>() || other.is<FLOAT>() || other.is<BOOL>())) {
+        Value::FLOAT val1 = is<INT>() ? get<INT>() : (is<FLOAT>() ? get<FLOAT>() : get<BOOL>());
+        Value::FLOAT val2 = other.is<INT>() ? other.get<INT>() : (other.is<FLOAT>() ? other.get<FLOAT>() : other.get<BOOL>());
+        return val1 < val2;
+    } else if (is<STR>() && other.is<STR>()) {
+        return get<STR>() < other.get<STR>();
+    } else if (is<NONETYPE>() && other.is<NONETYPE>()) {
+        return false;
+    } else if (is<LIST>() && other.is<LIST>()) {
+        Value::LIST list1 = get<LIST>();
+        Value::LIST list2 = other.get<LIST>();
+
+        return *list1 < *list2;
+    } else if (is<COLUMN>() && other.is<COLUMN>()) {
+        Value::COLUMN col1 = get<COLUMN>();
+        Value::COLUMN col2 = other.get<COLUMN>();
+
+        return *col1->data < *col2->data;
+    } else if (is<TABLE>() && other.is<TABLE>()) {
+        Value::TABLE table1 = get<TABLE>();
+        Value::TABLE table2 = other.get<TABLE>();
+
+        if (table1->size() != table2->size()) {
+            return table1->size() < table2->size();
+        }
+
+        for (const std::pair<const std::string, Value::COLUMN> &entry : *table1) {
+            if (entry.second != table2->at(entry.first)) {
+                return entry.second < table2->at(entry.first);
+            }
+        }
+    }
+
+    return false;
+}
+
+bool Value::operator>(const Value& other) const {
+    return other < *this;
+}
+
+bool Value::operator<=(const Value& other) const {
+    return *this < other || *this == other;
+}
+
+bool Value::operator>=(const Value& other) const {
+    return *this > other || *this == other;
 }

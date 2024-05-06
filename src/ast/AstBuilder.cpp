@@ -382,7 +382,7 @@ antlrcpp::Any AstBuilder::visitFiltering(DplParser::FilteringContext* parseNode)
 // To here
 
 antlrcpp::Any AstBuilder::visitUnaryexpr(DplParser::UnaryexprContext* parseNode) {
-    std::string text = "[" + parseNode->children[0]->getText() + "] Filter";
+    std::string text = parseNode->children[0]->getText();
     return unaryNode([this]() { return std::make_shared<FilterNode>(currentNode); }, parseNode, 1,
                      text, false);
 }
