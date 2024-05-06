@@ -4,7 +4,7 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
-#include <unordered_map>
+#include <map>
 #include <variant>
 #include <vector>
 
@@ -77,7 +77,7 @@ class Value {
     using LIST = std::shared_ptr<std::vector<std::shared_ptr<Value>>>;
     struct COL_STRUCT;
     using COLUMN = std::shared_ptr<COL_STRUCT>;
-    using TABLE = std::shared_ptr<std::unordered_map<STR, COLUMN>>;
+    using TABLE = std::shared_ptr<std::map<STR, COLUMN>>;
     struct COL_STRUCT {
         TABLE parent;
         STR header;
