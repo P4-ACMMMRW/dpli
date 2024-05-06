@@ -20,7 +20,7 @@ class Value {
      * Set the inner value
      */
     template <typename T>
-    Value(const T &innerValue) : innerValue(innerValue) {}
+    Value(const T& innerValue) : innerValue(innerValue) {}
 
     /**
      * Check if the value is of type T
@@ -34,7 +34,7 @@ class Value {
      * Get the value as type T read-only
      */
     template <typename T>
-    const T &get() const {
+    const T& get() const {
         return std::get<T>(innerValue);
     }
 
@@ -42,7 +42,7 @@ class Value {
      * Get the value as type T mutable
      */
     template <typename T>
-    T &getMut() {
+    T& getMut() {
         return std::get<T>(innerValue);
     }
 
@@ -64,7 +64,6 @@ class Value {
     bool operator>(const Value& other) const;
     bool operator<=(const Value& other) const;
     bool operator>=(const Value& other) const;
-
 
     /**
      * DPL Types
