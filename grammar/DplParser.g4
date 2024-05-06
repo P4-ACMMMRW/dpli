@@ -100,7 +100,7 @@ headerindex: (OpenSquare Dollar orexpr CloseSquare);
 filtering: (OpenSquare unaryexpr CloseSquare);
 
 
-unaryexpr: (Equal | NotEqual | Greater | GreaterEqual | Less | Less) orexpr;
+unaryexpr: (Equal | NotEqual | Greater | GreaterEqual | Less | LessEqual) orexpr;
 
 
 proccall: OpenPar ClosePar  

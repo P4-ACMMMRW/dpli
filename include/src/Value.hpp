@@ -1,8 +1,10 @@
 #ifndef VALUE_HPP
 #define VALUE_HPP
 
+#include <memory>
 #include <stdexcept>
 #include <string>
+#include <unordered_map>
 #include <variant>
 #include <vector>
 
@@ -49,11 +51,20 @@ class Value {
      */
     std::string toString() const;
 
-    /** 
+    /**
      * @param Whether expand types of composite types
-     * @return String representation of type 
+     * @return String representation of type
      */
     std::string toTypeString(bool verbose = false) const;
+
+    // Operator overloadings
+    bool operator==(const Value& other) const;
+    bool operator!=(const Value& other) const;
+    bool operator<(const Value& other) const;
+    bool operator>(const Value& other) const;
+    bool operator<=(const Value& other) const;
+    bool operator>=(const Value& other) const;
+
 
     /**
      * DPL Types
@@ -63,10 +74,19 @@ class Value {
     using BOOL = bool;
     using STR = std::string;
     using NONETYPE = std::nullptr_t;
-    using LIST = std::vector<Value>;
+    using LIST = std::shared_ptr<std::vector<std::shared_ptr<Value>>>;
+    struct COL_STRUCT;
+    using COLUMN = std::shared_ptr<COL_STRUCT>;
+    using TABLE = std::shared_ptr<std::unordered_map<STR, COLUMN>>;
+    struct COL_STRUCT {
+        TABLE parent;
+        STR header;
+        LIST data;
+        INT size;
+    };
 
    private:
-    mutable std::variant<INT, FLOAT, STR, BOOL, LIST, NONETYPE> innerValue;
+    mutable std::variant<INT, FLOAT, STR, BOOL, NONETYPE, LIST, TABLE, COLUMN> innerValue;
 };
 }  // namespace dplsrc
 
