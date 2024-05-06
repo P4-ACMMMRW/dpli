@@ -302,15 +302,14 @@ antlrcpp::Any AstBuilder::visitExpoexpr(DplParser::ExpoexprContext* parseNode) {
 }
 
 antlrcpp::Any AstBuilder::visitList(DplParser::ListContext* parseNode) {
-    bool hasChild =
-        (parseNode->children.size() > 2) ? true : false;  // dirty way to not visit children if empty list
+    bool hasChild = parseNode->children.size() > 2;  // dirty way to not visit children if empty list
     return unaryNode([this]() { return std::make_shared<ListNode>(currentNode); }, parseNode, 1,
                      "[] List", true, hasChild);
 }
 
 antlrcpp::Any AstBuilder::visitTable(DplParser::TableContext* parseNode) {
      bool hasChild =
-        (parseNode->children.size() > 2) ? true : false; 
+        parseNode->children.size() > 2; 
     return unaryNodeList([this]() { return std::make_shared<TableNode>(currentNode); }, parseNode,
                          1, 2, "{} Table", hasChild);
 }
