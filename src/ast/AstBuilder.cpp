@@ -302,14 +302,13 @@ antlrcpp::Any AstBuilder::visitExpoexpr(DplParser::ExpoexprContext* parseNode) {
 
 antlrcpp::Any AstBuilder::visitList(DplParser::ListContext* parseNode) {
     bool hasChild =
-        (parseNode->children.size() > 2) ? true : false;  // dirty way to not visit children if empty list
+        parseNode->children.size() > 2;  // dirty way to not visit children if empty list
     return unaryNode([this]() { return std::make_shared<ListNode>(currentNode); }, parseNode, 1,
                      "[] List", true, hasChild);
 }
 
 antlrcpp::Any AstBuilder::visitTable(DplParser::TableContext* parseNode) {
-     bool hasChild =
-        (parseNode->children.size() > 2) ? true : false; 
+    bool hasChild = parseNode->children.size() > 2;
     return unaryNodeList([this]() { return std::make_shared<TableNode>(currentNode); }, parseNode,
                          1, 2, "{} Table", hasChild);
 }
@@ -401,7 +400,8 @@ void AstBuilder::initNewNode(antlr4::ParserRuleContext* parseNode,
 
 antlrcpp::Any AstBuilder::unaryNode(const std::function<std::shared_ptr<AstNode>()>& createNode,
                                     antlr4::ParserRuleContext* parseNode, size_t childIndex,
-                                    const std::string& text, bool restoreOldCurrent, bool hasChild) {
+                                    const std::string& text, bool restoreOldCurrent,
+                                    bool hasChild) {
     std::shared_ptr<AstNode> oldNode = currentNode;
     std::shared_ptr<AstNode> newNode = createNode();
     initNewNode(parseNode, newNode, text);
