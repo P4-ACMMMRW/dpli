@@ -495,10 +495,50 @@ void Evaluator::initPtable() {
         throw std::runtime_error("Error: len() called with invalid type");
     };
 
+    Procedure::ProcType readFile1 = [](std::vector<std::shared_ptr<AstNode>> arg) {
+        Value fileName = arg[0]->getVal();
+
+        if (!fileName.is<Value::STR>()) {
+            throw std::runtime_error("Error: readFile() called with invalid type");
+        }
+
+        std::filesystem::path filePath = fileName.get<Value::STR>();
+        std::ifstream file(filePath);
+        if (!file.is_open()) {
+            throw std::runtime_error("Error: could not open file \"" + fileName.toString() + "\"");
+        }
+
+        std::string fileContents((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+
+        return fileContents;
+    };
+
+    Procedure::ProcType writeFile2 = [](std::vector<std::shared_ptr<AstNode>> arg) {
+        Value fileName = arg[0]->getVal();
+        Value content = arg[1]->getVal();
+
+        if (!content.is<Value::STR>() || !fileName.is<Value::STR>()) {
+            throw std::runtime_error("Error: writeFile() called with invalid types");
+        }
+
+        std::filesystem::path filePath = fileName.get<Value::STR>();
+        std::ofstream file(filePath);
+        if (!file.is_open()) {
+            throw std::runtime_error("Error: could not open file \"" + fileName.get<Value::STR>() + "\"");
+        }
+
+        file << content.get<Value::STR>();
+
+        return nullptr;
+    };
+
     ptable.bind(Procedure("print", {"msg"}, print1));
     ptable.bind(Procedure("input", {}, input0));
     ptable.bind(Procedure("input", {"msg"}, input1));
     ptable.bind(Procedure("type", {"x"}, type1));
     ptable.bind(Procedure("str", {"x"}, str1));
     ptable.bind(Procedure("len", {"x"}, len1));
+    ptable.bind(Procedure("readFile", {"filename"}, readFile1));
+    ptable.bind(Procedure("writeFile", {"filename", "content"}, writeFile2));
 }
+

@@ -3,6 +3,8 @@
 
 #include <DplLexer.h>
 
+#include <filesystem>
+
 #include "AllNodeIncludes.hpp"
 #include "AstVisitor.hpp"
 #include "ProcedureTable.hpp"
