@@ -14,7 +14,7 @@ void Evaluator::visit(const std::shared_ptr<AndExprNode> &node) {
 
     if (leftNode->getVal().is<Value::BOOL>() || rightNode->getVal().is<Value::BOOL>()) {
         // TODO: move to error handler at some point
-        throw std::runtime_error("Cannot compare the used types");
+        throw DplException("Cannot compare the used types");
     }
 
     // Evaluates the value of the expression
@@ -25,7 +25,7 @@ void Evaluator::visit(const std::shared_ptr<AndExprNode> &node) {
         else
             node->setVal(false);
     } else
-        throw std::runtime_error("Error: Couldn't convert string to value of nodes");
+        throw DplException("Could not convert string to value of nodes");
 }
 
 void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
@@ -41,7 +41,7 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
     bool error = (!isLeaf && !isIndexing) || (isLeaf && !leafNode->getIsIdentifier());
     if (error) {
         // TODO: move to error handler at some point
-        throw std::runtime_error("Error: left side of assignment must be a stored reference\n");
+        throw DplException("Left side of assignment must be a stored reference\n");
     }
 
     // Compute type of right node
@@ -82,7 +82,7 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
                 list = val.getMut<Value::LIST>();
 
                 if (index < 0 || static_cast<size_t>(index) >= list->size()) {
-                    throw std::runtime_error("Error: index out of range\n");
+                    throw DplException("Index out of range\n");
                 }
 
                 lastIndex = index;
@@ -92,7 +92,7 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
                 list = val.getMut<Value::COLUMN>()->data;
 
                 if (index < 0 || static_cast<size_t>(index) >= list->size()) {
-                    throw std::runtime_error("Error: index out of range\n");
+                    throw DplException("Index out of range\n");
                 }
 
                 lastIndex = index;
@@ -101,14 +101,14 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
                 // Tables index by header name
                 Value::TABLE table = val.get<Value::TABLE>();
                 Value::STR header = indices[i].get<Value::STR>();
-
+                
                 try {
                     val = table->at(header);
                 } catch (const std::out_of_range &e) {
-                    throw std::runtime_error("Error: header not found in table\n");
+                    throw DplException("Header not found in table\n");
                 }
             } else {
-                throw std::runtime_error("Error: index assignment not allowed for this type\n");
+                throw DplException("Index assignment not allowed for this type\n");
             }
         }
 
@@ -119,8 +119,8 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
             if (rightNode->getVal().is<Value::LIST>()) {
                 // Check size of right node matches size of column
                 if (col->data->size() != rightNode->getVal().get<Value::LIST>()->size()) {
-                    throw std::runtime_error(
-                        "Error: size of right side of assignment does not match size of column\n");
+                    throw DplException(
+                        "size of right side of assignment does not match size of column\n");
                 }
 
                 for (size_t i = 0; i < col->data->size(); ++i) {
@@ -156,20 +156,20 @@ void Evaluator::visit(const std::shared_ptr<DivExprNode> &node) {
 
     if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()))) {
         // TODO: move to error handler at some point
-        throw std::runtime_error("Cannot divide with the types");
+        throw DplException("Cannot divide with the types");
     }
 
     // Divide with 0 check
     if (rightNode->getVal().is<Value::INT>()) {
         if (rightNode->getVal().get<Value::INT>() == 0) {
-            throw std::runtime_error("Cannot divide with 0");
+            throw DplException("Cannot divide with 0");
         }
     } else if (rightNode->getVal().is<Value::FLOAT>()) {
         if (rightNode->getVal().get<Value::FLOAT>() == 0) {
-            throw std::runtime_error("Cannot divide with 0");
+            throw DplException("Cannot divide with 0");
         }
     } else if (rightNode->getVal().get<Value::BOOL>() == 0) {
-        throw std::runtime_error("Cannot divide with 0");
+        throw DplException("Cannot divide with 0");
     }
 
     // Evaluates the value of the expression
@@ -218,7 +218,7 @@ void Evaluator::visit(const std::shared_ptr<DivExprNode> &node) {
                          rightNode->getVal().get<Value::FLOAT>());
         }
     } else
-        throw std::runtime_error("Error: Couldn't convert string to value of nodes");
+        throw DplException("Could not convert string to value of nodes");
 }
 
 void Evaluator::visit(const std::shared_ptr<ElseNode> &node) {}
@@ -235,7 +235,7 @@ void Evaluator::visit(const std::shared_ptr<EqualExprNode> &node) {
 
     if (!numeric && !string) {
         // TODO: move to error handler at some point
-        throw std::runtime_error("Cannot compare the used types");
+        throw DplException("Cannot compare the used types");
     }
 
     // Evaluates the value of the expression
@@ -251,7 +251,7 @@ void Evaluator::visit(const std::shared_ptr<ExpoExprNode> &node) {
 
     if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()))) {
         // TODO: move to error handler at some point
-        throw std::runtime_error("Cannot multiply with the used types");
+        throw DplException("Cannot multiply with the used types");
     }
 
     // Evaluates the value of the expression
@@ -303,7 +303,7 @@ void Evaluator::visit(const std::shared_ptr<ExpoExprNode> &node) {
                                   rightNode->getVal().get<Value::FLOAT>()));
         }
     } else
-        throw std::runtime_error("Error: Couldn't convert string to value of nodes");
+        throw DplException("Could not convert string to value of nodes");
 }
 
 void Evaluator::visit(const std::shared_ptr<FilterNode> &node) {
@@ -359,7 +359,7 @@ void Evaluator::visit(const std::shared_ptr<FilterNode> &node) {
 
         node->setVal(newTable);
     } else {
-        throw std::runtime_error("Error: filter operation not allowed for this type\n");
+        throw DplException("Filter operation not allowed for this type\n");
     }
 }
 
@@ -372,7 +372,7 @@ void Evaluator::visit(const std::shared_ptr<GreaterEqualExprNode> &node) {
 
     if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()))) {
         // TODO: move to error handler at some point
-        throw std::runtime_error("Cannot compare the used types");
+        throw DplException("Cannot compare the used types");
     }
 
     // Evaluates the value of the expression
@@ -388,7 +388,7 @@ void Evaluator::visit(const std::shared_ptr<GreaterExprNode> &node) {
 
     if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()))) {
         // TODO: move to error handler at some point
-        throw std::runtime_error("Cannot compare the used types");
+        throw DplException("Cannot compare the used types");
     }
 
     // Evaluates the value of the expression
@@ -410,10 +410,10 @@ void Evaluator::visit(const std::shared_ptr<HeaderIndexNode> &node) {
         try {
             node->setVal(table->at(header));
         } catch (const std::out_of_range &e) {
-            throw std::runtime_error("Error: header not found in table\n");
+            throw DplException("Header not found in table\n");
         }
     } else {
-        throw std::runtime_error("Error: invalid index operation\n");
+        throw DplException("Invalid index operation\n");
     }
 }
 
@@ -428,11 +428,11 @@ void Evaluator::visit(const std::shared_ptr<IndexNode> &node) {
 
     if (!indexNode->getVal().is<Value::INT>()) {
         if (indexNode->getVal().is<Value::STR>()) {
-            throw std::runtime_error(
-                "Error: index must be an integer. Did you forget '$' infront?\n");
+            throw DplException(
+                "index must be an integer. Did you forget '$' infront?\n");
         }
 
-        throw std::runtime_error("Error: index must be an integer\n");
+        throw DplException("Index must be an integer\n");
     }
 
     Value::INT index = indexNode->getVal().get<Value::INT>();
@@ -442,7 +442,7 @@ void Evaluator::visit(const std::shared_ptr<IndexNode> &node) {
         Value::STR str = val.get<Value::STR>();
 
         if (index < 0 || static_cast<size_t>(index) >= str.size()) {
-            throw std::runtime_error("Error: index out of range\n");
+            throw DplException("Index out of range\n");
         }
 
         node->setVal(Value::STR{str[index]});
@@ -450,7 +450,7 @@ void Evaluator::visit(const std::shared_ptr<IndexNode> &node) {
         Value::LIST list = val.get<Value::LIST>();
 
         if (index < 0 || static_cast<size_t>(index) >= list->size()) {
-            throw std::runtime_error("Error: index out of range\n");
+            throw DplException("Index out of range\n");
         }
 
         node->setVal(*(*list)[index]);
@@ -458,12 +458,12 @@ void Evaluator::visit(const std::shared_ptr<IndexNode> &node) {
         Value::COLUMN col = val.get<Value::COLUMN>();
 
         if (index < 0 || static_cast<size_t>(index) >= col->data->size()) {
-            throw std::runtime_error("Error: index out of range\n");
+            throw DplException("Index out of range\n");
         }
 
         node->setVal(*(*col->data)[index]);
     } else {
-        throw std::runtime_error("Error: invalid index operation\n");
+        throw DplException("Invalid index operation\n");
     }
 }
 
@@ -477,7 +477,7 @@ void Evaluator::visit(const std::shared_ptr<LeafNode> &node) {
             Variable *var = vtable.lookup(node->getText());
             node->setVal(var->getVal());
         } catch (const std::out_of_range &e) {
-            throw std::runtime_error("Error: undefined variable \"" + node->getText() + "\"\n");
+            throw DplException("Undefined variable \"" + node->getText() + "\"\n");
         }
     } else {
         Value val = node->getVal();
@@ -507,7 +507,7 @@ void Evaluator::visit(const std::shared_ptr<LessEqualExprNode> &node) {
 
     if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()))) {
         // TODO: move to error handler at some point
-        throw std::runtime_error("Cannot compare the used types");
+        throw DplException("Cannot compare the used types");
     }
 
     // Evaluates the value of the expression
@@ -523,7 +523,7 @@ void Evaluator::visit(const std::shared_ptr<LessExprNode> &node) {
 
     if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()))) {
         // TODO: move to error handler at some point
-        throw std::runtime_error("Cannot compare the used types");
+        throw DplException("Cannot compare the used types");
     }
 
     // Evaluates the value of the expression
@@ -551,7 +551,7 @@ void Evaluator::visit(const std::shared_ptr<MinusExprNode> &node) {
 
     if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()))) {
         // TODO: move to error handler at some point
-        throw std::runtime_error("Cannot do substraction with the used types");
+        throw DplException("Cannot do substraction with the used types");
     }
 
     // Evaluates the value of the expression
@@ -589,7 +589,7 @@ void Evaluator::visit(const std::shared_ptr<MinusExprNode> &node) {
                          rightNode->getVal().get<Value::FLOAT>());
         }
     } else
-        throw std::runtime_error("Error: Couldn't convert string to value of nodes");
+        throw DplException("Couldn't convert string to value of nodes");
 }
 
 void Evaluator::visit(const std::shared_ptr<MinusNode> &node) {
@@ -599,7 +599,7 @@ void Evaluator::visit(const std::shared_ptr<MinusNode> &node) {
 
     if (!isNumeric(childNode->getVal())) {
         // TODO: move to error handler at some point
-        throw std::runtime_error("Cannot do substraction with the used type");
+        throw DplException("Cannot do substraction with the used type");
     }
 
     // Evaluates the value of the expression
@@ -610,7 +610,7 @@ void Evaluator::visit(const std::shared_ptr<MinusNode> &node) {
     } else if (childNode->getVal().is<Value::BOOL>()) {
         node->setVal(-childNode->getVal().get<Value::BOOL>());
     } else
-        throw std::runtime_error("Error: Couldn't convert string to value of nodes");
+        throw DplException("Couldn't convert string to value of nodes");
 }
 
 void Evaluator::visit(const std::shared_ptr<ModExprNode> &node) {
@@ -622,7 +622,7 @@ void Evaluator::visit(const std::shared_ptr<ModExprNode> &node) {
 
     if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()))) {
         // TODO: move to error handler at some point
-        throw std::runtime_error("Cannot compare the used types");
+        throw DplException("Cannot compare the used types");
     }
 
     // Evaluates the value of the expression
@@ -660,7 +660,7 @@ void Evaluator::visit(const std::shared_ptr<ModExprNode> &node) {
                               rightNode->getVal().get<Value::FLOAT>()));
         }
     } else
-        throw std::runtime_error("Error: Couldn't convert string to value of nodes");
+        throw DplException("Couldn't convert string to value of nodes");
 }
 
 void Evaluator::visit(const std::shared_ptr<MultExprNode> &node) {
@@ -676,7 +676,7 @@ void Evaluator::visit(const std::shared_ptr<MultExprNode> &node) {
           (leftNode->getVal().is<Value::STR>() && rightNode->getVal().is<Value::BOOL>()) ||
           (leftNode->getVal().is<Value::BOOL>() && rightNode->getVal().is<Value::STR>()))) {
         // TODO: move to error handler at some point
-        throw std::runtime_error("Cannot multiply with the used types");
+        throw DplException("Cannot multiply with the used types");
     }
 
     // Evaluates the value of the expression
@@ -735,7 +735,7 @@ void Evaluator::visit(const std::shared_ptr<MultExprNode> &node) {
                              leftNode->getVal().get<Value::STR>());
         }
     } else
-        throw std::runtime_error("Error: Couldn't convert string to value of nodes");
+        throw DplException("Couldn't convert string to value of nodes");
 }
 
 void Evaluator::visit(const std::shared_ptr<NotEqualExprNode> &node) {
@@ -750,7 +750,7 @@ void Evaluator::visit(const std::shared_ptr<NotEqualExprNode> &node) {
 
     if (!numeric && !string) {
         // TODO: move to error handler at some point
-        throw std::runtime_error("Cannot compare the used types");
+        throw DplException("Cannot compare the used types");
     }
 
     // Evaluates the value of the expression
@@ -790,7 +790,7 @@ void Evaluator::visit(const std::shared_ptr<NotEqualExprNode> &node) {
     } else if (leftNode->getVal().is<Value::STR>()) {
         node->setVal(leftNode->getVal().get<Value::STR>() != rightNode->getVal().get<Value::STR>());
     } else
-        throw std::runtime_error("Error: Couldn't convert string to value of nodes");
+        throw DplException("Couldn't convert string to value of nodes");
 }
 
 void Evaluator::visit(const std::shared_ptr<NotNode> &node) {
@@ -800,7 +800,7 @@ void Evaluator::visit(const std::shared_ptr<NotNode> &node) {
 
     if (!(isNumeric(childNode->getVal()))) {
         // TODO: move to error handler at some point
-        throw std::runtime_error("Cannot negate the used type");
+        throw DplException("Cannot negate the used type");
     }
 
     // Evaluates the value of the expression
@@ -820,7 +820,7 @@ void Evaluator::visit(const std::shared_ptr<NotNode> &node) {
         else
             node->setVal(true);
     } else
-        throw std::runtime_error("Couldn't evaluate negation");
+        throw DplException("Couldn't evaluate negation");
 }
 
 void Evaluator::visit(const std::shared_ptr<OrExprNode> &node) {
@@ -832,7 +832,7 @@ void Evaluator::visit(const std::shared_ptr<OrExprNode> &node) {
 
     if (!leftNode->getVal().is<Value::BOOL>() || !rightNode->getVal().is<Value::BOOL>()) {
         // TODO: move to error handler at some point
-        throw std::runtime_error("Cannot compare the used types");
+        throw DplException("Cannot compare the used types");
     }
 
     // Evaluates the value of the expression
@@ -858,7 +858,7 @@ void Evaluator::visit(const std::shared_ptr<PlusExprNode> &node) {
     if (!((isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal())) ||
           (leftNode->getVal().is<Value::STR>() && rightNode->getVal().is<Value::STR>()))) {
         // TODO: move to error handler at some point
-        throw std::runtime_error("Cannot do addition with the used types");
+        throw DplException("Cannot do addition with the used types");
     }
 
     // Evaluates the value of the expression
@@ -898,7 +898,7 @@ void Evaluator::visit(const std::shared_ptr<PlusExprNode> &node) {
     } else if (leftNode->getVal().is<Value::STR>()) {
         node->setVal(leftNode->getVal().get<Value::STR>() + rightNode->getVal().get<Value::STR>());
     } else
-        throw std::runtime_error("Error: Couldn't convert string to value of nodes");
+        throw DplException("Couldn't convert string to value of nodes");
 }
 
 void Evaluator::visit(const std::shared_ptr<PlusNode> &node) {
@@ -908,7 +908,7 @@ void Evaluator::visit(const std::shared_ptr<PlusNode> &node) {
 
     if (!isNumeric(childNode->getVal())) {
         // TODO: move to error handler at some point
-        throw std::runtime_error("Cannot use unary plus with the used type");
+        throw DplException("Cannot use unary plus with the used type");
     }
 
     // Evaluates the value of the expression
@@ -919,7 +919,7 @@ void Evaluator::visit(const std::shared_ptr<PlusNode> &node) {
     } else if (childNode->getVal().is<Value::BOOL>()) {
         node->setVal(childNode->getVal().get<Value::BOOL>());
     } else
-        throw std::runtime_error("Error: Couldn't convert string to value of nodes");
+        throw DplException("Couldn't convert string to value of nodes");
 }
 
 void Evaluator::visit(const std::shared_ptr<ProcCallNode> &node) {
@@ -929,12 +929,12 @@ void Evaluator::visit(const std::shared_ptr<ProcCallNode> &node) {
     try {
         proc = ptable.lookup(procNode->getText(), node->getChildNodeList().size());
     } catch (const std::out_of_range &e) {
-        throw std::runtime_error("Error: undefined procedure \"" + procNode->getText() + "\"\n");
+        throw DplException("Undefined procedure \"" + procNode->getText() + "\"\n");
     }
 
     // Check if amount of arguments is correct
     if (proc->getArity() != node->getChildNodeList().size()) {
-        throw std::runtime_error("Error: procedure \"" + procNode->getText() +
+        throw DplException("Procedure \"" + procNode->getText() +
                                  "\" called with incorrect number of arguments\n");
     }
 
@@ -1009,13 +1009,13 @@ void Evaluator::visit(const std::shared_ptr<TableNode> &node) {
         columnNode->accept(shared_from_this());
 
         if (!columnNode->getLeftNode()->getVal().is<Value::STR>()) {
-            throw std::runtime_error("Error: table key must be a string\n");
+            throw DplException("Table key must be a string\n");
         }
 
         Value::STR header = columnNode->getLeftNode()->getVal().get<Value::STR>();
 
         if (!columnNode->getRightNode()->getVal().is<Value::LIST>()) {
-            throw std::runtime_error("Error: table value must be a list\n");
+            throw DplException("Table value must be a list\n");
         }
 
         Value::LIST val = columnNode->getRightNode()->getVal().get<Value::LIST>();
@@ -1030,7 +1030,7 @@ void Evaluator::visit(const std::shared_ptr<TableNode> &node) {
             size = val->size();
             col->size = size;
         } else if (val->size() != static_cast<size_t>(size)) {
-            throw std::runtime_error("Error: all columns in a table must have the same size\n");
+            throw DplException("All columns in a table must have the same size\n");
         }
 
         table->insert({header, col});
@@ -1081,7 +1081,7 @@ void Evaluator::initPtable() {
             return static_cast<Value::INT>(val.get<Value::COLUMN>()->data->size());
         }
 
-        throw std::runtime_error("Error: len called with invalid type");
+        throw DplException("Len called with invalid type " + val.toTypeString() + '\n');
     };
 
     Procedure::ProcType ceil1 = [](std::vector<std::shared_ptr<AstNode>> args) {
@@ -1091,7 +1091,7 @@ void Evaluator::initPtable() {
             return static_cast<Value::INT>(std::ceil(val.get<Value::FLOAT>()));
         }
 
-        throw std::runtime_error("Error: ceil called with invalid type " + val.toTypeString() + ". Expected: " + Value(0.0).toTypeString() + "\n");
+        throw DplException("Ceil called with invalid type " + val.toTypeString() + ". Expected: " + Value(0.0).toTypeString() + "\n");
     };
     
     Procedure::ProcType floor1 = [](std::vector<std::shared_ptr<AstNode>> args) {
@@ -1100,21 +1100,21 @@ void Evaluator::initPtable() {
         if (val.is<Value::FLOAT>()) {
             return static_cast<Value::INT>(std::floor(val.get<Value::FLOAT>()));
         }
-
-        throw std::runtime_error("Error: floor called with invalid type " + val.toTypeString() + ". Expected: " + Value(0.0).toTypeString() + "\n");
+        
+        throw DplException("Floor called with invalid type " + val.toTypeString() + ". Expected: " + Value(0.0).toTypeString() + "\n");
     };
 
     Procedure::ProcType readFile1 = [](std::vector<std::shared_ptr<AstNode>> args) {
         Value fileName = args[0]->getVal();
 
         if (!fileName.is<Value::STR>()) {
-            throw std::runtime_error("Error: readFile called with invalid type");
+            throw DplException("ReadFile called with invalid type " + fileName.toTypeString() + ". Expected: " + Value("").toTypeString() + '\n');
         }
 
         std::filesystem::path filePath = fileName.get<Value::STR>();
         std::ifstream file(filePath);
         if (!file.is_open()) {
-            throw std::runtime_error("Error: could not open file \"" + fileName.toString() + "\"");
+            throw DplException("Could not open file \"" + fileName.toString() + "\"");
         }
 
         std::string fileContents((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
@@ -1127,13 +1127,13 @@ void Evaluator::initPtable() {
         Value content = args[1]->getVal();
 
         if (!content.is<Value::STR>() || !fileName.is<Value::STR>()) {
-            throw std::runtime_error("Error: writeFile called with invalid types");
+            throw DplException("WriteFile called with invalid types");
         }
 
         std::filesystem::path filePath = fileName.get<Value::STR>();
         std::ofstream file(filePath);
         if (!file.is_open()) {
-            throw std::runtime_error("Error: could not open file \"" + fileName.get<Value::STR>() + "\"");
+            throw DplException("Could not open file \"" + fileName.get<Value::STR>() + "\"");
         }
 
         file << content.get<Value::STR>();
@@ -1147,26 +1147,26 @@ void Evaluator::initPtable() {
         Value dataTypesVal = args[2]->getVal();
 
         if (!fileName.is<Value::STR>()) {
-            throw std::runtime_error("Error: readTable called with invalid type " + fileName.toTypeString() + ". Expected: " + Value("").toTypeString() + '\n');
+            throw DplException("ReadTable called with invalid type " + fileName.toTypeString() + ". Expected: " + Value("").toTypeString() + '\n');
         }
 
         if (!delimiterVal.is<Value::STR>()) {
-            throw std::runtime_error("Error: readTable called with invalid type " + delimiterVal.toTypeString() + ". Expected: " + Value("").toTypeString() + '\n');
+            throw DplException("ReadTable called with invalid type " + delimiterVal.toTypeString() + ". Expected: " + Value("").toTypeString() + '\n');
         }
 
         if (delimiterVal.get<Value::STR>().size() != 1) {
-            throw std::runtime_error("Error: delimiter must be a string of size 1\n");
+            throw DplException("Delimiter must be a string of size 1\n");
         }
 
         if (!dataTypesVal.is<Value::LIST>()) {
-            throw std::runtime_error("Error: readTable called with invalid type " + dataTypesVal.toTypeString() + ". Expected: " + Value({}).toTypeString() + '\n');
+            throw DplException("ReadTable called with invalid type " + dataTypesVal.toTypeString() + ". Expected: " + Value({}).toTypeString() + '\n');
         }
 
         char delimiter = delimiterVal.get<Value::STR>()[0];
         std::filesystem::path filePath = fileName.get<Value::STR>();
         std::ifstream file(filePath);
         if (!file.is_open()) {
-            throw std::runtime_error("Error: could not open file \"" + fileName.toString() + "\"");
+            throw DplException("Could not open file \"" + fileName.toString() + "\"");
         }
 
         bool isFirstLine = true;
@@ -1226,13 +1226,13 @@ void Evaluator::initPtable() {
                             } else if (dataType == "str") {
                                 cols[i]->data->emplace_back(std::make_shared<Value>(values[i]));
                             } else if (dataType == "list") {
-                                throw std::runtime_error("Error: type \"lists\" not supported when loading table from file\n");
+                                throw DplException("Type \"lists\" not supported when loading table from file\n");
                             } else if (dataType == "table") {
-                                throw std::runtime_error("Error: type \"table\" not supported when loading table from file\n");
+                                throw DplException("Type \"table\" not supported when loading table from file\n");
                             } else if (dataType == "column") {
-                                throw std::runtime_error("Error: data can not be explicitly converted to type \"column\"\n");
+                                throw DplException("Data can not be explicitly converted to type \"column\"\n");
                             } else {
-                                throw std::runtime_error("Error: trying to convert to invalid data type \"" + dataType + "\"\n");
+                                throw DplException("Trying to convert to invalid data type \"" + dataType + "\"\n");
                             }
                         }
                     }
@@ -1287,20 +1287,20 @@ void Evaluator::initPtable() {
         Value delimiterVal = args[2]->getVal();
 
         if (!fileName.is<Value::STR>()) {
-            throw std::runtime_error("Error: writeTable called with invalid type " + fileName.toTypeString() + ". Expected: " + Value("").toTypeString() + '\n');
+            throw DplException("WriteTable called with invalid type " + fileName.toTypeString() + ". Expected: " + Value("").toTypeString() + '\n');
         }
 
         if (!table.is<Value::TABLE>()) {
-            throw std::runtime_error("Error: writeTable called with invalid type " + table.toTypeString() + ". Expected: " + Value("").toTypeString() + '\n');
+            throw DplException("WriteTable called with invalid type " + table.toTypeString() + ". Expected: " + Value("").toTypeString() + '\n');
         }
 
         if (!delimiterVal.is<Value::STR>()) {
-            throw std::runtime_error("Error: writeTable called with invalid type " + delimiterVal.toTypeString() + ". Expected: " + Value("").toTypeString() + '\n');
+            throw DplException("WriteTable called with invalid type " + delimiterVal.toTypeString() + ". Expected: " + Value("").toTypeString() + '\n');
         }
 
 
         if (delimiterVal.get<Value::STR>().size() != 1) {
-            throw std::runtime_error("Error: delimiter must be a string of size 1\n");
+            throw DplException("Delimiter must be a string of size 1\n");
         }
 
         char delimiter = delimiterVal.get<Value::STR>()[0];
@@ -1308,7 +1308,7 @@ void Evaluator::initPtable() {
         std::filesystem::path filePath = fileName.get<Value::STR>();
         std::ofstream file(filePath);
         if (!file.is_open()) {
-            throw std::runtime_error("Error: could not open file \"" + fileName.toString() + "\"");
+            throw DplException("Could not open file \"" + fileName.toString() + "\"");
         }
 
         // Write headers

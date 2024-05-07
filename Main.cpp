@@ -70,18 +70,44 @@ int main(int argc, char **argv) {
     }
 
     DplLexer lexer(&input);
+    lexer.removeErrorListeners();
+
+    std::string filename = std::string(argv[fileArgIndex]).substr(std::string(argv[fileArgIndex]).find_last_of('/') + 1);
+    std::shared_ptr<ANTLRErrorListener> lexerErrorListener = std::make_shared<LexerErrorListener>(filename);
+    lexer.addErrorListener(lexerErrorListener.get());
     CommonTokenStream tokens(&lexer);
 
-    tokens.fill();
+    try {
+        tokens.fill();
+    } catch (const RuntimeException &e) {
+        return EXIT_FAILURE;
+    }
 
     DplParser parser(&tokens);
-    tree::ParseTree *tree = parser.prog();
+    parser.removeErrorListeners();
+    std::shared_ptr<ANTLRErrorListener> parserErrorListener = std::make_shared<ParserErrorListener>(filename);
+    parser.addErrorListener(parserErrorListener.get());
+    std::shared_ptr<ANTLRErrorStrategy> strategy = std::make_shared<DplErrorStrategy>();
+    parser.setErrorHandler(strategy);
+    tree::ParseTree *tree; 
+    
+    try {
+        tree = parser.prog();
+    } catch (const ParseCancellationException &e) {
+        return EXIT_FAILURE;
+    }
 
     AstBuilder builder{&parser, &lexer};
     builder.visit(tree);
     std::shared_ptr<AstNode> root = builder.getRoot();
     std::shared_ptr<Evaluator> evaluator = std::make_shared<Evaluator>();
-    root->accept(evaluator);
+
+    try {
+        root->accept(evaluator);
+    } catch (const DplException &e) {
+        std::cerr << e.what() << '\n';
+        return EXIT_FAILURE;
+    }
 
     if (debug) {
         // Ast print

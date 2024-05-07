@@ -12,6 +12,12 @@
 #include <iostream>
 #include <regex>
 
+#include "LexerErrorListener.hpp"
+#include "ParserErrorListener.hpp"
+#include "DplErrorStrategy.hpp"
+#include "DplException.hpp"
+
 #include "Evaluator.hpp"
+
 
 #endif

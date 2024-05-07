@@ -154,7 +154,7 @@ namespace argz
 
          const char* flag = argv[i];
          if (*flag != '-') {
-            throw std::runtime_error("Expected '-'");
+            throw std::runtime_error("Error: expected '-'");
          }
          ++flag;
          
@@ -173,7 +173,7 @@ namespace argz
          if (str.size() == 1) {
             str = get_id(*flag);
             if (str.empty()) {
-               throw std::runtime_error("Invalid argument: '-" + std::string(1, *flag) + "'");
+               throw std::runtime_error("Error: invalid argument '-" + std::string(1, *flag) + "'");
             }
          }
          if (str.empty()) { break; }
