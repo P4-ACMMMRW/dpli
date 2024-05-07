@@ -14,7 +14,7 @@ namespace dplsrc {
                 return msg.c_str();
             }
 
-        private:
+        protected:
             std::string msg;
     };
 }

@@ -12,9 +12,9 @@ void Evaluator::visit(const std::shared_ptr<AndExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    if (leftNode->getVal().is<Value::BOOL>() || rightNode->getVal().is<Value::BOOL>()) {
+    if (!leftNode->getVal().is<Value::BOOL>() || !rightNode->getVal().is<Value::BOOL>()) {
         // TODO: move to error handler at some point
-        throw RuntimeException("Cannot compare the used types");
+        throw RuntimeException("Cannot do logical and with the used types");
     }
 
     // Evaluates the value of the expression
@@ -221,7 +221,14 @@ void Evaluator::visit(const std::shared_ptr<DivExprNode> &node) {
         throw RuntimeException("Could not convert string to value of nodes");
 }
 
-void Evaluator::visit(const std::shared_ptr<ElseNode> &node) {}
+void Evaluator::visit(const std::shared_ptr<ElseNode> &node) {
+    std::vector<std::shared_ptr<AstNode>> elseBodyNodes = node->getChildNodeList();
+
+    for (size_t i = 0; i < elseBodyNodes.size(); ++i) {
+        elseBodyNodes[i]->accept(shared_from_this());
+    }
+    
+}
 
 void Evaluator::visit(const std::shared_ptr<EqualExprNode> &node) {
     // Get left and right node
@@ -235,7 +242,7 @@ void Evaluator::visit(const std::shared_ptr<EqualExprNode> &node) {
 
     if (!numeric && !string) {
         // TODO: move to error handler at some point
-        throw RuntimeException("Cannot compare the used types");
+        throw RuntimeException("Cannot check equality with the used types");
     }
 
     // Evaluates the value of the expression
@@ -262,7 +269,7 @@ void Evaluator::visit(const std::shared_ptr<ExpoExprNode> &node) {
                                   rightNode->getVal().get<Value::BOOL>()));
         } else if (rightNode->getVal().is<Value::INT>()) {
             if (rightNode->getVal().get<Value::INT>() >= 0) {
-                node->setVal((int)round(std::pow(leftNode->getVal().get<Value::INT>(),
+                node->setVal(static_cast<Value::INT>(std::pow(leftNode->getVal().get<Value::INT>(),
                                                  rightNode->getVal().get<Value::INT>())));
             } else {
                 node->setVal(std::pow(leftNode->getVal().get<Value::INT>(),
@@ -372,9 +379,8 @@ void Evaluator::visit(const std::shared_ptr<GreaterEqualExprNode> &node) {
 
     if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()))) {
         // TODO: move to error handler at some point
-        throw RuntimeException("Cannot compare the used types");
+        throw RuntimeException("Cannot do greater or equal with the used types");
     }
-
     // Evaluates the value of the expression
     node->setVal(leftNode->getVal() >= rightNode->getVal());
 }
@@ -388,7 +394,7 @@ void Evaluator::visit(const std::shared_ptr<GreaterExprNode> &node) {
 
     if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()))) {
         // TODO: move to error handler at some point
-        throw RuntimeException("Cannot compare the used types");
+        throw RuntimeException("Cannot do greater than with the used types");
     }
 
     // Evaluates the value of the expression
@@ -417,7 +423,37 @@ void Evaluator::visit(const std::shared_ptr<HeaderIndexNode> &node) {
     }
 }
 
-void Evaluator::visit(const std::shared_ptr<IfNode> &node) {}
+void Evaluator::visit(const std::shared_ptr<IfNode> &node) {
+    std::shared_ptr<AstNode> condNode = node->getCondNode();
+    std::vector<std::shared_ptr<AstNode>> bodyNodes = node->getBodyNodes();
+    std::shared_ptr<AstNode> elseNode = node->getElseNode();
+
+    condNode->accept(shared_from_this());
+    
+    if (!isNumeric(condNode->getVal())) {
+        // TODO: move to error handler later
+        throw std::runtime_error("Error: Invalid type.");
+    }
+    else if (condNode->getVal().is<Value::BOOL>() && condNode->getVal().get<Value::BOOL>()) {
+        for (size_t i = 0; i < bodyNodes.size(); ++i) { 
+            bodyNodes[i]->accept(shared_from_this());
+        }
+    }
+    else if (condNode->getVal().is<Value::INT>() && condNode->getVal().get<Value::INT>()) {
+        for (size_t i = 0; i < bodyNodes.size(); ++i) { 
+            bodyNodes[i]->accept(shared_from_this());
+        }
+    }
+    else if (condNode->getVal().is<Value::FLOAT>() && condNode->getVal().get<Value::FLOAT>()) {
+        for (size_t i = 0; i < bodyNodes.size(); ++i) { 
+            bodyNodes[i]->accept(shared_from_this());
+        }
+    }
+    else if (elseNode != 0) {
+        elseNode->accept(shared_from_this());
+    }
+    
+}
 
 void Evaluator::visit(const std::shared_ptr<IndexNode> &node) {
     std::shared_ptr<AstNode> identifierNode = node->getLeftNode();
@@ -507,7 +543,7 @@ void Evaluator::visit(const std::shared_ptr<LessEqualExprNode> &node) {
 
     if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()))) {
         // TODO: move to error handler at some point
-        throw RuntimeException("Cannot compare the used types");
+        throw RuntimeException("Cannot do less or equal with the used types");
     }
 
     // Evaluates the value of the expression
@@ -523,7 +559,7 @@ void Evaluator::visit(const std::shared_ptr<LessExprNode> &node) {
 
     if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()))) {
         // TODO: move to error handler at some point
-        throw RuntimeException("Cannot compare the used types");
+        throw RuntimeException("Cannot do less than with the used types");
     }
 
     // Evaluates the value of the expression
@@ -622,45 +658,46 @@ void Evaluator::visit(const std::shared_ptr<ModExprNode> &node) {
 
     if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()))) {
         // TODO: move to error handler at some point
-        throw RuntimeException("Cannot compare the used types");
-    }
+        throw RuntimeException("Cannot do modulo with the used types");
 
-    // Evaluates the value of the expression
-    if (leftNode->getVal().is<Value::INT>()) {
-        if (rightNode->getVal().is<Value::BOOL>()) {
-            node->setVal(leftNode->getVal().get<Value::INT>() %
-                         rightNode->getVal().get<Value::BOOL>());
-        } else if (rightNode->getVal().is<Value::INT>()) {
-            node->setVal(leftNode->getVal().get<Value::INT>() %
-                         rightNode->getVal().get<Value::INT>());
+        // Evaluates the value of the expression
+        if (leftNode->getVal().is<Value::INT>()) {
+            if (rightNode->getVal().is<Value::BOOL>()) {
+                node->setVal(leftNode->getVal().get<Value::INT>() %
+                            rightNode->getVal().get<Value::BOOL>());
+            } else if (rightNode->getVal().is<Value::INT>()) {
+                node->setVal(leftNode->getVal().get<Value::INT>() %
+                            rightNode->getVal().get<Value::INT>());
+            } else {
+                node->setVal(fmod(leftNode->getVal().get<Value::INT>(),
+                                rightNode->getVal().get<Value::FLOAT>()));
+            }
+        } else if (leftNode->getVal().is<Value::FLOAT>()) {
+            if (rightNode->getVal().is<Value::BOOL>()) {
+                node->setVal(fmod(leftNode->getVal().get<Value::FLOAT>(),
+                                rightNode->getVal().get<Value::BOOL>()));
+            } else if (rightNode->getVal().is<Value::INT>()) {
+                node->setVal(fmod(leftNode->getVal().get<Value::FLOAT>(),
+                                rightNode->getVal().get<Value::INT>()));
+            } else {
+                node->setVal(fmod(leftNode->getVal().get<Value::FLOAT>(),
+                                rightNode->getVal().get<Value::BOOL>()));
+            }
+        } else if (leftNode->getVal().is<Value::BOOL>()) {
+            if (rightNode->getVal().is<Value::BOOL>()) {
+                node->setVal(leftNode->getVal().get<Value::BOOL>() %
+                            rightNode->getVal().get<Value::BOOL>());
+            } else if (rightNode->getVal().is<Value::INT>()) {
+                node->setVal(leftNode->getVal().get<Value::BOOL>() %
+                            rightNode->getVal().get<Value::INT>());
+            } else {
+                node->setVal(fmod(leftNode->getVal().get<Value::BOOL>(),
+                                rightNode->getVal().get<Value::FLOAT>()));
+            }
         } else {
-            node->setVal(fmod(leftNode->getVal().get<Value::INT>(),
-                              rightNode->getVal().get<Value::FLOAT>()));
+            throw RuntimeException("Couldn't convert string to value of nodes");
         }
-    } else if (leftNode->getVal().is<Value::FLOAT>()) {
-        if (rightNode->getVal().is<Value::BOOL>()) {
-            node->setVal(fmod(leftNode->getVal().get<Value::FLOAT>(),
-                              rightNode->getVal().get<Value::BOOL>()));
-        } else if (rightNode->getVal().is<Value::INT>()) {
-            node->setVal(fmod(leftNode->getVal().get<Value::FLOAT>(),
-                              rightNode->getVal().get<Value::INT>()));
-        } else {
-            node->setVal(fmod(leftNode->getVal().get<Value::FLOAT>(),
-                              rightNode->getVal().get<Value::BOOL>()));
-        }
-    } else if (leftNode->getVal().is<Value::BOOL>()) {
-        if (rightNode->getVal().is<Value::BOOL>()) {
-            node->setVal(leftNode->getVal().get<Value::BOOL>() %
-                         rightNode->getVal().get<Value::BOOL>());
-        } else if (rightNode->getVal().is<Value::INT>()) {
-            node->setVal(leftNode->getVal().get<Value::BOOL>() %
-                         rightNode->getVal().get<Value::INT>());
-        } else {
-            node->setVal(fmod(leftNode->getVal().get<Value::BOOL>(),
-                              rightNode->getVal().get<Value::FLOAT>()));
-        }
-    } else
-        throw RuntimeException("Couldn't convert string to value of nodes");
+    }
 }
 
 void Evaluator::visit(const std::shared_ptr<MultExprNode> &node) {
@@ -750,7 +787,7 @@ void Evaluator::visit(const std::shared_ptr<NotEqualExprNode> &node) {
 
     if (!numeric && !string) {
         // TODO: move to error handler at some point
-        throw RuntimeException("Cannot compare the used types");
+        throw RuntimeException("Cannot dp logical not equal with the used types");
     }
 
     // Evaluates the value of the expression
@@ -832,7 +869,7 @@ void Evaluator::visit(const std::shared_ptr<OrExprNode> &node) {
 
     if (!leftNode->getVal().is<Value::BOOL>() || !rightNode->getVal().is<Value::BOOL>()) {
         // TODO: move to error handler at some point
-        throw RuntimeException("Cannot compare the used types");
+        throw RuntimeException("Cannot do logical or with the used types");
     }
 
     // Evaluates the value of the expression
@@ -961,11 +998,11 @@ void Evaluator::visit(const std::shared_ptr<ProcCallNode> &node) {
     // Evaluate body
     std::vector<std::shared_ptr<AstNode>> bodyNodes = proc->getBodyNodes();
     for (size_t i = 0; i < bodyNodes.size(); ++i) {
-        bodyNodes[i]->accept(shared_from_this());
-        std::shared_ptr<ReturnNode> returnNode =
-            std::dynamic_pointer_cast<ReturnNode>(bodyNodes[i]);
-        if (returnNode) {
-            node->setVal(returnNode->getVal());
+        // Abusing try catch to break out of loop when we evaluated return statement
+        try {
+            bodyNodes[i]->accept(shared_from_this());
+        } catch (const ReturnValue &e) {
+            node->setVal(e.getVal());
             break;
         }
     }
@@ -995,7 +1032,7 @@ void Evaluator::visit(const std::shared_ptr<ProgNode> &node) {
 void Evaluator::visit(const std::shared_ptr<ReturnNode> &node) {
     std::shared_ptr<AstNode> childNode = node->getChildNode();
     childNode->accept(shared_from_this());
-    node->setVal(childNode->getVal());
+    throw ReturnValue(childNode->getVal());
 }
 
 void Evaluator::visit(const std::shared_ptr<TableNode> &node) {
@@ -1041,7 +1078,41 @@ void Evaluator::visit(const std::shared_ptr<TableNode> &node) {
 
 void Evaluator::visit(const std::shared_ptr<UnionExprNode> &node) {}
 
-void Evaluator::visit(const std::shared_ptr<WhileNode> &node) {}
+void Evaluator::visit(const std::shared_ptr<WhileNode> &node) {
+    std::shared_ptr<AstNode> condNode = node->getChildNode();
+    std::vector<std::shared_ptr<AstNode>> bodyNodes = node->getChildNodeList();
+
+    condNode->accept(shared_from_this());
+
+    if (!isNumeric(condNode->getVal())) {
+        // TODO: move to error handler later
+        throw std::runtime_error("Error: Invalid type.");
+    }
+    else if (condNode->getVal().is<Value::BOOL>() && condNode->getVal().get<Value::BOOL>()) {
+        while(condNode->getVal().get<Value::BOOL>()) {
+            for (size_t i = 0; i < bodyNodes.size(); ++i) { 
+                bodyNodes[i]->accept(shared_from_this());
+            }
+            condNode->accept(shared_from_this());
+        }
+    }
+    else if (condNode->getVal().is<Value::INT>() && condNode->getVal().get<Value::INT>()) {
+        while(condNode->getVal().get<Value::INT>()) {
+            for (size_t i = 0; i < bodyNodes.size(); ++i) { 
+                bodyNodes[i]->accept(shared_from_this());
+            }
+            condNode->accept(shared_from_this());
+        }
+    }
+    else if (condNode->getVal().is<Value::FLOAT>() && condNode->getVal().get<Value::FLOAT>()) {
+        while(condNode->getVal().get<Value::FLOAT>()) {
+            for (size_t i = 0; i < bodyNodes.size(); ++i) { 
+                bodyNodes[i]->accept(shared_from_this());
+            }
+            condNode->accept(shared_from_this());
+        }
+    }
+}
 
 void Evaluator::initPtable() {
     Procedure::ProcType print1 = [](std::vector<std::shared_ptr<AstNode>> args) {
