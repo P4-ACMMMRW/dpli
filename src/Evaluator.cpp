@@ -913,10 +913,7 @@ void Evaluator::visit(const std::shared_ptr<PlusNode> &node) {
 
     // Evaluates the value of the expression
     if (childNode->getVal().is<Value::INT>()) {
-        if (childNode->getVal().get<Value::INT>() == 69) {
-            throw std::runtime_error(
-                "Why would you ever use this kind of operator without lambda functions?!?");
-        }
+        node->setVal(childNode->getVal().get<Value::INT>());
     } else if (childNode->getVal().is<Value::FLOAT>()) {
         node->setVal(childNode->getVal().get<Value::FLOAT>());
     } else if (childNode->getVal().is<Value::BOOL>()) {
