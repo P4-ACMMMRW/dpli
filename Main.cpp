@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
     // Parse all arguments except fileArgIndex and argv[0]
     try {
         argz::parse(about, options, argc, argv, fileArgIndex);
-    } catch (const std::exception &e) {
+    } catch (const DplException &e) {
         std::cerr << e.what() << '\n';
         return EXIT_FAILURE;
     }
