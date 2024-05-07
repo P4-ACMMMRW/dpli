@@ -1,4 +1,5 @@
 #include "VariableTable.hpp"
+#include "InternalException.hpp"
 
 using namespace dplsrc;
 
@@ -59,7 +60,7 @@ void VariableTable::enterScope(const Scope& scope) { scopes.push(scope); }
 
 void VariableTable::exitScope() {
     if (scopes.empty()) {
-        throw std::runtime_error("Error: cannot exit global scope");
+        throw InternalException("Error: cannot exit global scope");
     }         
     
     scopes.pop();

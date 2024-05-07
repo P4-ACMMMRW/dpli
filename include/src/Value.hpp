@@ -7,6 +7,7 @@
 #include <map>
 #include <variant>
 #include <vector>
+#include "InternalException.hpp"
 
 namespace dplsrc {
 class Value {

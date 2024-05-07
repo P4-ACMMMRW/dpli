@@ -9,6 +9,8 @@
 #include <functional>
 #include <memory>
 
+#include "AstException.hpp"
+
 using namespace antlr4;
 using namespace dplgrammar;
 

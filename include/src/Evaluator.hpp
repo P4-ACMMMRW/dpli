@@ -11,6 +11,7 @@
 #include "ProcedureTable.hpp"
 #include "Value.hpp"
 #include "VariableTable.hpp"
+#include "RuntimeException.hpp"
 
 namespace dplsrc {
 class Evaluator : public AstVisitor {
