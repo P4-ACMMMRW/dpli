@@ -8,7 +8,7 @@ namespace dplsrc {
     class RuntimeException : public DplException {
         public:
             RuntimeException(std::string msg) : DplException(msg) {
-                msg.insert(0, "Runtime Error: ");
+                this->msg = msg.insert(0, "Runtime Error: ");
             }
     };
 }
