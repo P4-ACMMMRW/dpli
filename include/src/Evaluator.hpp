@@ -3,11 +3,15 @@
 
 #include <DplLexer.h>
 
+#include <filesystem>
+#include <cmath>
+
 #include "AllNodeIncludes.hpp"
 #include "AstVisitor.hpp"
 #include "ProcedureTable.hpp"
 #include "Value.hpp"
 #include "VariableTable.hpp"
+#include "RuntimeException.hpp"
 
 namespace dplsrc {
 class Evaluator : public AstVisitor {

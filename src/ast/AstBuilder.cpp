@@ -64,10 +64,11 @@ antlrcpp::Any AstBuilder::visitProccall(DplParser::ProccallContext* parseNode) {
     std::shared_ptr<AstNode> newNode = std::static_pointer_cast<AstNode>(procCallNewNode);
     initNewNode(parseNode, newNode, "() proccall");
 
-    if (parseNode->children.size() != 2) {  // not empty params
+    if (parseNode->children.size() > 2) {  // not empty params
         parseNode->children[1]->accept(this);
     }
     procCallNewNode->stopVisitingParams();
+    currentNode = newNode;
 
     return nullptr;
 }
@@ -200,7 +201,7 @@ antlrcpp::Any AstBuilder::visitEqulexpr(DplParser::EqulexprContext* parseNode) {
                 case DplLexer::NotEqual:
                     return std::make_shared<NotEqualExprNode>(currentNode);
                 default:
-                    throw std::runtime_error("Junc expr was not valid operator");
+                    throw AstException("Junc expr was not valid operator");
             }
             return nullptr;
         },
@@ -220,7 +221,7 @@ antlrcpp::Any AstBuilder::visitCompexpr(DplParser::CompexprContext* parseNode) {
                 case DplLexer::LessEqual:
                     return std::make_shared<LessEqualExprNode>(currentNode);
                 default:
-                    throw std::runtime_error("Compexpr was not valid operator");
+                    throw AstException("Compexpr was not valid operator");
             }
             return nullptr;
         },
@@ -236,7 +237,7 @@ antlrcpp::Any AstBuilder::visitPlusexpr(DplParser::PlusexprContext* parseNode) {
                 case DplLexer::Minus:
                     return std::make_shared<MinusExprNode>(currentNode);
                 default:
-                    throw std::runtime_error("Plusexpr was not valid operator");
+                    throw AstException("Plusexpr was not valid operator");
             }
             return nullptr;
         },
@@ -252,7 +253,7 @@ antlrcpp::Any AstBuilder::visitTablexpr(DplParser::TablexprContext* parseNode) {
                 case DplLexer::Intersection:
                     return std::make_shared<IntersectionExprNode>(currentNode);
                 default:
-                    throw std::runtime_error("Tablexpr was not valid operator");
+                    throw AstException("Tablexpr was not valid operator");
             }
             return nullptr;
         },
@@ -270,7 +271,7 @@ antlrcpp::Any AstBuilder::visitMultexpr(DplParser::MultexprContext* parseNode) {
                 case DplLexer::Mod:
                     return std::make_shared<ModExprNode>(currentNode);
                 default:
-                    throw std::runtime_error("Multexpr was not valid operator");
+                    throw AstException("Multexpr was not valid operator");
             }
             return nullptr;
         },
@@ -286,7 +287,7 @@ antlrcpp::Any AstBuilder::visitPolaexpr(DplParser::PolaexprContext* parseNode) {
                 case DplLexer::Minus:
                     return std::make_shared<MinusNode>(currentNode);
                 default:
-                    throw std::runtime_error("Polaexpr was not valid operator");
+                    throw AstException("Polaexpr was not valid operator");
             }
             return nullptr;
         },
@@ -305,7 +306,7 @@ antlrcpp::Any AstBuilder::visitList(DplParser::ListContext* parseNode) {
     bool hasChild =
         parseNode->children.size() > 2;  // dirty way to not visit children if empty list
     return unaryNode([this]() { return std::make_shared<ListNode>(currentNode); }, parseNode, 1,
-                     "[] List", true, hasChild);
+                     "[] List", hasChild);
 }
 
 antlrcpp::Any AstBuilder::visitTable(DplParser::TableContext* parseNode) {
@@ -339,7 +340,7 @@ antlrcpp::Any AstBuilder::visitNumber(DplParser::NumberContext* parseNode) {
                 case DplLexer::Minus:
                     return std::make_shared<MinusNode>(currentNode);
                 default:
-                    throw std::runtime_error("Numberexpr was not valid operator");
+                    throw AstException("Numberexpr was not valid operator");
             }
             return nullptr;
         },
@@ -367,13 +368,13 @@ antlrcpp::Any AstBuilder::visitSubscript(DplParser::SubscriptContext* parseNode)
 }
 
 antlrcpp::Any AstBuilder::visitIndex(DplParser::IndexContext* parseNode) {
-    return unaryNode([this]() { return std::make_shared<IndexNode>(currentNode); }, parseNode, 1,
-                     "[] Index", false);
+    return indexNode([this]() { return std::make_shared<IndexNode>(currentNode); }, parseNode, 1,
+                     "[] Index");
 }
 
 antlrcpp::Any AstBuilder::visitHeaderindex(DplParser::HeaderindexContext* parseNode) {
-    return unaryNode([this]() { return std::make_shared<HeaderIndexNode>(currentNode); }, parseNode,
-                     2, "[$] Header Indexing", false);
+    return indexNode([this]() { return std::make_shared<HeaderIndexNode>(currentNode); }, parseNode,
+                     2, "[$] Header Indexing");
 }
 
 antlrcpp::Any AstBuilder::visitFiltering(DplParser::FilteringContext* parseNode) {
@@ -384,8 +385,8 @@ antlrcpp::Any AstBuilder::visitFiltering(DplParser::FilteringContext* parseNode)
 
 antlrcpp::Any AstBuilder::visitUnaryexpr(DplParser::UnaryexprContext* parseNode) {
     std::string text = parseNode->children[0]->getText();
-    return unaryNode([this]() { return std::make_shared<FilterNode>(currentNode); }, parseNode, 1,
-                     text, false);
+    return indexNode([this]() { return std::make_shared<FilterNode>(currentNode); }, parseNode, 1,
+                     text);
 }
 
 std::shared_ptr<AstNode> AstBuilder::getRoot() { return root; }
@@ -399,28 +400,33 @@ void AstBuilder::initNewNode(antlr4::ParserRuleContext* parseNode,
     currentNode = newNode;
 }
 
-antlrcpp::Any AstBuilder::unaryNode(const std::function<std::shared_ptr<AstNode>()>& createNode,
+antlrcpp::Any AstBuilder::indexNode(const std::function<std::shared_ptr<AstNode>()>& createNode,
                                     antlr4::ParserRuleContext* parseNode, size_t childIndex,
-                                    const std::string& text, bool restoreOldCurrent,
-                                    bool hasChild) {
-    std::shared_ptr<AstNode> oldNode = currentNode;
+                                    const std::string& text) {
     std::shared_ptr<AstNode> newNode = createNode();
     initNewNode(parseNode, newNode, text);
 
+    parseNode->children[childIndex]->accept(this);
+
+    currentNode = newNode;
+    return nullptr;
+}
+
+antlrcpp::Any AstBuilder::unaryNode(const std::function<std::shared_ptr<AstNode>()>& createNode,
+                                    antlr4::ParserRuleContext* parseNode, size_t childIndex,
+                                    const std::string& text, bool hasChild) {
+    std::shared_ptr<AstNode> oldNode = currentNode;
+    std::shared_ptr<AstNode> newNode = createNode();
+    initNewNode(parseNode, newNode, text);
+    
     if (!hasChild) {
         return nullptr;
     }
 
-    tree::ParseTree* child = parseNode->children[childIndex];
-
-    if (child != nullptr) {
-        child->accept(this);
-    }
-
-    if (restoreOldCurrent) {
-        currentNode = oldNode;
-    }
-
+    parseNode->children[childIndex]->accept(this);
+    
+    currentNode = oldNode;
+    
     return nullptr;
 }
 
@@ -522,5 +528,5 @@ antlr4::Token* AstBuilder::getChildToken(antlr4::tree::ParseTree* parseNode, siz
     if (terminalNode != nullptr) {
         return terminalNode->getSymbol();
     }
-    throw std::runtime_error("Child node is not a TerminalNode");
+    throw AstException("Child node is not a TerminalNode");
 }

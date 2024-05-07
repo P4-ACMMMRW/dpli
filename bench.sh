@@ -1,11 +1,21 @@
 #!/bin/bash
 
 # Make a temporary file to store all examples
-tmpfile=$(mktemp /tmp/tmp.XXXXXXXXXX.dpl)
-for file in docs/examples/*; do
-    cat "$file" >> "$tmpfile"
-    echo "" >> "$tmpfile"
-done
+
+# if another file is provided, use that file
+if [ -n "$1" ]; then
+    tmpfile="$1"
+    if [ ! -f "$tmpfile" ]; then
+        echo "File not found."
+        exit 1
+    fi
+else 
+    tmpfile=$(mktemp /tmp/tmp.XXXXXXXXXX.dpl)
+    for file in docs/examples/*; do
+        cat "$file" >> "$tmpfile"
+        echo "" >> "$tmpfile"
+    done
+fi
 
 run_perf() {
     # Benchmark interpreter

@@ -50,6 +50,8 @@ AST_TEST("quicksort.dpl") {
        DplLexer::Identifier,
        DplParser::RuleIndex,
        DplLexer::Identifier,
+       DplParser::RuleProccall,
+       DplLexer::Identifier,
        DplParser::RuleMultexpr,
        DplParser::RuleTerm,
        DplParser::RulePlusexpr,
@@ -165,6 +167,7 @@ AST_TEST("quicksort.dpl") {
        DplLexer::Identifier,
        DplParser::RulePlusexpr,
        DplLexer::String,
+       DplParser::RuleProccall,
        DplLexer::Identifier,
     };
     
