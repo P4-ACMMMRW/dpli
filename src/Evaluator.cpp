@@ -597,7 +597,7 @@ void Evaluator::visit(const std::shared_ptr<MinusNode> &node) {
     std::shared_ptr<AstNode> childNode = node->getChildNode();
     childNode->accept(shared_from_this());
 
-    if (isNumeric(childNode->getVal())) {
+    if (!isNumeric(childNode->getVal())) {
         // TODO: move to error handler at some point
         throw std::runtime_error("Cannot do substraction with the used type");
     }
