@@ -10,7 +10,7 @@ namespace dplsrc {
     class ArgumentException : public RuntimeException {
         public:
             ArgumentException(std::string msg) : RuntimeException(msg) {
-                msg.insert(0, "Argument Error: ");
+                this->msg = msg.insert(0, "Argument Error: ");
             }
     };
 }

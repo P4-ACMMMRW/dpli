@@ -12,6 +12,7 @@
 #include "Value.hpp"
 #include "VariableTable.hpp"
 #include "RuntimeException.hpp"
+#include "ReturnValue.hpp"
 
 namespace dplsrc {
 class Evaluator : public AstVisitor {

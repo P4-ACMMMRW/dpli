@@ -7,7 +7,7 @@ namespace dplsrc {
     class AstException : public InternalException {
         public:
             AstException(std::string msg) : InternalException(msg) {
-                msg.insert(0, "AST Error: ");
+                this->msg = msg.insert(0, "AST Error: ");
             }
     };
 }
