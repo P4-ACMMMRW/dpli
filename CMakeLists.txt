@@ -58,6 +58,7 @@ target_include_directories(dpllib PUBLIC
     ${PROJECT_SOURCE_DIR}/include/src/ast/nodes
     ${PROJECT_SOURCE_DIR}/include/src/ast/nodes/abstract
     ${PROJECT_SOURCE_DIR}/include/src/error-handling
+    ${PROJECT_SOURCE_DIR}/include/src/error-handling/exceptions
 )
 
 target_link_libraries(dpllib PUBLIC antlr4_static)

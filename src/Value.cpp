@@ -85,7 +85,7 @@ std::string Value::toString() const {
         return result;
     }
 
-    throw std::runtime_error("Error: unknown value type");
+    throw InternalException("Error: unknown value type");
 }
 
 std::string Value::toTypeString(bool verbose) const {
@@ -156,7 +156,7 @@ std::string Value::toTypeString(bool verbose) const {
         return result;
     }
 
-    throw std::runtime_error("Error: unknown type cannot be converted to a string");
+    throw InternalException("unknown type cannot be converted to a string");
 }
 
 bool Value::operator==(const Value& other) const {

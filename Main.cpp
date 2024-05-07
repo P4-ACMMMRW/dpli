@@ -79,7 +79,8 @@ int main(int argc, char **argv) {
 
     try {
         tokens.fill();
-    } catch (const RuntimeException &e) {
+    } catch (const dplsrc::RuntimeException &e) {
+        std::cerr << e.what() << '\n';
         return EXIT_FAILURE;
     }
 
@@ -94,15 +95,24 @@ int main(int argc, char **argv) {
     try {
         tree = parser.prog();
     } catch (const ParseCancellationException &e) {
+        std::cerr << e.what() << '\n';
         return EXIT_FAILURE;
     }
 
     AstBuilder builder{&parser, &lexer};
     builder.visit(tree);
-    std::shared_ptr<AstNode> root = builder.getRoot();
-    std::shared_ptr<Evaluator> evaluator = std::make_shared<Evaluator>();
 
+    std::shared_ptr<AstNode> root;
     try {
+        root = builder.getRoot();
+    } catch (const DplException &e) {
+        std::cerr << e.what() << '\n';
+        return EXIT_FAILURE;
+    }
+
+    std::shared_ptr<Evaluator> evaluator;
+    try {
+        evaluator = std::make_shared<Evaluator>();
         root->accept(evaluator);
     } catch (const DplException &e) {
         std::cerr << e.what() << '\n';

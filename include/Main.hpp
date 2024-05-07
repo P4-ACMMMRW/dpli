@@ -19,5 +19,4 @@
 
 #include "Evaluator.hpp"
 
-
 #endif

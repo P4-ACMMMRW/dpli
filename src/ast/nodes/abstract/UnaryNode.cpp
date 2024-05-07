@@ -1,10 +1,12 @@
 #include <UnaryNode.hpp>
 
+using namespace dplsrc;
+
 void UnaryNode::addChild(std::shared_ptr<AstNode> child) {
     if (childNode->getChildNode() == nullptr) {
         childNode->addChild(child);
     } else {
-        throw std::runtime_error("UnaryNode already has two children");
+        throw AstException("UnaryNode already has two children");
     }
 }
 

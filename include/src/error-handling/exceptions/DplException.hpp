@@ -4,12 +4,16 @@
 #include <string>
 
 namespace dplsrc {
+    // Base class for all exceptions
     class DplException : public std::exception {
         public:
-            DplException(std::string msg) : msg("Evaluation Error: " + msg) {}
+            virtual ~DplException() = default;
+
+            DplException(std::string msg) : msg(msg) {}
             const char *what() const noexcept override {
                 return msg.c_str();
             }
+
         private:
             std::string msg;
     };
