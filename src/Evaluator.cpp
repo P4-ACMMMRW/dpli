@@ -19,11 +19,11 @@ void Evaluator::visit(const std::shared_ptr<AndExprNode> &node) {
 
     // Evaluates the value of the expression
     if (leftNode->getVal().is<Value::BOOL>()) {
-        if (leftNode->getVal().get<Value::BOOL>() == 1 &&
-            rightNode->getVal().get<Value::BOOL>() == 1)
-            node->setVal(1);
+        if (leftNode->getVal().get<Value::BOOL>() == true &&
+            rightNode->getVal().get<Value::BOOL>() == true)
+            node->setVal(true);
         else
-            node->setVal(0);
+            node->setVal(false);
     } else
         throw std::runtime_error("Error: Couldn't convert string to value of nodes");
 }
@@ -805,20 +805,20 @@ void Evaluator::visit(const std::shared_ptr<NotNode> &node) {
 
     // Evaluates the value of the expression
     if (childNode->getVal().is<Value::INT>()) {
-        if (childNode->getVal().get<Value::INT>() != 0)
-            node->setVal(0);
+        if (childNode->getVal().get<Value::INT>() != false)
+            node->setVal(false);
         else
-            node->setVal(1);
+            node->setVal(true);
     } else if (childNode->getVal().is<Value::INT>()) {
-        if (childNode->getVal().get<Value::FLOAT>() != 0)
-            node->setVal(0);
+        if (childNode->getVal().get<Value::FLOAT>() != false)
+            node->setVal(false);
         else
-            node->setVal(1);
+            node->setVal(true);
     } else if (childNode->getVal().is<Value::BOOL>()) {
-        if (childNode->getVal().get<Value::BOOL>() != 0)
-            node->setVal(0);
+        if (childNode->getVal().get<Value::BOOL>() != false)
+            node->setVal(false);
         else
-            node->setVal(1);
+            node->setVal(true);
     } else
         throw std::runtime_error("Couldn't evaluate negation");
 }
@@ -836,10 +836,10 @@ void Evaluator::visit(const std::shared_ptr<OrExprNode> &node) {
     }
 
     // Evaluates the value of the expression
-    if (leftNode->getVal().get<Value::BOOL>() == 1 || rightNode->getVal().get<Value::BOOL>() == 1)
-        node->setVal(1);
+    if (leftNode->getVal().get<Value::BOOL>() == true || rightNode->getVal().get<Value::BOOL>() == true)
+        node->setVal(true);
     else
-        node->setVal(0);
+        node->setVal(false);
 }
 
 void Evaluator::visit(const std::shared_ptr<ParNode> &node) {
