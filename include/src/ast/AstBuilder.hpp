@@ -75,9 +75,13 @@ class AstBuilder : public DplParserBaseVisitor {
     void initNewNode(antlr4::ParserRuleContext *parseNode, const std::shared_ptr<AstNode> &newNode,
                      const std::string &text = "");
 
+    antlrcpp::Any indexNode(const std::function<std::shared_ptr<AstNode>()>& createNode,
+                                    antlr4::ParserRuleContext* parseNode, size_t childIndex,
+                                    const std::string& text = "");
+
     antlrcpp::Any unaryNode(const std::function<std::shared_ptr<AstNode>()> &createNode,
                             antlr4::ParserRuleContext *parseNode, size_t childIndex,
-                            const std::string &text = "", bool restoreOldCurrent = true, bool hasChild = true);
+                            const std::string &text = "", bool hasChild = true);
 
     antlrcpp::Any unaryNodeList(const std::function<std::shared_ptr<AstNode>()> &createNode,
                                 antlr4::ParserRuleContext *parseNode, size_t startIndex,
