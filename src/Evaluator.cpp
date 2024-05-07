@@ -221,7 +221,14 @@ void Evaluator::visit(const std::shared_ptr<DivExprNode> &node) {
         throw RuntimeException("Could not convert string to value of nodes");
 }
 
-void Evaluator::visit(const std::shared_ptr<ElseNode> &node) {}
+void Evaluator::visit(const std::shared_ptr<ElseNode> &node) {
+    std::vector<std::shared_ptr<AstNode>> elseBodyNodes = node->getChildNodeList();
+
+    for (size_t i = 0; i < elseBodyNodes.size(); ++i) {
+        elseBodyNodes[i]->accept(shared_from_this());
+    }
+    
+}
 
 void Evaluator::visit(const std::shared_ptr<EqualExprNode> &node) {
     // Get left and right node
@@ -417,7 +424,37 @@ void Evaluator::visit(const std::shared_ptr<HeaderIndexNode> &node) {
     }
 }
 
-void Evaluator::visit(const std::shared_ptr<IfNode> &node) {}
+void Evaluator::visit(const std::shared_ptr<IfNode> &node) {
+    std::shared_ptr<AstNode> condNode = node->getCondNode();
+    std::vector<std::shared_ptr<AstNode>> bodyNodes = node->getBodyNodes();
+    std::shared_ptr<AstNode> elseNode = node->getElseNode();
+
+    condNode->accept(shared_from_this());
+    
+    if (!isNumeric(condNode->getVal())) {
+        // TODO: move to error handler later
+        throw std::runtime_error("Error: Invalid type.");
+    }
+    else if (condNode->getVal().is<Value::BOOL>() && condNode->getVal().get<Value::BOOL>()) {
+        for (size_t i = 0; i < bodyNodes.size(); ++i) { 
+            bodyNodes[i]->accept(shared_from_this());
+        }
+    }
+    else if (condNode->getVal().is<Value::INT>() && condNode->getVal().get<Value::INT>()) {
+        for (size_t i = 0; i < bodyNodes.size(); ++i) { 
+            bodyNodes[i]->accept(shared_from_this());
+        }
+    }
+    else if (condNode->getVal().is<Value::FLOAT>() && condNode->getVal().get<Value::FLOAT>()) {
+        for (size_t i = 0; i < bodyNodes.size(); ++i) { 
+            bodyNodes[i]->accept(shared_from_this());
+        }
+    }
+    else if (elseNode != 0) {
+        elseNode->accept(shared_from_this());
+    }
+    
+}
 
 void Evaluator::visit(const std::shared_ptr<IndexNode> &node) {
     std::shared_ptr<AstNode> identifierNode = node->getLeftNode();
@@ -1041,7 +1078,41 @@ void Evaluator::visit(const std::shared_ptr<TableNode> &node) {
 
 void Evaluator::visit(const std::shared_ptr<UnionExprNode> &node) {}
 
-void Evaluator::visit(const std::shared_ptr<WhileNode> &node) {}
+void Evaluator::visit(const std::shared_ptr<WhileNode> &node) {
+    std::shared_ptr<AstNode> condNode = node->getChildNode();
+    std::vector<std::shared_ptr<AstNode>> bodyNodes = node->getChildNodeList();
+
+    condNode->accept(shared_from_this());
+
+    if (!isNumeric(condNode->getVal())) {
+        // TODO: move to error handler later
+        throw std::runtime_error("Error: Invalid type.");
+    }
+    else if (condNode->getVal().is<Value::BOOL>() && condNode->getVal().get<Value::BOOL>()) {
+        while(condNode->getVal().get<Value::BOOL>()) {
+            for (size_t i = 0; i < bodyNodes.size(); ++i) { 
+                bodyNodes[i]->accept(shared_from_this());
+            }
+            condNode->accept(shared_from_this());
+        }
+    }
+    else if (condNode->getVal().is<Value::INT>() && condNode->getVal().get<Value::INT>()) {
+        while(condNode->getVal().get<Value::INT>()) {
+            for (size_t i = 0; i < bodyNodes.size(); ++i) { 
+                bodyNodes[i]->accept(shared_from_this());
+            }
+            condNode->accept(shared_from_this());
+        }
+    }
+    else if (condNode->getVal().is<Value::FLOAT>() && condNode->getVal().get<Value::FLOAT>()) {
+        while(condNode->getVal().get<Value::FLOAT>()) {
+            for (size_t i = 0; i < bodyNodes.size(); ++i) { 
+                bodyNodes[i]->accept(shared_from_this());
+            }
+            condNode->accept(shared_from_this());
+        }
+    }
+}
 
 void Evaluator::initPtable() {
     Procedure::ProcType print1 = [](std::vector<std::shared_ptr<AstNode>> args) {
