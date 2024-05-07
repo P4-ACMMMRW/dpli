@@ -305,6 +305,7 @@ antlrcpp::Any AstBuilder::visitExpoexpr(DplParser::ExpoexprContext* parseNode) {
 antlrcpp::Any AstBuilder::visitList(DplParser::ListContext* parseNode) {
     bool hasChild =
         parseNode->children.size() > 2;  // dirty way to not visit children if empty list
+        parseNode->children.size() > 2;  // dirty way to not visit children if empty list
     return unaryNode([this]() { return std::make_shared<ListNode>(currentNode); }, parseNode, 1,
                      "[] List", hasChild);
 }
