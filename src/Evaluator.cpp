@@ -230,8 +230,10 @@ void Evaluator::visit(const std::shared_ptr<EqualExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal())) ||
-        (leftNode->getVal().is<Value::STR>() && rightNode->getVal().is<Value::STR>())) {
+    bool numeric = isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal());
+    bool string = leftNode->getVal().is<Value::STR>() && rightNode->getVal().is<Value::STR>();
+
+    if (!numeric && !string) {
         // TODO: move to error handler at some point
         throw std::runtime_error("Cannot compare the used types");
     }
@@ -678,7 +680,6 @@ void Evaluator::visit(const std::shared_ptr<MultExprNode> &node) {
     }
 
     // Evaluates the value of the expression
-    // TODO: Support string mutliplication e.g. "Hello" * 3 = "HelloHelloHello"
     if (leftNode->getVal().is<Value::INT>()) {
         if (rightNode->getVal().is<Value::BOOL>()) {
             node->setVal(leftNode->getVal().get<Value::INT>() *
@@ -691,7 +692,7 @@ void Evaluator::visit(const std::shared_ptr<MultExprNode> &node) {
                          rightNode->getVal().get<Value::FLOAT>());
         } else {
             node->setVal("");
-            for (size_t i = 0; i < leftNode->getVal().get<Value::INT>(); i++)
+            for (Value::INT i = 0; i < leftNode->getVal().get<Value::INT>(); i++)
                 node->setVal(node->getVal().get<Value::STR>() +
                              rightNode->getVal().get<Value::STR>());
         }
@@ -725,7 +726,7 @@ void Evaluator::visit(const std::shared_ptr<MultExprNode> &node) {
     } else if (leftNode->getVal().is<Value::STR>()) {
         node->setVal("");
         if (rightNode->getVal().is<Value::INT>()) {
-            for (size_t i = 0; i < rightNode->getVal().get<Value::INT>(); i++)
+            for (Value::INT i = 0; i < rightNode->getVal().get<Value::INT>(); i++)
                 node->setVal(node->getVal().get<Value::STR>() +
                              leftNode->getVal().get<Value::STR>());
         } else {
@@ -744,8 +745,10 @@ void Evaluator::visit(const std::shared_ptr<NotEqualExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal())) ||
-        (leftNode->getVal().is<Value::STR>() && rightNode->getVal().is<Value::STR>())) {
+    bool numeric = isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal());
+    bool string = leftNode->getVal().is<Value::STR>() && rightNode->getVal().is<Value::STR>();
+
+    if (!numeric && !string) {
         // TODO: move to error handler at some point
         throw std::runtime_error("Cannot compare the used types");
     }
