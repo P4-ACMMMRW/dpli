@@ -28,7 +28,11 @@ std::string Value::toString() const {
         std::string result = "[";
         bool addedSomething = false;
         for (const std::shared_ptr<Value>& elem : *get<LIST>()) {
-            result += elem->toString() + ", ";
+            if (elem->is<STR>()) {
+                result += "'" + elem->toString() + "', ";
+            } else {
+                result += elem->toString() + ", ";
+            }
             addedSomething = true;
         }
 
@@ -59,10 +63,14 @@ std::string Value::toString() const {
 
         return result;
     } else if (is<COLUMN>()) {
-        std::string result = static_cast<Value>(get<COLUMN>()->header).toString() + ": [";
+        std::string result = static_cast<Value>("'" + get<COLUMN>()->header).toString() + "'" + ": [";
         bool addedSomething = false;
         for (const std::shared_ptr<Value>& valPtr : *get<COLUMN>()->data) {
-            result += valPtr->toString() + ", ";
+            if (valPtr->is<STR>()) {
+                result += "'" + valPtr->toString() + "', ";
+            } else {
+                result += valPtr->toString() + ", ";
+            }
             addedSomething = true;
         }
 
