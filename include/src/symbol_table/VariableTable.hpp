@@ -41,7 +41,7 @@ class VariableTable : public SymbolTable {
      * Enters a new variable scope
      * @param VariableTable The table to copy the scope from
      */
-    void enterScope(Scope scope);
+    void enterScope(const Scope& scope);
 
     /**
      * Exits the current variable scope
@@ -67,7 +67,7 @@ class VariableTable : public SymbolTable {
      * Generates a string representation of a scope
      * @param scope The scope to generate a string for
      */
-    std::string generatePrintString(const Scope &scope);
+    static std::string generatePrintString(const Scope &scope);
 };
 }  // namespace dplsrc
 

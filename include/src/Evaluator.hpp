@@ -68,6 +68,10 @@ class Evaluator : public AstVisitor {
     ProcedureTable ptable = ProcedureTable();
     bool verbose;
 
+    bool isNumeric(Value value) {
+        return value.is<Value::FLOAT>() || value.is<Value::INT>() || value.is<Value::BOOL>();
+    }
+
     /**
      * Initializes the procedures from the standard library of the language
      */
