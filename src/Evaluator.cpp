@@ -76,8 +76,7 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
         // Get the pointer to the innermost list or column
         Value::LIST list = nullptr;
         Value::INT lastIndex = 0;
-        // Compare with SIZE_MAX as it will underflow once if i is 0
-        for (size_t i = indices.size(); i != SIZE_MAX; --i) {;
+        for (size_t i = indices.size() - 1; --i;) {
             if (val.is<Value::LIST>()) {
                 Value::INT index = indices[i].get<Value::INT>();
                 list = val.getMut<Value::LIST>();
