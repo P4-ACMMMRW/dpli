@@ -360,7 +360,6 @@ void Evaluator::visit(const std::shared_ptr<FilterNode> &node) {
             newCol->parent = newTable;
             newCol->header = entry.first;
             newCol->data = newData;
-            newCol->size = newData->size();
             newTable->insert({entry.first, newCol});
         }
 
@@ -1065,7 +1064,6 @@ void Evaluator::visit(const std::shared_ptr<TableNode> &node) {
         if (!sizeSet) {
             sizeSet = true;
             size = val->size();
-            col->size = size;
         } else if (val->size() != static_cast<size_t>(size)) {
             throw RuntimeException("All columns in a table must have the same size");
         }
@@ -1325,7 +1323,6 @@ void Evaluator::initPtable() {
 
                     cols[i]->header = headers[i];
                     cols[i]->parent = table;
-                    cols[i]->size++;
                 }
             }
         }
