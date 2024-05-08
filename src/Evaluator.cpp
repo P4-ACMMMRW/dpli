@@ -659,44 +659,44 @@ void Evaluator::visit(const std::shared_ptr<ModExprNode> &node) {
     if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()))) {
         // TODO: move to error handler at some point
         throw RuntimeException("Cannot do modulo with the used types");
+    }
 
-        // Evaluates the value of the expression
-        if (leftNode->getVal().is<Value::INT>()) {
-            if (rightNode->getVal().is<Value::BOOL>()) {
-                node->setVal(leftNode->getVal().get<Value::INT>() %
-                            rightNode->getVal().get<Value::BOOL>());
-            } else if (rightNode->getVal().is<Value::INT>()) {
-                node->setVal(leftNode->getVal().get<Value::INT>() %
-                            rightNode->getVal().get<Value::INT>());
-            } else {
-                node->setVal(fmod(leftNode->getVal().get<Value::INT>(),
-                                rightNode->getVal().get<Value::FLOAT>()));
-            }
-        } else if (leftNode->getVal().is<Value::FLOAT>()) {
-            if (rightNode->getVal().is<Value::BOOL>()) {
-                node->setVal(fmod(leftNode->getVal().get<Value::FLOAT>(),
-                                rightNode->getVal().get<Value::BOOL>()));
-            } else if (rightNode->getVal().is<Value::INT>()) {
-                node->setVal(fmod(leftNode->getVal().get<Value::FLOAT>(),
-                                rightNode->getVal().get<Value::INT>()));
-            } else {
-                node->setVal(fmod(leftNode->getVal().get<Value::FLOAT>(),
-                                rightNode->getVal().get<Value::BOOL>()));
-            }
-        } else if (leftNode->getVal().is<Value::BOOL>()) {
-            if (rightNode->getVal().is<Value::BOOL>()) {
-                node->setVal(leftNode->getVal().get<Value::BOOL>() %
-                            rightNode->getVal().get<Value::BOOL>());
-            } else if (rightNode->getVal().is<Value::INT>()) {
-                node->setVal(leftNode->getVal().get<Value::BOOL>() %
-                            rightNode->getVal().get<Value::INT>());
-            } else {
-                node->setVal(fmod(leftNode->getVal().get<Value::BOOL>(),
-                                rightNode->getVal().get<Value::FLOAT>()));
-            }
+    // Evaluates the value of the expression
+    if (leftNode->getVal().is<Value::INT>()) {
+        if (rightNode->getVal().is<Value::BOOL>()) {
+            node->setVal(leftNode->getVal().get<Value::INT>() %
+                        rightNode->getVal().get<Value::BOOL>());
+        } else if (rightNode->getVal().is<Value::INT>()) {
+            node->setVal(leftNode->getVal().get<Value::INT>() %
+                        rightNode->getVal().get<Value::INT>());
         } else {
-            throw RuntimeException("Couldn't convert string to value of nodes");
+            node->setVal(fmod(leftNode->getVal().get<Value::INT>(),
+                            rightNode->getVal().get<Value::FLOAT>()));
         }
+    } else if (leftNode->getVal().is<Value::FLOAT>()) {
+        if (rightNode->getVal().is<Value::BOOL>()) {
+            node->setVal(fmod(leftNode->getVal().get<Value::FLOAT>(),
+                            rightNode->getVal().get<Value::BOOL>()));
+        } else if (rightNode->getVal().is<Value::INT>()) {
+            node->setVal(fmod(leftNode->getVal().get<Value::FLOAT>(),
+                            rightNode->getVal().get<Value::INT>()));
+        } else {
+            node->setVal(fmod(leftNode->getVal().get<Value::FLOAT>(),
+                            rightNode->getVal().get<Value::BOOL>()));
+        }
+    } else if (leftNode->getVal().is<Value::BOOL>()) {
+        if (rightNode->getVal().is<Value::BOOL>()) {
+            node->setVal(leftNode->getVal().get<Value::BOOL>() %
+                        rightNode->getVal().get<Value::BOOL>());
+        } else if (rightNode->getVal().is<Value::INT>()) {
+            node->setVal(leftNode->getVal().get<Value::BOOL>() %
+                        rightNode->getVal().get<Value::INT>());
+        } else {
+            node->setVal(fmod(leftNode->getVal().get<Value::BOOL>(),
+                            rightNode->getVal().get<Value::FLOAT>()));
+        }
+    } else {
+        throw RuntimeException("Couldn't convert string to value of nodes");
     }
 }
 
