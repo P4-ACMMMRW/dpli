@@ -153,8 +153,9 @@ antlrcpp::Any AstBuilder::visitAssignstm(DplParser::AssignstmContext* parseNode)
 
 // Return
 antlrcpp::Any AstBuilder::visitReturnstm(DplParser::ReturnstmContext* parseNode) {
+    bool hasChild = parseNode->children.size() > 1;
     return unaryNode([this]() { return std::make_shared<ReturnNode>(currentNode); }, parseNode, 1,
-                     "Return");
+                     "Return", hasChild);
 }
 
 antlrcpp::Any AstBuilder::visitElsestm(DplParser::ElsestmContext* parseNode) {
