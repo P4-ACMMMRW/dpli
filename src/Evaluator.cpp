@@ -204,8 +204,8 @@ void Evaluator::visit(const std::shared_ptr<DivExprNode> &node) {
 
     if (!((isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal())) || 
         (isNumeric(leftNode->getVal()) && rightNode->getVal().is<Value::COLUMN>()) ||
-        (leftNode->getVal().is<Value::COLUMN>() && isNumeric(rightNode->getVal()) ||
-        (leftNode->getVal().is<Value::COLUMN>() && rightNode->getVal().is<Value::COLUMN>())))) {
+        (leftNode->getVal().is<Value::COLUMN>() && isNumeric(rightNode->getVal())) ||
+        (leftNode->getVal().is<Value::COLUMN>() && rightNode->getVal().is<Value::COLUMN>()))) {
         // TODO: move to error handler at some point
         throw RuntimeException("Cannot divide with the types");
     }
@@ -223,12 +223,15 @@ void Evaluator::visit(const std::shared_ptr<DivExprNode> &node) {
         if (rightNode->getVal().get<Value::BOOL>() == 0)
             throw RuntimeException("Cannot divide with 0");
     } else if (rightNode->getVal().is<Value::COLUMN>()){
-        // Checks if both columns are the same size
-        if (rightNode->getVal().is<Value::COLUMN>())
-            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+        for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
                 if ((*rightNode->getVal().get<Value::COLUMN>()->data)[i] == 0)
                 throw RuntimeException("Cannot divide with 0");
-            }
+        }
+        // Checks if both columns are the same size
+        if (leftNode->getVal().is<Value::COLUMN>())
+            if (leftNode->getVal().get<Value::COLUMN>()->data->size() != rightNode->getVal().get<Value::COLUMN>()->data->size())
+                throw RuntimeException("Cannot have expressions with different size columns");
+            
     }
 
     // Evaluates the value of the expression
@@ -239,9 +242,22 @@ void Evaluator::visit(const std::shared_ptr<DivExprNode> &node) {
         } else if (rightNode->getVal().is<Value::INT>()) {
             node->setVal(static_cast<double>(leftNode->getVal().get<Value::INT>()) /
                          rightNode->getVal().get<Value::INT>());
-        } else {
+        } else if (rightNode->getVal().is<Value::FLOAT>()) {
             node->setVal(static_cast<double>(leftNode->getVal().get<Value::INT>()) /
                          rightNode->getVal().get<Value::FLOAT>());
+        } else {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    *(*col->data)[i] = leftNode->getVal().get<Value::INT>() / (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>();
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    *(*col->data)[i] = leftNode->getVal().get<Value::INT>() / (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>();
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    *(*col->data)[i] = leftNode->getVal().get<Value::INT>() / (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>();
+                else 
+                    throw RuntimeException ("Cannot divide with columns contained type");   
+            }
+            node->setVal(col);
         }
     } else if (leftNode->getVal().is<Value::FLOAT>()) {
         if (rightNode->getVal().is<Value::BOOL>()) {
@@ -250,9 +266,22 @@ void Evaluator::visit(const std::shared_ptr<DivExprNode> &node) {
         } else if (rightNode->getVal().is<Value::INT>()) {
             node->setVal(leftNode->getVal().get<Value::FLOAT>() /
                          rightNode->getVal().get<Value::INT>());
-        } else {
+        } else if (rightNode->getVal().is<Value::FLOAT>()) {
             node->setVal(leftNode->getVal().get<Value::FLOAT>() /
                          rightNode->getVal().get<Value::FLOAT>());
+        } else {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    *(*col->data)[i] = leftNode->getVal().get<Value::FLOAT>() / (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>();
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    *(*col->data)[i] = leftNode->getVal().get<Value::FLOAT>() / (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>();
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    *(*col->data)[i] = leftNode->getVal().get<Value::FLOAT>() / (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>();
+                else 
+                    throw RuntimeException ("Cannot divide with columns contained type");   
+            }
+            node->setVal(col);
         }
     } else if (leftNode->getVal().is<Value::BOOL>()) {
         if (rightNode->getVal().is<Value::BOOL>()) {
@@ -261,23 +290,107 @@ void Evaluator::visit(const std::shared_ptr<DivExprNode> &node) {
         } else if (rightNode->getVal().is<Value::INT>()) {
             node->setVal(static_cast<double>(leftNode->getVal().get<Value::BOOL>()) /
                          rightNode->getVal().get<Value::INT>());
-        } else {
+        } else if (rightNode->getVal().is<Value::FLOAT>()) {
             node->setVal(static_cast<double>(leftNode->getVal().get<Value::BOOL>()) /
                          rightNode->getVal().get<Value::FLOAT>());
-        }
-    } else if (leftNode->getVal().is<Value::BOOL>()) {
-        if (rightNode->getVal().is<Value::BOOL>()) {
-            node->setVal(static_cast<double>(leftNode->getVal().get<Value::BOOL>()) /
-                         rightNode->getVal().get<Value::BOOL>());
-        } else if (rightNode->getVal().is<Value::INT>()) {
-            node->setVal(static_cast<double>(leftNode->getVal().get<Value::BOOL>()) /
-                         rightNode->getVal().get<Value::INT>());
         } else {
-            node->setVal(static_cast<double>(leftNode->getVal().get<Value::BOOL>()) /
-                         rightNode->getVal().get<Value::FLOAT>());
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    *(*col->data)[i] = leftNode->getVal().get<Value::BOOL>() / (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>();
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    *(*col->data)[i] = leftNode->getVal().get<Value::BOOL>() / (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>();
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    *(*col->data)[i] = leftNode->getVal().get<Value::BOOL>() / (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>();
+                else 
+                    throw RuntimeException ("Cannot divide with columns contained type");   
+            }
+            node->setVal(col);
         }
     } else if (leftNode->getVal().is<Value::COLUMN>()) {
-
+        if (rightNode->getVal().is<Value::BOOL>()) {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>() / rightNode->getVal().get<Value::BOOL>();
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>() / rightNode->getVal().get<Value::BOOL>();
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>() / rightNode->getVal().get<Value::BOOL>();
+                else 
+                    throw RuntimeException ("Cannot divide with columns contained type");   
+            }
+            node->setVal(col);
+        } else if (rightNode->getVal().is<Value::INT>()) {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>() / rightNode->getVal().get<Value::INT>();
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>() / rightNode->getVal().get<Value::INT>();
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>() / rightNode->getVal().get<Value::INT>();
+                else 
+                    throw RuntimeException ("Cannot divide with columns contained type");   
+            }
+            node->setVal(col);
+        } else if (rightNode->getVal().is<Value::FLOAT>()) {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>() / rightNode->getVal().get<Value::FLOAT>();
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>() / rightNode->getVal().get<Value::FLOAT>();
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>() / rightNode->getVal().get<Value::FLOAT>();
+                else 
+                    throw RuntimeException ("Cannot divide with columns contained type");   
+            }
+            node->setVal(col);
+        } else {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                        *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>() / 
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>();
+                    else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                       *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>() / 
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>(); 
+                    else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                        *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>() / 
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>();
+                    else 
+                        throw RuntimeException ("Cannot divide with columns contained type"); 
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                        *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>() / 
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>();
+                    else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                        *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>() / 
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>();
+                    else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                        *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>() / 
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>();
+                    else 
+                        throw RuntimeException ("Cannot divide with columns contained type"); 
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                        *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>() / 
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>();
+                    else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                        *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>() / 
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>();
+                    else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                        *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>() / 
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>();
+                    else 
+                        throw RuntimeException ("Cannot divide with columns contained type"); 
+                else 
+                    throw RuntimeException ("Cannot divide with columns contained type");   
+            }
+            node->setVal(col);
+        }
     } else
         throw RuntimeException("Could not convert string to value of nodes");
 }
