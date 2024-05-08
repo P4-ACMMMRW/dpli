@@ -1023,8 +1023,12 @@ void Evaluator::visit(const std::shared_ptr<ProcDecNode> &node) {
 
 void Evaluator::visit(const std::shared_ptr<ProgNode> &node) {
     std::vector<std::shared_ptr<AstNode>> childNodes = node->getChildNodeList();
-    for (size_t i = 0; i < childNodes.size(); ++i) {
-        childNodes[i]->accept(shared_from_this());
+    try {
+        for (size_t i = 0; i < childNodes.size(); ++i) {
+            childNodes[i]->accept(shared_from_this());
+        }
+    } catch (const ReturnValue &e) {
+        throw RuntimeException("Return statement not allowed outside functions");
     }
 }
 
