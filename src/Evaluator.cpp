@@ -13,7 +13,6 @@ void Evaluator::visit(const std::shared_ptr<AndExprNode> &node) {
     rightNode->accept(shared_from_this());
 
     if (!leftNode->getVal().is<Value::BOOL>() || !rightNode->getVal().is<Value::BOOL>()) {
-        // TODO: move to error handler at some point
         throw RuntimeException("Cannot do logical and with the used types");
     }
 
@@ -40,7 +39,6 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
     // Also if left is a leaf node but not an identifier, throw error
     bool error = (!isLeaf && !isIndexing) || (isLeaf && !leafNode->getIsIdentifier());
     if (error) {
-        // TODO: move to error handler at some point
         throw RuntimeException("Left side of assignment must be a stored reference");
     }
 
@@ -155,7 +153,6 @@ void Evaluator::visit(const std::shared_ptr<DivExprNode> &node) {
     rightNode->accept(shared_from_this());
 
     if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()))) {
-        // TODO: move to error handler at some point
         throw RuntimeException("Cannot divide with the types");
     }
 
@@ -241,7 +238,6 @@ void Evaluator::visit(const std::shared_ptr<EqualExprNode> &node) {
     bool string = leftNode->getVal().is<Value::STR>() && rightNode->getVal().is<Value::STR>();
 
     if (!numeric && !string) {
-        // TODO: move to error handler at some point
         throw RuntimeException("Cannot check equality with the used types");
     }
 
@@ -257,7 +253,6 @@ void Evaluator::visit(const std::shared_ptr<ExpoExprNode> &node) {
     rightNode->accept(shared_from_this());
 
     if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()))) {
-        // TODO: move to error handler at some point
         throw RuntimeException("Cannot multiply with the used types");
     }
 
@@ -377,7 +372,6 @@ void Evaluator::visit(const std::shared_ptr<GreaterEqualExprNode> &node) {
     rightNode->accept(shared_from_this());
 
     if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()))) {
-        // TODO: move to error handler at some point
         throw RuntimeException("Cannot do greater or equal with the used types");
     }
     // Evaluates the value of the expression
@@ -392,7 +386,6 @@ void Evaluator::visit(const std::shared_ptr<GreaterExprNode> &node) {
     rightNode->accept(shared_from_this());
 
     if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()))) {
-        // TODO: move to error handler at some point
         throw RuntimeException("Cannot do greater than with the used types");
     }
 
@@ -430,7 +423,6 @@ void Evaluator::visit(const std::shared_ptr<IfNode> &node) {
     condNode->accept(shared_from_this());
     
     if (!isNumeric(condNode->getVal())) {
-        // TODO: move to error handler later
         throw RuntimeException("Error: Invalid type.");
     }
     else if (condNode->getVal().is<Value::BOOL>() && condNode->getVal().get<Value::BOOL>()) {
@@ -541,7 +533,6 @@ void Evaluator::visit(const std::shared_ptr<LessEqualExprNode> &node) {
     rightNode->accept(shared_from_this());
 
     if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()))) {
-        // TODO: move to error handler at some point
         throw RuntimeException("Cannot do less or equal with the used types");
     }
 
@@ -557,7 +548,6 @@ void Evaluator::visit(const std::shared_ptr<LessExprNode> &node) {
     rightNode->accept(shared_from_this());
 
     if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()))) {
-        // TODO: move to error handler at some point
         throw RuntimeException("Cannot do less than with the used types");
     }
 
@@ -585,7 +575,6 @@ void Evaluator::visit(const std::shared_ptr<MinusExprNode> &node) {
     rightNode->accept(shared_from_this());
 
     if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()))) {
-        // TODO: move to error handler at some point
         throw RuntimeException("Cannot do substraction with the used types");
     }
 
@@ -633,7 +622,6 @@ void Evaluator::visit(const std::shared_ptr<MinusNode> &node) {
     childNode->accept(shared_from_this());
 
     if (!isNumeric(childNode->getVal())) {
-        // TODO: move to error handler at some point
         throw RuntimeException("Cannot do substraction with the used type");
     }
 
@@ -656,7 +644,6 @@ void Evaluator::visit(const std::shared_ptr<ModExprNode> &node) {
     rightNode->accept(shared_from_this());
 
     if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()))) {
-        // TODO: move to error handler at some point
         throw RuntimeException("Cannot do modulo with the used types");
     }
 
@@ -711,7 +698,6 @@ void Evaluator::visit(const std::shared_ptr<MultExprNode> &node) {
           (leftNode->getVal().is<Value::STR>() && rightNode->getVal().is<Value::INT>()) ||
           (leftNode->getVal().is<Value::STR>() && rightNode->getVal().is<Value::BOOL>()) ||
           (leftNode->getVal().is<Value::BOOL>() && rightNode->getVal().is<Value::STR>()))) {
-        // TODO: move to error handler at some point
         throw RuntimeException("Cannot multiply with the used types");
     }
 
@@ -785,7 +771,6 @@ void Evaluator::visit(const std::shared_ptr<NotEqualExprNode> &node) {
     bool string = leftNode->getVal().is<Value::STR>() && rightNode->getVal().is<Value::STR>();
 
     if (!numeric && !string) {
-        // TODO: move to error handler at some point
         throw RuntimeException("Cannot dp logical not equal with the used types");
     }
 
@@ -835,7 +820,6 @@ void Evaluator::visit(const std::shared_ptr<NotNode> &node) {
     childNode->accept(shared_from_this());
 
     if (!(isNumeric(childNode->getVal()))) {
-        // TODO: move to error handler at some point
         throw RuntimeException("Cannot negate the used type");
     }
 
@@ -867,7 +851,6 @@ void Evaluator::visit(const std::shared_ptr<OrExprNode> &node) {
     rightNode->accept(shared_from_this());
 
     if (!leftNode->getVal().is<Value::BOOL>() || !rightNode->getVal().is<Value::BOOL>()) {
-        // TODO: move to error handler at some point
         throw RuntimeException("Cannot do logical or with the used types");
     }
 
@@ -893,7 +876,6 @@ void Evaluator::visit(const std::shared_ptr<PlusExprNode> &node) {
 
     if (!((isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal())) ||
           (leftNode->getVal().is<Value::STR>() && rightNode->getVal().is<Value::STR>()))) {
-        // TODO: move to error handler at some point
         throw RuntimeException("Cannot do addition with the used types");
     }
 
@@ -943,7 +925,6 @@ void Evaluator::visit(const std::shared_ptr<PlusNode> &node) {
     childNode->accept(shared_from_this());
 
     if (!isNumeric(childNode->getVal())) {
-        // TODO: move to error handler at some point
         throw RuntimeException("Cannot use unary plus with the used type");
     }
 
@@ -1087,7 +1068,6 @@ void Evaluator::visit(const std::shared_ptr<WhileNode> &node) {
     condNode->accept(shared_from_this());
 
     if (!isNumeric(condNode->getVal())) {
-        // TODO: move to error handler later
         throw RuntimeException("Invalid type");
     }
     else if (condNode->getVal().is<Value::BOOL>() && condNode->getVal().get<Value::BOOL>()) {
@@ -1236,7 +1216,6 @@ void Evaluator::initPtable() {
     };
     
     Procedure::ProcType copy1 = [this](std::vector<std::shared_ptr<AstNode>> args) {
-        //TODO: implement
         Value val = args[0]->getVal();
         if (val.is<Value::LIST>()) {
             return Value(copyList(val.get<Value::LIST>()));
