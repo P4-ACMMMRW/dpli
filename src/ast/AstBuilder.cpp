@@ -99,7 +99,7 @@ antlrcpp::Any AstBuilder::visitParams(DplParser::ParamsContext* parseNode) {
 
 antlrcpp::Any AstBuilder::visitIfstm(DplParser::IfstmContext* parseNode) {
     std::shared_ptr<AstNode> oldNode = currentNode;
-    binaryNode([this]() { return std::make_shared<IfNode>(currentNode); }, parseNode, 1, 3, false,
+    binaryNode([this]() { return std::make_shared<IfNode>(currentNode); }, parseNode, 3, 1, false,
                "If");
 
     // Else
@@ -165,8 +165,8 @@ antlrcpp::Any AstBuilder::visitElsestm(DplParser::ElsestmContext* parseNode) {
 
 // While
 antlrcpp::Any AstBuilder::visitWhilestm(DplParser::WhilestmContext* parseNode) {
-    return binaryNode([this]() { return std::make_shared<WhileNode>(currentNode); }, parseNode, 1,
-                      3, true);
+    return binaryNode([this]() { return std::make_shared<WhileNode>(currentNode); }, parseNode, 3,
+                      1, true);
 }
 
 antlrcpp::Any AstBuilder::visitOrexpr(DplParser::OrexprContext* parseNode) {
@@ -459,8 +459,8 @@ antlrcpp::Any AstBuilder::binaryNode(const std::function<std::shared_ptr<AstNode
     std::shared_ptr<AstNode> newNode = createNode();
     initNewNode(parseNode, newNode, text);
 
-    parseNode->children[leftIndex]->accept(this);
     parseNode->children[rightIndex]->accept(this);
+    parseNode->children[leftIndex]->accept(this);
 
     if (restoreOldCurrent) {
         currentNode = oldNode;
@@ -508,14 +508,15 @@ antlrcpp::Any AstBuilder::binaryExpr(
         std::shared_ptr<AstNode> newNode = createNode(operatorToken->getType());
 
         initNewNode(parseNode, newNode, operatorToken->getText());
+        
+        // rightNode
+        parseNode->children[i]->accept(this);
 
         // if last iteration, add left node
         if (i == 2) {
             parseNode->children[0]->accept(this);
         }
 
-        // rightNode
-        parseNode->children[i]->accept(this);
     }
 
     currentNode = oldNode;

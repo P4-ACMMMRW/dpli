@@ -3,10 +3,10 @@
 using namespace dplsrc;
 
 void BinaryNode::addChild(std::shared_ptr<AstNode> child) {
-    if (leftNode->getChildNode() == nullptr) {
-        leftNode->addChild(child);
-    } else if (rightNode->getChildNode() == nullptr) {
+    if (rightNode->getChildNode() == nullptr) {
         rightNode->addChild(child);
+    } else if (leftNode->getChildNode() == nullptr) {
+        leftNode->addChild(child);
     } else {
         throw AstException("BinaryNode already has two children");
     }
