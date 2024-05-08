@@ -154,7 +154,10 @@ void Evaluator::visit(const std::shared_ptr<DivExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()))) {
+    if (!((isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal())) || 
+        (isNumeric(leftNode->getVal()) && rightNode->getVal().is<Value::COLUMN>()) ||
+        (leftNode->getVal().is<Value::COLUMN>() && isNumeric(rightNode->getVal()) ||
+        (leftNode->getVal().is<Value::COLUMN>() && rightNode->getVal().is<Value::COLUMN>())))) {
         // TODO: move to error handler at some point
         throw RuntimeException("Cannot divide with the types");
     }
@@ -168,8 +171,13 @@ void Evaluator::visit(const std::shared_ptr<DivExprNode> &node) {
         if (rightNode->getVal().get<Value::FLOAT>() == 0) {
             throw RuntimeException("Cannot divide with 0");
         }
-    } else if (rightNode->getVal().get<Value::BOOL>() == 0) {
-        throw RuntimeException("Cannot divide with 0");
+    } else if (rightNode->getVal().is<Value::BOOL>()) {
+        if (rightNode->getVal().get<Value::BOOL>() == 0)
+            throw RuntimeException("Cannot divide with 0");
+    } else if (rightNode->getVal().is<Value::COLUMN>()){
+        // Checks if both columns are the same size
+        if (leftNode->getVal().is<Value::COLUMN>())
+            if (leftNode)
     }
 
     // Evaluates the value of the expression
@@ -217,6 +225,8 @@ void Evaluator::visit(const std::shared_ptr<DivExprNode> &node) {
             node->setVal(static_cast<double>(leftNode->getVal().get<Value::BOOL>()) /
                          rightNode->getVal().get<Value::FLOAT>());
         }
+    } else if (leftNode->getVal().is<Value::COLUMN>()) {
+
     } else
         throw RuntimeException("Could not convert string to value of nodes");
 }
