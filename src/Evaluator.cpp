@@ -432,7 +432,7 @@ void Evaluator::visit(const std::shared_ptr<IfNode> &node) {
     
     if (!isNumeric(condNode->getVal())) {
         // TODO: move to error handler later
-        throw std::runtime_error("Error: Invalid type.");
+        throw RuntimeException("Error: Invalid type.");
     }
     else if (condNode->getVal().is<Value::BOOL>() && condNode->getVal().get<Value::BOOL>()) {
         for (size_t i = 0; i < bodyNodes.size(); ++i) { 
@@ -1086,7 +1086,7 @@ void Evaluator::visit(const std::shared_ptr<WhileNode> &node) {
 
     if (!isNumeric(condNode->getVal())) {
         // TODO: move to error handler later
-        throw std::runtime_error("Error: Invalid type.");
+        throw RuntimeException("Error: Invalid type.");
     }
     else if (condNode->getVal().is<Value::BOOL>() && condNode->getVal().get<Value::BOOL>()) {
         while(condNode->getVal().get<Value::BOOL>()) {
