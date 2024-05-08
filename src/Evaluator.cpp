@@ -430,10 +430,18 @@ void Evaluator::visit(const std::shared_ptr<ExpoExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()))) {
+    if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()) ||
+        (isNumeric(leftNode->getVal()) && rightNode->getVal().is<Value::COLUMN>()) ||
+        (leftNode->getVal().is<Value::COLUMN>() && isNumeric(rightNode->getVal())) ||
+        (leftNode->getVal().is<Value::COLUMN>() && rightNode->getVal().is<Value::COLUMN>()))) {
         // TODO: move to error handler at some point
         throw RuntimeException("Cannot multiply with the used types");
     }
+
+    // Checks if both columns are the same size
+    if (leftNode->getVal().is<Value::COLUMN>())
+        if (leftNode->getVal().get<Value::COLUMN>()->data->size() != rightNode->getVal().get<Value::COLUMN>()->data->size())
+            throw RuntimeException("Cannot have expressions with different size columns");
 
     // Evaluates the value of the expression
 
@@ -449,9 +457,22 @@ void Evaluator::visit(const std::shared_ptr<ExpoExprNode> &node) {
                 node->setVal(std::pow(leftNode->getVal().get<Value::INT>(),
                                       rightNode->getVal().get<Value::INT>()));
             }
-        } else {
+        } else if (rightNode->getVal().is<Value::FLOAT>()) {
             node->setVal(std::pow(leftNode->getVal().get<Value::INT>(),
                                   rightNode->getVal().get<Value::FLOAT>()));
+        } else {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    *(*col->data)[i] = std::pow(leftNode->getVal().get<Value::INT>(), (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>());
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    *(*col->data)[i] = std::pow(leftNode->getVal().get<Value::INT>(), (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>());
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    *(*col->data)[i] = std::pow(leftNode->getVal().get<Value::INT>(), (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>());
+                else 
+                    throw RuntimeException ("Cannot divide with columns contained type");   
+            }
+            node->setVal(col);
         }
     } else if (leftNode->getVal().is<Value::BOOL>()) {
         if (rightNode->getVal().is<Value::BOOL>()) {
@@ -465,8 +486,22 @@ void Evaluator::visit(const std::shared_ptr<ExpoExprNode> &node) {
                 node->setVal(std::pow(leftNode->getVal().get<Value::INT>(),
                                       rightNode->getVal().get<Value::INT>()));
             }
-        } else
+        } else if (rightNode->getVal().is<Value::FLOAT>())
             std::pow(leftNode->getVal().get<Value::INT>(), rightNode->getVal().get<Value::FLOAT>());
+        else {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    *(*col->data)[i] = std::pow(leftNode->getVal().get<Value::BOOL>(), (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>());
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    *(*col->data)[i] = std::pow(leftNode->getVal().get<Value::BOOL>(), (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>());
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    *(*col->data)[i] = std::pow(leftNode->getVal().get<Value::BOOL>(), (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>());
+                else 
+                    throw RuntimeException ("Cannot divide with columns contained type");   
+            }
+            node->setVal(col);
+        }
     } else if (leftNode->getVal().is<Value::FLOAT>()) {
         if (rightNode->getVal().is<Value::BOOL>()) {
             node->setVal(std::pow(leftNode->getVal().get<Value::INT>(),
@@ -479,7 +514,7 @@ void Evaluator::visit(const std::shared_ptr<ExpoExprNode> &node) {
                 node->setVal(std::pow(leftNode->getVal().get<Value::INT>(),
                                       rightNode->getVal().get<Value::INT>()));
             }
-        } else {
+        } else if ( rightNode->getVal().is<Value::FLOAT>()){
             node->setVal(std::pow(leftNode->getVal().get<Value::INT>(),
                                   rightNode->getVal().get<Value::FLOAT>()));
         }
