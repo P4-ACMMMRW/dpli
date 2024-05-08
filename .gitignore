@@ -4,4 +4,5 @@ build/
 perf.data
 perf.data.old
 *.txt
+*.csv
 test.dpl

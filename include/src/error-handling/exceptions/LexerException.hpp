@@ -7,7 +7,7 @@ namespace dplsrc {
     class LexerException : public RuntimeException {
         public:
             LexerException(std::string msg) : RuntimeException(msg) {
-                msg.insert(0, "Lexer Error: ");
+                this->msg = msg.insert(0, "Lexer Error: ");
             }
     };
 }

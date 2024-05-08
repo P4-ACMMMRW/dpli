@@ -8,7 +8,7 @@ namespace dplsrc {
     class InternalException : public DplException {
         public:
             InternalException(std::string msg) : DplException(msg) {
-                msg.insert(0, "Internal Error: ");
+                this->msg = msg.insert(0, "Internal Error: ");
             }
     };
 }
