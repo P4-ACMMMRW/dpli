@@ -55,6 +55,21 @@ class Evaluator : public AstVisitor {
     void visit(const std::shared_ptr<UnionExprNode> &node) override;
     void visit(const std::shared_ptr<WhileNode> &node) override;
 
+
+    /**
+     * @param leftTable
+     * @param rightTable
+     * @return true if the tables have the same columns
+     */
+    bool isSameColumns(Value::TABLE leftTable, Value::TABLE rightTable);
+
+    /**
+     * @param leftTable
+     * @param rightTable
+     * @return a coloumn corresponding to the header in the given table, if no hit nullptr.
+     */
+    Value::COLUMN getColumnByHeader(Value::TABLE table, const std::string& header);
+
     /**
      * @return the variable table
      */

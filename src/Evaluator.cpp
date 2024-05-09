@@ -502,7 +502,101 @@ void Evaluator::visit(const std::shared_ptr<IndexNode> &node) {
     }
 }
 
-void Evaluator::visit(const std::shared_ptr<IntersectionExprNode> &node) {}
+void Evaluator::visit(const std::shared_ptr<IntersectionExprNode> &node) {
+    std::shared_ptr<AstNode> leftNode = node->getLeftNode();
+    leftNode->accept(shared_from_this());
+    std::shared_ptr<AstNode> rightNode = node->getRightNode();
+    rightNode->accept(shared_from_this());
+
+    if (!node->getLeftNode()->getVal().is<Value::TABLE>() ||
+        !node->getRightNode()->getVal().is<Value::TABLE>()) {
+            throw RuntimeException("Intersection operation only allowed for Table type");
+    }
+
+    Value::TABLE leftTable = leftNode->getVal().get<Value::TABLE>();
+    Value::TABLE rightTable = rightNode->getVal().get<Value::TABLE>();
+ 
+    if (leftTable->size() != rightTable->size()) {
+        throw RuntimeException("Tables must have the same number of columns");
+    }
+
+
+    Value::TABLE table = std::make_shared<std::map<Value::STR, Value::COLUMN>>();
+
+    if (!isSameColumns(leftTable, rightTable)) throw RuntimeException("Column not found in right table");
+
+    size_t size = leftTable->size();
+    std::vector<std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>>> cols(size);
+    for (size_t i = 0; i < size; ++i) {
+        cols[i] = std::make_shared<std::vector<std::shared_ptr<dplsrc::Value>>>();
+    }
+
+    auto entryLeft = std::next(leftTable->begin(), 0);
+    auto entryLeftCol = entryLeft->second;
+    auto entryRightCol = Evaluator::getColumnByHeader(rightTable, entryLeft->first);
+
+    for (size_t i = 0; i < entryLeftCol->data->size(); ++i) {
+        std::shared_ptr<Value> entryLeftData = entryLeftCol->data->at(i);
+        for (size_t j = 0; j < entryRightCol->data->size(); ++j) {
+            std::shared_ptr<Value> entryRightData = entryRightCol->data->at(j);
+
+            if (*entryLeftData == *entryRightData) {
+                bool rowIntersected = true;
+
+                for (size_t l = 0; l < leftTable->size(); ++l) {
+
+                    auto leftMap = std::next(leftTable->begin(), l);
+                    auto rightCol = Evaluator::getColumnByHeader(rightTable, leftMap->first);
+
+                    auto leftData = (*leftMap->second->data)[i]; 
+                    auto rightData = (*rightCol->data)[j]; 
+
+                    if (*leftData != *rightData) { 
+                        rowIntersected = false;
+                        break;
+                    }
+                }
+                if (rowIntersected) {
+                    for (size_t l = 0; l < leftTable->size(); ++l) {
+
+                        auto leftMap = std::next(leftTable->begin(), l);
+                        auto leftData = (*leftMap->second->data)[i];
+                        cols[l]->emplace_back(leftData); // segfault 
+                    }
+                }
+            }
+        }
+    };
+    for (size_t i = 0; i < leftTable->size(); ++i) {
+        auto entry = std::next(leftTable->begin(), i);
+        Value::COLUMN col = std::make_shared<Value::COL_STRUCT>();
+
+        col->header = entry->first;
+        col->data = cols[i];
+        col->parent = table;
+        table->insert({entry->first, col});
+    }
+    dplsrc::Value value(table);
+    node->setVal(table);
+}
+
+Value::COLUMN Evaluator::getColumnByHeader(Value::TABLE table, const std::string& header) {
+    for (const auto& entry : *table) {
+        if (entry.first == header) {
+            return entry.second;
+        }
+    }
+    return nullptr; // Return null if no column with the given header is found
+}
+
+bool Evaluator::isSameColumns(Value::TABLE leftTable, Value::TABLE rightTable) {
+    for (size_t i = 0; i < leftTable->size(); ++i) {
+        const auto& tempEntryLeft = std::next(leftTable->begin(), i); 
+        if (getColumnByHeader(rightTable, tempEntryLeft->first) == nullptr) return false;
+    }
+    return true;
+}
+
 
 void Evaluator::visit(const std::shared_ptr<LeafNode> &node) {
     if (node->getText() == "<EOF>") return;
