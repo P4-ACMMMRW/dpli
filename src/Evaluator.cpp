@@ -13,7 +13,6 @@ void Evaluator::visit(const std::shared_ptr<AndExprNode> &node) {
     rightNode->accept(shared_from_this());
 
     if (!leftNode->getVal().is<Value::BOOL>() || !rightNode->getVal().is<Value::BOOL>()) {
-        // TODO: move to error handler at some point
         throw RuntimeException("Cannot do logical and with the used types");
     }
 
@@ -40,7 +39,6 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
     // Also if left is a leaf node but not an identifier, throw error
     bool error = (!isLeaf && !isIndexing) || (isLeaf && !leafNode->getIsIdentifier());
     if (error) {
-        // TODO: move to error handler at some point
         throw RuntimeException("Left side of assignment must be a stored reference");
     }
 
@@ -76,7 +74,7 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
         // Get the pointer to the innermost list or column
         Value::LIST list = nullptr;
         Value::INT lastIndex = 0;
-        for (int i = indices.size() - 1; i >= 0; --i) {
+        for (size_t i = indices.size(); i--;) {
             if (val.is<Value::LIST>()) {
                 Value::INT index = indices[i].get<Value::INT>();
                 list = val.getMut<Value::LIST>();
@@ -155,7 +153,6 @@ void Evaluator::visit(const std::shared_ptr<DivExprNode> &node) {
     rightNode->accept(shared_from_this());
 
     if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()))) {
-        // TODO: move to error handler at some point
         throw RuntimeException("Cannot divide with the types");
     }
 
@@ -241,7 +238,6 @@ void Evaluator::visit(const std::shared_ptr<EqualExprNode> &node) {
     bool string = leftNode->getVal().is<Value::STR>() && rightNode->getVal().is<Value::STR>();
 
     if (!numeric && !string) {
-        // TODO: move to error handler at some point
         throw RuntimeException("Cannot check equality with the used types");
     }
 
@@ -257,7 +253,6 @@ void Evaluator::visit(const std::shared_ptr<ExpoExprNode> &node) {
     rightNode->accept(shared_from_this());
 
     if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()))) {
-        // TODO: move to error handler at some point
         throw RuntimeException("Cannot multiply with the used types");
     }
 
@@ -377,7 +372,6 @@ void Evaluator::visit(const std::shared_ptr<GreaterEqualExprNode> &node) {
     rightNode->accept(shared_from_this());
 
     if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()))) {
-        // TODO: move to error handler at some point
         throw RuntimeException("Cannot do greater or equal with the used types");
     }
     // Evaluates the value of the expression
@@ -392,7 +386,6 @@ void Evaluator::visit(const std::shared_ptr<GreaterExprNode> &node) {
     rightNode->accept(shared_from_this());
 
     if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()))) {
-        // TODO: move to error handler at some point
         throw RuntimeException("Cannot do greater than with the used types");
     }
 
@@ -430,7 +423,6 @@ void Evaluator::visit(const std::shared_ptr<IfNode> &node) {
     condNode->accept(shared_from_this());
     
     if (!isNumeric(condNode->getVal())) {
-        // TODO: move to error handler later
         throw RuntimeException("Error: Invalid type.");
     }
     else if (condNode->getVal().is<Value::BOOL>() && condNode->getVal().get<Value::BOOL>()) {
@@ -541,7 +533,6 @@ void Evaluator::visit(const std::shared_ptr<LessEqualExprNode> &node) {
     rightNode->accept(shared_from_this());
 
     if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()))) {
-        // TODO: move to error handler at some point
         throw RuntimeException("Cannot do less or equal with the used types");
     }
 
@@ -557,7 +548,6 @@ void Evaluator::visit(const std::shared_ptr<LessExprNode> &node) {
     rightNode->accept(shared_from_this());
 
     if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()))) {
-        // TODO: move to error handler at some point
         throw RuntimeException("Cannot do less than with the used types");
     }
 
@@ -585,7 +575,6 @@ void Evaluator::visit(const std::shared_ptr<MinusExprNode> &node) {
     rightNode->accept(shared_from_this());
 
     if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()))) {
-        // TODO: move to error handler at some point
         throw RuntimeException("Cannot do substraction with the used types");
     }
 
@@ -633,7 +622,6 @@ void Evaluator::visit(const std::shared_ptr<MinusNode> &node) {
     childNode->accept(shared_from_this());
 
     if (!isNumeric(childNode->getVal())) {
-        // TODO: move to error handler at some point
         throw RuntimeException("Cannot do substraction with the used type");
     }
 
@@ -656,7 +644,6 @@ void Evaluator::visit(const std::shared_ptr<ModExprNode> &node) {
     rightNode->accept(shared_from_this());
 
     if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()))) {
-        // TODO: move to error handler at some point
         throw RuntimeException("Cannot do modulo with the used types");
     }
 
@@ -711,7 +698,6 @@ void Evaluator::visit(const std::shared_ptr<MultExprNode> &node) {
           (leftNode->getVal().is<Value::STR>() && rightNode->getVal().is<Value::INT>()) ||
           (leftNode->getVal().is<Value::STR>() && rightNode->getVal().is<Value::BOOL>()) ||
           (leftNode->getVal().is<Value::BOOL>() && rightNode->getVal().is<Value::STR>()))) {
-        // TODO: move to error handler at some point
         throw RuntimeException("Cannot multiply with the used types");
     }
 
@@ -785,7 +771,6 @@ void Evaluator::visit(const std::shared_ptr<NotEqualExprNode> &node) {
     bool string = leftNode->getVal().is<Value::STR>() && rightNode->getVal().is<Value::STR>();
 
     if (!numeric && !string) {
-        // TODO: move to error handler at some point
         throw RuntimeException("Cannot dp logical not equal with the used types");
     }
 
@@ -835,7 +820,6 @@ void Evaluator::visit(const std::shared_ptr<NotNode> &node) {
     childNode->accept(shared_from_this());
 
     if (!(isNumeric(childNode->getVal()))) {
-        // TODO: move to error handler at some point
         throw RuntimeException("Cannot negate the used type");
     }
 
@@ -867,7 +851,6 @@ void Evaluator::visit(const std::shared_ptr<OrExprNode> &node) {
     rightNode->accept(shared_from_this());
 
     if (!leftNode->getVal().is<Value::BOOL>() || !rightNode->getVal().is<Value::BOOL>()) {
-        // TODO: move to error handler at some point
         throw RuntimeException("Cannot do logical or with the used types");
     }
 
@@ -893,7 +876,6 @@ void Evaluator::visit(const std::shared_ptr<PlusExprNode> &node) {
 
     if (!((isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal())) ||
           (leftNode->getVal().is<Value::STR>() && rightNode->getVal().is<Value::STR>()))) {
-        // TODO: move to error handler at some point
         throw RuntimeException("Cannot do addition with the used types");
     }
 
@@ -943,7 +925,6 @@ void Evaluator::visit(const std::shared_ptr<PlusNode> &node) {
     childNode->accept(shared_from_this());
 
     if (!isNumeric(childNode->getVal())) {
-        // TODO: move to error handler at some point
         throw RuntimeException("Cannot use unary plus with the used type");
     }
 
@@ -1087,8 +1068,7 @@ void Evaluator::visit(const std::shared_ptr<WhileNode> &node) {
     condNode->accept(shared_from_this());
 
     if (!isNumeric(condNode->getVal())) {
-        // TODO: move to error handler later
-        throw RuntimeException("Error: Invalid type.");
+        throw RuntimeException("Invalid type");
     }
     else if (condNode->getVal().is<Value::BOOL>() && condNode->getVal().get<Value::BOOL>()) {
         while(condNode->getVal().get<Value::BOOL>()) {
@@ -1141,6 +1121,54 @@ void Evaluator::initPtable() {
         return args[0]->getVal().toString();
     };
 
+    Procedure::ProcType int1 = [](std::vector<std::shared_ptr<AstNode>> args) {
+        if (args[0]->getVal().is<Value::INT>()) {
+            return args[0]->getVal().get<Value::INT>();
+        } else if (args[0]->getVal().is<Value::FLOAT>()) {
+            return static_cast<Value::INT>(args[0]->getVal().get<Value::FLOAT>());
+        } else if (args[0]->getVal().is<Value::BOOL>()) {
+            return static_cast<Value::INT>(args[0]->getVal().get<Value::BOOL>());
+        } else if (args[0]->getVal().is<Value::STR>()) {
+            try {
+                return std::stol(args[0]->getVal().get<Value::STR>());
+            } catch (const std::invalid_argument &e) {
+                throw RuntimeException("Could not convert string to int");
+            }
+        }
+
+        throw RuntimeException("Could not convert value to int");
+    };
+
+    Procedure::ProcType float1 = [](std::vector<std::shared_ptr<AstNode>> args) {
+        if (args[0]->getVal().is<Value::INT>()) {
+            return static_cast<Value::FLOAT>(args[0]->getVal().get<Value::INT>());
+        } else if (args[0]->getVal().is<Value::FLOAT>()) {
+            return args[0]->getVal().get<Value::FLOAT>();
+        } else if (args[0]->getVal().is<Value::BOOL>()) {
+            return static_cast<Value::FLOAT>(args[0]->getVal().get<Value::BOOL>());
+        } else if (args[0]->getVal().is<Value::STR>()) {
+            try {
+                return std::stod(args[0]->getVal().get<Value::STR>());
+            } catch (const std::invalid_argument &e) {
+                throw RuntimeException("Could not convert string to float");
+            }
+        }
+
+        throw RuntimeException("Could not convert value to float");
+    };
+
+    Procedure::ProcType bool1 = [](std::vector<std::shared_ptr<AstNode>> args) {
+        if (args[0]->getVal().is<Value::INT>()) {
+            return static_cast<Value::BOOL>(args[0]->getVal().get<Value::INT>());
+        } else if (args[0]->getVal().is<Value::FLOAT>()) {
+            return static_cast<Value::BOOL>(args[0]->getVal().get<Value::FLOAT>());
+        } else if (args[0]->getVal().is<Value::BOOL>()) {
+            return args[0]->getVal().get<Value::BOOL>();
+        }
+
+        throw RuntimeException("Could not convert value to bool");
+    };
+
     Procedure::ProcType len1 = [](std::vector<std::shared_ptr<AstNode>> args) {
         Value val = args[0]->getVal();
 
@@ -1175,6 +1203,27 @@ void Evaluator::initPtable() {
         }
 
         throw RuntimeException("Floor called with invalid type " + val.toTypeString() + ". Expected: " + Value(0.0).toTypeString());
+    };
+
+    Procedure::ProcType round1 = [](std::vector<std::shared_ptr<AstNode>> args) {
+        Value val = args[0]->getVal();
+
+        if (val.is<Value::FLOAT>()) {
+            return static_cast<Value::INT>(std::round(val.get<Value::FLOAT>()));
+        }
+
+        throw RuntimeException("Round called with invalid type " + val.toTypeString() + ". Expected: " + Value(0.0).toTypeString());
+    };
+    
+    Procedure::ProcType copy1 = [this](std::vector<std::shared_ptr<AstNode>> args) {
+        Value val = args[0]->getVal();
+        if (val.is<Value::LIST>()) {
+            return Value(copyList(val.get<Value::LIST>()));
+        } else if (val.is<Value::TABLE>()) {
+            return Value(copyTable(val.get<Value::TABLE>()));
+        }
+
+        throw RuntimeException("Copy called with invalid type " + val.toTypeString());
     };
 
     Procedure::ProcType readFile1 = [](std::vector<std::shared_ptr<AstNode>> args) {
@@ -1426,9 +1475,14 @@ void Evaluator::initPtable() {
     ptable.bind(Procedure("input", {"msg"}, input1));
     ptable.bind(Procedure("type", {"x"}, type1));
     ptable.bind(Procedure("str", {"x"}, str1));
+    ptable.bind(Procedure("int", {"x"}, int1));
+    ptable.bind(Procedure("float", {"x"}, float1));
+    ptable.bind(Procedure("bool", {"x"}, bool1));
     ptable.bind(Procedure("len", {"x"}, len1));
     ptable.bind(Procedure("ceil", {"x"}, ceil1));
     ptable.bind(Procedure("floor", {"x"}, floor1));
+    ptable.bind(Procedure("round", {"x"}, round1));
+    ptable.bind(Procedure("copy", {"x"}, copy1));
     ptable.bind(Procedure("readFile", {"filename"}, readFile1));
     ptable.bind(Procedure("writeFile", {"filename", "content"}, writeFile2));
     ptable.bind(Procedure("readTable", {"filename"}, readTable1));
@@ -1438,3 +1492,45 @@ void Evaluator::initPtable() {
     ptable.bind(Procedure("writeTable", {"filename", "table", "delimiter"}, writeTable3));
 }
 
+Value::LIST Evaluator::copyList(const Value::LIST &list) {
+    Value::LIST copiedList = std::make_shared<std::vector<std::shared_ptr<Value>>>();
+    std::stack<std::pair<Value::LIST, std::shared_ptr<Value>>> stack;
+
+    for (auto it = list->rbegin(); it != list->rend(); ++it) {
+        stack.push({copiedList, *it});
+    }
+
+    while (!stack.empty()) {
+        auto [currentList, v] = stack.top();
+        stack.pop();
+
+        if (v->is<Value::LIST>()) {
+            Value::LIST nestedList = std::make_shared<std::vector<std::shared_ptr<Value>>>();
+            for (std::shared_ptr<Value> nestedVal : *v->get<Value::LIST>()) {
+                stack.push({nestedList, nestedVal});
+            }
+            currentList->emplace_back(std::make_shared<Value>(nestedList));
+        } else if (v->is<Value::TABLE>()) {
+            Value::TABLE copiedTable = copyTable(v->get<Value::TABLE>());
+            currentList->emplace_back(std::make_shared<Value>(copiedTable));
+        } else {
+            currentList->emplace_back(std::make_shared<Value>(*v));
+        }
+    }
+
+    return copiedList;
+}
+
+Value::TABLE Evaluator::copyTable(const Value::TABLE &table) {
+    Value::TABLE copiedTable = std::make_shared<std::map<Value::STR, Value::COLUMN>>();
+
+    for (const std::pair<const Value::STR, Value::COLUMN> &entry : *table) {
+        Value::COLUMN copiedCol = std::make_shared<Value::COL_STRUCT>();
+        copiedCol->header = entry.second->header;
+        copiedCol->parent = copiedTable;
+        copiedCol->data = copyList(entry.second->data);
+        copiedTable->insert({entry.first, copiedCol});
+    }
+
+    return copiedTable;
+}
