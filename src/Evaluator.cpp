@@ -1501,20 +1501,20 @@ Value::LIST Evaluator::copyList(const Value::LIST &list) {
     }
 
     while (!stack.empty()) {
-        auto [currentList, v] = stack.top();
+        auto [currentList, valPtr] = stack.top();
         stack.pop();
 
-        if (v->is<Value::LIST>()) {
+        if (valPtr->is<Value::LIST>()) {
             Value::LIST nestedList = std::make_shared<std::vector<std::shared_ptr<Value>>>();
-            for (std::shared_ptr<Value> nestedVal : *v->get<Value::LIST>()) {
+            for (std::shared_ptr<Value> nestedVal : *valPtr->get<Value::LIST>()) {
                 stack.push({nestedList, nestedVal});
             }
             currentList->emplace_back(std::make_shared<Value>(nestedList));
-        } else if (v->is<Value::TABLE>()) {
-            Value::TABLE copiedTable = copyTable(v->get<Value::TABLE>());
+        } else if (valPtr->is<Value::TABLE>()) {
+            Value::TABLE copiedTable = copyTable(valPtr->get<Value::TABLE>());
             currentList->emplace_back(std::make_shared<Value>(copiedTable));
         } else {
-            currentList->emplace_back(std::make_shared<Value>(*v));
+            currentList->emplace_back(std::make_shared<Value>(*valPtr));
         }
     }
 
