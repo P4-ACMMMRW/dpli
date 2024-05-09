@@ -470,7 +470,7 @@ void Evaluator::visit(const std::shared_ptr<ExpoExprNode> &node) {
                 else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
                     *(*col->data)[i] = std::pow(leftNode->getVal().get<Value::INT>(), (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>());
                 else 
-                    throw RuntimeException ("Cannot divide with columns contained type");   
+                    throw RuntimeException ("Cannot multiply with columns contained type");   
             }
             node->setVal(col);
         }
@@ -498,7 +498,7 @@ void Evaluator::visit(const std::shared_ptr<ExpoExprNode> &node) {
                 else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
                     *(*col->data)[i] = std::pow(leftNode->getVal().get<Value::BOOL>(), (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>());
                 else 
-                    throw RuntimeException ("Cannot divide with columns contained type");   
+                    throw RuntimeException ("Cannot multiply with columns contained type");   
             }
             node->setVal(col);
         }
@@ -517,6 +517,103 @@ void Evaluator::visit(const std::shared_ptr<ExpoExprNode> &node) {
         } else if ( rightNode->getVal().is<Value::FLOAT>()){
             node->setVal(std::pow(leftNode->getVal().get<Value::INT>(),
                                   rightNode->getVal().get<Value::FLOAT>()));
+        } else {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    *(*col->data)[i] = std::pow(leftNode->getVal().get<Value::FLOAT>(), (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>());
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    *(*col->data)[i] = std::pow(leftNode->getVal().get<Value::FLOAT>(), (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>());
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    *(*col->data)[i] = std::pow(leftNode->getVal().get<Value::FLOAT>(), (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>());
+                else 
+                    throw RuntimeException ("Cannot multiply with columns contained type");   
+            }
+            node->setVal(col);
+        }
+    } else if (leftNode->getVal().is<Value::COLUMN>()) {
+        if (rightNode->getVal().is<Value::BOOL>()) {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    *(*col->data)[i] = std::pow((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>(), leftNode->getVal().get<Value::BOOL>());
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    *(*col->data)[i] = std::pow((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>(), leftNode->getVal().get<Value::BOOL>());
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    *(*col->data)[i] = std::pow((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>(), leftNode->getVal().get<Value::BOOL>());
+                else 
+                    throw RuntimeException ("Cannot multiply with columns contained type");   
+            }
+            node->setVal(col);
+        } else if (rightNode->getVal().is<Value::INT>()) {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    *(*col->data)[i] = std::pow((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>(), leftNode->getVal().get<Value::INT>());
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    *(*col->data)[i] = std::pow((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>(), leftNode->getVal().get<Value::INT>());
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    *(*col->data)[i] = std::pow((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>(), leftNode->getVal().get<Value::INT>());
+                else 
+                    throw RuntimeException ("Cannot multiply with columns contained type");   
+            }
+            node->setVal(col);
+        } else if (rightNode->getVal().is<Value::FLOAT>()) {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    *(*col->data)[i] = std::pow((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>(), leftNode->getVal().get<Value::FLOAT>());
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    *(*col->data)[i] = std::pow((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>(), leftNode->getVal().get<Value::FLOAT>());
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    *(*col->data)[i] = std::pow((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>(), leftNode->getVal().get<Value::FLOAT>());
+                else 
+                    throw RuntimeException ("Cannot multiply with columns contained type");   
+            }
+            node->setVal(col);
+        } else {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                        *(*col->data)[i] = std::pow((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>(),
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>());
+                    else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                       *(*col->data)[i] = std::pow((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>(),
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>());
+                    else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                        *(*col->data)[i] = std::pow((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>(),
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>());
+                    else 
+                        throw RuntimeException ("Cannot multiply with columns contained type"); 
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                        *(*col->data)[i] = std::pow((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>(),
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>());
+                    else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                        *(*col->data)[i] = std::pow((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>(),
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>());
+                    else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                        *(*col->data)[i] = std::pow((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>(),
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>());
+                    else 
+                        throw RuntimeException ("Cannot multiply with columns contained type"); 
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                        *(*col->data)[i] = std::pow((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>(),
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>());
+                    else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                        *(*col->data)[i] = std::pow((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>(),
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>());
+                    else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                        *(*col->data)[i] = std::pow((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>(),
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>());
+                    else 
+                        throw RuntimeException ("Cannot multiply with columns contained type"); 
+                else 
+                    throw RuntimeException ("Cannot multiply with columns contained type");   
+            }
+            node->setVal(col);
         }
     } else
         throw RuntimeException("Could not convert string to value of nodes");
@@ -793,7 +890,10 @@ void Evaluator::visit(const std::shared_ptr<MinusExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()))) {
+    if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()) || 
+        (isNumeric(leftNode->getVal()) && rightNode->getVal().is<Value::COLUMN>()) ||
+        (leftNode->getVal().is<Value::COLUMN>() && isNumeric(rightNode->getVal())) ||
+        (leftNode->getVal().is<Value::COLUMN>() && rightNode->getVal().is<Value::COLUMN>()))) {
         // TODO: move to error handler at some point
         throw RuntimeException("Cannot do substraction with the used types");
     }
@@ -806,9 +906,22 @@ void Evaluator::visit(const std::shared_ptr<MinusExprNode> &node) {
         } else if (rightNode->getVal().is<Value::INT>()) {
             node->setVal(leftNode->getVal().get<Value::INT>() -
                          rightNode->getVal().get<Value::INT>());
-        } else {
+        } else if (rightNode->getVal().is<Value::FLOAT>()){
             node->setVal(leftNode->getVal().get<Value::INT>() -
                          rightNode->getVal().get<Value::FLOAT>());
+        } else {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    *(*col->data)[i] = leftNode->getVal().get<Value::INT>() - (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>();
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    *(*col->data)[i] = leftNode->getVal().get<Value::INT>() - (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>();
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    *(*col->data)[i] = leftNode->getVal().get<Value::INT>() - (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>();
+                else 
+                    throw RuntimeException ("Cannot subtract with columns contained type");   
+            }
+            node->setVal(col);
         }
     } else if (leftNode->getVal().is<Value::FLOAT>()) {
         if (rightNode->getVal().is<Value::BOOL>()) {
@@ -817,9 +930,22 @@ void Evaluator::visit(const std::shared_ptr<MinusExprNode> &node) {
         } else if (rightNode->getVal().is<Value::INT>()) {
             node->setVal(leftNode->getVal().get<Value::FLOAT>() -
                          rightNode->getVal().get<Value::INT>());
-        } else {
+        } else if (rightNode->getVal().is<Value::FLOAT>()){
             node->setVal(leftNode->getVal().get<Value::FLOAT>() -
                          rightNode->getVal().get<Value::FLOAT>());
+        } else {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    *(*col->data)[i] = leftNode->getVal().get<Value::FLOAT>() - (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>();
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    *(*col->data)[i] = leftNode->getVal().get<Value::FLOAT>() - (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>();
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    *(*col->data)[i] = leftNode->getVal().get<Value::FLOAT>() - (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>();
+                else 
+                    throw RuntimeException ("Cannot subtract with columns contained type");   
+            }
+            node->setVal(col);
         }
     } else if (leftNode->getVal().is<Value::BOOL>()) {
         if (rightNode->getVal().is<Value::BOOL>()) {
@@ -828,9 +954,106 @@ void Evaluator::visit(const std::shared_ptr<MinusExprNode> &node) {
         } else if (rightNode->getVal().is<Value::INT>()) {
             node->setVal(leftNode->getVal().get<Value::BOOL>() -
                          rightNode->getVal().get<Value::INT>());
-        } else {
+        } else if (rightNode->getVal().is<Value::FLOAT>()) {
             node->setVal(leftNode->getVal().get<Value::BOOL>() -
                          rightNode->getVal().get<Value::FLOAT>());
+        } else {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    *(*col->data)[i] = leftNode->getVal().get<Value::FLOAT>() - (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>();
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    *(*col->data)[i] = leftNode->getVal().get<Value::FLOAT>() - (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>();
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    *(*col->data)[i] = leftNode->getVal().get<Value::FLOAT>() - (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>();
+                else 
+                    throw RuntimeException ("Cannot subtract with columns contained type");   
+            }
+            node->setVal(col);
+        }
+    } else if (leftNode->getVal().is<Value::COLUMN>()) {
+        if (rightNode->getVal().is<Value::BOOL>()) {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>() - rightNode->getVal().get<Value::BOOL>();
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>() - rightNode->getVal().get<Value::BOOL>();
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>() - rightNode->getVal().get<Value::BOOL>();
+                else 
+                    throw RuntimeException ("Cannot subtract with columns contained type");   
+            }
+            node->setVal(col);
+        } else if (rightNode->getVal().is<Value::INT>()) {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>() - rightNode->getVal().get<Value::INT>();
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>() - rightNode->getVal().get<Value::INT>();
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>() - rightNode->getVal().get<Value::INT>();
+                else 
+                    throw RuntimeException ("Cannot subtract with columns contained type");   
+            }
+            node->setVal(col);
+        } else if (rightNode->getVal().is<Value::FLOAT>()) {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>() - rightNode->getVal().get<Value::FLOAT>();
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>() - rightNode->getVal().get<Value::FLOAT>();
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>() - rightNode->getVal().get<Value::FLOAT>();
+                else 
+                    throw RuntimeException ("Cannot subtract with columns contained type");   
+            }
+            node->setVal(col);
+        } else {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                        *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>() - 
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>();
+                    else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                       *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>() - 
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>(); 
+                    else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                        *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>() - 
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>();
+                    else 
+                        throw RuntimeException ("Cannot subtract with columns contained type"); 
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                        *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>() - 
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>();
+                    else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                        *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>() - 
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>();
+                    else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                        *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>() - 
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>();
+                    else 
+                        throw RuntimeException ("Cannot subtract with columns contained type"); 
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                        *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>() - 
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>();
+                    else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                        *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>() - 
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>();
+                    else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                        *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>() - 
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>();
+                    else 
+                        throw RuntimeException ("Cannot subtract with columns contained type"); 
+                else 
+                    throw RuntimeException ("Cannot subtract with columns contained type");   
+            }
+            node->setVal(col);
         }
     } else
         throw RuntimeException("Couldn't convert string to value of nodes");
@@ -841,7 +1064,7 @@ void Evaluator::visit(const std::shared_ptr<MinusNode> &node) {
     std::shared_ptr<AstNode> childNode = node->getChildNode();
     childNode->accept(shared_from_this());
 
-    if (!isNumeric(childNode->getVal())) {
+    if (!(isNumeric(childNode->getVal()) || childNode->getVal().is<Value::COLUMN>())) {
         // TODO: move to error handler at some point
         throw RuntimeException("Cannot do substraction with the used type");
     }
@@ -853,6 +1076,19 @@ void Evaluator::visit(const std::shared_ptr<MinusNode> &node) {
         node->setVal(-childNode->getVal().get<Value::FLOAT>());
     } else if (childNode->getVal().is<Value::BOOL>()) {
         node->setVal(-childNode->getVal().get<Value::BOOL>());
+    } else if (childNode->getVal().is<Value::COLUMN>()) {
+        Value::COLUMN col;
+        for (int i = 0; i < childNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*childNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    *(*col->data)[i] = - (*(*childNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>();
+                else if ((*(*childNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    *(*col->data)[i] = - (*(*childNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>();
+                else if ((*(*childNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    *(*col->data)[i] = - (*(*childNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>();
+                else 
+                    throw RuntimeException ("Cannot divide with columns contained type");   
+            }
+            node->setVal(col);
     } else
         throw RuntimeException("Couldn't convert string to value of nodes");
 }
@@ -864,7 +1100,10 @@ void Evaluator::visit(const std::shared_ptr<ModExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()))) {
+    if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()) || 
+        (isNumeric(leftNode->getVal()) && rightNode->getVal().is<Value::COLUMN>()) ||
+        (leftNode->getVal().is<Value::COLUMN>() && isNumeric(rightNode->getVal())) ||
+        (leftNode->getVal().is<Value::COLUMN>() && rightNode->getVal().is<Value::COLUMN>()))) {
         // TODO: move to error handler at some point
         throw RuntimeException("Cannot do modulo with the used types");
     }
@@ -898,9 +1137,22 @@ void Evaluator::visit(const std::shared_ptr<ModExprNode> &node) {
         } else if (rightNode->getVal().is<Value::INT>()) {
             node->setVal(leftNode->getVal().get<Value::INT>() %
                         rightNode->getVal().get<Value::INT>());
-        } else {
+        } else if (rightNode->getVal().is<Value::FLOAT>()){
             node->setVal(fmod(leftNode->getVal().get<Value::INT>(),
                             rightNode->getVal().get<Value::FLOAT>()));
+        } else {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    *(*col->data)[i] = fmod(leftNode->getVal().get<Value::INT>(), (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>());
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    *(*col->data)[i] = fmod(leftNode->getVal().get<Value::INT>(), (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>());
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    *(*col->data)[i] = fmod(leftNode->getVal().get<Value::INT>(), (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>());
+                else 
+                    throw RuntimeException ("Cannot multiply with columns contained type");   
+            }
+            node->setVal(col);
         }
     } else if (leftNode->getVal().is<Value::FLOAT>()) {
         if (rightNode->getVal().is<Value::BOOL>()) {
@@ -909,9 +1161,22 @@ void Evaluator::visit(const std::shared_ptr<ModExprNode> &node) {
         } else if (rightNode->getVal().is<Value::INT>()) {
             node->setVal(fmod(leftNode->getVal().get<Value::FLOAT>(),
                             rightNode->getVal().get<Value::INT>()));
-        } else {
+        } else if (rightNode->getVal().is<Value::FLOAT>()){
             node->setVal(fmod(leftNode->getVal().get<Value::FLOAT>(),
                             rightNode->getVal().get<Value::BOOL>()));
+        } else {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    *(*col->data)[i] = fmod(leftNode->getVal().get<Value::FLOAT>(), (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>());
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    *(*col->data)[i] = fmod(leftNode->getVal().get<Value::FLOAT>(), (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>());
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    *(*col->data)[i] = fmod(leftNode->getVal().get<Value::FLOAT>(), (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>());
+                else 
+                    throw RuntimeException ("Cannot multiply with columns contained type");   
+            }
+            node->setVal(col);
         }
     } else if (leftNode->getVal().is<Value::BOOL>()) {
         if (rightNode->getVal().is<Value::BOOL>()) {
@@ -920,13 +1185,109 @@ void Evaluator::visit(const std::shared_ptr<ModExprNode> &node) {
         } else if (rightNode->getVal().is<Value::INT>()) {
             node->setVal(leftNode->getVal().get<Value::BOOL>() %
                         rightNode->getVal().get<Value::INT>());
-        } else {
+        } else if (rightNode->getVal().is<Value::FLOAT>()){
             node->setVal(fmod(leftNode->getVal().get<Value::BOOL>(),
                             rightNode->getVal().get<Value::FLOAT>()));
+        } else {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    *(*col->data)[i] = fmod(leftNode->getVal().get<Value::BOOL>(), (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>());
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    *(*col->data)[i] = fmod(leftNode->getVal().get<Value::BOOL>(), (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>());
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    *(*col->data)[i] = fmod(leftNode->getVal().get<Value::BOOL>(), (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>());
+                else 
+                    throw RuntimeException ("Cannot multiply with columns contained type");   
+            }
+            node->setVal(col);
         }
-    } else {
+    } else if (leftNode->getVal().is<Value::COLUMN>()) {
+        if (rightNode->getVal().is<Value::BOOL>()) {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    *(*col->data)[i] = fmod((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>(), leftNode->getVal().get<Value::BOOL>());
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    *(*col->data)[i] = fmod((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>(), leftNode->getVal().get<Value::BOOL>());
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    *(*col->data)[i] = fmod((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>(), leftNode->getVal().get<Value::BOOL>());
+                else 
+                    throw RuntimeException ("Cannot multiply with columns contained type");   
+            }
+            node->setVal(col);
+        } else if (rightNode->getVal().is<Value::INT>()) {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    *(*col->data)[i] = fmod((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>(), leftNode->getVal().get<Value::INT>());
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    *(*col->data)[i] = fmod((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>(), leftNode->getVal().get<Value::INT>());
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    *(*col->data)[i] = fmod((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>(), leftNode->getVal().get<Value::INT>());
+                else 
+                    throw RuntimeException ("Cannot multiply with columns contained type");   
+            }
+            node->setVal(col);
+        } else if (rightNode->getVal().is<Value::FLOAT>()) {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    *(*col->data)[i] = fmod((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>(), leftNode->getVal().get<Value::FLOAT>());
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    *(*col->data)[i] = fmod((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>(), leftNode->getVal().get<Value::FLOAT>());
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    *(*col->data)[i] = fmod((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>(), leftNode->getVal().get<Value::FLOAT>());
+                else 
+                    throw RuntimeException ("Cannot multiply with columns contained type");   
+            }
+            node->setVal(col);
+        } else {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                        *(*col->data)[i] = fmod((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>(),
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>());
+                    else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                       *(*col->data)[i] = fmod((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>(),
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>());
+                    else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                        *(*col->data)[i] = fmod((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>(),
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>());
+                    else 
+                        throw RuntimeException ("Cannot multiply with columns contained type"); 
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                        *(*col->data)[i] = fmod((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>(),
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>());
+                    else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                        *(*col->data)[i] = fmod((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>(),
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>());
+                    else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                        *(*col->data)[i] = fmod((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>(),
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>());
+                    else 
+                        throw RuntimeException ("Cannot multiply with columns contained type"); 
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                        *(*col->data)[i] = fmod((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>(),
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>());
+                    else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                        *(*col->data)[i] = fmod((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>(),
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>());
+                    else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                        *(*col->data)[i] = fmod((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>(),
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>());
+                    else 
+                        throw RuntimeException ("Cannot multiply with columns contained type"); 
+                else 
+                    throw RuntimeException ("Cannot multiply with columns contained type");   
+            }
+            node->setVal(col);
+        }
+    } else 
         throw RuntimeException("Couldn't convert string to value of nodes");
-    }
 }
 
 void Evaluator::visit(const std::shared_ptr<MultExprNode> &node) {
@@ -940,7 +1301,14 @@ void Evaluator::visit(const std::shared_ptr<MultExprNode> &node) {
           (leftNode->getVal().is<Value::INT>() && rightNode->getVal().is<Value::STR>()) ||
           (leftNode->getVal().is<Value::STR>() && rightNode->getVal().is<Value::INT>()) ||
           (leftNode->getVal().is<Value::STR>() && rightNode->getVal().is<Value::BOOL>()) ||
-          (leftNode->getVal().is<Value::BOOL>() && rightNode->getVal().is<Value::STR>()))) {
+          (leftNode->getVal().is<Value::BOOL>() && rightNode->getVal().is<Value::STR>()) || 
+        (isNumeric(leftNode->getVal()) && rightNode->getVal().is<Value::COLUMN>()) ||
+        (leftNode->getVal().is<Value::COLUMN>() && isNumeric(rightNode->getVal())) ||
+        (leftNode->getVal().is<Value::COLUMN>() && rightNode->getVal().is<Value::COLUMN>()) ||
+        (leftNode->getVal().is<Value::COLUMN>() && rightNode->getVal().is<Value::STR>()) ||
+        (leftNode->getVal().is<Value::STR>() && rightNode->getVal().is<Value::COLUMN>()) ||
+        (isNumeric(leftNode->getVal()) && rightNode->getVal().is<Value::LIST>()) || 
+        (isNumeric(rightNode->getVal()) && leftNode->getVal().is<Value::LIST>()))) {
         // TODO: move to error handler at some point
         throw RuntimeException("Cannot multiply with the used types");
     }
@@ -956,11 +1324,37 @@ void Evaluator::visit(const std::shared_ptr<MultExprNode> &node) {
         } else if (rightNode->getVal().is<Value::FLOAT>()) {
             node->setVal(leftNode->getVal().get<Value::INT>() *
                          rightNode->getVal().get<Value::FLOAT>());
-        } else {
+        } else if (rightNode->getVal().is<Value::STR>()){
             node->setVal("");
             for (Value::INT i = 0; i < leftNode->getVal().get<Value::INT>(); i++)
                 node->setVal(node->getVal().get<Value::STR>() +
                              rightNode->getVal().get<Value::STR>());
+        } else if (rightNode->getVal().is<Value::LIST>()) { 
+            Value::LIST list;
+            for (int i = 0; i < leftNode->getVal().get<Value::INT>(); i++) {
+                for (int j = 0; j < rightNode->getVal().get<Value::LIST>()->size(); j++) {
+                    *(*list)[rightNode->getVal().get<Value::LIST>()->size()*i+j] = *(*rightNode->getVal().get<Value::LIST>())[j];
+                }
+            }
+            node->setVal(list);
+        } else {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    *(*col->data)[i] = leftNode->getVal().get<Value::INT>() * (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>();
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    *(*col->data)[i] = leftNode->getVal().get<Value::INT>() * (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>();
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    *(*col->data)[i] = leftNode->getVal().get<Value::INT>() * (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>();
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::STR>()) {
+                    *(*col->data)[i] = "";
+                    for (Value::INT j = 0; i < leftNode->getVal().get<Value::INT>(); i++) {
+                        *(*col->data)[i] = (*(*col->data)[i]).get<Value::STR>() + (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::STR>();
+                    }
+                } else
+                    throw RuntimeException ("Cannot multiply with columns contained type");   
+            }
+            node->setVal(col);
         }
     } else if (leftNode->getVal().is<Value::FLOAT>()) {
         if (rightNode->getVal().is<Value::BOOL>()) {
@@ -969,9 +1363,22 @@ void Evaluator::visit(const std::shared_ptr<MultExprNode> &node) {
         } else if (rightNode->getVal().is<Value::INT>()) {
             node->setVal(leftNode->getVal().get<Value::FLOAT>() *
                          rightNode->getVal().get<Value::INT>());
-        } else {
+        } else if (rightNode->getVal().is<Value::FLOAT>()){
             node->setVal(leftNode->getVal().get<Value::FLOAT>() *
                          rightNode->getVal().get<Value::FLOAT>());
+        } else {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    *(*col->data)[i] = leftNode->getVal().get<Value::FLOAT>() * (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>();
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    *(*col->data)[i] = leftNode->getVal().get<Value::FLOAT>() * (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>();
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    *(*col->data)[i] = leftNode->getVal().get<Value::FLOAT>() * (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>();
+                else 
+                    throw RuntimeException ("Cannot multiply with columns contained type");   
+            }
+            node->setVal(col);
         }
     } else if (leftNode->getVal().is<Value::BOOL>()) {
         if (rightNode->getVal().is<Value::BOOL>()) {
@@ -983,22 +1390,217 @@ void Evaluator::visit(const std::shared_ptr<MultExprNode> &node) {
         } else if (rightNode->getVal().is<Value::FLOAT>()) {
             node->setVal(leftNode->getVal().get<Value::BOOL>() *
                          rightNode->getVal().get<Value::FLOAT>());
-        } else {
+        } else if (rightNode->getVal().is<Value::STR>()){
             node->setVal("");
             for (size_t i = 0; i < leftNode->getVal().get<Value::BOOL>(); i++)
                 node->setVal(node->getVal().get<Value::STR>() +
                              rightNode->getVal().get<Value::STR>());
+        } else if (rightNode->getVal().is<Value::LIST>()) { 
+            Value::LIST list;
+            for (int i = 0; i < leftNode->getVal().get<Value::BOOL>(); i++) {
+                for (int j = 0; j < rightNode->getVal().get<Value::LIST>()->size(); j++) {
+                    *(*list)[rightNode->getVal().get<Value::LIST>()->size()*i+j] = *(*rightNode->getVal().get<Value::LIST>())[j];
+                }
+            }
+            node->setVal(list);
+        } else {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    *(*col->data)[i] = leftNode->getVal().get<Value::BOOL>() * (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>();
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    *(*col->data)[i] = leftNode->getVal().get<Value::BOOL>() * (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>();
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    *(*col->data)[i] = leftNode->getVal().get<Value::BOOL>() * (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>();
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::STR>()) {
+                    *(*col->data)[i] = "";
+                    for (Value::INT j = 0; i < leftNode->getVal().get<Value::BOOL>(); i++) {
+                        *(*col->data)[i] = (*(*col->data)[i]).get<Value::STR>() + (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::STR>();
+                    }
+                } else
+                    throw RuntimeException ("Cannot multiply with columns contained type"); 
+            }
+            node->setVal(col);
         }
     } else if (leftNode->getVal().is<Value::STR>()) {
-        node->setVal("");
         if (rightNode->getVal().is<Value::INT>()) {
             for (Value::INT i = 0; i < rightNode->getVal().get<Value::INT>(); i++)
                 node->setVal(node->getVal().get<Value::STR>() +
                              leftNode->getVal().get<Value::STR>());
-        } else {
+        } else if (rightNode->getVal().is<Value::BOOL>()) {
             for (size_t i = 0; i < rightNode->getVal().get<Value::BOOL>(); i++)
                 node->setVal(node->getVal().get<Value::STR>() +
                              leftNode->getVal().get<Value::STR>());
+        } else {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) {
+                    *(*col->data)[i] = "";
+                    for (Value::INT j = 0; i < (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>(); i++) {
+                       *(*col->data)[i] = (*(*col->data)[i]).get<Value::STR>() + leftNode->getVal().get<Value::STR>();
+                    }
+                }
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>()) {
+                    *(*col->data)[i] = "";
+                    for (Value::INT j = 0; i < (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>(); i++) {
+                        *(*col->data)[i] = (*(*col->data)[i]).get<Value::STR>() + leftNode->getVal().get<Value::STR>();
+                    }
+                } else
+                    throw RuntimeException ("Cannot multiply with columns contained type"); 
+            }
+            node->setVal(col);
+        }
+    } else if (leftNode->getVal().is<Value::COLUMN>()) {
+        if (rightNode->getVal().is<Value::BOOL>()) {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>() * rightNode->getVal().get<Value::BOOL>();
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>() * rightNode->getVal().get<Value::BOOL>();
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>() * rightNode->getVal().get<Value::BOOL>();
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::STR>()) {
+                    *(*col->data)[i] = "";
+                    for (Value::INT j = 0; i < rightNode->getVal().get<Value::BOOL>(); i++) {
+                        *(*col->data)[i] = (*(*col->data)[i]).get<Value::STR>() + (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::STR>();
+                    }
+                } else
+                    throw RuntimeException ("Cannot multiply with columns contained type");   
+            }
+            node->setVal(col);
+        } else if (rightNode->getVal().is<Value::INT>()) {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>() * rightNode->getVal().get<Value::INT>();
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>() * rightNode->getVal().get<Value::INT>();
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>() * rightNode->getVal().get<Value::INT>();
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::STR>()) {
+                    *(*col->data)[i] = "";
+                    for (Value::INT j = 0; i < rightNode->getVal().get<Value::INT>(); i++) {
+                        *(*col->data)[i] = (*(*col->data)[i]).get<Value::STR>() + (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::STR>();
+                    }
+                } else
+                    throw RuntimeException ("Cannot multiply with columns contained type");   
+            }
+            node->setVal(col);
+        } else if (rightNode->getVal().is<Value::FLOAT>()) {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>() * rightNode->getVal().get<Value::FLOAT>();
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>() * rightNode->getVal().get<Value::FLOAT>();
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>() * rightNode->getVal().get<Value::FLOAT>();
+                else 
+                    throw RuntimeException ("Cannot multiply with columns contained type");   
+            }
+            node->setVal(col);
+        } else if (rightNode->getVal().is<Value::STR>()) {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) {
+                    *(*col->data)[i] = "";
+                    for (Value::INT j = 0; i < (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>(); i++) {
+                       *(*col->data)[i] = (*(*col->data)[i]).get<Value::STR>() + rightNode->getVal().get<Value::STR>();
+                    }
+                }
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>()) {
+                    *(*col->data)[i] = "";
+                    for (Value::INT j = 0; i < (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>(); i++) {
+                        *(*col->data)[i] = (*(*col->data)[i]).get<Value::STR>() + rightNode->getVal().get<Value::STR>();
+                    }
+                } else
+                    throw RuntimeException ("Cannot multiply with columns contained type"); 
+            }
+        } else{
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                        *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>() * 
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>();
+                    else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                       *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>() * 
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>(); 
+                    else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                        *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>() * 
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>();
+                    else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::STR>()) {
+                        *(*col->data)[i] = "";
+                        for (Value::INT j = 0; i < (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>(); i++) {
+                            *(*col->data)[i] = (*(*col->data)[i]).get<Value::STR>() + (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::STR>();
+                        }
+                    } else 
+                        throw RuntimeException ("Cannot multiply with columns contained type"); 
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                        *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>() * 
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>();
+                    else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                        *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>() * 
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>();
+                    else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                        *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>() * 
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>();
+                    else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::STR>()) {
+                        *(*col->data)[i] = "";
+                        for (Value::INT j = 0; i < (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>(); i++) {
+                            *(*col->data)[i] = (*(*col->data)[i]).get<Value::STR>() + (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::STR>();
+                        }
+                    } else 
+                        throw RuntimeException ("Cannot multiply with columns contained type"); 
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                        *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>() / 
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>();
+                    else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                        *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>() / 
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>();
+                    else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                        *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>() / 
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>();
+                    else 
+                        throw RuntimeException ("Cannot divide with columns contained type"); 
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::STR>()){
+                    if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) {
+                        *(*col->data)[i] = "";
+                        for (Value::INT j = 0; i < (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>(); i++) {
+                            *(*col->data)[i] = (*(*col->data)[i]).get<Value::STR>() + (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::STR>();
+                        }
+                    } else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>()) {
+                        *(*col->data)[i] = "";
+                        for (Value::INT j = 0; i < (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>(); i++) {
+                            *(*col->data)[i] = (*(*col->data)[i]).get<Value::STR>() + (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::STR>();
+                        }
+                    } else 
+                        throw RuntimeException ("Cannot multiply with columns contained type"); 
+                } else 
+                    throw RuntimeException ("Cannot divide with columns contained type");   
+            }
+            node->setVal(col);
+        }
+    } else if (leftNode->getVal().is<Value::LIST>()) {
+        if (rightNode->getVal().is<Value::INT>()) { 
+            Value::LIST list;
+            for (int i = 0; i < rightNode->getVal().get<Value::INT>(); i++) {
+                for (int j = 0; j < leftNode->getVal().get<Value::LIST>()->size(); j++) {
+                    *(*list)[leftNode->getVal().get<Value::LIST>()->size()*i+j] = *(*leftNode->getVal().get<Value::LIST>())[j];
+                }
+            }
+            node->setVal(list);
+        } else if (rightNode->getVal().is<Value::BOOL>()) { 
+             Value::LIST list;
+            for (int i = 0; i < rightNode->getVal().get<Value::BOOL>(); i++) {
+                for (int j = 0; j < leftNode->getVal().get<Value::LIST>()->size(); j++) {
+                    *(*list)[leftNode->getVal().get<Value::LIST>()->size()*i+j] = *(*leftNode->getVal().get<Value::LIST>())[j];
+                }
+            }
+            node->setVal(list);
         }
     } else
         throw RuntimeException("Couldn't convert string to value of nodes");
@@ -1175,7 +1777,13 @@ void Evaluator::visit(const std::shared_ptr<PlusExprNode> &node) {
     rightNode->accept(shared_from_this());
 
     if (!((isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal())) ||
-          (leftNode->getVal().is<Value::STR>() && rightNode->getVal().is<Value::STR>()))) {
+        (leftNode->getVal().is<Value::STR>() && rightNode->getVal().is<Value::STR>()) || 
+        (isNumeric(leftNode->getVal()) && rightNode->getVal().is<Value::COLUMN>()) ||
+        (leftNode->getVal().is<Value::COLUMN>() && isNumeric(rightNode->getVal())) ||
+        (leftNode->getVal().is<Value::COLUMN>() && rightNode->getVal().is<Value::COLUMN>()) ||
+        (leftNode->getVal().is<Value::STR>() && rightNode->getVal().is<Value::COLUMN>()) || 
+        (leftNode->getVal().is<Value::COLUMN>() && rightNode->getVal().is<Value::STR>()) || 
+        (leftNode->getVal().is<Value::LIST>() && rightNode->getVal().is<Value::LIST>()))) {
         // TODO: move to error handler at some point
         throw RuntimeException("Cannot do addition with the used types");
     }
@@ -1188,9 +1796,22 @@ void Evaluator::visit(const std::shared_ptr<PlusExprNode> &node) {
         } else if (rightNode->getVal().is<Value::INT>()) {
             node->setVal(leftNode->getVal().get<Value::INT>() +
                          rightNode->getVal().get<Value::INT>());
-        } else {
+        } else if (rightNode->getVal().is<Value::FLOAT>()){
             node->setVal(leftNode->getVal().get<Value::INT>() +
                          rightNode->getVal().get<Value::FLOAT>());
+        } else {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    *(*col->data)[i] = leftNode->getVal().get<Value::INT>() + (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>();
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    *(*col->data)[i] = leftNode->getVal().get<Value::INT>() + (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>();
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    *(*col->data)[i] = leftNode->getVal().get<Value::INT>() + (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>();
+                else 
+                    throw RuntimeException ("Cannot do addition with columns contained type");   
+            }
+            node->setVal(col);
         }
     } else if (leftNode->getVal().is<Value::FLOAT>()) {
         if (rightNode->getVal().is<Value::BOOL>()) {
@@ -1199,9 +1820,22 @@ void Evaluator::visit(const std::shared_ptr<PlusExprNode> &node) {
         } else if (rightNode->getVal().is<Value::INT>()) {
             node->setVal(leftNode->getVal().get<Value::FLOAT>() +
                          rightNode->getVal().get<Value::INT>());
-        } else {
+        } else if (rightNode->getVal().is<Value::FLOAT>()){
             node->setVal(leftNode->getVal().get<Value::FLOAT>() +
                          rightNode->getVal().get<Value::FLOAT>());
+        } else {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    *(*col->data)[i] = leftNode->getVal().get<Value::FLOAT>() + (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>();
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    *(*col->data)[i] = leftNode->getVal().get<Value::FLOAT>() + (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>();
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    *(*col->data)[i] = leftNode->getVal().get<Value::FLOAT>() + (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>();
+                else 
+                    throw RuntimeException ("Cannot do addition with columns contained type");   
+            }
+            node->setVal(col);
         }
     } else if (leftNode->getVal().is<Value::BOOL>()) {
         if (rightNode->getVal().is<Value::BOOL>()) {
@@ -1210,12 +1844,148 @@ void Evaluator::visit(const std::shared_ptr<PlusExprNode> &node) {
         } else if (rightNode->getVal().is<Value::INT>()) {
             node->setVal(leftNode->getVal().get<Value::BOOL>() +
                          rightNode->getVal().get<Value::INT>());
-        } else {
+        } else if (rightNode->getVal().is<Value::FLOAT>()){
             node->setVal(leftNode->getVal().get<Value::BOOL>() +
                          rightNode->getVal().get<Value::FLOAT>());
+        } else {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    *(*col->data)[i] = leftNode->getVal().get<Value::BOOL>() + (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>();
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    *(*col->data)[i] = leftNode->getVal().get<Value::BOOL>() + (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>();
+                else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    *(*col->data)[i] = leftNode->getVal().get<Value::BOOL>() + (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>();
+                else 
+                    throw RuntimeException ("Cannot do addition with columns contained type");   
+            }
+            node->setVal(col);
         }
     } else if (leftNode->getVal().is<Value::STR>()) {
-        node->setVal(leftNode->getVal().get<Value::STR>() + rightNode->getVal().get<Value::STR>());
+        if (rightNode->getVal().is<Value::STR>()) 
+            node->setVal(leftNode->getVal().get<Value::STR>() + rightNode->getVal().get<Value::STR>());
+        else {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {   
+                if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::STR>()) {
+                    *(*col->data)[i] = leftNode->getVal().get<Value::STR>() + (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::STR>();
+                } else
+                    throw RuntimeException ("Cannot do addition with columns contained type");  
+            }
+            node->setVal(col);
+        }
+    } else if (leftNode->getVal().is<Value::COLUMN>()) {
+        if (rightNode->getVal().is<Value::BOOL>()) {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>() + rightNode->getVal().get<Value::BOOL>();
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>() + rightNode->getVal().get<Value::BOOL>();
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>() + rightNode->getVal().get<Value::BOOL>();
+                else 
+                    throw RuntimeException ("Cannot do addition with columns contained type");   
+            }
+            node->setVal(col);
+        } else if (rightNode->getVal().is<Value::INT>()) {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>() + rightNode->getVal().get<Value::INT>();
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>() + rightNode->getVal().get<Value::INT>();
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>() + rightNode->getVal().get<Value::INT>();
+                else 
+                    throw RuntimeException ("Cannot do addition with columns contained type");   
+            }
+            node->setVal(col);
+        } else if (rightNode->getVal().is<Value::FLOAT>()) {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>() + rightNode->getVal().get<Value::FLOAT>();
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>() + rightNode->getVal().get<Value::FLOAT>();
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>() + rightNode->getVal().get<Value::FLOAT>();
+                else 
+                    throw RuntimeException ("Cannot do addition with columns contained type");   
+            }
+            node->setVal(col);
+        } else if (rightNode->getVal().is<Value::STR>()) {
+            Value::COLUMN col;
+            for (int i = 0; i < leftNode->getVal().get<Value::COLUMN>()->data->size(); i++) {   
+                if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::STR>()) {
+                    *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::STR>() + rightNode->getVal().get<Value::STR>();
+                } else
+                    throw RuntimeException ("Cannot do addition with columns contained type");  
+            }
+            node->setVal(col);
+        } else {
+            Value::COLUMN col;
+            for (int i = 0; i < rightNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                        *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>() + 
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>();
+                    else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                       *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>() + 
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>(); 
+                    else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                        *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>() + 
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>();
+                    else 
+                        throw RuntimeException ("Cannot do addition with columns contained type"); 
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                        *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>() + 
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>();
+                    else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                        *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>() + 
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>();
+                    else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                        *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>() + 
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>();
+                    else 
+                        throw RuntimeException ("Cannot do addition with columns contained type"); 
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                        *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>() + 
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>();
+                    else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                        *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>() + 
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>();
+                    else if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                        *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>() + 
+                            (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>();
+                    else 
+                        throw RuntimeException ("Cannot do addition with columns contained type"); 
+                else if ((*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::STR>()) 
+                    if ((*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::STR>()) {
+                    *(*col->data)[i] = (*(*leftNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::STR>() + 
+                        (*(*rightNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::STR>();
+                    } else
+                    throw RuntimeException ("Cannot do addition with columns contained type");  
+                else  
+                    throw RuntimeException ("Cannot do addition with columns contained type");   
+            }
+            node->setVal(col);
+        }
+    } else if (leftNode->getVal().is<Value::LIST>()) {
+        if (rightNode->getVal().is<Value::LIST>()) {
+            Value::LIST list;
+            for (int i = 0; i < leftNode->getVal().get<Value::LIST>()->size(); i++) {
+                *(*list)[i] = *(*leftNode->getVal().get<Value::LIST>())[i];
+            }
+            for (int i = 0; i < rightNode->getVal().get<Value::LIST>()->size(); i++) {
+                *(*list)[leftNode->getVal().get<Value::LIST>()->size()+i] = *(*rightNode->getVal().get<Value::LIST>())[i];
+            }
+            node->setVal(list);
+        } else {
+            throw RuntimeException("Can only add a list to a list");
+        }
     } else
         throw RuntimeException("Couldn't convert string to value of nodes");
 }
@@ -1225,7 +1995,7 @@ void Evaluator::visit(const std::shared_ptr<PlusNode> &node) {
     std::shared_ptr<AstNode> childNode = node->getChildNode();
     childNode->accept(shared_from_this());
 
-    if (!isNumeric(childNode->getVal())) {
+    if (!isNumeric(childNode->getVal()) && !childNode->getVal().is<Value::COLUMN>()) {
         // TODO: move to error handler at some point
         throw RuntimeException("Cannot use unary plus with the used type");
     }
@@ -1237,6 +2007,8 @@ void Evaluator::visit(const std::shared_ptr<PlusNode> &node) {
         node->setVal(childNode->getVal().get<Value::FLOAT>());
     } else if (childNode->getVal().is<Value::BOOL>()) {
         node->setVal(childNode->getVal().get<Value::BOOL>());
+    } else if (childNode->getVal().is<Value::COLUMN>()) {
+        node->setVal(childNode->getVal().get<Value::COLUMN>());
     } else
         throw RuntimeException("Couldn't convert string to value of nodes");
 }
