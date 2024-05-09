@@ -14,6 +14,7 @@
 #define LEXER_TEST(name) TEST_CASE("Lexer -- " #name, "[lexer]")
 #define PARSER_TEST(name) TEST_CASE("Parser -- " #name, "[parser]")
 #define AST_TEST(name) TEST_CASE("Ast -- " #name, "[ast]")
+#define SYMBOL_TABLE_TEST(name) TEST_CASE("Symbol Table -- " #name, "[symbol_table]")
 
 namespace dplutil {
     class TestVisitor : public dplgrammar::DplParserBaseVisitor {
