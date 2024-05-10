@@ -78,6 +78,20 @@ class Evaluator : public AstVisitor {
      * Initializes the procedures from the standard library of the language
      */
     void initPtable();
+
+    /**
+     * Makes a deep copy of a list using DFS
+     * @param list the list to copy
+     * @return the copied list
+    */
+    Value::LIST copyList(const Value::LIST &list);
+
+    /**
+     * Makes a deep copy of a table using DFS
+     * @param table the table to copy
+     * @return the copied table
+    */
+    Value::TABLE copyTable(const Value::TABLE &table);
 };
 
 }  // namespace dplsrc
