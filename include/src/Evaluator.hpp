@@ -55,6 +55,21 @@ class Evaluator : public AstVisitor {
     void visit(const std::shared_ptr<UnionExprNode> &node) override;
     void visit(const std::shared_ptr<WhileNode> &node) override;
 
+    /**
+     * Adds null Values to a Value::List
+    */
+    void addNullValuesToList(const std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>>& list, 
+                             size_t size);
+    /**
+     * Adds a list of values to another list of values
+    */
+    void addListToList(std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>> srcList, 
+                   std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>> dstList);
+
+    /**
+     * Inserts a new column into the given table
+    */
+    void insertColInTable(Value::TABLE table, std::string header, Value::LIST list);
 
     /**
      * @param leftTable
