@@ -539,33 +539,12 @@ void Evaluator::visit(const std::shared_ptr<IntersectionExprNode> &node) {
         for (size_t j = 0; j < entryRightCol->data->size(); ++j) {
             std::shared_ptr<Value> entryRightData = entryRightCol->data->at(j);
 
-            if (*entryLeftData == *entryRightData) {
-                bool rowIntersected = true;
-
-                for (size_t l = 0; l < leftTable->size(); ++l) {
-
-                    auto leftMap = std::next(leftTable->begin(), l);
-                    auto rightCol = Evaluator::getColumnByHeader(rightTable, leftMap->first);
-
-                    auto leftData = (*leftMap->second->data)[i]; 
-                    auto rightData = (*rightCol->data)[j]; 
-
-                    if (*leftData != *rightData) { 
-                        rowIntersected = false;
-                        break;
-                    }
-                }
-                if (rowIntersected) {
-                    for (size_t l = 0; l < leftTable->size(); ++l) {
-
-                        auto leftMap = std::next(leftTable->begin(), l);
-                        auto leftData = (*leftMap->second->data)[i];
-                        cols[l]->emplace_back(leftData); 
-                    }
-                }
+            if (*entryLeftData == *entryRightData && rowsIntersect(leftTable, rightTable, i, j)) {
+                addDataToCols(leftTable, cols, i);
             }
         }
     };
+
     for (size_t i = 0; i < leftTable->size(); ++i) {
         auto leftCol = std::next(leftTable->begin(), i);
         Evaluator::insertColInTable(table, leftCol->first, cols[i]);
@@ -573,22 +552,6 @@ void Evaluator::visit(const std::shared_ptr<IntersectionExprNode> &node) {
     node->setVal(table);
 }
 
-Value::COLUMN Evaluator::getColumnByHeader(Value::TABLE table, const std::string& header) {
-    for (const auto& entry : *table) {
-        if (entry.first == header) {
-            return entry.second;
-        }
-    }
-    return nullptr; // Return null if no column with the given header is found
-}
-
-bool Evaluator::isSameColumns(Value::TABLE leftTable, Value::TABLE rightTable) {
-    for (size_t i = 0; i < leftTable->size(); ++i) {
-        const auto& tempEntryLeft = std::next(leftTable->begin(), i); 
-        if (getColumnByHeader(rightTable, tempEntryLeft->first) == nullptr) return false;
-    }
-    return true;
-}
 
 
 void Evaluator::visit(const std::shared_ptr<LeafNode> &node) {
@@ -1210,52 +1173,6 @@ void Evaluator::visit(const std::shared_ptr<UnionExprNode> &node) {
     node->setVal(table);
 }
 
-void Evaluator::addColUnionToTable(Value::TABLE& table, 
-                                   const std::shared_ptr<dplsrc::Value::COL_STRUCT>& col1, 
-                                   const std::shared_ptr<dplsrc::Value::COL_STRUCT>& col2, 
-                                   const Value::STR& header) {
-
-    auto tempList = std::make_shared<std::vector<std::shared_ptr<dplsrc::Value>>>();
-
-    if (col1 == nullptr) {
-        Evaluator::addNullValuesToList(tempList, col2->data->size());
-    } else {
-        Evaluator::addListToList(col1->data, tempList);
-    }
-
-    if (col2 == nullptr) {
-        Evaluator::addNullValuesToList(tempList, col1->data->size());
-    } else {
-        Evaluator::addListToList(col2->data, tempList);
-    }
-
-    Evaluator::insertColInTable(table, header, tempList);
-}
-
-void Evaluator::addNullValuesToList(const std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>>& list, 
-                                        size_t size) {
-
-    for (size_t j = 0; j < size; ++j) {
-        list->push_back(std::make_shared<Value>(nullptr));
-    }
-}
-
-void Evaluator::insertColInTable(Value::TABLE table, std::string header, Value::LIST list) {
-    Value::COLUMN col = std::make_shared<Value::COL_STRUCT>();
-    col->header = header;
-    col->data = list; 
-    col->parent = table;
-    table->insert({header, col});
-}
-
-void Evaluator::addListToList(std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>> srcList, 
-                              std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>> dstList) {
-
-    for (size_t i = 0; i < srcList->size(); ++i) {
-        dstList->push_back(srcList->at(i));
-    }
-}
-
 void Evaluator::visit(const std::shared_ptr<WhileNode> &node) {
     std::shared_ptr<AstNode> condNode = node->getChildNode();
     std::vector<std::shared_ptr<AstNode>> bodyNodes = node->getChildNodeList();
@@ -1612,6 +1529,96 @@ void Evaluator::initPtable() {
     ptable.bind(Procedure("readTable", {"filename", "delimiter", "dataTypes"}, readTable3));
     ptable.bind(Procedure("writeTable", {"filename", "table"}, writeTable2));
     ptable.bind(Procedure("writeTable", {"filename", "table", "delimiter"}, writeTable3));
+}
+
+bool Evaluator::rowsIntersect(const Value::TABLE& leftTable, 
+                              const Value::TABLE& rightTable, 
+                              size_t i, size_t j) {
+    for (size_t l = 0; l < leftTable->size(); ++l) {
+        auto leftMap = std::next(leftTable->begin(), l);
+        auto rightCol = Evaluator::getColumnByHeader(rightTable, leftMap->first);
+
+        auto leftData = (*leftMap->second->data)[i]; 
+        auto rightData = (*rightCol->data)[j]; 
+
+        if (*leftData != *rightData) { 
+            return false;
+        }
+    }
+    return true;
+}
+
+void Evaluator::addDataToCols(const Value::TABLE& leftTable, 
+                              std::vector<std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>>>& cols, 
+                              size_t i) {
+    for (size_t l = 0; l < leftTable->size(); ++l) {
+        auto leftMap = std::next(leftTable->begin(), l);
+        auto leftData = (*leftMap->second->data)[i];
+        cols[l]->emplace_back(leftData); 
+    }
+}
+
+Value::COLUMN Evaluator::getColumnByHeader(Value::TABLE table, const std::string& header) {
+    for (const auto& entry : *table) {
+        if (entry.first == header) {
+            return entry.second;
+        }
+    }
+    return nullptr; // Return null if no column with the given header is found
+}
+
+bool Evaluator::isSameColumns(Value::TABLE leftTable, Value::TABLE rightTable) {
+    for (size_t i = 0; i < leftTable->size(); ++i) {
+        const auto& tempEntryLeft = std::next(leftTable->begin(), i); 
+        if (getColumnByHeader(rightTable, tempEntryLeft->first) == nullptr) return false;
+    }
+    return true;
+}
+
+void Evaluator::addColUnionToTable(Value::TABLE& table, 
+                                   const std::shared_ptr<dplsrc::Value::COL_STRUCT>& col1, 
+                                   const std::shared_ptr<dplsrc::Value::COL_STRUCT>& col2, 
+                                   const Value::STR& header) {
+
+    auto tempList = std::make_shared<std::vector<std::shared_ptr<dplsrc::Value>>>();
+
+    if (col1 == nullptr) {
+        Evaluator::addNullValuesToList(tempList, col2->data->size());
+    } else {
+        Evaluator::addListToList(col1->data, tempList);
+    }
+
+    if (col2 == nullptr) {
+        Evaluator::addNullValuesToList(tempList, col1->data->size());
+    } else {
+        Evaluator::addListToList(col2->data, tempList);
+    }
+
+    Evaluator::insertColInTable(table, header, tempList);
+}
+
+void Evaluator::addNullValuesToList(const std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>>& list, 
+                                        size_t size) {
+
+    for (size_t j = 0; j < size; ++j) {
+        list->push_back(std::make_shared<Value>(nullptr));
+    }
+}
+
+void Evaluator::insertColInTable(Value::TABLE table, std::string header, Value::LIST list) {
+    Value::COLUMN col = std::make_shared<Value::COL_STRUCT>();
+    col->header = header;
+    col->data = list; 
+    col->parent = table;
+    table->insert({header, col});
+}
+
+void Evaluator::addListToList(std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>> srcList, 
+                              std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>> dstList) {
+
+    for (size_t i = 0; i < srcList->size(); ++i) {
+        dstList->push_back(srcList->at(i));
+    }
 }
 
 

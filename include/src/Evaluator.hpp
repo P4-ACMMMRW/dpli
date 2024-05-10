@@ -79,6 +79,14 @@ class Evaluator : public AstVisitor {
      */
     void initPtable();
 
+    bool rowsIntersect(const Value::TABLE& leftTable, 
+                       const Value::TABLE& rightTable, 
+                       size_t i, size_t j); 
+    
+    void addDataToCols(const Value::TABLE& leftTable, 
+                       std::vector<std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>>>& cols, 
+                       size_t i);
+
     /**
      * Add union of columns to a table, 
      * if the first column doesn't exist a corresponding amount of None is addded to the table.
