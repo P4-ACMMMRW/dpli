@@ -16,12 +16,7 @@ Variable *VariableTable::lookup(const std::string &id) {
         return &globalScope.at(id);
     }         
     
-    try {
-        return &scopes.top().at(id);
-    } catch (const std::out_of_range &e) {
-        return &globalScope.at(id);
-    }
-   
+    return &scopes.top().at(id);   
 }
 
 void VariableTable::print() {
