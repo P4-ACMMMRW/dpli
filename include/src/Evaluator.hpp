@@ -3,16 +3,16 @@
 
 #include <DplLexer.h>
 
-#include <filesystem>
 #include <cmath>
+#include <filesystem>
 
 #include "AllNodeIncludes.hpp"
 #include "AstVisitor.hpp"
 #include "ProcedureTable.hpp"
+#include "ReturnValue.hpp"
+#include "RuntimeException.hpp"
 #include "Value.hpp"
 #include "VariableTable.hpp"
-#include "RuntimeException.hpp"
-#include "ReturnValue.hpp"
 
 namespace dplsrc {
 class Evaluator : public AstVisitor {
@@ -83,14 +83,14 @@ class Evaluator : public AstVisitor {
      * Makes a deep copy of a list using DFS
      * @param list the list to copy
      * @return the copied list
-    */
+     */
     Value::LIST copyList(const Value::LIST &list);
 
     /**
      * Makes a deep copy of a table using DFS
      * @param table the table to copy
      * @return the copied table
-    */
+     */
     Value::TABLE copyTable(const Value::TABLE &table);
 };
 

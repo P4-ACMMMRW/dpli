@@ -7,8 +7,8 @@
 #include <string>
 #include <utility>
 
-#include "Value.hpp"
 #include "AstException.hpp"
+#include "Value.hpp"
 
 class AstNode : public std::enable_shared_from_this<AstNode> {
    public:

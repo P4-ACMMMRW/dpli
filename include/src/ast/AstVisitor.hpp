@@ -50,7 +50,7 @@ class UnaryNodeList;
 class AstVisitor : public std::enable_shared_from_this<AstVisitor> {
    public:
     virtual ~AstVisitor() = default;
-    
+
     virtual void visit(const std::shared_ptr<ProgNode> &node) = 0;
     virtual void visit(const std::shared_ptr<AndExprNode> &node) = 0;
     virtual void visit(const std::shared_ptr<AssignNode> &node) = 0;

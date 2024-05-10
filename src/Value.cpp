@@ -63,7 +63,8 @@ std::string Value::toString() const {
 
         return result;
     } else if (is<COLUMN>()) {
-        std::string result = static_cast<Value>("'" + get<COLUMN>()->header).toString() + "'" + ": [";
+        std::string result =
+            static_cast<Value>("'" + get<COLUMN>()->header).toString() + "'" + ": [";
         bool addedSomething = false;
         for (const std::shared_ptr<Value>& valPtr : *get<COLUMN>()->data) {
             if (valPtr->is<STR>()) {
@@ -199,7 +200,7 @@ bool Value::operator==(const Value& other) const {
             Value::COLUMN col = nullptr;
             try {
                 col = table2->at(entry.first);
-            } catch (const std::out_of_range &e) {
+            } catch (const std::out_of_range& e) {
                 return false;
             }
 

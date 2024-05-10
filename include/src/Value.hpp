@@ -1,12 +1,13 @@
 #ifndef VALUE_HPP
 #define VALUE_HPP
 
+#include <map>
 #include <memory>
 #include <stdexcept>
 #include <string>
-#include <map>
 #include <variant>
 #include <vector>
+
 #include "InternalException.hpp"
 
 namespace dplsrc {

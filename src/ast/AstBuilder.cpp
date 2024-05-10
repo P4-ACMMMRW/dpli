@@ -419,15 +419,15 @@ antlrcpp::Any AstBuilder::unaryNode(const std::function<std::shared_ptr<AstNode>
     std::shared_ptr<AstNode> oldNode = currentNode;
     std::shared_ptr<AstNode> newNode = createNode();
     initNewNode(parseNode, newNode, text);
-    
+
     if (!hasChild) {
         return nullptr;
     }
 
     parseNode->children[childIndex]->accept(this);
-    
+
     currentNode = oldNode;
-    
+
     return nullptr;
 }
 
@@ -508,7 +508,7 @@ antlrcpp::Any AstBuilder::binaryExpr(
         std::shared_ptr<AstNode> newNode = createNode(operatorToken->getType());
 
         initNewNode(parseNode, newNode, operatorToken->getText());
-        
+
         // rightNode
         parseNode->children[i]->accept(this);
 
@@ -516,7 +516,6 @@ antlrcpp::Any AstBuilder::binaryExpr(
         if (i == 2) {
             parseNode->children[0]->accept(this);
         }
-
     }
 
     currentNode = oldNode;

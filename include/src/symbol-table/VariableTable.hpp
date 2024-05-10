@@ -41,7 +41,7 @@ class VariableTable : public SymbolTable {
      * Enters a new variable scope
      * @param VariableTable The table to copy the scope from
      */
-    void enterScope(const Scope& scope);
+    void enterScope(const Scope &scope);
 
     /**
      * Exits the current variable scope

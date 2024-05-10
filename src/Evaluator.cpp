@@ -99,7 +99,7 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
                 // Tables index by header name
                 Value::TABLE table = val.get<Value::TABLE>();
                 Value::STR header = indices[i].get<Value::STR>();
-                
+
                 try {
                     val = table->at(header);
                 } catch (const std::out_of_range &e) {
@@ -224,7 +224,6 @@ void Evaluator::visit(const std::shared_ptr<ElseNode> &node) {
     for (size_t i = 0; i < elseBodyNodes.size(); ++i) {
         elseBodyNodes[i]->accept(shared_from_this());
     }
-    
 }
 
 void Evaluator::visit(const std::shared_ptr<EqualExprNode> &node) {
@@ -264,8 +263,8 @@ void Evaluator::visit(const std::shared_ptr<ExpoExprNode> &node) {
                                   rightNode->getVal().get<Value::BOOL>()));
         } else if (rightNode->getVal().is<Value::INT>()) {
             if (rightNode->getVal().get<Value::INT>() >= 0) {
-                node->setVal(static_cast<Value::INT>(std::pow(leftNode->getVal().get<Value::INT>(),
-                                                 rightNode->getVal().get<Value::INT>())));
+                node->setVal(static_cast<Value::INT>(std::pow(
+                    leftNode->getVal().get<Value::INT>(), rightNode->getVal().get<Value::INT>())));
             } else {
                 node->setVal(std::pow(leftNode->getVal().get<Value::INT>(),
                                       rightNode->getVal().get<Value::INT>()));
@@ -421,29 +420,24 @@ void Evaluator::visit(const std::shared_ptr<IfNode> &node) {
     std::shared_ptr<AstNode> elseNode = node->getElseNode();
 
     condNode->accept(shared_from_this());
-    
+
     if (!isNumeric(condNode->getVal())) {
         throw RuntimeException("Error: Invalid type.");
-    }
-    else if (condNode->getVal().is<Value::BOOL>() && condNode->getVal().get<Value::BOOL>()) {
-        for (size_t i = 0; i < bodyNodes.size(); ++i) { 
+    } else if (condNode->getVal().is<Value::BOOL>() && condNode->getVal().get<Value::BOOL>()) {
+        for (size_t i = 0; i < bodyNodes.size(); ++i) {
             bodyNodes[i]->accept(shared_from_this());
         }
-    }
-    else if (condNode->getVal().is<Value::INT>() && condNode->getVal().get<Value::INT>()) {
-        for (size_t i = 0; i < bodyNodes.size(); ++i) { 
+    } else if (condNode->getVal().is<Value::INT>() && condNode->getVal().get<Value::INT>()) {
+        for (size_t i = 0; i < bodyNodes.size(); ++i) {
             bodyNodes[i]->accept(shared_from_this());
         }
-    }
-    else if (condNode->getVal().is<Value::FLOAT>() && condNode->getVal().get<Value::FLOAT>()) {
-        for (size_t i = 0; i < bodyNodes.size(); ++i) { 
+    } else if (condNode->getVal().is<Value::FLOAT>() && condNode->getVal().get<Value::FLOAT>()) {
+        for (size_t i = 0; i < bodyNodes.size(); ++i) {
             bodyNodes[i]->accept(shared_from_this());
         }
-    }
-    else if (elseNode != 0) {
+    } else if (elseNode != 0) {
         elseNode->accept(shared_from_this());
     }
-    
 }
 
 void Evaluator::visit(const std::shared_ptr<IndexNode> &node) {
@@ -455,8 +449,7 @@ void Evaluator::visit(const std::shared_ptr<IndexNode> &node) {
 
     if (!indexNode->getVal().is<Value::INT>()) {
         if (indexNode->getVal().is<Value::STR>()) {
-            throw RuntimeException(
-                "index must be an integer. Did you forget '$' infront?");
+            throw RuntimeException("index must be an integer. Did you forget '$' infront?");
         }
 
         throw RuntimeException("Index must be an integer");
@@ -651,35 +644,35 @@ void Evaluator::visit(const std::shared_ptr<ModExprNode> &node) {
     if (leftNode->getVal().is<Value::INT>()) {
         if (rightNode->getVal().is<Value::BOOL>()) {
             node->setVal(leftNode->getVal().get<Value::INT>() %
-                        rightNode->getVal().get<Value::BOOL>());
+                         rightNode->getVal().get<Value::BOOL>());
         } else if (rightNode->getVal().is<Value::INT>()) {
             node->setVal(leftNode->getVal().get<Value::INT>() %
-                        rightNode->getVal().get<Value::INT>());
+                         rightNode->getVal().get<Value::INT>());
         } else {
             node->setVal(fmod(leftNode->getVal().get<Value::INT>(),
-                            rightNode->getVal().get<Value::FLOAT>()));
+                              rightNode->getVal().get<Value::FLOAT>()));
         }
     } else if (leftNode->getVal().is<Value::FLOAT>()) {
         if (rightNode->getVal().is<Value::BOOL>()) {
             node->setVal(fmod(leftNode->getVal().get<Value::FLOAT>(),
-                            rightNode->getVal().get<Value::BOOL>()));
+                              rightNode->getVal().get<Value::BOOL>()));
         } else if (rightNode->getVal().is<Value::INT>()) {
             node->setVal(fmod(leftNode->getVal().get<Value::FLOAT>(),
-                            rightNode->getVal().get<Value::INT>()));
+                              rightNode->getVal().get<Value::INT>()));
         } else {
             node->setVal(fmod(leftNode->getVal().get<Value::FLOAT>(),
-                            rightNode->getVal().get<Value::BOOL>()));
+                              rightNode->getVal().get<Value::BOOL>()));
         }
     } else if (leftNode->getVal().is<Value::BOOL>()) {
         if (rightNode->getVal().is<Value::BOOL>()) {
             node->setVal(leftNode->getVal().get<Value::BOOL>() %
-                        rightNode->getVal().get<Value::BOOL>());
+                         rightNode->getVal().get<Value::BOOL>());
         } else if (rightNode->getVal().is<Value::INT>()) {
             node->setVal(leftNode->getVal().get<Value::BOOL>() %
-                        rightNode->getVal().get<Value::INT>());
+                         rightNode->getVal().get<Value::INT>());
         } else {
             node->setVal(fmod(leftNode->getVal().get<Value::BOOL>(),
-                            rightNode->getVal().get<Value::FLOAT>()));
+                              rightNode->getVal().get<Value::FLOAT>()));
         }
     } else {
         throw RuntimeException("Couldn't convert string to value of nodes");
@@ -855,7 +848,8 @@ void Evaluator::visit(const std::shared_ptr<OrExprNode> &node) {
     }
 
     // Evaluates the value of the expression
-    if (leftNode->getVal().get<Value::BOOL>() == true || rightNode->getVal().get<Value::BOOL>() == true)
+    if (leftNode->getVal().get<Value::BOOL>() == true ||
+        rightNode->getVal().get<Value::BOOL>() == true)
         node->setVal(true);
     else
         node->setVal(false);
@@ -952,7 +946,7 @@ void Evaluator::visit(const std::shared_ptr<ProcCallNode> &node) {
     // Check if amount of arguments is correct
     if (proc->getArity() != node->getChildNodeList().size()) {
         throw RuntimeException("Procedure \"" + procNode->getText() +
-                                 "\" called with incorrect number of arguments");
+                               "\" called with incorrect number of arguments");
     }
 
     // Evaluate params
@@ -1069,26 +1063,23 @@ void Evaluator::visit(const std::shared_ptr<WhileNode> &node) {
 
     if (!isNumeric(condNode->getVal())) {
         throw RuntimeException("Invalid type");
-    }
-    else if (condNode->getVal().is<Value::BOOL>() && condNode->getVal().get<Value::BOOL>()) {
-        while(condNode->getVal().get<Value::BOOL>()) {
-            for (size_t i = 0; i < bodyNodes.size(); ++i) { 
+    } else if (condNode->getVal().is<Value::BOOL>() && condNode->getVal().get<Value::BOOL>()) {
+        while (condNode->getVal().get<Value::BOOL>()) {
+            for (size_t i = 0; i < bodyNodes.size(); ++i) {
                 bodyNodes[i]->accept(shared_from_this());
             }
             condNode->accept(shared_from_this());
         }
-    }
-    else if (condNode->getVal().is<Value::INT>() && condNode->getVal().get<Value::INT>()) {
-        while(condNode->getVal().get<Value::INT>()) {
-            for (size_t i = 0; i < bodyNodes.size(); ++i) { 
+    } else if (condNode->getVal().is<Value::INT>() && condNode->getVal().get<Value::INT>()) {
+        while (condNode->getVal().get<Value::INT>()) {
+            for (size_t i = 0; i < bodyNodes.size(); ++i) {
                 bodyNodes[i]->accept(shared_from_this());
             }
             condNode->accept(shared_from_this());
         }
-    }
-    else if (condNode->getVal().is<Value::FLOAT>() && condNode->getVal().get<Value::FLOAT>()) {
-        while(condNode->getVal().get<Value::FLOAT>()) {
-            for (size_t i = 0; i < bodyNodes.size(); ++i) { 
+    } else if (condNode->getVal().is<Value::FLOAT>() && condNode->getVal().get<Value::FLOAT>()) {
+        while (condNode->getVal().get<Value::FLOAT>()) {
+            for (size_t i = 0; i < bodyNodes.size(); ++i) {
                 bodyNodes[i]->accept(shared_from_this());
             }
             condNode->accept(shared_from_this());
@@ -1192,9 +1183,10 @@ void Evaluator::initPtable() {
             return static_cast<Value::INT>(std::ceil(val.get<Value::FLOAT>()));
         }
 
-        throw RuntimeException("Ceil called with invalid type " + val.toTypeString() + ". Expected: " + Value(0.0).toTypeString());
+        throw RuntimeException("Ceil called with invalid type " + val.toTypeString() +
+                               ". Expected: " + Value(0.0).toTypeString());
     };
-    
+
     Procedure::ProcType floor1 = [](std::vector<std::shared_ptr<AstNode>> args) {
         Value val = args[0]->getVal();
 
@@ -1202,7 +1194,8 @@ void Evaluator::initPtable() {
             return static_cast<Value::INT>(std::floor(val.get<Value::FLOAT>()));
         }
 
-        throw RuntimeException("Floor called with invalid type " + val.toTypeString() + ". Expected: " + Value(0.0).toTypeString());
+        throw RuntimeException("Floor called with invalid type " + val.toTypeString() +
+                               ". Expected: " + Value(0.0).toTypeString());
     };
 
     Procedure::ProcType round1 = [](std::vector<std::shared_ptr<AstNode>> args) {
@@ -1212,9 +1205,10 @@ void Evaluator::initPtable() {
             return static_cast<Value::INT>(std::round(val.get<Value::FLOAT>()));
         }
 
-        throw RuntimeException("Round called with invalid type " + val.toTypeString() + ". Expected: " + Value(0.0).toTypeString());
+        throw RuntimeException("Round called with invalid type " + val.toTypeString() +
+                               ". Expected: " + Value(0.0).toTypeString());
     };
-    
+
     Procedure::ProcType copy1 = [this](std::vector<std::shared_ptr<AstNode>> args) {
         Value val = args[0]->getVal();
         if (val.is<Value::LIST>()) {
@@ -1230,7 +1224,8 @@ void Evaluator::initPtable() {
         Value fileName = args[0]->getVal();
 
         if (!fileName.is<Value::STR>()) {
-            throw RuntimeException("ReadFile called with invalid type " + fileName.toTypeString() + ". Expected: " + Value("").toTypeString() + '\n');
+            throw RuntimeException("ReadFile called with invalid type " + fileName.toTypeString() +
+                                   ". Expected: " + Value("").toTypeString() + '\n');
         }
 
         std::filesystem::path filePath = fileName.get<Value::STR>();
@@ -1239,7 +1234,8 @@ void Evaluator::initPtable() {
             throw RuntimeException("Could not open file \"" + fileName.toString() + "\"");
         }
 
-        std::string fileContents((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+        std::string fileContents((std::istreambuf_iterator<char>(file)),
+                                 std::istreambuf_iterator<char>());
 
         return fileContents;
     };
@@ -1269,11 +1265,14 @@ void Evaluator::initPtable() {
         Value dataTypesVal = args[2]->getVal();
 
         if (!fileName.is<Value::STR>()) {
-            throw RuntimeException("ReadTable called with invalid type " + fileName.toTypeString() + ". Expected: " + Value("").toTypeString() + '\n');
+            throw RuntimeException("ReadTable called with invalid type " + fileName.toTypeString() +
+                                   ". Expected: " + Value("").toTypeString() + '\n');
         }
 
         if (!delimiterVal.is<Value::STR>()) {
-            throw RuntimeException("ReadTable called with invalid type " + delimiterVal.toTypeString() + ". Expected: " + Value("").toTypeString() + '\n');
+            throw RuntimeException("ReadTable called with invalid type " +
+                                   delimiterVal.toTypeString() +
+                                   ". Expected: " + Value("").toTypeString() + '\n');
         }
 
         if (delimiterVal.get<Value::STR>().size() != 1) {
@@ -1281,7 +1280,9 @@ void Evaluator::initPtable() {
         }
 
         if (!dataTypesVal.is<Value::LIST>()) {
-            throw RuntimeException("ReadTable called with invalid type " + dataTypesVal.toTypeString() + ". Expected: " + Value({}).toTypeString() + '\n');
+            throw RuntimeException("ReadTable called with invalid type " +
+                                   dataTypesVal.toTypeString() +
+                                   ". Expected: " + Value({}).toTypeString() + '\n');
         }
 
         char delimiter = delimiterVal.get<Value::STR>()[0];
@@ -1337,9 +1338,11 @@ void Evaluator::initPtable() {
                         } else {
                             Value::STR dataType = dataTypes->at(i)->get<Value::STR>();
                             if (dataType == "int") {
-                                cols[i]->data->emplace_back(std::make_shared<Value>(std::stol(values[i])));
+                                cols[i]->data->emplace_back(
+                                    std::make_shared<Value>(std::stol(values[i])));
                             } else if (dataType == "float") {
-                                cols[i]->data->emplace_back(std::make_shared<Value>(std::stod(values[i])));
+                                cols[i]->data->emplace_back(
+                                    std::make_shared<Value>(std::stod(values[i])));
                             } else if (dataType == "bool") {
                                 bool isTrue = values[i] == "True" || values[i] != "0";
                                 cols[i]->data->emplace_back(std::make_shared<Value>(isTrue));
@@ -1348,13 +1351,17 @@ void Evaluator::initPtable() {
                             } else if (dataType == "str") {
                                 cols[i]->data->emplace_back(std::make_shared<Value>(values[i]));
                             } else if (dataType == "list") {
-                                throw RuntimeException("Type \"lists\" not supported when loading table from file");
+                                throw RuntimeException(
+                                    "Type \"lists\" not supported when loading table from file");
                             } else if (dataType == "table") {
-                                throw RuntimeException("Type \"table\" not supported when loading table from file");
+                                throw RuntimeException(
+                                    "Type \"table\" not supported when loading table from file");
                             } else if (dataType == "column") {
-                                throw RuntimeException("Data can not be explicitly converted to type \"column\"");
+                                throw RuntimeException(
+                                    "Data can not be explicitly converted to type \"column\"");
                             } else {
-                                throw RuntimeException("Trying to convert to invalid data type \"" + dataType + "\"");
+                                throw RuntimeException("Trying to convert to invalid data type \"" +
+                                                       dataType + "\"");
                             }
                         }
                     }
@@ -1363,8 +1370,9 @@ void Evaluator::initPtable() {
                     if (headers[i].empty()) {
                         std::hash<std::size_t> hash;
                         std::string hashStr = "id" + std::to_string(hash(i));
-                        
-                        // While the hash is already in headers vector we make a new one to avoid collision
+
+                        // While the hash is already in headers vector we make a new one to avoid
+                        // collision
                         size_t j = i;
                         while (std::count(headers.begin(), headers.end(), hashStr)) {
                             ++j;
@@ -1408,17 +1416,21 @@ void Evaluator::initPtable() {
         Value delimiterVal = args[2]->getVal();
 
         if (!fileName.is<Value::STR>()) {
-            throw RuntimeException("WriteTable called with invalid type " + fileName.toTypeString() + ". Expected: " + Value("").toTypeString() + '\n');
+            throw RuntimeException("WriteTable called with invalid type " +
+                                   fileName.toTypeString() +
+                                   ". Expected: " + Value("").toTypeString() + '\n');
         }
 
         if (!table.is<Value::TABLE>()) {
-            throw RuntimeException("WriteTable called with invalid type " + table.toTypeString() + ". Expected: " + Value("").toTypeString() + '\n');
+            throw RuntimeException("WriteTable called with invalid type " + table.toTypeString() +
+                                   ". Expected: " + Value("").toTypeString() + '\n');
         }
 
         if (!delimiterVal.is<Value::STR>()) {
-            throw RuntimeException("WriteTable called with invalid type " + delimiterVal.toTypeString() + ". Expected: " + Value("").toTypeString() + '\n');
+            throw RuntimeException("WriteTable called with invalid type " +
+                                   delimiterVal.toTypeString() +
+                                   ". Expected: " + Value("").toTypeString() + '\n');
         }
-
 
         if (delimiterVal.get<Value::STR>().size() != 1) {
             throw RuntimeException("Delimiter must be a string of size 1");
@@ -1447,7 +1459,8 @@ void Evaluator::initPtable() {
         // Write data
         for (size_t i = 0; i < table.get<Value::TABLE>()->begin()->second->data->size(); ++i) {
             std::string entryStr;
-            for (const std::pair<const Value::STR, Value::COLUMN> &entry : *table.get<Value::TABLE>()) {
+            for (const std::pair<const Value::STR, Value::COLUMN> &entry :
+                 *table.get<Value::TABLE>()) {
                 Value::STR val = (*entry.second->data)[i]->toString();
                 entryStr += val + delimiter;
             }
