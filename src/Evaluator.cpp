@@ -1173,7 +1173,8 @@ void Evaluator::visit(const std::shared_ptr<UnionExprNode> &node) {
 
     if (!node->getLeftNode()->getVal().is<Value::TABLE>() ||
         !node->getRightNode()->getVal().is<Value::TABLE>()) {
-            throw RuntimeException("Intersection operation only allowed for Table type");
+
+        throw RuntimeException("Intersection operation only allowed for Table type");
     }
 
     Value::TABLE leftTable = leftNode->getVal().get<Value::TABLE>();
@@ -1183,83 +1184,52 @@ void Evaluator::visit(const std::shared_ptr<UnionExprNode> &node) {
 
     size_t largestTableSize = (leftTable->size() > rightTable->size()) ? leftTable->size() : rightTable->size();
 
-
     for (size_t i = 0; i < largestTableSize; ++i) {
         auto leftColPair = (i > leftTable->size())   ? leftTable->end()  : std::next(leftTable->begin(), i);
         auto rightColPair = (i > rightTable->size()) ? rightTable->end() : std::next(rightTable->begin(), i);
 
         if (leftColPair == leftTable->end()) {
-            auto tempList = std::make_shared<std::vector<std::shared_ptr<dplsrc::Value>>>();
             auto leftCol = Evaluator::getColumnByHeader(leftTable, rightColPair->first);
-            auto rightCol = rightColPair->second;
-
-            if (leftCol == nullptr) {
-                Evaluator::addNullValuesToList(tempList, rightCol->data->size());
-            } else {
-                Evaluator::addListToList(leftCol->data, tempList);
-            }
-            Evaluator::addListToList(rightCol->data, tempList);
-            Evaluator::insertColInTable(table, rightColPair->first, tempList);
+            addColUnionToTable(table, leftCol, rightColPair->second, rightColPair->first);
         }
         else if (rightColPair == rightTable->end()) {
-            auto tempList = std::make_shared<std::vector<std::shared_ptr<dplsrc::Value>>>();
-            auto leftCol = leftColPair->second;
             auto rightCol = Evaluator::getColumnByHeader(rightTable, leftColPair->first);
-
-            Evaluator::addListToList(leftCol->data, tempList);
-            if (rightCol == nullptr) {
-                for (size_t j = 0; j < leftCol->data->size(); ++j) {
-                    tempList->push_back(std::make_shared<Value>(nullptr));
-                }
-            }
-
-            Evaluator::insertColInTable(table, leftColPair->first, tempList);
+            addColUnionToTable(table, leftColPair->second, rightCol, leftColPair->first);
         }
         else if (leftColPair->first == rightColPair->first) {
-            auto tempList = std::make_shared<std::vector<std::shared_ptr<dplsrc::Value>>>();
-            auto leftCol = leftColPair->second;
-            auto rightCol = rightColPair->second;
-
-            Evaluator::addListToList(leftCol->data, tempList);
-            Evaluator::addListToList(rightCol->data, tempList);
-
-            Evaluator::insertColInTable(table, rightColPair->first, tempList);
+            addColUnionToTable(table, leftColPair->second, rightColPair->second, rightColPair->first);
         }
-        else { // what if header not exist
+        else { 
             auto leftColMatch  = Evaluator::getColumnByHeader(leftTable, rightColPair->first);
             auto rightColMatch = Evaluator::getColumnByHeader(rightTable, leftColPair->first);
 
-            if (leftColMatch == nullptr) {
-                auto tempList = std::make_shared<std::vector<std::shared_ptr<dplsrc::Value>>>();
-                auto rightCol = rightColPair->second;
-                Evaluator::addNullValuesToList(tempList, rightCol->data->size());
-                Evaluator::addListToList(rightCol->data, tempList);
-                Evaluator::insertColInTable(table, rightColPair->first, tempList);
-            } 
-            else {
-                auto tempList = std::make_shared<std::vector<std::shared_ptr<dplsrc::Value>>>();
-                auto rightCol = rightColPair->second;
-                Evaluator::addListToList(leftColMatch->data, tempList);
-                Evaluator::addListToList(rightCol->data, tempList);
-                Evaluator::insertColInTable(table, rightColPair->first, tempList);
-            }
-            if (rightColMatch == nullptr) {
-                auto tempList = std::make_shared<std::vector<std::shared_ptr<dplsrc::Value>>>();
-                auto leftCol  = leftColPair->second;
-                Evaluator::addListToList(leftCol->data, tempList);
-                Evaluator::addNullValuesToList(tempList, leftCol->data->size());
-                Evaluator::insertColInTable(table, leftColPair->first, tempList);
-            } 
-            else {
-                auto tempList = std::make_shared<std::vector<std::shared_ptr<dplsrc::Value>>>();
-                auto leftCol  = leftColPair->second;
-                Evaluator::addListToList(leftCol->data, tempList);
-                Evaluator::addListToList(rightColMatch->data, tempList);
-                Evaluator::insertColInTable(table, rightColPair->first, tempList);
-            }
+            addColUnionToTable(table, leftColMatch, rightColPair->second, rightColPair->first);
+            addColUnionToTable(table, leftColPair->second, rightColMatch, leftColPair->first);
         }
     }
     node->setVal(table);
+}
+
+void Evaluator::addColUnionToTable(Value::TABLE& table, 
+                                   const std::shared_ptr<dplsrc::Value::COL_STRUCT>& col1, 
+                                   const std::shared_ptr<dplsrc::Value::COL_STRUCT>& col2, 
+                                   const Value::STR& header) {
+
+    auto tempList = std::make_shared<std::vector<std::shared_ptr<dplsrc::Value>>>();
+
+    if (col1 == nullptr) {
+        Evaluator::addNullValuesToList(tempList, col2->data->size());
+    } else {
+        Evaluator::addListToList(col1->data, tempList);
+    }
+
+    if (col2 == nullptr) {
+        Evaluator::addNullValuesToList(tempList, col1->data->size());
+    } else {
+        Evaluator::addListToList(col2->data, tempList);
+    }
+
+    Evaluator::insertColInTable(table, header, tempList);
 }
 
 void Evaluator::addNullValuesToList(const std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>>& list, 
@@ -1643,4 +1613,6 @@ void Evaluator::initPtable() {
     ptable.bind(Procedure("writeTable", {"filename", "table"}, writeTable2));
     ptable.bind(Procedure("writeTable", {"filename", "table", "delimiter"}, writeTable3));
 }
+
+
 

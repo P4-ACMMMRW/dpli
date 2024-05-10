@@ -56,10 +56,44 @@ class Evaluator : public AstVisitor {
     void visit(const std::shared_ptr<WhileNode> &node) override;
 
     /**
+     * @return the variable table
+     */
+    VariableTable getVtable() { return vtable; }
+
+    /**
+     * @return the procedure table
+     */
+    ProcedureTable getPtable() { return ptable; }
+
+   private:
+    VariableTable vtable = VariableTable();
+    ProcedureTable ptable = ProcedureTable();
+    bool verbose;
+
+    bool isNumeric(Value value) {
+        return value.is<Value::FLOAT>() || value.is<Value::INT>() || value.is<Value::BOOL>();
+    }
+
+    /**
+     * Initializes the procedures from the standard library of the language
+     */
+    void initPtable();
+
+    /**
+     * Add union of columns to a table, 
+     * if the first column doesn't exist a corresponding amount of None is addded to the table.
+    */
+    void addColUnionToTable(Value::TABLE& table, 
+                            const std::shared_ptr<dplsrc::Value::COL_STRUCT>& col1, 
+                            const std::shared_ptr<dplsrc::Value::COL_STRUCT>& col2, 
+                            const Value::STR& header);
+
+    /**
      * Adds null Values to a Value::List
     */
     void addNullValuesToList(const std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>>& list, 
                              size_t size);
+
     /**
      * Adds a list of values to another list of values
     */
@@ -84,30 +118,6 @@ class Evaluator : public AstVisitor {
      * @return a coloumn corresponding to the header in the given table, if no hit nullptr.
      */
     Value::COLUMN getColumnByHeader(Value::TABLE table, const std::string& header);
-
-    /**
-     * @return the variable table
-     */
-    VariableTable getVtable() { return vtable; }
-
-    /**
-     * @return the procedure table
-     */
-    ProcedureTable getPtable() { return ptable; }
-
-   private:
-    VariableTable vtable = VariableTable();
-    ProcedureTable ptable = ProcedureTable();
-    bool verbose;
-
-    bool isNumeric(Value value) {
-        return value.is<Value::FLOAT>() || value.is<Value::INT>() || value.is<Value::BOOL>();
-    }
-
-    /**
-     * Initializes the procedures from the standard library of the language
-     */
-    void initPtable();
 };
 
 }  // namespace dplsrc
