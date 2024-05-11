@@ -10,10 +10,12 @@
 #include <DplParser.h>
 #include <DplParserBaseVisitor.h>
 #include <AstTestVisitor.hpp>
+#include <Evaluator.hpp>
 
 #define LEXER_TEST(name) TEST_CASE("Lexer -- " #name, "[lexer]")
 #define PARSER_TEST(name) TEST_CASE("Parser -- " #name, "[parser]")
 #define AST_TEST(name) TEST_CASE("Ast -- " #name, "[ast]")
+#define EVAL_TEST(name) TEST_CASE("Eval --" #name, "[eval]")
 
 namespace dplutil {
     class TestVisitor : public dplgrammar::DplParserBaseVisitor {
@@ -35,6 +37,7 @@ namespace dplutil {
             static void testTokens(std::string testFileName, std::vector<size_t> expectedTokenTypes);
             static void testParser(std::string testFileName, std::vector<size_t> expectedTreeNodes);
             static void testAst(std::string testFileName, std::vector<size_t> expectedTreeNodes);
+            static void testEval(std::string testFileName, std::vector<std::pair<std::string, dplsrc::Value>> expectedVarVec);
 
         private:
             static constexpr std::string_view exampleLocation = "../../docs/examples/"; 
