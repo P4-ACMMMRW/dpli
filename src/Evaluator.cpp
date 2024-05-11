@@ -137,12 +137,20 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
     }
 }
 
+void Evaluator::visit([[maybe_unused]] const std::shared_ptr<BreakNode> &node) {
+    throw BreakValue();
+}
+
 void Evaluator::visit(const std::shared_ptr<ColumnNode> &node) {
     std::shared_ptr<AstNode> leftNode = node->getLeftNode();
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
 
     leftNode->accept(shared_from_this());
     rightNode->accept(shared_from_this());
+}
+
+void Evaluator::visit([[maybe_unused]] const std::shared_ptr<ContinueNode> &node) {
+    throw ContinueValue();
 }
 
 void Evaluator::visit(const std::shared_ptr<DivExprNode> &node) {
@@ -425,17 +433,8 @@ void Evaluator::visit(const std::shared_ptr<IfNode> &node) {
     if (!isNumeric(condNode->getVal())) {
         throw RuntimeException("Error: Invalid type.");
     }
-    else if (condNode->getVal().is<Value::BOOL>() && condNode->getVal().get<Value::BOOL>()) {
-        for (size_t i = 0; i < bodyNodes.size(); ++i) { 
-            bodyNodes[i]->accept(shared_from_this());
-        }
-    }
-    else if (condNode->getVal().is<Value::INT>() && condNode->getVal().get<Value::INT>()) {
-        for (size_t i = 0; i < bodyNodes.size(); ++i) { 
-            bodyNodes[i]->accept(shared_from_this());
-        }
-    }
-    else if (condNode->getVal().is<Value::FLOAT>() && condNode->getVal().get<Value::FLOAT>()) {
+
+    if (Evaluator::getNumericValue(condNode->getVal() == true)) {
         for (size_t i = 0; i < bodyNodes.size(); ++i) { 
             bodyNodes[i]->accept(shared_from_this());
         }
@@ -443,7 +442,6 @@ void Evaluator::visit(const std::shared_ptr<IfNode> &node) {
     else if (elseNode != 0) {
         elseNode->accept(shared_from_this());
     }
-    
 }
 
 void Evaluator::visit(const std::shared_ptr<IndexNode> &node) {
@@ -543,8 +541,6 @@ void Evaluator::visit(const std::shared_ptr<IntersectionExprNode> &node) {
     }
     node->setVal(table);
 }
-
-
 
 void Evaluator::visit(const std::shared_ptr<LeafNode> &node) {
     if (node->getText() == "<EOF>") return;
@@ -1163,29 +1159,11 @@ void Evaluator::visit(const std::shared_ptr<WhileNode> &node) {
     if (!isNumeric(condNode->getVal())) {
         throw RuntimeException("Invalid type");
     }
-    else if (condNode->getVal().is<Value::BOOL>() && condNode->getVal().get<Value::BOOL>()) {
-        while(condNode->getVal().get<Value::BOOL>()) {
-            for (size_t i = 0; i < bodyNodes.size(); ++i) { 
-                bodyNodes[i]->accept(shared_from_this());
-            }
-            condNode->accept(shared_from_this());
+    while(Evaluator::getNumericValue(condNode->getVal())) {
+        if (Evaluator::loopBody(bodyNodes)) {
+            break;
         }
-    }
-    else if (condNode->getVal().is<Value::INT>() && condNode->getVal().get<Value::INT>()) {
-        while(condNode->getVal().get<Value::INT>()) {
-            for (size_t i = 0; i < bodyNodes.size(); ++i) { 
-                bodyNodes[i]->accept(shared_from_this());
-            }
-            condNode->accept(shared_from_this());
-        }
-    }
-    else if (condNode->getVal().is<Value::FLOAT>() && condNode->getVal().get<Value::FLOAT>()) {
-        while(condNode->getVal().get<Value::FLOAT>()) {
-            for (size_t i = 0; i < bodyNodes.size(); ++i) { 
-                bodyNodes[i]->accept(shared_from_this());
-            }
-            condNode->accept(shared_from_this());
-        }
+        condNode->accept(shared_from_this());
     }
 }
 
@@ -1601,6 +1579,37 @@ bool Evaluator::rowsIntersect(const Value::TABLE& leftTable,
     }
     return true;
 }
+
+double Evaluator::getNumericValue(const Value &val) {
+    if (val.is<Value::BOOL>()) {
+        return static_cast<double>(val.get<Value::BOOL>());
+    }
+    else if (val.is<Value::INT>()) {
+        return static_cast<double>(val.get<Value::INT>());
+    }
+    else if (val.is<Value::FLOAT>()) {
+        return val.get<Value::FLOAT>();
+    }
+    else {
+        return 0.0;
+    }
+}
+
+bool Evaluator::loopBody(std::vector<std::shared_ptr<AstNode>> bodyNodes) {
+    bool breakFromLoop = false;
+    for (size_t i = 0; i < bodyNodes.size(); ++i) { 
+        try {
+            bodyNodes[i]->accept(shared_from_this());
+        } catch (const ContinueValue &e) {
+            break;
+        } catch (const BreakValue &e) {
+            breakFromLoop = true;
+            break;
+        }
+    }
+    return breakFromLoop;
+}
+
 
 void Evaluator::addDataToCols(const Value::TABLE& table, 
                               std::vector<std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>>>& cols, 

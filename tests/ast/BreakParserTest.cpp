@@ -24,6 +24,5 @@ AST_TEST("break.dpl") {
         DplLexer::Identifier,
         DplLexer::String
     };
-    
     dplutil::TestingUtil::testAst("break.dpl", expectedNodeRules);
 }

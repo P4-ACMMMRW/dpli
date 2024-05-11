@@ -22,7 +22,19 @@ class AstTestVisitor : public AstVisitor {
         AstVisitor::visit(node);
     };
 
+    void visit(const std::shared_ptr<BreakNode> &node) override {
+        std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
+        test(astNode);
+        AstVisitor::visit(node);
+    };
+
     void visit(const std::shared_ptr<ColumnNode> &node) override {
+        std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
+        test(astNode);
+        AstVisitor::visit(node);
+    };
+
+    void visit(const std::shared_ptr<ContinueNode> &node) override {
         std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
         test(astNode);
         AstVisitor::visit(node);

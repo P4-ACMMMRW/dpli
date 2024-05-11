@@ -13,6 +13,8 @@
 #include "VariableTable.hpp"
 #include "RuntimeException.hpp"
 #include "ReturnValue.hpp"
+#include "ContinueValue.hpp"
+#include "BreakValue.hpp"
 
 namespace dplsrc {
 class Evaluator : public AstVisitor {
@@ -21,7 +23,9 @@ class Evaluator : public AstVisitor {
 
     void visit(const std::shared_ptr<AndExprNode> &node) override;
     void visit(const std::shared_ptr<AssignNode> &node) override;
+    void visit(const std::shared_ptr<BreakNode> &node) override;
     void visit(const std::shared_ptr<ColumnNode> &node) override;
+    void visit(const std::shared_ptr<ContinueNode> &node) override;
     void visit(const std::shared_ptr<DivExprNode> &node) override;
     void visit(const std::shared_ptr<ElseNode> &node) override;
     void visit(const std::shared_ptr<EqualExprNode> &node) override;
@@ -93,6 +97,16 @@ class Evaluator : public AstVisitor {
      */
     Value::TABLE copyTable(const Value::TABLE &table);
 
+    /**
+     * @return the double representation of the given numeric Value, if not Numeric 0.0.
+    */
+    double getNumericValue(const Value &val);
+
+    /**
+     * Executes body of loop taking into account the possibility of break and continue
+     * @return true if break encountered, else false.
+    */
+    bool loopBody(std::vector<std::shared_ptr<AstNode>> bodyNodes);
 
     /**
      * @return true if i'th row of leftTable and j'th row of rightTable intersect (is the same). 

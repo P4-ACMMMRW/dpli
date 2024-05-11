@@ -83,7 +83,7 @@ void TestingUtil::testParser(std::string testFileName, std::vector<size_t> expec
 }
 
 void TestingUtil::testAst(std::string testFileName, std::vector<size_t> expectedTreeNodes) {
-     std::string filePath = std::filesystem::path(std::string{exampleLocation} + testFileName).string();
+    std::string filePath = std::filesystem::path(std::string{exampleLocation} + testFileName).string();
 
     if (!std::filesystem::exists(filePath)) {
         FAIL("File does not exist: " + filePath);
@@ -102,7 +102,6 @@ void TestingUtil::testAst(std::string testFileName, std::vector<size_t> expected
     tokens.fill();
 
     dplgrammar::DplParser parser(&tokens);
-    
 
     dplgrammar::DplParser::ProgContext* tree = parser.prog();
 
@@ -110,6 +109,8 @@ void TestingUtil::testAst(std::string testFileName, std::vector<size_t> expected
     builder.visit(tree);
 
     std::shared_ptr<AstNode> root = builder.getRoot();
+
     std::shared_ptr<AstTestVisitor> visitor = std::make_shared<AstTestVisitor>(expectedTreeNodes, &parser, &lexer);
+
     root->accept(visitor);
 }

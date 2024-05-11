@@ -114,8 +114,13 @@ antlrcpp::Any AstBuilder::visitIfstm(DplParser::IfstmContext* parseNode) {
 
 // Terms
 antlrcpp::Any AstBuilder::visitTerminal(tree::TerminalNode* node) {
+    size_t lexerRule = node->getSymbol()->getType();
+    if (lexerRule == DplLexer::Break || lexerRule == DplLexer::Continue) { 
+        return flowStm(node); 
+    }
+
     std::shared_ptr<LeafNode> newNode = std::make_shared<LeafNode>(currentNode);
-    newNode->setRule(node->getSymbol()->getType());
+    newNode->setRule(lexerRule);
     newNode->setText(node->getText());
 
     bool isIdentifier = node->getSymbol()->getType() == DplLexer::Identifier;
@@ -382,7 +387,6 @@ antlrcpp::Any AstBuilder::visitFiltering(DplParser::FilteringContext* parseNode)
     parseNode->children[1]->accept(this);
     return nullptr;
 }
-// To here
 
 antlrcpp::Any AstBuilder::visitUnaryexpr(DplParser::UnaryexprContext* parseNode) {
     std::string text = parseNode->children[0]->getText();
@@ -520,6 +524,27 @@ antlrcpp::Any AstBuilder::binaryExpr(
     }
 
     currentNode = oldNode;
+
+    return nullptr;
+}
+
+antlrcpp::Any AstBuilder::flowStm(tree::TerminalNode* node) {
+    size_t lexerRule = node->getSymbol()->getType();
+    std::shared_ptr<AstNode> newNode;
+
+    if (lexerRule == DplLexer::Break) {
+        newNode = std::make_shared<BreakNode>(currentNode);
+    }
+    else if (lexerRule == DplLexer::Continue) {
+        newNode = std::make_shared<ContinueNode>(currentNode);
+    } 
+    else {
+        throw std::runtime_error("Invalid lexer rule for flowStm in AstBuilder.cpp");
+    }
+    newNode->setRule(lexerRule);
+    newNode->setText(node->getText());
+
+    currentNode->addChild(newNode); // Error here
 
     return nullptr;
 }
