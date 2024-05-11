@@ -69,7 +69,7 @@ class AstBuilder : public DplParserBaseVisitor {
 
    private:
     DplParser *parser;  // Add a parser member
-    [[maybe_unused]] DplLexer *lexer;    // Add a lexer member
+    DplLexer *lexer;    // Add a lexer member
     std::shared_ptr<AstNode> root;
     std::shared_ptr<AstNode> currentNode;
 
