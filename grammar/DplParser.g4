@@ -4,7 +4,7 @@ options {
 	tokenVocab = DplLexer;
 }
 
-prog: (stm Newline? | procdec Newline? | Newline)+ EOF;
+prog: (stm Newline | procdec Newline? | Newline)+ EOF;
 
 
 procdec: Def Identifier OpenPar ClosePar Colon block 
@@ -21,7 +21,7 @@ stm: ifstm
    | returnstm
    | orexpr;
 
-stms: (stm Newline? | Newline)+;
+stms: (stm Newline | Newline)+;
 
 block: Indent Newline? stms Dedent Newline?;
 
