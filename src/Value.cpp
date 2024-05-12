@@ -271,11 +271,15 @@ bool Value::operator>=(const Value& other) const { return *this > other || *this
 
 Value Value::operator+(const Value& other) const {
     std::string errOpWord = "add";
+
     const std::function<Value(Value, Value)> op = [this](Value val1, Value val2) -> Value {
         if (val1.is<INT>() && val2.is<INT>()) {
             return Value(val1.get<INT>() + val2.get<INT>());
-        } else if (val1.is<FLOAT>() && val2.is<FLOAT>()) {
-            return Value(val1.get<FLOAT>() + val2.get<FLOAT>());
+        } else if ((val1.is<INT>() || val1.is<FLOAT>()) &&
+                   (val2.is<INT>() || val2.is<FLOAT>())) {
+                
+            return Value(((val1.is<INT>()) ? val1.get<INT>() : val1.get<FLOAT>()) + 
+                         ((val2.is<INT>()) ? val2.get<INT>() : val2.get<FLOAT>()));
         } else if (val1.is<STR>() && val2.is<STR>()) {
             return Value(val1.get<STR>() + val2.get<STR>());
         } else if (val1.is<LIST>() && val2.is<LIST>()) {
@@ -290,11 +294,16 @@ Value Value::operator+(const Value& other) const {
 
 Value Value::operator-(const Value& other) const {
     std::string errOpWord = "detract";
+
     const std::function<Value(Value, Value)> op = [this](Value val1, Value val2) -> Value {
+
         if (val1.is<INT>() && val2.is<INT>()) {
             return Value(val1.get<INT>() - val2.get<INT>());
-        } else if (val1.is<FLOAT>() && val2.is<FLOAT>()) {
-            return Value(val1.get<FLOAT>() - val2.get<FLOAT>());
+        } else if ((val1.is<INT>() || val1.is<FLOAT>()) &&
+            (val2.is<INT>() || val2.is<FLOAT>())) {
+
+            return Value(((val1.is<INT>()) ? val1.get<INT>() : val1.get<FLOAT>()) - 
+                         ((val2.is<INT>()) ? val2.get<INT>() : val2.get<FLOAT>()));
         } else if (val1.is<LIST>() && val2.is<LIST>()) {
             return Value(val1.get<LIST>()) - Value(val2.get<LIST>());
         } else {
@@ -310,10 +319,52 @@ Value Value::operator*(const Value& other) const {
     const std::function<Value(Value, Value)> op = [this](Value val1, Value val2) -> Value {
         if (val1.is<INT>() && val2.is<INT>()) {
             return Value(val1.get<INT>() * val2.get<INT>());
-        } else if (val1.is<FLOAT>() && val2.is<FLOAT>()) {
-            return Value(val1.get<FLOAT>() * val2.get<FLOAT>());
+        } else if ((val1.is<INT>() || val1.is<FLOAT>()) &&
+            (val2.is<INT>() || val2.is<FLOAT>())) {
+
+            return Value(((val1.is<INT>()) ? val1.get<INT>() : val1.get<FLOAT>()) * 
+                         ((val2.is<INT>()) ? val2.get<INT>() : val2.get<FLOAT>()));
         }  else if (val1.is<LIST>() && val2.is<LIST>()) {
             return Value(val1.get<LIST>()) * Value(val2.get<LIST>());
+        } else if (((val1.is<INT>() || val1.is<BOOL>())   && val2.is<STR>()) || 
+                   ((val2.is<INT>() || val2.is<BOOL>()) && val1.is<STR>())) {
+            int intVal;
+            std::string strVal;
+
+            if (val1.is<INT>() || val1.is<BOOL>()) {
+                intVal = (val1.is<INT>()) ? val1.get<INT>() : val1.get<BOOL>();
+                strVal = val2.get<STR>();
+            } else {
+                intVal = (val2.get<INT>()) ? val2.get<INT>() : val2.get<BOOL>();
+                strVal = val1.get<STR>();
+            }
+
+            std::string resultStr = "";
+            for (int i = 0; i < intVal; ++i) {
+                resultStr += strVal;
+            }
+            return Value(resultStr);
+        } else if (((val1.is<INT>() || val1.is<BOOL>()) && val2.is<LIST>()) || 
+                   ((val2.is<INT>() || val2.is<BOOL>()) && val1.is<LIST>())) {
+            Value::LIST result = std::make_shared<std::vector<std::shared_ptr<Value>>>();
+            int intVal;
+            Value::LIST listVal;
+
+            if (val1.is<INT>() || val1.is<BOOL>()) {
+                intVal = (val1.is<INT>()) ? val1.get<INT>() : val1.get<BOOL>();
+                listVal = val2.get<LIST>();
+            } else {
+                intVal = (val2.get<INT>()) ? val2.get<INT>() : val2.get<BOOL>();
+                listVal = val1.get<LIST>();
+            }
+
+            for (int i = 0; i < intVal; ++i) {
+                for (const std::shared_ptr<Value>& elem : *listVal) {
+                    result->push_back(elem);
+                }
+            }
+            
+            return Value(result);
         } else {
             throw InternalException("Error: cannot multiply values of type " + val1.toTypeString() + 
                                     " and " + val2.toTypeString());
@@ -325,10 +376,11 @@ Value Value::operator*(const Value& other) const {
 Value Value::operator/(const Value& other) const {
     std::string errOpWord = "divide";
     const std::function<Value(Value, Value)> op = [this](Value val1, Value val2) -> Value {
-        if (val1.is<INT>() && val2.is<INT>()) {
-            return Value(val1.get<INT>() / val2.get<INT>());
-        } else if (val1.is<FLOAT>() && val2.is<FLOAT>()) {
-            return Value(val1.get<FLOAT>() / val2.get<FLOAT>());
+        if ((val1.is<INT>() || val1.is<FLOAT>()) &&
+            (val2.is<INT>() || val2.is<FLOAT>())) {
+
+            return Value(((val1.is<INT>()) ? val1.get<INT>() : val1.get<FLOAT>()) / 
+                         ((val2.is<INT>()) ? val2.get<INT>() : val2.get<FLOAT>()));
         } else if (val1.is<LIST>() && val2.is<LIST>()) {
             return Value(val1.get<LIST>()) / Value(val2.get<LIST>());
         } else {
@@ -342,10 +394,12 @@ Value Value::operator/(const Value& other) const {
 Value Value::operator%(const Value& other) const {
     std::string errOpWord = "take remainder of";
     const std::function<Value(Value, Value)> op = [this](Value val1, Value val2) -> Value {
-        if (val1.is<INT>() && val2.is<INT>()) {
-            return Value(val1.get<INT>() % val2.get<INT>());
-        } else if (val1.is<FLOAT>() && val2.is<FLOAT>()) {
-            return Value(std::fmod(val1.get<FLOAT>(), val2.get<FLOAT>()));
+        if ((val1.is<INT>() || val1.is<FLOAT>()) &&
+            (val2.is<INT>() || val2.is<FLOAT>())) {
+
+            return Value(std::fmod(((val1.is<INT>()) ? val1.get<INT>() : val1.get<FLOAT>()), 
+                                   ((val2.is<INT>()) ? val2.get<INT>() : val2.get<FLOAT>())));
+
         } else if (val1.is<LIST>() && val2.is<LIST>()) {
             return Value(val1.get<LIST>()) % Value(val2.get<LIST>());
         } else {
@@ -359,10 +413,12 @@ Value Value::operator%(const Value& other) const {
 Value Value::pow(const Value& other) const {
     std::string errOpWord = "get exponent between";
     const std::function<Value(Value, Value)> op = [this](Value val1, Value val2) -> Value {
-        if (val1.is<INT>() && val2.is<INT>()) {
-            return Value(std::pow(val1.get<INT>(), val2.get<INT>()));
-        } else if (val1.is<FLOAT>() && val2.is<FLOAT>()) {
-            return Value(std::pow(val1.get<INT>(), val2.get<INT>()));
+        
+        if ((val1.is<INT>() || val1.is<FLOAT>()) &&
+            (val2.is<INT>() || val2.is<FLOAT>())) {
+
+            return Value(std::pow(((val1.is<INT>()) ? val1.get<INT>() : val1.get<FLOAT>()),
+                                  ((val2.is<INT>()) ? val2.get<INT>() : val2.get<FLOAT>())));
         } else if (val1.is<LIST>() && val2.is<LIST>()) {
             return Value(val1.get<LIST>()).pow(Value(val2.get<LIST>()));
         } else {
@@ -370,7 +426,7 @@ Value Value::pow(const Value& other) const {
                                     " and " + val2.toTypeString());
         }
     };
-    return Value::binaryOperator(other, errOpWord, op); 
+    return Value::binaryOperator(other, errOpWord, op);
 }
 
 
@@ -379,23 +435,27 @@ Value Value::binaryOperator(const Value& other,
                             const std::function<Value(Value, Value)>& op) const {
 
     if ((is<INT>() || is<BOOL>()) && (other.is<INT>() || other.is<BOOL>())) {
-        Value::INT val1 = is<INT>() ? get<INT>() : get<BOOL>();
+
+        Value::INT val1 = other.is<INT>() ? other.get<INT>() : other.get<BOOL>();
         Value::INT val2 = is<INT>() ? get<INT>() : get<BOOL>();
+
         return op(Value(val1),  Value(val2));
-    } else if ((is<FLOAT>() || is<INT>() || is<BOOL>()) &&
+    } else if ((is<FLOAT>()       || is<INT>()       || is<BOOL>()) &&
                (other.is<FLOAT>() || other.is<INT>() || other.is<BOOL>())) {
-        Value::FLOAT val1 = is<FLOAT>() ? get<FLOAT>() : (is<INT>() ? get<INT>() : get<BOOL>());
-        Value::FLOAT val2 = other.is<FLOAT>()
+
+        Value::FLOAT val1 = other.is<FLOAT>()
                                 ? other.get<FLOAT>()
                                 : (other.is<INT>() ? other.get<INT>() : other.get<BOOL>());
+        Value::FLOAT val2 = is<FLOAT>() ? get<FLOAT>() : (is<INT>() ? get<INT>() : get<BOOL>());
+
         return op(Value(val1), Value(val2));
     } else if (is<STR>() && other.is<STR>()) {
-        return op(Value(get<STR>()), Value(other.get<STR>()));
+        return op(Value(other.get<STR>()), Value(get<STR>()));
     } else if (is<NONETYPE>() && other.is<NONETYPE>()) {
         return Value(nullptr); // might need to throw error
     } else if (is<LIST>() && other.is<LIST>()) {
-        Value::LIST list1 = get<LIST>();
-        Value::LIST list2 = other.get<LIST>();
+        Value::LIST list1 = other.get<LIST>();
+        Value::LIST list2 = get<LIST>();
 
         if (list1->size() != list2->size()) {
             throw InternalException("Error: cannot " + errOpWord + " lists of different sizes");
@@ -414,8 +474,8 @@ Value Value::binaryOperator(const Value& other,
         return op(Value(col1->data), Value(col2->data));
     } else if (is<TABLE>() && other.is<TABLE>()) {
         Value::TABLE resultTable = std::make_shared<std::map<std::string, Value::COLUMN>>();
-        Value::TABLE table1 = get<TABLE>();
-        Value::TABLE table2 = other.get<TABLE>();
+        Value::TABLE table1 = other.get<TABLE>();
+        Value::TABLE table2 = get<TABLE>();
 
         if (table1->size() != table2->size()) {
             throw InternalException("Error: cannot " + errOpWord + " tables of different sizes\n " 
@@ -430,6 +490,13 @@ Value Value::binaryOperator(const Value& other,
             }
         }
         return Value(resultTable);
+    } else if (((is<INT>()       || is<BOOL>())       && other.is<STR>()) || 
+               ((other.is<INT>() || other.is<BOOL>()) && is<STR>())) {
+
+        return op(Value(other), Value(*this)); 
+    } else if (((is<INT>()       || is<BOOL>())       && other.is<LIST>()) || 
+               ((other.is<INT>() || other.is<BOOL>()) && is<LIST>())) {
+        return op(Value(other), Value(*this)); 
     }
     throw InternalException("Error: cannot " + errOpWord  + 
                             " values of type " + toTypeString() + 
