@@ -28,6 +28,5 @@ AST_TEST("continue.dpl") {
         DplLexer::Identifier,
         DplLexer::Identifier
     };
-    
     dplutil::TestingUtil::testAst("continue.dpl", expectedNodeRules);
 }

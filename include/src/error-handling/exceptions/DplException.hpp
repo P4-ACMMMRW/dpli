@@ -4,19 +4,17 @@
 #include <string>
 
 namespace dplsrc {
-    // Base class for all exceptions
-    class DplException : public std::exception {
-        public:
-            virtual ~DplException() = default;
+// Base class for all exceptions
+class DplException : public std::exception {
+   public:
+    virtual ~DplException() = default;
 
-            DplException(std::string msg) : msg(msg) {}
-            const char *what() const noexcept override {
-                return msg.c_str();
-            }
+    DplException(std::string msg) : msg(msg) {}
+    const char *what() const noexcept override { return msg.c_str(); }
 
-        protected:
-            std::string msg;
-    };
-}
+   protected:
+    std::string msg;
+};
+}  // namespace dplsrc
 
 #endif

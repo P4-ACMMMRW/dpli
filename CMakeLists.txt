@@ -8,8 +8,12 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 # Can not be upgraded to C++20 because of a bug in github actions with chrono header
 set(CMAKE_CXX_STANDARD 17)
 
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
+
+    if (NOT CMAKE_BUILD_TYPE STREQUAL "Release")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 --coverage")
+    endif()
 endif()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -46,6 +50,8 @@ message(STATUS "ANTLR_DplParser_CXX_OUTPUTS: ${ANTLR_DplParser_CXX_OUTPUTS}")
 file(GLOB_RECURSE SOURCES "${PROJECT_SOURCE_DIR}/src/*.cpp")
 message(STATUS "SOURCES: ${SOURCES}")
 
+message(STATUS "Compiling with ${CMAKE_CXX_COMPILER_ID}")
+
 add_library(dpllib STATIC ${SOURCES} ${ANTLR_DplLexer_CXX_OUTPUTS} ${ANTLR_DplParser_CXX_OUTPUTS})
 
 target_include_directories(dpllib PUBLIC 
@@ -53,7 +59,7 @@ target_include_directories(dpllib PUBLIC
     ${ANTLR_DplParser_OUTPUT_DIR} 
     ${PROJECT_SOURCE_DIR}/lib/argz 
     ${PROJECT_SOURCE_DIR}/include/src
-    ${PROJECT_SOURCE_DIR}/include/src/symbol_table
+    ${PROJECT_SOURCE_DIR}/include/src/symbol-table
     ${PROJECT_SOURCE_DIR}/include/src/ast
     ${PROJECT_SOURCE_DIR}/include/src/ast/nodes
     ${PROJECT_SOURCE_DIR}/include/src/ast/nodes/abstract

@@ -1,4 +1,3 @@
-
 #include <Main.hpp>
 
 using namespace antlr4;
@@ -72,8 +71,10 @@ int main(int argc, char **argv) {
     DplLexer lexer(&input);
     lexer.removeErrorListeners();
 
-    std::string filename = std::string(argv[fileArgIndex]).substr(std::string(argv[fileArgIndex]).find_last_of('/') + 1);
-    std::shared_ptr<ANTLRErrorListener> lexerErrorListener = std::make_shared<LexerErrorListener>(filename);
+    std::string filename = std::string(argv[fileArgIndex])
+                               .substr(std::string(argv[fileArgIndex]).find_last_of('/') + 1);
+    std::shared_ptr<ANTLRErrorListener> lexerErrorListener =
+        std::make_shared<LexerErrorListener>(filename);
     lexer.addErrorListener(lexerErrorListener.get());
     CommonTokenStream tokens(&lexer);
 
@@ -86,12 +87,13 @@ int main(int argc, char **argv) {
 
     DplParser parser(&tokens);
     parser.removeErrorListeners();
-    std::shared_ptr<ANTLRErrorListener> parserErrorListener = std::make_shared<ParserErrorListener>(filename);
+    std::shared_ptr<ANTLRErrorListener> parserErrorListener =
+        std::make_shared<ParserErrorListener>(filename);
     parser.addErrorListener(parserErrorListener.get());
     std::shared_ptr<ANTLRErrorStrategy> strategy = std::make_shared<DplErrorStrategy>();
     parser.setErrorHandler(strategy);
-    tree::ParseTree *tree; 
-    
+    tree::ParseTree *tree;
+
     try {
         tree = parser.prog();
     } catch (const ParseCancellationException &e) {

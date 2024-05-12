@@ -3,16 +3,18 @@
 
 #include <DplLexer.h>
 
-#include <filesystem>
 #include <cmath>
+#include <filesystem>
 
 #include "AllNodeIncludes.hpp"
 #include "AstVisitor.hpp"
 #include "ProcedureTable.hpp"
+#include "ReturnValue.hpp"
+#include "RuntimeException.hpp"
 #include "Value.hpp"
 #include "VariableTable.hpp"
-#include "RuntimeException.hpp"
-#include "ReturnValue.hpp"
+#include "ContinueValue.hpp"
+#include "BreakValue.hpp"
 
 namespace dplsrc {
 class Evaluator : public AstVisitor {
@@ -21,7 +23,9 @@ class Evaluator : public AstVisitor {
 
     void visit(const std::shared_ptr<AndExprNode> &node) override;
     void visit(const std::shared_ptr<AssignNode> &node) override;
+    void visit(const std::shared_ptr<BreakNode> &node) override;
     void visit(const std::shared_ptr<ColumnNode> &node) override;
+    void visit(const std::shared_ptr<ContinueNode> &node) override;
     void visit(const std::shared_ptr<DivExprNode> &node) override;
     void visit(const std::shared_ptr<ElseNode> &node) override;
     void visit(const std::shared_ptr<EqualExprNode> &node) override;
@@ -83,15 +87,80 @@ class Evaluator : public AstVisitor {
      * Makes a deep copy of a list using DFS
      * @param list the list to copy
      * @return the copied list
-    */
+     */
     Value::LIST copyList(const Value::LIST &list);
 
     /**
      * Makes a deep copy of a table using DFS
      * @param table the table to copy
      * @return the copied table
-    */
+     */
     Value::TABLE copyTable(const Value::TABLE &table);
+
+    /**
+     * @return the double representation of the given numeric Value, if not Numeric 0.0.
+    */
+    double getNumericValue(const Value &val);
+
+    /**
+     * Executes body of loop taking into account the possibility of break and continue
+     * @return true if break encountered, else false.
+    */
+    bool loopBody(std::vector<std::shared_ptr<AstNode>> bodyNodes);
+
+    /**
+     * @return true if i'th row of leftTable and j'th row of rightTable intersect (is the same). 
+     */
+    bool rowsIntersect(const Value::TABLE& leftTable, 
+                       const Value::TABLE& rightTable, 
+                       size_t i, size_t j); 
+    
+    /**
+     * Adds the content of the i'th row of the table parameter to the sudo table cols.
+     */
+    void addDataToCols(const Value::TABLE& table, 
+                       std::vector<std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>>>& cols, 
+                       size_t i);
+
+    /**
+     * Add union of columns to a table, 
+     * if the first column doesn't exist a corresponding amount of None is addded to the table.
+     */
+    void addColUnionToTable(Value::TABLE& table, 
+                            const std::shared_ptr<dplsrc::Value::COL_STRUCT>& col1, 
+                            const std::shared_ptr<dplsrc::Value::COL_STRUCT>& col2, 
+                            const Value::STR& header);
+
+    /**
+     * Adds null Values to a Value::List
+     */
+    void addNullValuesToList(const std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>>& list, 
+                             size_t size);
+
+    /**
+     * Adds a list of values to another list of values
+     */
+    void addListToList(std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>> srcList, 
+                   std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>> dstList);
+
+    /**
+     * Inserts a new column into the given table
+     */
+    void insertColInTable(Value::TABLE table, std::string header, Value::LIST list);
+
+    /**
+     * @param leftTable
+     * @param rightTable
+     * @return true if the tables have the same columns
+     */
+    bool isSameColumns(Value::TABLE leftTable, Value::TABLE rightTable);
+
+    /**
+     * @param leftTable
+     * @param rightTable
+     * @return a coloumn corresponding to the header in the given table, if no hit nullptr.
+     */
+    Value::COLUMN getColumnByHeader(Value::TABLE table, const std::string& header);
 };
 
 }  // namespace dplsrc

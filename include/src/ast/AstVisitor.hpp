@@ -8,7 +8,9 @@
 class AstNode;
 class AndExprNode;
 class AssignNode;
+class BreakNode;
 class ColumnNode;
+class ContinueNode;
 class DivExprNode;
 class ElseNode;
 class EqualExprNode;
@@ -50,11 +52,13 @@ class UnaryNodeList;
 class AstVisitor : public std::enable_shared_from_this<AstVisitor> {
    public:
     virtual ~AstVisitor() = default;
-    
+
     virtual void visit(const std::shared_ptr<ProgNode> &node) = 0;
     virtual void visit(const std::shared_ptr<AndExprNode> &node) = 0;
     virtual void visit(const std::shared_ptr<AssignNode> &node) = 0;
+    virtual void visit(const std::shared_ptr<BreakNode> &node) = 0;
     virtual void visit(const std::shared_ptr<ColumnNode> &node) = 0;
+    virtual void visit(const std::shared_ptr<ContinueNode> &node) = 0;
     virtual void visit(const std::shared_ptr<DivExprNode> &node) = 0;
     virtual void visit(const std::shared_ptr<ElseNode> &node) = 0;
     virtual void visit(const std::shared_ptr<EqualExprNode> &node) = 0;

@@ -9,7 +9,7 @@ fi
 # Check if dpli file in build directory exists
 if [ ! -f build/dpli ]; then
     echo "dpli not found. Compiling the project..."
-    chmod +x compile.sh && ./compile.sh
+    ./compile.sh
 fi
 
 cd build

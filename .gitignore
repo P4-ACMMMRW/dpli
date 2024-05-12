@@ -3,6 +3,10 @@ build/
 .vscode
 perf.data
 perf.data.old
-*.txt
-*.csv
+perf_report.txt
+test.csv
 test.dpl
+coverage.info
+base.info
+test.info
+coverage/

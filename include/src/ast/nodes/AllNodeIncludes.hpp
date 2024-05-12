@@ -5,7 +5,9 @@
 #include <AndExprNode.hpp>
 #include <AssignNode.hpp>
 #include <AstNode.hpp>
+#include <BreakNode.hpp>
 #include <ColumnNode.hpp>
+#include <ContinueNode.hpp>
 #include <DivExprNode.hpp>
 #include <ElseNode.hpp>
 #include <EqualExprNode.hpp>

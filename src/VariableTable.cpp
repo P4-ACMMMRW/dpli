@@ -1,4 +1,5 @@
 #include "VariableTable.hpp"
+
 #include "InternalException.hpp"
 
 using namespace dplsrc;
@@ -14,14 +15,9 @@ void VariableTable::bind(Variable var) {
 Variable *VariableTable::lookup(const std::string &id) {
     if (scopes.empty()) {
         return &globalScope.at(id);
-    }         
-    
-    try {
-        return &scopes.top().at(id);
-    } catch (const std::out_of_range &e) {
-        return &globalScope.at(id);
     }
-   
+
+    return &scopes.top().at(id);
 }
 
 void VariableTable::print() {
@@ -56,12 +52,12 @@ std::string VariableTable::generatePrintString(const Scope &scope) {
     return printStr;
 }
 
-void VariableTable::enterScope(const Scope& scope) { scopes.push(scope); }
+void VariableTable::enterScope(const Scope &scope) { scopes.push(scope); }
 
 void VariableTable::exitScope() {
     if (scopes.empty()) {
         throw InternalException("Error: cannot exit global scope");
-    }         
-    
+    }
+
     scopes.pop();
 }

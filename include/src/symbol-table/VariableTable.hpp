@@ -41,7 +41,7 @@ class VariableTable : public SymbolTable {
      * Enters a new variable scope
      * @param VariableTable The table to copy the scope from
      */
-    void enterScope(const Scope& scope);
+    void enterScope(const Scope &scope);
 
     /**
      * Exits the current variable scope
@@ -57,6 +57,13 @@ class VariableTable : public SymbolTable {
         } else {
             return scopes.top();
         }
+    }
+
+    /**
+     * @return the amount of variables in variable table.
+     */
+    size_t size() {
+        return (scopes.empty()) ? globalScope.size() : scopes.top().size() + globalScope.size();
     }
 
    private:

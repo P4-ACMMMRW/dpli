@@ -63,7 +63,8 @@ std::string Value::toString() const {
 
         return result;
     } else if (is<COLUMN>()) {
-        std::string result = static_cast<Value>("'" + get<COLUMN>()->header).toString() + "'" + ": [";
+        std::string result =
+            static_cast<Value>("'" + get<COLUMN>()->header).toString() + "'" + ": [";
         bool addedSomething = false;
         for (const std::shared_ptr<Value>& valPtr : *get<COLUMN>()->data) {
             if (valPtr->is<STR>()) {
@@ -175,12 +176,18 @@ bool Value::operator==(const Value& other) const {
         Value::LIST list1 = get<LIST>();
         Value::LIST list2 = other.get<LIST>();
 
-        return *list1 == *list2;
+        if (list1->size() != list2->size()) return false;
+
+        for (size_t i = 0; i < list1->size(); ++i) {
+            if (*(*list1)[i] != *(*list2)[i]) return false;
+        }
+
+        return true;
     } else if (is<COLUMN>() && other.is<COLUMN>()) {
         Value::COLUMN col1 = get<COLUMN>();
         Value::COLUMN col2 = other.get<COLUMN>();
 
-        return *col1->data == *col2->data;
+        return Value(col1->data) == Value(col2->data);
     } else if (is<TABLE>() && other.is<TABLE>()) {
         Value::TABLE table1 = get<TABLE>();
         Value::TABLE table2 = other.get<TABLE>();
@@ -190,10 +197,19 @@ bool Value::operator==(const Value& other) const {
         }
 
         for (const std::pair<const std::string, Value::COLUMN>& entry : *table1) {
-            if (entry.second != table2->at(entry.first)) {
+            Value::COLUMN col = nullptr;
+            try {
+                col = table2->at(entry.first);
+            } catch (const std::out_of_range& e) {
+                return false;
+            }
+
+            if (Value(col) != Value(entry.second)) {
                 return false;
             }
         }
+
+        return true;
     }
 
     return false;
@@ -217,12 +233,17 @@ bool Value::operator<(const Value& other) const {
         Value::LIST list1 = get<LIST>();
         Value::LIST list2 = other.get<LIST>();
 
-        return *list1 < *list2;
+        size_t minSize = std::min(list1->size(), list2->size());
+
+        for (size_t i = 0; i < minSize; ++i) {
+            if (*(*list1)[i] != *(*list2)[i]) return *(*list1)[i] < *(*list2)[i];
+        }
+
+        return list1->size() < list2->size();
     } else if (is<COLUMN>() && other.is<COLUMN>()) {
         Value::COLUMN col1 = get<COLUMN>();
         Value::COLUMN col2 = other.get<COLUMN>();
-
-        return *col1->data < *col2->data;
+        return Value(col1->data) < Value(col2->data);
     } else if (is<TABLE>() && other.is<TABLE>()) {
         Value::TABLE table1 = get<TABLE>();
         Value::TABLE table2 = other.get<TABLE>();
