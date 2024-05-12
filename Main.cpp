@@ -1,4 +1,3 @@
-
 #include <Main.hpp>
 
 using namespace antlr4;

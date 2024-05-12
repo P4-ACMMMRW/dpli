@@ -59,6 +59,13 @@ class VariableTable : public SymbolTable {
         }
     }
 
+    /**
+     * @return the amount of variables in variable table.
+     */
+    size_t size() {
+        return (scopes.empty()) ? globalScope.size() : scopes.top().size() + globalScope.size();
+    }
+
    private:
     std::stack<Scope> scopes = std::stack<Scope>();
     Scope globalScope;

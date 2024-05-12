@@ -15,12 +15,6 @@ using namespace antlr4;
 using namespace dplgrammar;
 
 class AstBuilder : public DplParserBaseVisitor {
-   private:
-    DplParser *parser;  // Add a parser member
-    DplLexer *lexer;    // Add a lexer member
-    std::shared_ptr<AstNode> root;
-    std::shared_ptr<AstNode> currentNode;
-
    public:
     AstBuilder(DplParser *parser, DplLexer *lexer)
         : parser(parser), lexer(lexer), root(nullptr), currentNode(nullptr) {}
@@ -74,6 +68,11 @@ class AstBuilder : public DplParserBaseVisitor {
     std::shared_ptr<AstNode> getRoot();
 
    private:
+    DplParser *parser;  // Add a parser member
+    DplLexer *lexer;    // Add a lexer member
+    std::shared_ptr<AstNode> root;
+    std::shared_ptr<AstNode> currentNode;
+
     void initNewNode(antlr4::ParserRuleContext *parseNode, const std::shared_ptr<AstNode> &newNode,
                      const std::string &text = "");
 
@@ -100,6 +99,8 @@ class AstBuilder : public DplParserBaseVisitor {
 
     antlrcpp::Any binaryExpr(const std::function<std::shared_ptr<AstNode>(size_t)> &createNode,
                              antlr4::ParserRuleContext *parseNode);
+
+    antlrcpp::Any flowStm(tree::TerminalNode* node);
 
     static antlr4::Token *getChildToken(antlr4::tree::ParseTree *parseNode, size_t childIndex);
 };
