@@ -2,10 +2,12 @@
 
 using namespace dplsrc;
 #include <iostream>
+#include <utility>
 std::string Value::toString() const {
     if (is<INT>()) {
         return std::to_string(get<long>());
-    } else if (is<FLOAT>()) {
+    }
+    if (is<FLOAT>()) {
         std::string doubleStr = std::to_string(get<double>());
 
         // Remove trailing zeros
@@ -18,13 +20,17 @@ std::string Value::toString() const {
         }
 
         return doubleStr;
-    } else if (is<STR>()) {
+    }
+    if (is<STR>()) {
         return get<STR>();
-    } else if (is<BOOL>()) {
+    }
+    if (is<BOOL>()) {
         return get<BOOL>() ? "True" : "False";
-    } else if (is<NONETYPE>()) {
+    }
+    if (is<NONETYPE>()) {
         return "None";
-    } else if (is<LIST>()) {
+    }
+    if (is<LIST>()) {
         std::string result = "[";
         bool addedSomething = false;
         for (const std::shared_ptr<Value>& elem : *get<LIST>()) {
@@ -45,7 +51,8 @@ std::string Value::toString() const {
         result += "]";
 
         return result;
-    } else if (is<TABLE>()) {
+    }
+    if (is<TABLE>()) {
         std::string result = "{ ";
         bool addedSomething = false;
         for (const std::pair<const std::string, Value::COLUMN>& entry : *get<TABLE>()) {
@@ -62,7 +69,8 @@ std::string Value::toString() const {
         result += " }";
 
         return result;
-    } else if (is<COLUMN>()) {
+    }
+    if (is<COLUMN>()) {
         std::string result =
             static_cast<Value>("'" + get<COLUMN>()->header).toString() + "'" + ": [";
         bool addedSomething = false;
@@ -92,16 +100,22 @@ std::string Value::toString() const {
 std::string Value::toTypeString(bool verbose) const {
     if (is<INT>()) {
         return "int";
-    } else if (is<FLOAT>()) {
+    }
+    if (is<FLOAT>()) {
         return "float";
-    } else if (is<STR>()) {
+    }
+    if (is<STR>()) {
         return "str";
-    } else if (is<BOOL>()) {
+    }
+    if (is<BOOL>()) {
         return "bool";
-    } else if (is<NONETYPE>()) {
+    }
+    if (is<NONETYPE>()) {
         return "NoneType";
-    } else if (is<LIST>()) {
-        if (!verbose) return "list";
+    }
+    if (is<LIST>()) {
+        if (!verbose) { return "list";
+}
 
         std::string listStr = "list -> [";
         Value::LIST list = get<LIST>();
@@ -118,8 +132,10 @@ std::string Value::toTypeString(bool verbose) const {
         listStr += "]";
 
         return listStr;
-    } else if (is<TABLE>()) {
-        if (!verbose) return "table";
+    }
+    if (is<TABLE>()) {
+        if (!verbose) { return "table";
+}
 
         std::string tableStr = "table -> { ";
         Value::TABLE table = get<TABLE>();
@@ -136,8 +152,10 @@ std::string Value::toTypeString(bool verbose) const {
         tableStr += "} ";
 
         return tableStr;
-    } else if (is<COLUMN>()) {
-        if (!verbose) return "column";
+    }
+    if (is<COLUMN>()) {
+        if (!verbose) { return "column";
+}
 
         std::string result =
             "column -> " + static_cast<Value>(get<COLUMN>()->header).toTypeString(verbose) + ": [";
@@ -163,34 +181,44 @@ std::string Value::toTypeString(bool verbose) const {
 bool Value::operator==(const Value& other) const {
     if ((is<INT>() || is<FLOAT>() || is<BOOL>()) &&
         (other.is<INT>() || other.is<FLOAT>() || other.is<BOOL>())) {
-        Value::FLOAT val1 = is<INT>() ? get<INT>() : (is<FLOAT>() ? get<FLOAT>() : get<BOOL>());
-        Value::FLOAT val2 = other.is<INT>()
-                                ? other.get<INT>()
-                                : (other.is<FLOAT>() ? other.get<FLOAT>() : other.get<BOOL>());
+        Value::FLOAT val1 = is<INT>()
+                                ? get<INT>()
+                                : (is<FLOAT>() ? get<FLOAT>() : static_cast<double>(get<BOOL>()));
+        Value::FLOAT val2 =
+            other.is<INT>()
+                ? other.get<INT>()
+                : (other.is<FLOAT>() ? other.get<FLOAT>() : static_cast<double>(other.get<BOOL>()));
         return val1 == val2;
-    } else if (is<STR>() && other.is<STR>()) {
+    }
+    if (is<STR>() && other.is<STR>()) {
         return get<STR>() == other.get<STR>();
-    } else if (is<NONETYPE>() && other.is<NONETYPE>()) {
+    }
+    if (is<NONETYPE>() && other.is<NONETYPE>()) {
         return true;
-    } else if (is<LIST>() && other.is<LIST>()) {
+    }
+    if (is<LIST>() && other.is<LIST>()) {
         Value::LIST list1 = get<LIST>();
-        Value::LIST list2 = other.get<LIST>();
+        const Value::LIST& list2 = other.get<LIST>();
 
-        if (list1->size() != list2->size()) return false;
+        if (list1->size() != list2->size()) { return false;
+}
 
         for (size_t i = 0; i < list1->size(); ++i) {
-            if (*(*list1)[i] != *(*list2)[i]) return false;
+            if (*(*list1)[i] != *(*list2)[i]) { return false;
+}
         }
 
         return true;
-    } else if (is<COLUMN>() && other.is<COLUMN>()) {
+    }
+    if (is<COLUMN>() && other.is<COLUMN>()) {
         Value::COLUMN col1 = get<COLUMN>();
-        Value::COLUMN col2 = other.get<COLUMN>();
+        const Value::COLUMN& col2 = other.get<COLUMN>();
 
         return Value(col1->data) == Value(col2->data);
-    } else if (is<TABLE>() && other.is<TABLE>()) {
+    }
+    if (is<TABLE>() && other.is<TABLE>()) {
         Value::TABLE table1 = get<TABLE>();
-        Value::TABLE table2 = other.get<TABLE>();
+        const Value::TABLE& table2 = other.get<TABLE>();
 
         if (table1->size() != table2->size()) {
             return false;
@@ -220,33 +248,42 @@ bool Value::operator!=(const Value& other) const { return !(*this == other); }
 bool Value::operator<(const Value& other) const {
     if ((is<INT>() || is<FLOAT>() || is<BOOL>()) &&
         (other.is<INT>() || other.is<FLOAT>() || other.is<BOOL>())) {
-        Value::FLOAT val1 = is<INT>() ? get<INT>() : (is<FLOAT>() ? get<FLOAT>() : get<BOOL>());
-        Value::FLOAT val2 = other.is<INT>()
-                                ? other.get<INT>()
-                                : (other.is<FLOAT>() ? other.get<FLOAT>() : other.get<BOOL>());
+        Value::FLOAT val1 = is<INT>()
+                                ? get<INT>()
+                                : (is<FLOAT>() ? get<FLOAT>() : static_cast<double>(get<BOOL>()));
+        Value::FLOAT val2 =
+            other.is<INT>()
+                ? other.get<INT>()
+                : (other.is<FLOAT>() ? other.get<FLOAT>() : static_cast<double>(other.get<BOOL>()));
         return val1 < val2;
-    } else if (is<STR>() && other.is<STR>()) {
+    }
+    if (is<STR>() && other.is<STR>()) {
         return get<STR>() < other.get<STR>();
-    } else if (is<NONETYPE>() && other.is<NONETYPE>()) {
+    }
+    if (is<NONETYPE>() && other.is<NONETYPE>()) {
         return false;
-    } else if (is<LIST>() && other.is<LIST>()) {
+    }
+    if (is<LIST>() && other.is<LIST>()) {
         Value::LIST list1 = get<LIST>();
-        Value::LIST list2 = other.get<LIST>();
+        const Value::LIST& list2 = other.get<LIST>();
 
         size_t minSize = std::min(list1->size(), list2->size());
 
         for (size_t i = 0; i < minSize; ++i) {
-            if (*(*list1)[i] != *(*list2)[i]) return *(*list1)[i] < *(*list2)[i];
+            if (*(*list1)[i] != *(*list2)[i]) { return *(*list1)[i] < *(*list2)[i];
+}
         }
 
         return list1->size() < list2->size();
-    } else if (is<COLUMN>() && other.is<COLUMN>()) {
+    }
+    if (is<COLUMN>() && other.is<COLUMN>()) {
         Value::COLUMN col1 = get<COLUMN>();
-        Value::COLUMN col2 = other.get<COLUMN>();
+        const Value::COLUMN& col2 = other.get<COLUMN>();
         return Value(col1->data) < Value(col2->data);
-    } else if (is<TABLE>() && other.is<TABLE>()) {
+    }
+    if (is<TABLE>() && other.is<TABLE>()) {
         Value::TABLE table1 = get<TABLE>();
-        Value::TABLE table2 = other.get<TABLE>();
+        const Value::TABLE& table2 = other.get<TABLE>();
 
         if (table1->size() != table2->size()) {
             return table1->size() < table2->size();
@@ -268,26 +305,26 @@ bool Value::operator<=(const Value& other) const { return *this < other || *this
 
 bool Value::operator>=(const Value& other) const { return *this > other || *this == other; }
 
-
 Value Value::operator+(const Value& other) const {
     std::string errOpWord = "add";
 
-    const std::function<Value(Value, Value)> op = [this](Value val1, Value val2) -> Value {
+    const std::function<Value(Value, Value)> op = [](const Value& val1,
+                                                     const Value& val2) -> Value {
         if (val1.is<INT>() && val2.is<INT>()) {
             return Value(val1.get<INT>() + val2.get<INT>());
-        } else if ((val1.is<INT>() || val1.is<FLOAT>()) &&
-                   (val2.is<INT>() || val2.is<FLOAT>())) {
-                
-            return Value(((val1.is<INT>()) ? val1.get<INT>() : val1.get<FLOAT>()) + 
-                         ((val2.is<INT>()) ? val2.get<INT>() : val2.get<FLOAT>()));
-        } else if (val1.is<STR>() && val2.is<STR>()) {
-            return Value(val1.get<STR>() + val2.get<STR>());
-        } else if (val1.is<LIST>() && val2.is<LIST>()) {
-            return Value(val1.get<LIST>()) + Value(val2.get<LIST>());
-        } else {
-            throw InternalException("Error: cannot add values of type " + val1.toTypeString() + 
-                                    " and " + val2.toTypeString());
         }
+        if ((val1.is<INT>() || val1.is<FLOAT>()) && (val2.is<INT>() || val2.is<FLOAT>())) {
+            return Value(((val1.is<INT>()) ? val1.get<INT>() : val1.get<FLOAT>()) +
+                         ((val2.is<INT>()) ? val2.get<INT>() : val2.get<FLOAT>()));
+        }
+        if (val1.is<STR>() && val2.is<STR>()) {
+            return Value(val1.get<STR>() + val2.get<STR>());
+        }
+        if (val1.is<LIST>() && val2.is<LIST>()) {
+            return Value(val1.get<LIST>()) + Value(val2.get<LIST>());
+        }             throw InternalException("Error: cannot add values of type " + val1.toTypeString() +
+                                    " and " + val2.toTypeString());
+       
     };
     return Value::binaryOperator(other, errOpWord, op);
 }
@@ -295,66 +332,68 @@ Value Value::operator+(const Value& other) const {
 Value Value::operator-(const Value& other) const {
     std::string errOpWord = "detract";
 
-    const std::function<Value(Value, Value)> op = [this](Value val1, Value val2) -> Value {
-
+    const std::function<Value(Value, Value)> op = [](const Value& val1,
+                                                     const Value& val2) -> Value {
         if (val1.is<INT>() && val2.is<INT>()) {
             return Value(val1.get<INT>() - val2.get<INT>());
-        } else if ((val1.is<INT>() || val1.is<FLOAT>()) &&
-            (val2.is<INT>() || val2.is<FLOAT>())) {
-
-            return Value(((val1.is<INT>()) ? val1.get<INT>() : val1.get<FLOAT>()) - 
-                         ((val2.is<INT>()) ? val2.get<INT>() : val2.get<FLOAT>()));
-        } else if (val1.is<LIST>() && val2.is<LIST>()) {
-            return Value(val1.get<LIST>()) - Value(val2.get<LIST>());
-        } else {
-            throw InternalException("Error: cannot detract values of type " + val1.toTypeString() + 
-                                    " and " + val2.toTypeString());
         }
+        if ((val1.is<INT>() || val1.is<FLOAT>()) && (val2.is<INT>() || val2.is<FLOAT>())) {
+            return Value(((val1.is<INT>()) ? val1.get<INT>() : val1.get<FLOAT>()) -
+                         ((val2.is<INT>()) ? val2.get<INT>() : val2.get<FLOAT>()));
+        }
+        if (val1.is<LIST>() && val2.is<LIST>()) {
+            return Value(val1.get<LIST>()) - Value(val2.get<LIST>());
+        }
+        throw InternalException("Error: cannot detract values of type " + val1.toTypeString() +
+                                " and " + val2.toTypeString());
     };
     return Value::binaryOperator(other, errOpWord, op);
 }
 
 Value Value::operator*(const Value& other) const {
     std::string errOpWord = "multiply";
-    const std::function<Value(Value, Value)> op = [this](Value val1, Value val2) -> Value {
+    const std::function<Value(Value, Value)> op = [](const Value& val1,
+                                                     const Value& val2) -> Value {
         if (val1.is<INT>() && val2.is<INT>()) {
             return Value(val1.get<INT>() * val2.get<INT>());
-        } else if ((val1.is<INT>() || val1.is<FLOAT>()) &&
-            (val2.is<INT>() || val2.is<FLOAT>())) {
-
-            return Value(((val1.is<INT>()) ? val1.get<INT>() : val1.get<FLOAT>()) * 
+        }
+        if ((val1.is<INT>() || val1.is<FLOAT>()) && (val2.is<INT>() || val2.is<FLOAT>())) {
+            return Value(((val1.is<INT>()) ? val1.get<INT>() : val1.get<FLOAT>()) *
                          ((val2.is<INT>()) ? val2.get<INT>() : val2.get<FLOAT>()));
-        }  else if (val1.is<LIST>() && val2.is<LIST>()) {
+        }
+        if (val1.is<LIST>() && val2.is<LIST>()) {
             return Value(val1.get<LIST>()) * Value(val2.get<LIST>());
-        } else if (((val1.is<INT>() || val1.is<BOOL>())   && val2.is<STR>()) || 
-                   ((val2.is<INT>() || val2.is<BOOL>()) && val1.is<STR>())) {
-            int intVal;
+        }
+        if (((val1.is<INT>() || val1.is<BOOL>()) && val2.is<STR>()) ||
+            ((val2.is<INT>() || val2.is<BOOL>()) && val1.is<STR>())) {
+            int intVal = 0;
             std::string strVal;
 
             if (val1.is<INT>() || val1.is<BOOL>()) {
-                intVal = (val1.is<INT>()) ? val1.get<INT>() : val1.get<BOOL>();
+                intVal = (val1.is<INT>()) ? val1.get<INT>() : static_cast<long>(val1.get<BOOL>());
                 strVal = val2.get<STR>();
             } else {
-                intVal = (val2.get<INT>()) ? val2.get<INT>() : val2.get<BOOL>();
+                intVal = (val2.get<INT>()) != 0 ? val2.get<INT>() : static_cast<long>(val2.get<BOOL>());
                 strVal = val1.get<STR>();
             }
 
-            std::string resultStr = "";
+            std::string resultStr;
             for (int i = 0; i < intVal; ++i) {
                 resultStr += strVal;
             }
             return Value(resultStr);
-        } else if (((val1.is<INT>() || val1.is<BOOL>()) && val2.is<LIST>()) || 
-                   ((val2.is<INT>() || val2.is<BOOL>()) && val1.is<LIST>())) {
+        }
+        if (((val1.is<INT>() || val1.is<BOOL>()) && val2.is<LIST>()) ||
+            ((val2.is<INT>() || val2.is<BOOL>()) && val1.is<LIST>())) {
             Value::LIST result = std::make_shared<std::vector<std::shared_ptr<Value>>>();
-            int intVal;
+            int intVal = 0;
             Value::LIST listVal;
 
             if (val1.is<INT>() || val1.is<BOOL>()) {
-                intVal = (val1.is<INT>()) ? val1.get<INT>() : val1.get<BOOL>();
+                intVal = (val1.is<INT>()) ? val1.get<INT>() : static_cast<long>(val1.get<BOOL>());
                 listVal = val2.get<LIST>();
             } else {
-                intVal = (val2.get<INT>()) ? val2.get<INT>() : val2.get<BOOL>();
+                intVal = (val2.get<INT>()) != 0 ? val2.get<INT>() : static_cast<long>(val2.get<BOOL>());
                 listVal = val1.get<LIST>();
             }
 
@@ -363,98 +402,91 @@ Value Value::operator*(const Value& other) const {
                     result->push_back(elem);
                 }
             }
-            
+
             return Value(result);
-        } else {
-            throw InternalException("Error: cannot multiply values of type " + val1.toTypeString() + 
-                                    " and " + val2.toTypeString());
         }
+        throw InternalException("Error: cannot multiply values of type " + val1.toTypeString() +
+                                " and " + val2.toTypeString());
     };
     return Value::binaryOperator(other, errOpWord, op);
 }
 
 Value Value::operator/(const Value& other) const {
     std::string errOpWord = "divide";
-    const std::function<Value(Value, Value)> op = [this](Value val1, Value val2) -> Value {
-        if ((val1.is<INT>() || val1.is<FLOAT>()) &&
-            (val2.is<INT>() || val2.is<FLOAT>())) {
-
-            return Value(((val1.is<INT>()) ? val1.get<INT>() : val1.get<FLOAT>()) / 
+    const std::function<Value(Value, Value)> op = [](const Value& val1,
+                                                     const Value& val2) -> Value {
+        if ((val1.is<INT>() || val1.is<FLOAT>()) && (val2.is<INT>() || val2.is<FLOAT>())) {
+            return Value(((val1.is<INT>()) ? val1.get<INT>() : val1.get<FLOAT>()) /
                          ((val2.is<INT>()) ? val2.get<INT>() : val2.get<FLOAT>()));
-        } else if (val1.is<LIST>() && val2.is<LIST>()) {
-            return Value(val1.get<LIST>()) / Value(val2.get<LIST>());
-        } else {
-            throw InternalException("Error: cannot divide values of type " + val1.toTypeString() + 
-                                    " and " + val2.toTypeString());
         }
+        if (val1.is<LIST>() && val2.is<LIST>()) {
+            return Value(val1.get<LIST>()) / Value(val2.get<LIST>());
+        }
+        throw InternalException("Error: cannot divide values of type " + val1.toTypeString() +
+                                " and " + val2.toTypeString());
     };
     return Value::binaryOperator(other, errOpWord, op);
 }
 
 Value Value::operator%(const Value& other) const {
     std::string errOpWord = "take remainder of";
-    const std::function<Value(Value, Value)> op = [this](Value val1, Value val2) -> Value {
-        if ((val1.is<INT>() || val1.is<FLOAT>()) &&
-            (val2.is<INT>() || val2.is<FLOAT>())) {
-
-            return Value(std::fmod(((val1.is<INT>()) ? val1.get<INT>() : val1.get<FLOAT>()), 
+    const std::function<Value(Value, Value)> op = [](const Value& val1,
+                                                     const Value& val2) -> Value {
+        if ((val1.is<INT>() || val1.is<FLOAT>()) && (val2.is<INT>() || val2.is<FLOAT>())) {
+            return Value(std::fmod(((val1.is<INT>()) ? val1.get<INT>() : val1.get<FLOAT>()),
                                    ((val2.is<INT>()) ? val2.get<INT>() : val2.get<FLOAT>())));
-
-        } else if (val1.is<LIST>() && val2.is<LIST>()) {
-            return Value(val1.get<LIST>()) % Value(val2.get<LIST>());
-        } else {
-            throw InternalException("Error: cannot take remainder of values of type " + val1.toTypeString() + 
-                                    " and " + val2.toTypeString());
         }
+        if (val1.is<LIST>() && val2.is<LIST>()) {
+            return Value(val1.get<LIST>()) % Value(val2.get<LIST>());
+        }
+        throw InternalException("Error: cannot take remainder of values of type " +
+                                val1.toTypeString() + " and " + val2.toTypeString());
     };
     return Value::binaryOperator(other, errOpWord, op);
 }
 
 Value Value::pow(const Value& other) const {
     std::string errOpWord = "get exponent between";
-    const std::function<Value(Value, Value)> op = [this](Value val1, Value val2) -> Value {
-        
-        if ((val1.is<INT>() || val1.is<FLOAT>()) &&
-            (val2.is<INT>() || val2.is<FLOAT>())) {
-
+    const std::function<Value(Value, Value)> op = [](const Value& val1,
+                                                     const Value& val2) -> Value {
+        if ((val1.is<INT>() || val1.is<FLOAT>()) && (val2.is<INT>() || val2.is<FLOAT>())) {
             return Value(std::pow(((val1.is<INT>()) ? val1.get<INT>() : val1.get<FLOAT>()),
                                   ((val2.is<INT>()) ? val2.get<INT>() : val2.get<FLOAT>())));
-        } else if (val1.is<LIST>() && val2.is<LIST>()) {
-            return Value(val1.get<LIST>()).pow(Value(val2.get<LIST>()));
-        } else {
-            throw InternalException("Error: cannot get exponent between values of type " + val1.toTypeString() + 
-                                    " and " + val2.toTypeString());
         }
+        if (val1.is<LIST>() && val2.is<LIST>()) {
+            return Value(val1.get<LIST>()).pow(Value(val2.get<LIST>()));
+        }
+        throw InternalException("Error: cannot get exponent between values of type " +
+                                val1.toTypeString() + " and " + val2.toTypeString());
     };
     return Value::binaryOperator(other, errOpWord, op);
 }
 
-
-Value Value::binaryOperator(const Value& other, 
-                            std::string errOpWord, 
+Value Value::binaryOperator(const Value& other, const std::string& errOpWord,
                             const std::function<Value(Value, Value)>& op) const {
-
     if ((is<INT>() || is<BOOL>()) && (other.is<INT>() || other.is<BOOL>())) {
-
-        Value::INT val1 = other.is<INT>() ? other.get<INT>() : other.get<BOOL>();
-        Value::INT val2 = is<INT>() ? get<INT>() : get<BOOL>();
-
-        return op(Value(val1),  Value(val2));
-    } else if ((is<FLOAT>()       || is<INT>()       || is<BOOL>()) &&
-               (other.is<FLOAT>() || other.is<INT>() || other.is<BOOL>())) {
-
-        Value::FLOAT val1 = other.is<FLOAT>()
-                                ? other.get<FLOAT>()
-                                : (other.is<INT>() ? other.get<INT>() : other.get<BOOL>());
-        Value::FLOAT val2 = is<FLOAT>() ? get<FLOAT>() : (is<INT>() ? get<INT>() : get<BOOL>());
+        Value::INT val1 = other.is<INT>() ? other.get<INT>() : static_cast<long>(other.get<BOOL>());
+        Value::INT val2 = is<INT>() ? get<INT>() : static_cast<long>(get<BOOL>());
 
         return op(Value(val1), Value(val2));
-    } else if (is<STR>() && other.is<STR>()) {
+    }
+    if ((is<FLOAT>() || is<INT>() || is<BOOL>()) &&
+        (other.is<FLOAT>() || other.is<INT>() || other.is<BOOL>())) {
+        Value::FLOAT val1 = other.is<FLOAT>()
+                                ? other.get<FLOAT>()
+                                : (other.is<INT>() ? other.get<INT>() : static_cast<long>(other.get<BOOL>()));
+        Value::FLOAT val2 = is<FLOAT>() ? get<FLOAT>() : (is<INT>() ? get<INT>() : static_cast<long>(get<BOOL>()));
+
+        return op(Value(val1), Value(val2));
+    }
+    if (is<STR>() && other.is<STR>()) {
         return op(Value(other.get<STR>()), Value(get<STR>()));
-    } else if (is<NONETYPE>() && other.is<NONETYPE>()) {
-        return Value(nullptr); // might need to throw error
-    } else if (is<LIST>() && other.is<LIST>()) {
-        Value::LIST list1 = other.get<LIST>();
+    }
+    if (is<NONETYPE>() && other.is<NONETYPE>()) {
+        return Value(nullptr);  // might need to throw error
+    }
+    if (is<LIST>() && other.is<LIST>()) {
+        const Value::LIST& list1 = other.get<LIST>();
         Value::LIST list2 = get<LIST>();
 
         if (list1->size() != list2->size()) {
@@ -463,68 +495,73 @@ Value Value::binaryOperator(const Value& other,
 
         Value::LIST result = std::make_shared<std::vector<std::shared_ptr<Value>>>();
         for (size_t i = 0; i < list1->size(); ++i) {
-            result->push_back(std::make_shared<Value>(op(Value(*(*list1)[i]), Value(*(*list2)[i]))));
+            result->push_back(
+                std::make_shared<Value>(op(Value(*(*list1)[i]), Value(*(*list2)[i]))));
         }
         return Value(result);
-
-    } else if (is<COLUMN>() && other.is<COLUMN>()) {
+    }
+    if (is<COLUMN>() && other.is<COLUMN>()) {
         Value::COLUMN col1 = get<COLUMN>();
-        Value::COLUMN col2 = other.get<COLUMN>();
+        const Value::COLUMN& col2 = other.get<COLUMN>();
 
         return op(Value(col1->data), Value(col2->data));
-    } else if (is<TABLE>() && other.is<TABLE>()) {
+    }
+    if (is<TABLE>() && other.is<TABLE>()) {
         Value::TABLE resultTable = std::make_shared<std::map<std::string, Value::COLUMN>>();
-        Value::TABLE table1 = other.get<TABLE>();
+        const Value::TABLE& table1 = other.get<TABLE>();
         Value::TABLE table2 = get<TABLE>();
 
         if (table1->size() != table2->size()) {
-            throw InternalException("Error: cannot " + errOpWord + " tables of different sizes\n " 
-                                    + std::to_string(table1->size()) + " != " + std::to_string(table2->size()));
+            throw InternalException("Error: cannot " + errOpWord + " tables of different sizes\n " +
+                                    std::to_string(table1->size()) +
+                                    " != " + std::to_string(table2->size()));
         }
 
         for (const std::pair<const std::string, Value::COLUMN>& entry : *table1) {
             auto result = op(Value(entry.second), Value(table2->at(entry.first)));
             if (result.is<LIST>()) {
-                auto list = result.get<LIST>();
+                const auto& list = result.get<LIST>();
                 Value::insertColInTable(resultTable, entry.first, list);
             }
         }
         return Value(resultTable);
-    } else if (((is<INT>()       || is<BOOL>())       && other.is<STR>()) || 
-               ((other.is<INT>() || other.is<BOOL>()) && is<STR>())) {
-
-        return op(Value(other), Value(*this)); 
-    } else if (((is<INT>()       || is<BOOL>())       && other.is<LIST>()) || 
-               ((other.is<INT>() || other.is<BOOL>()) && is<LIST>())) {
-        return op(Value(other), Value(*this)); 
     }
-    throw InternalException("Error: cannot " + errOpWord  + 
-                            " values of type " + toTypeString() + 
+    if (((is<INT>() || is<BOOL>()) && other.is<STR>()) ||
+        ((other.is<INT>() || other.is<BOOL>()) && is<STR>())) {
+        return op(Value(other), Value(*this));
+    }
+    if (((is<INT>() || is<BOOL>()) && other.is<LIST>()) ||
+        ((other.is<INT>() || other.is<BOOL>()) && is<LIST>())) {
+        return op(Value(other), Value(*this));
+    }
+    throw InternalException("Error: cannot " + errOpWord + " values of type " + toTypeString() +
                             " and " + other.toTypeString());
 }
 
-Value::COLUMN Value::getColumnByHeader(Value::TABLE table, const std::string& header) const {
+Value::COLUMN Value::getColumnByHeader(const Value::TABLE& table, const std::string& header) {
     for (const auto& entry : *table) {
         if (entry.first == header) {
             return entry.second;
         }
     }
-    return nullptr; // Return null if no column with the given header is found
+    return nullptr;  // Return null if no column with the given header is found
 }
 
-bool Value::isSameColumns(Value::TABLE leftTable, Value::TABLE rightTable) const {
+bool Value::isSameColumns(const Value::TABLE& leftTable, const Value::TABLE& rightTable) {
     for (size_t i = 0; i < leftTable->size(); ++i) {
-        const auto& tempEntryLeft = std::next(leftTable->begin(), i); 
-        if (getColumnByHeader(rightTable, tempEntryLeft->first) == nullptr) return false;
+        const auto& tempEntryLeft = std::next(leftTable->begin(), i);
+        if (getColumnByHeader(rightTable, tempEntryLeft->first) == nullptr) {
+            return false;
+        }
     }
     return true;
 }
 
-void Value::insertColInTable(Value::TABLE table, std::string header, Value::LIST list) const {
+void Value::insertColInTable(const Value::TABLE& table, const std::string& header,
+                             Value::LIST list) {
     Value::COLUMN col = std::make_shared<Value::COL_STRUCT>();
     col->header = header;
-    col->data = list; 
+    col->data = std::move(list);
     col->parent = table;
     table->insert({header, col});
 }
-

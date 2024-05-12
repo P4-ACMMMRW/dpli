@@ -5,7 +5,7 @@
 
 class BreakNode : public LeafNode {
    public:
-    BreakNode(std::shared_ptr<AstNode> parent) : LeafNode(std::move(parent)){
+    BreakNode(std::shared_ptr<AstNode> parent) : LeafNode(std::move(parent)) {
         LeafNode::setIsIdentifier(false);
         AstNode::setVal("Break");
     };

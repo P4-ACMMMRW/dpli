@@ -8,13 +8,13 @@
 
 #include "AllNodeIncludes.hpp"
 #include "AstVisitor.hpp"
+#include "BreakValue.hpp"
+#include "ContinueValue.hpp"
 #include "ProcedureTable.hpp"
 #include "ReturnValue.hpp"
 #include "RuntimeException.hpp"
 #include "Value.hpp"
 #include "VariableTable.hpp"
-#include "ContinueValue.hpp"
-#include "BreakValue.hpp"
 
 namespace dplsrc {
 class Evaluator : public AstVisitor {
@@ -74,7 +74,7 @@ class Evaluator : public AstVisitor {
     ProcedureTable ptable = ProcedureTable();
     bool verbose;
 
-    bool isNumeric(Value value) {
+    static bool isNumeric(const Value &value) {
         return value.is<Value::FLOAT>() || value.is<Value::INT>() || value.is<Value::BOOL>();
     }
 
@@ -99,68 +99,69 @@ class Evaluator : public AstVisitor {
 
     /**
      * @return the double representation of the given numeric Value, if not Numeric 0.0.
-    */
-    double getNumericValue(const Value &val);
+     */
+    static double getNumericValue(const Value &val);
 
     /**
      * Executes body of loop taking into account the possibility of break and continue
      * @return true if break encountered, else false.
-    */
+     */
     bool loopBody(std::vector<std::shared_ptr<AstNode>> bodyNodes);
 
     /**
-     * @return true if i'th row of leftTable and j'th row of rightTable intersect (is the same). 
+     * @return true if i'th row of leftTable and j'th row of rightTable intersect (is the same).
      */
-    bool rowsIntersect(const Value::TABLE& leftTable, 
-                       const Value::TABLE& rightTable, 
-                       size_t i, size_t j); 
-    
+    static bool rowsIntersect(const Value::TABLE &leftTable, const Value::TABLE &rightTable,
+                              size_t i, size_t j);
+
     /**
      * Adds the content of the i'th row of the table parameter to the sudo table cols.
      */
-    void addDataToCols(const Value::TABLE& table, 
-                       std::vector<std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>>>& cols, 
-                       size_t i);
+    static void addDataToCols(
+        const Value::TABLE &table,
+        std::vector<std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>>> &cols, size_t i);
 
     /**
-     * Add union of columns to a table, 
+     * Add union of columns to a table,
      * if the first column doesn't exist a corresponding amount of None is addded to the table.
      */
-    void addColUnionToTable(Value::TABLE& table, 
-                            const std::shared_ptr<dplsrc::Value::COL_STRUCT>& col1, 
-                            const std::shared_ptr<dplsrc::Value::COL_STRUCT>& col2, 
-                            const Value::STR& header);
+    static void addColUnionToTable(Value::TABLE &table,
+                                   const std::shared_ptr<dplsrc::Value::COL_STRUCT> &col1,
+                                   const std::shared_ptr<dplsrc::Value::COL_STRUCT> &col2,
+                                   const Value::STR &header);
 
     /**
      * Adds null Values to a Value::List
      */
-    void addNullValuesToList(const std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>>& list, 
-                             size_t size);
+    static void addNullValuesToList(
+        const std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>> &list, size_t size);
 
     /**
      * Adds a list of values to another list of values
      */
-    void addListToList(std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>> srcList, 
-                       std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>> dstList);
+    static void addListToList(
+        const std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>> &srcList,
+        const std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>> &dstList);
 
     /**
      * Inserts a new column into the given table
      */
-    void insertColInTable(Value::TABLE table, std::string header, Value::LIST list);
+    static void insertColInTable(const Value::TABLE &table, const std::string &header,
+                                 Value::LIST list);
 
     /**
      * @param leftTable
      * @param rightTable
      * @return true if the tables have the same columns
      */
-    bool isSameColumns(Value::TABLE leftTable, Value::TABLE rightTable);
+    static bool isSameColumns(const Value::TABLE &leftTable, const Value::TABLE &rightTable);
 
     /**
      * @param leftTable
      * @param rightTable
      * @return a coloumn corresponding to the header in the given table, if no hit nullptr.
      */
-    Value::COLUMN getColumnByHeader(Value::TABLE table, const std::string& header);
+    static Value::COLUMN getColumnByHeader(const Value::TABLE &table, const std::string &header);
 };
 
 }  // namespace dplsrc

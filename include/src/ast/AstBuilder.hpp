@@ -100,7 +100,7 @@ class AstBuilder : public DplParserBaseVisitor {
     antlrcpp::Any binaryExpr(const std::function<std::shared_ptr<AstNode>(size_t)> &createNode,
                              antlr4::ParserRuleContext *parseNode);
 
-    antlrcpp::Any flowStm(tree::TerminalNode* node);
+    antlrcpp::Any flowStm(tree::TerminalNode *node);
 
     static antlr4::Token *getChildToken(antlr4::tree::ParseTree *parseNode, size_t childIndex);
 };

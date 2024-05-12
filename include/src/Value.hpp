@@ -1,14 +1,14 @@
 #ifndef VALUE_HPP
 #define VALUE_HPP
 
+#include <cmath>
+#include <functional>
 #include <map>
 #include <memory>
 #include <stdexcept>
 #include <string>
 #include <variant>
 #include <vector>
-#include <functional>
-#include <cmath>
 
 #include "InternalException.hpp"
 
@@ -62,7 +62,7 @@ class Value {
     std::string toTypeString(bool verbose = false) const;
 
     // Operator overloadings
-        // Bools
+    // Bools
     bool operator==(const Value& other) const;
     bool operator!=(const Value& other) const;
     bool operator<(const Value& other) const;
@@ -70,7 +70,7 @@ class Value {
     bool operator<=(const Value& other) const;
     bool operator>=(const Value& other) const;
 
-        // Arthmetic
+    // Arthmetic
     Value operator+(const Value& other) const;
     Value operator-(const Value& other) const;
     Value operator*(const Value& other) const;
@@ -78,10 +78,9 @@ class Value {
     Value operator%(const Value& other) const;
     Value pow(const Value& other) const;
 
-        // Logical
+    // Logical
     Value operator&&(const Value& other) const;
     Value operator||(const Value& other) const;
-
 
     /**
      * DPL Types
@@ -109,27 +108,26 @@ class Value {
      * @param rightTable
      * @return true if the tables have the same columns
      */
-    bool isSameColumns(Value::TABLE leftTable, Value::TABLE rightTable) const;
+    static bool isSameColumns(const Value::TABLE& leftTable, const Value::TABLE& rightTable);
 
     /**
      * @param leftTable
      * @param rightTable
      * @return a coloumn corresponding to the header in the given table, if no hit nullptr.
      */
-    Value::COLUMN getColumnByHeader(Value::TABLE table, const std::string& header) const;
+    static Value::COLUMN getColumnByHeader(const Value::TABLE& table, const std::string& header);
 
     /**
      * Inserts a new column into the given table
      */
-    void insertColInTable(Value::TABLE table, std::string header, Value::LIST list) const;
+    static void insertColInTable(const Value::TABLE& table, const std::string& header,
+                                 Value::LIST list);
 
     /**
      * @return Value resulting from a binary operator on this and other
      */
-    Value binaryOperator(const Value& other, 
-                         std::string errOpWord,
+    Value binaryOperator(const Value& other, const std::string& errOpWord,
                          const std::function<Value(Value, Value)>& op) const;
-
 };
 }  // namespace dplsrc
 

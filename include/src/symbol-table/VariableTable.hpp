@@ -54,9 +54,8 @@ class VariableTable : public SymbolTable {
     Scope top() {
         if (scopes.empty()) {
             return Scope();
-        } else {
-            return scopes.top();
         }
+        return scopes.top();
     }
 
     /**

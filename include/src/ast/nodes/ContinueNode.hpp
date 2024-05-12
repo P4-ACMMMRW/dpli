@@ -5,7 +5,7 @@
 
 class ContinueNode : public LeafNode {
    public:
-    ContinueNode(std::shared_ptr<AstNode> parent) : LeafNode(std::move(parent)){
+    ContinueNode(std::shared_ptr<AstNode> parent) : LeafNode(std::move(parent)) {
         LeafNode::setIsIdentifier(false);
         AstNode::setVal("Continue");
     };

@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <string>
+#include <utility>
 
 using namespace dplsrc;
 
@@ -19,61 +20,80 @@ void Evaluator::visit(const std::shared_ptr<AndExprNode> &node) {
 
     // Evaluates the value of the expression
     if (leftNode->getVal().is<Value::BOOL>()) {
-        if (rightNode->getVal().is<Value::BOOL>())
-            if (leftNode->getVal().get<Value::BOOL>() == true &&
-            rightNode->getVal().get<Value::BOOL>() == true) 
+        if (rightNode->getVal().is<Value::BOOL>()) {
+            if (leftNode->getVal().get<Value::BOOL>() && rightNode->getVal().get<Value::BOOL>()) {
                 node->setVal(true);
-            else node->setVal(false);
-        else if (rightNode->getVal().is<Value::INT>()) 
-            if (leftNode->getVal().get<Value::BOOL>() == true &&
-            rightNode->getVal().get<Value::INT>() == true)
+            } else {
+                node->setVal(false);
+            }
+        } else if (rightNode->getVal().is<Value::INT>()) {
+            if (leftNode->getVal().get<Value::BOOL>() &&
+                static_cast<bool>(rightNode->getVal().get<Value::INT>())) {
                 node->setVal(true);
-            else node->setVal(false);
-        else if (leftNode->getVal().get<Value::BOOL>() == true &&
-            rightNode->getVal().get<Value::FLOAT>() == true)
+            } else {
+                node->setVal(false);
+            }
+        } else if (leftNode->getVal().get<Value::BOOL>() &&
+                   static_cast<bool>(rightNode->getVal().get<Value::FLOAT>())) {
             node->setVal(true);
-        else if (rightNode->getVal().is<Value::STR>() || rightNode->getVal().is<Value::LIST>())
+        } else if (rightNode->getVal().is<Value::STR>() || rightNode->getVal().is<Value::LIST>()) {
             node->setVal(rightNode->getVal());
-        else node->setVal (false);
+        } else {
+            node->setVal(false);
+        }
     } else if (leftNode->getVal().is<Value::INT>()) {
-        if (rightNode->getVal().is<Value::BOOL>())
-            if (leftNode->getVal().get<Value::INT>() == true &&
-            rightNode->getVal().get<Value::BOOL>() == true) 
+        if (rightNode->getVal().is<Value::BOOL>()) {
+            if (static_cast<bool>(leftNode->getVal().get<Value::INT>()) &&
+                rightNode->getVal().get<Value::BOOL>()) {
                 node->setVal(true);
-            else node->setVal(false);
-        else if (rightNode->getVal().is<Value::INT>()) 
-            if (leftNode->getVal().get<Value::INT>() == true &&
-            rightNode->getVal().get<Value::INT>() == true)
+            } else {
+                node->setVal(false);
+            }
+        } else if (rightNode->getVal().is<Value::INT>()) {
+            if (static_cast<bool>(leftNode->getVal().get<Value::INT>()) &&
+                static_cast<bool>(rightNode->getVal().get<Value::INT>())) {
                 node->setVal(true);
-            else node->setVal(false);
-        else if (leftNode->getVal().get<Value::INT>() == true &&
-            rightNode->getVal().get<Value::FLOAT>() == true)
+            } else {
+                node->setVal(false);
+            }
+        } else if (static_cast<bool>(leftNode->getVal().get<Value::INT>()) &&
+                   static_cast<bool>(rightNode->getVal().get<Value::FLOAT>())) {
             node->setVal(true);
-        else if (rightNode->getVal().is<Value::STR>() || rightNode->getVal().is<Value::LIST>())
+        } else if (rightNode->getVal().is<Value::STR>() || rightNode->getVal().is<Value::LIST>()) {
             node->setVal(rightNode->getVal());
-        else node->setVal (false);
+        } else {
+            node->setVal(false);
+        }
     } else if (leftNode->getVal().is<Value::FLOAT>()) {
-        if (rightNode->getVal().is<Value::BOOL>())
-            if (leftNode->getVal().get<Value::FLOAT>() == true &&
-            rightNode->getVal().get<Value::BOOL>() == true) 
+        if (rightNode->getVal().is<Value::BOOL>()) {
+            if (static_cast<bool>(leftNode->getVal().get<Value::FLOAT>()) &&
+                rightNode->getVal().get<Value::BOOL>()) {
                 node->setVal(true);
-            else node->setVal(false);
-        else if (rightNode->getVal().is<Value::INT>()) 
-            if (leftNode->getVal().get<Value::FLOAT>() == true &&
-            rightNode->getVal().get<Value::INT>() == true)
+            } else {
+                node->setVal(false);
+            }
+        } else if (rightNode->getVal().is<Value::INT>()) {
+            if (static_cast<bool>(leftNode->getVal().get<Value::FLOAT>()) &&
+                static_cast<bool>(rightNode->getVal().get<Value::INT>())) {
                 node->setVal(true);
-            else node->setVal(false);
-        else if (leftNode->getVal().get<Value::FLOAT>() == true &&
-            rightNode->getVal().get<Value::FLOAT>() == true)
+            } else {
+                node->setVal(false);
+            }
+        } else if (static_cast<bool>(leftNode->getVal().get<Value::FLOAT>()) &&
+                   static_cast<bool>(rightNode->getVal().get<Value::FLOAT>())) {
             node->setVal(true);
-        else if (rightNode->getVal().is<Value::STR>() || rightNode->getVal().is<Value::LIST>())
+        } else if (rightNode->getVal().is<Value::STR>() || rightNode->getVal().is<Value::LIST>()) {
             node->setVal(rightNode->getVal());
-        else node->setVal (false);
-    } else if (leftNode->getVal().is<Value::STR>())
+        } else {
+            node->setVal(false);
+        }
+    } else if (leftNode->getVal().is<Value::STR>()) {
         node->setVal(rightNode->getVal());
-    else if (leftNode->getVal().is<Value::LIST>())
+    } else if (leftNode->getVal().is<Value::LIST>()) {
         node->setVal(rightNode->getVal());
-    else RuntimeException("Could not convert string to value of nodes");
+    } else {
+        RuntimeException("Could not convert string to value of nodes");
+    }
 }
 
 void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
@@ -123,7 +143,7 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
         // Get the pointer to the innermost list or column
         Value::LIST list = nullptr;
         Value::INT lastIndex = 0;
-        for (size_t i = indices.size(); i--;) {
+        for (size_t i = indices.size(); (i--) != 0U;) {
             if (val.is<Value::LIST>()) {
                 Value::INT index = indices[i].get<Value::INT>();
                 list = val.getMut<Value::LIST>();
@@ -209,7 +229,7 @@ void Evaluator::visit(const std::shared_ptr<DivExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    node->setVal(rightNode->getVal() / leftNode->getVal()); 
+    node->setVal(rightNode->getVal() / leftNode->getVal());
 }
 
 void Evaluator::visit(const std::shared_ptr<ElseNode> &node) {
@@ -245,7 +265,7 @@ void Evaluator::visit(const std::shared_ptr<ExpoExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    node->setVal(rightNode->getVal().pow(leftNode->getVal())); 
+    node->setVal(rightNode->getVal().pow(leftNode->getVal()));
 }
 
 void Evaluator::visit(const std::shared_ptr<FilterNode> &node) {
@@ -261,7 +281,7 @@ void Evaluator::visit(const std::shared_ptr<FilterNode> &node) {
     if (identifierVal.is<Value::LIST>()) {
         //? is it possible to use on list?
     } else if (identifierVal.is<Value::COLUMN>()) {
-        Value::COLUMN col = identifierVal.get<Value::COLUMN>();
+        const Value::COLUMN &col = identifierVal.get<Value::COLUMN>();
 
         // Map string to operator function
         std::map<std::string, std::function<bool(const Value &, const Value &)>> ops = {
@@ -279,7 +299,9 @@ void Evaluator::visit(const std::shared_ptr<FilterNode> &node) {
         std::vector<Value::INT> indicesToKeep;
         for (size_t i = 0; i < col->data->size(); ++i) {
             Value val = *(*col->data)[i];
-            if (ops[op](val, filterVal)) indicesToKeep.push_back(i);
+            if (ops[op](val, filterVal)) {
+                indicesToKeep.push_back(i);
+            }
         }
 
         // Create new columns with filtered data and insert into new table
@@ -342,7 +364,7 @@ void Evaluator::visit(const std::shared_ptr<HeaderIndexNode> &node) {
 
     Value val = identifierNode->getVal();
     if (val.is<Value::TABLE>()) {
-        Value::TABLE table = val.get<Value::TABLE>();
+        const Value::TABLE &table = val.get<Value::TABLE>();
         Value::STR header = headerNode->getVal().get<Value::STR>();
 
         try {
@@ -366,8 +388,8 @@ void Evaluator::visit(const std::shared_ptr<IfNode> &node) {
         throw RuntimeException("Error: Invalid type.");
     }
 
-    if (Evaluator::getNumericValue(condNode->getVal() == true)) {
-        for (size_t i = 0; i < bodyNodes.size(); ++i) { 
+    if (Evaluator::getNumericValue(condNode->getVal() == true) != 0.0) {
+        for (size_t i = 0; i < bodyNodes.size(); ++i) {
             bodyNodes[i]->accept(shared_from_this());
         }
     } else if (elseNode != 0) {
@@ -402,7 +424,7 @@ void Evaluator::visit(const std::shared_ptr<IndexNode> &node) {
 
         node->setVal(Value::STR{str[index]});
     } else if (val.is<Value::LIST>()) {
-        Value::LIST list = val.get<Value::LIST>();
+        const Value::LIST &list = val.get<Value::LIST>();
 
         if (index < 0 || static_cast<size_t>(index) >= list->size()) {
             throw RuntimeException("Index out of range");
@@ -410,7 +432,7 @@ void Evaluator::visit(const std::shared_ptr<IndexNode> &node) {
 
         node->setVal(*(*list)[index]);
     } else if (val.is<Value::COLUMN>()) {
-        Value::COLUMN col = val.get<Value::COLUMN>();
+        const Value::COLUMN &col = val.get<Value::COLUMN>();
 
         if (index < 0 || static_cast<size_t>(index) >= col->data->size()) {
             throw RuntimeException("Index out of range");
@@ -430,19 +452,21 @@ void Evaluator::visit(const std::shared_ptr<IntersectionExprNode> &node) {
 
     if (!node->getLeftNode()->getVal().is<Value::TABLE>() ||
         !node->getRightNode()->getVal().is<Value::TABLE>()) {
-            throw RuntimeException("Intersection operation only allowed for Table type");
+        throw RuntimeException("Intersection operation only allowed for Table type");
     }
 
     Value::TABLE leftTable = leftNode->getVal().get<Value::TABLE>();
     Value::TABLE rightTable = rightNode->getVal().get<Value::TABLE>();
- 
+
     if (leftTable->size() != rightTable->size()) {
         throw RuntimeException("Tables must have the same number of columns");
     }
 
     Value::TABLE table = std::make_shared<std::map<Value::STR, Value::COLUMN>>();
 
-    if (!isSameColumns(leftTable, rightTable)) throw RuntimeException("Tables doesn't have equivalent headers");
+    if (!isSameColumns(leftTable, rightTable)) {
+        throw RuntimeException("Tables doesn't have equivalent headers");
+    }
 
     size_t size = leftTable->size();
     std::vector<std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>>> cols(size);
@@ -473,7 +497,9 @@ void Evaluator::visit(const std::shared_ptr<IntersectionExprNode> &node) {
 }
 
 void Evaluator::visit(const std::shared_ptr<LeafNode> &node) {
-    if (node->getText() == "<EOF>") return;
+    if (node->getText() == "<EOF>") {
+        return;
+    }
 
     if (node->getIsIdentifier()) {
         try {
@@ -550,7 +576,7 @@ void Evaluator::visit(const std::shared_ptr<MinusExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    node->setVal(rightNode->getVal() - leftNode->getVal()); 
+    node->setVal(rightNode->getVal() - leftNode->getVal());
 }
 
 void Evaluator::visit(const std::shared_ptr<MinusNode> &node) {
@@ -569,22 +595,27 @@ void Evaluator::visit(const std::shared_ptr<MinusNode> &node) {
     } else if (childNode->getVal().is<Value::FLOAT>()) {
         node->setVal(-childNode->getVal().get<Value::FLOAT>());
     } else if (childNode->getVal().is<Value::BOOL>()) {
-        node->setVal(-childNode->getVal().get<Value::BOOL>());
+        node->setVal(-static_cast<int>(childNode->getVal().get<Value::BOOL>()));
     } else if (childNode->getVal().is<Value::COLUMN>()) {
         Value::COLUMN col;
         for (size_t i = 0; i < childNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
-                if ((*(*childNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
-                    *(*col->data)[i] = - (*(*childNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>();
-                else if ((*(*childNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
-                    *(*col->data)[i] = - (*(*childNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>();
-                else if ((*(*childNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
-                    *(*col->data)[i] = - (*(*childNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>();
-                else 
-                    throw RuntimeException ("Cannot divide with columns contained type");   
+            if ((*(*childNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) {
+                *(*col->data)[i] =
+                    -(*(*childNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>();
+            } else if ((*(*childNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>()) {
+                *(*col->data)[i] = -static_cast<int>(
+                    (*(*childNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>());
+            } else if ((*(*childNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>()) {
+                *(*col->data)[i] =
+                    -(*(*childNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>();
+            } else {
+                throw RuntimeException("Cannot divide with columns contained type");
             }
-            node->setVal(col);
-    } else
+        }
+        node->setVal(col);
+    } else {
         throw RuntimeException("Couldn't convert string to value of nodes");
+    }
 }
 
 void Evaluator::visit(const std::shared_ptr<ModExprNode> &node) {
@@ -594,7 +625,7 @@ void Evaluator::visit(const std::shared_ptr<ModExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    node->setVal(rightNode->getVal() % leftNode->getVal()); 
+    node->setVal(rightNode->getVal() % leftNode->getVal());
 }
 
 void Evaluator::visit(const std::shared_ptr<MultExprNode> &node) {
@@ -604,7 +635,7 @@ void Evaluator::visit(const std::shared_ptr<MultExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    node->setVal(rightNode->getVal() * leftNode->getVal()); 
+    node->setVal(rightNode->getVal() * leftNode->getVal());
 }
 
 void Evaluator::visit(const std::shared_ptr<NotEqualExprNode> &node) {
@@ -625,7 +656,7 @@ void Evaluator::visit(const std::shared_ptr<NotEqualExprNode> &node) {
     if (leftNode->getVal().is<Value::INT>()) {
         if (rightNode->getVal().is<Value::BOOL>()) {
             node->setVal(leftNode->getVal().get<Value::INT>() !=
-                         rightNode->getVal().get<Value::BOOL>());
+                         static_cast<long>(rightNode->getVal().get<Value::BOOL>()));
         } else if (rightNode->getVal().is<Value::INT>()) {
             node->setVal(leftNode->getVal().get<Value::INT>() !=
                          rightNode->getVal().get<Value::INT>());
@@ -636,7 +667,7 @@ void Evaluator::visit(const std::shared_ptr<NotEqualExprNode> &node) {
     } else if (leftNode->getVal().is<Value::FLOAT>()) {
         if (rightNode->getVal().is<Value::BOOL>()) {
             node->setVal(leftNode->getVal().get<Value::FLOAT>() !=
-                         rightNode->getVal().get<Value::BOOL>());
+                         static_cast<double>(rightNode->getVal().get<Value::BOOL>()));
         } else if (rightNode->getVal().is<Value::INT>()) {
             node->setVal(leftNode->getVal().get<Value::FLOAT>() !=
                          rightNode->getVal().get<Value::INT>());
@@ -649,16 +680,17 @@ void Evaluator::visit(const std::shared_ptr<NotEqualExprNode> &node) {
             node->setVal(leftNode->getVal().get<Value::BOOL>() !=
                          rightNode->getVal().get<Value::BOOL>());
         } else if (rightNode->getVal().is<Value::INT>()) {
-            node->setVal(leftNode->getVal().get<Value::BOOL>() !=
+            node->setVal(static_cast<long>(leftNode->getVal().get<Value::BOOL>()) !=
                          rightNode->getVal().get<Value::INT>());
         } else {
-            node->setVal(leftNode->getVal().get<Value::BOOL>() !=
+            node->setVal(static_cast<double>(leftNode->getVal().get<Value::BOOL>()) !=
                          rightNode->getVal().get<Value::FLOAT>());
         }
     } else if (leftNode->getVal().is<Value::STR>()) {
         node->setVal(leftNode->getVal().get<Value::STR>() != rightNode->getVal().get<Value::STR>());
-    } else
+    } else {
         throw RuntimeException("Couldn't convert string to value of nodes");
+    }
 }
 
 void Evaluator::visit(const std::shared_ptr<NotNode> &node) {
@@ -672,22 +704,26 @@ void Evaluator::visit(const std::shared_ptr<NotNode> &node) {
 
     // Evaluates the value of the expression
     if (childNode->getVal().is<Value::INT>()) {
-        if (childNode->getVal().get<Value::INT>() != false)
+        if (static_cast<bool>(childNode->getVal().get<Value::INT>())) {
             node->setVal(false);
-        else
+        } else {
             node->setVal(true);
+        }
     } else if (childNode->getVal().is<Value::INT>()) {
-        if (childNode->getVal().get<Value::FLOAT>() != false)
+        if (static_cast<bool>(childNode->getVal().get<Value::FLOAT>())) {
             node->setVal(false);
-        else
+        } else {
             node->setVal(true);
+        }
     } else if (childNode->getVal().is<Value::BOOL>()) {
-        if (childNode->getVal().get<Value::BOOL>() != false)
+        if (childNode->getVal().get<Value::BOOL>()) {
             node->setVal(false);
-        else
+        } else {
             node->setVal(true);
-    } else
+        }
+    } else {
         throw RuntimeException("Couldn't evaluate negation");
+    }
 }
 
 void Evaluator::visit(const std::shared_ptr<OrExprNode> &node) {
@@ -705,61 +741,80 @@ void Evaluator::visit(const std::shared_ptr<OrExprNode> &node) {
     // Evaluates the value of the expression
     // Evaluates the value of the expression
     if (leftNode->getVal().is<Value::BOOL>()) {
-        if (rightNode->getVal().is<Value::BOOL>())
-            if (leftNode->getVal().get<Value::BOOL>() == true ||
-            rightNode->getVal().get<Value::BOOL>() == true) 
+        if (rightNode->getVal().is<Value::BOOL>()) {
+            if (leftNode->getVal().get<Value::BOOL>() || rightNode->getVal().get<Value::BOOL>()) {
                 node->setVal(true);
-            else node->setVal(false);
-        else if (rightNode->getVal().is<Value::INT>()) 
-            if (leftNode->getVal().get<Value::BOOL>() == true ||
-            rightNode->getVal().get<Value::INT>() == true)
+            } else {
+                node->setVal(false);
+            }
+        } else if (rightNode->getVal().is<Value::INT>()) {
+            if (leftNode->getVal().get<Value::BOOL>() ||
+                static_cast<bool>(rightNode->getVal().get<Value::INT>())) {
                 node->setVal(true);
-            else node->setVal(false);
-        else if (leftNode->getVal().get<Value::BOOL>() == true ||
-            rightNode->getVal().get<Value::FLOAT>() == true)
+            } else {
+                node->setVal(false);
+            }
+        } else if (leftNode->getVal().get<Value::BOOL>() ||
+                   static_cast<bool>(rightNode->getVal().get<Value::FLOAT>())) {
             node->setVal(true);
-        else if (rightNode->getVal().is<Value::STR>() || rightNode->getVal().is<Value::LIST>())
+        } else if (rightNode->getVal().is<Value::STR>() || rightNode->getVal().is<Value::LIST>()) {
             node->setVal(leftNode->getVal());
-        else node->setVal (false);
+        } else {
+            node->setVal(false);
+        }
     } else if (leftNode->getVal().is<Value::INT>()) {
-        if (rightNode->getVal().is<Value::BOOL>())
-            if (leftNode->getVal().get<Value::INT>() == true ||
-            rightNode->getVal().get<Value::BOOL>() == true) 
+        if (rightNode->getVal().is<Value::BOOL>()) {
+            if (static_cast<bool>(leftNode->getVal().get<Value::INT>()) ||
+                rightNode->getVal().get<Value::BOOL>()) {
                 node->setVal(true);
-            else node->setVal(false);
-        else if (rightNode->getVal().is<Value::INT>()) 
-            if (leftNode->getVal().get<Value::INT>() == true ||
-            rightNode->getVal().get<Value::INT>() == true)
+            } else {
+                node->setVal(false);
+            }
+        } else if (rightNode->getVal().is<Value::INT>()) {
+            if (static_cast<bool>(leftNode->getVal().get<Value::INT>()) ||
+                static_cast<bool>(rightNode->getVal().get<Value::INT>())) {
                 node->setVal(true);
-            else node->setVal(false);
-        else if (leftNode->getVal().get<Value::INT>() == true ||
-            rightNode->getVal().get<Value::FLOAT>() == true)
+            } else {
+                node->setVal(false);
+            }
+        } else if (static_cast<bool>(leftNode->getVal().get<Value::INT>()) ||
+                   static_cast<bool>(rightNode->getVal().get<Value::FLOAT>())) {
             node->setVal(true);
-        else if (rightNode->getVal().is<Value::STR>() || rightNode->getVal().is<Value::LIST>())
+        } else if (rightNode->getVal().is<Value::STR>() || rightNode->getVal().is<Value::LIST>()) {
             node->setVal(leftNode->getVal());
-        else node->setVal (false);
+        } else {
+            node->setVal(false);
+        }
     } else if (leftNode->getVal().is<Value::FLOAT>()) {
-        if (rightNode->getVal().is<Value::BOOL>())
-            if (leftNode->getVal().get<Value::FLOAT>() == true ||
-            rightNode->getVal().get<Value::BOOL>() == true) 
+        if (rightNode->getVal().is<Value::BOOL>()) {
+            if (static_cast<bool>(leftNode->getVal().get<Value::FLOAT>()) ||
+                rightNode->getVal().get<Value::BOOL>()) {
                 node->setVal(true);
-            else node->setVal(false);
-        else if (rightNode->getVal().is<Value::INT>()) 
-            if (leftNode->getVal().get<Value::FLOAT>() == true ||
-            rightNode->getVal().get<Value::INT>() == true)
+            } else {
+                node->setVal(false);
+            }
+        } else if (rightNode->getVal().is<Value::INT>()) {
+            if (static_cast<bool>(leftNode->getVal().get<Value::FLOAT>()) ||
+                static_cast<bool>(rightNode->getVal().get<Value::INT>())) {
                 node->setVal(true);
-            else node->setVal(false);
-        else if (leftNode->getVal().get<Value::FLOAT>() == true ||
-            rightNode->getVal().get<Value::FLOAT>() == true)
+            } else {
+                node->setVal(false);
+            }
+        } else if (static_cast<bool>(leftNode->getVal().get<Value::FLOAT>()) ||
+                   static_cast<bool>(rightNode->getVal().get<Value::FLOAT>())) {
             node->setVal(true);
-        else if (rightNode->getVal().is<Value::STR>() || rightNode->getVal().is<Value::LIST>())
+        } else if (rightNode->getVal().is<Value::STR>() || rightNode->getVal().is<Value::LIST>()) {
             node->setVal(leftNode->getVal());
-        else node->setVal (false);
-    } else if (leftNode->getVal().is<Value::STR>())
+        } else {
+            node->setVal(false);
+        }
+    } else if (leftNode->getVal().is<Value::STR>()) {
         node->setVal(leftNode->getVal());
-    else if (leftNode->getVal().is<Value::LIST>())
+    } else if (leftNode->getVal().is<Value::LIST>()) {
         node->setVal(leftNode->getVal());
-    else throw RuntimeException("Could not convert string to value of nodes");
+    } else {
+        throw RuntimeException("Could not convert string to value of nodes");
+    }
 }
 
 void Evaluator::visit(const std::shared_ptr<ParNode> &node) {
@@ -775,7 +830,7 @@ void Evaluator::visit(const std::shared_ptr<PlusExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    node->setVal(rightNode->getVal() + leftNode->getVal()); 
+    node->setVal(rightNode->getVal() + leftNode->getVal());
 }
 
 void Evaluator::visit(const std::shared_ptr<PlusNode> &node) {
@@ -797,8 +852,9 @@ void Evaluator::visit(const std::shared_ptr<PlusNode> &node) {
         node->setVal(childNode->getVal().get<Value::BOOL>());
     } else if (childNode->getVal().is<Value::COLUMN>()) {
         node->setVal(childNode->getVal().get<Value::COLUMN>());
-    } else
+    } else {
         throw RuntimeException("Couldn't convert string to value of nodes");
+    }
 }
 
 void Evaluator::visit(const std::shared_ptr<ProcCallNode> &node) {
@@ -929,34 +985,34 @@ void Evaluator::visit(const std::shared_ptr<UnionExprNode> &node) {
 
     if (!node->getLeftNode()->getVal().is<Value::TABLE>() ||
         !node->getRightNode()->getVal().is<Value::TABLE>()) {
-
         throw RuntimeException("Intersection operation only allowed for Table type");
     }
 
     Value::TABLE leftTable = leftNode->getVal().get<Value::TABLE>();
     Value::TABLE rightTable = rightNode->getVal().get<Value::TABLE>();
- 
+
     Value::TABLE table = std::make_shared<std::map<Value::STR, Value::COLUMN>>();
 
-    size_t largestTableSize = (leftTable->size() > rightTable->size()) ? leftTable->size() : rightTable->size();
+    size_t largestTableSize =
+        (leftTable->size() > rightTable->size()) ? leftTable->size() : rightTable->size();
 
     for (size_t i = 0; i < largestTableSize; ++i) {
-        auto leftColPair = (i > leftTable->size())   ? leftTable->end()  : std::next(leftTable->begin(), i);
-        auto rightColPair = (i > rightTable->size()) ? rightTable->end() : std::next(rightTable->begin(), i);
+        auto leftColPair =
+            (i > leftTable->size()) ? leftTable->end() : std::next(leftTable->begin(), i);
+        auto rightColPair =
+            (i > rightTable->size()) ? rightTable->end() : std::next(rightTable->begin(), i);
 
         if (leftColPair == leftTable->end()) {
             auto leftCol = Evaluator::getColumnByHeader(leftTable, rightColPair->first);
             addColUnionToTable(table, leftCol, rightColPair->second, rightColPair->first);
-        }
-        else if (rightColPair == rightTable->end()) {
+        } else if (rightColPair == rightTable->end()) {
             auto rightCol = Evaluator::getColumnByHeader(rightTable, leftColPair->first);
             addColUnionToTable(table, leftColPair->second, rightCol, leftColPair->first);
-        }
-        else if (leftColPair->first == rightColPair->first) {
-            addColUnionToTable(table, leftColPair->second, rightColPair->second, rightColPair->first);
-        }
-        else { 
-            auto leftColMatch  = Evaluator::getColumnByHeader(leftTable, rightColPair->first);
+        } else if (leftColPair->first == rightColPair->first) {
+            addColUnionToTable(table, leftColPair->second, rightColPair->second,
+                               rightColPair->first);
+        } else {
+            auto leftColMatch = Evaluator::getColumnByHeader(leftTable, rightColPair->first);
             auto rightColMatch = Evaluator::getColumnByHeader(rightTable, leftColPair->first);
 
             addColUnionToTable(table, leftColMatch, rightColPair->second, rightColPair->first);
@@ -975,7 +1031,7 @@ void Evaluator::visit(const std::shared_ptr<WhileNode> &node) {
     if (!isNumeric(condNode->getVal())) {
         throw RuntimeException("Invalid type");
     }
-    while(Evaluator::getNumericValue(condNode->getVal())) {
+    while (Evaluator::getNumericValue(condNode->getVal()) != 0.0) {
         if (Evaluator::loopBody(bodyNodes)) {
             break;
         }
@@ -989,11 +1045,12 @@ void Evaluator::initPtable() {
         return nullptr;
     };
 
-    Procedure::ProcType input0 = []([[maybe_unused]] std::vector<std::shared_ptr<AstNode>> args) {
-        std::string inputStr;
-        std::getline(std::cin, inputStr);
-        return inputStr;
-    };
+    Procedure::ProcType input0 =
+        []([[maybe_unused]] const std::vector<std::shared_ptr<AstNode>> &args) {
+            std::string inputStr;
+            std::getline(std::cin, inputStr);
+            return inputStr;
+        };
 
     Procedure::ProcType input1 = [input0](std::vector<std::shared_ptr<AstNode>> args) {
         std::cout << args[0]->getVal().toString();
@@ -1011,9 +1068,10 @@ void Evaluator::initPtable() {
     Procedure::ProcType int1 = [](std::vector<std::shared_ptr<AstNode>> args) {
         if (args[0]->getVal().is<Value::INT>()) {
             return args[0]->getVal().get<Value::INT>();
-        } else if (args[0]->getVal().is<Value::FLOAT>()) {
+        }
+        if (args[0]->getVal().is<Value::FLOAT>()) {
             return static_cast<Value::INT>(args[0]->getVal().get<Value::FLOAT>());
-        } else if (args[0]->getVal().is<Value::BOOL>()) {
+        } if (args[0]->getVal().is<Value::BOOL>()) {
             return static_cast<Value::INT>(args[0]->getVal().get<Value::BOOL>());
         } else if (args[0]->getVal().is<Value::STR>()) {
             try {
@@ -1029,9 +1087,10 @@ void Evaluator::initPtable() {
     Procedure::ProcType float1 = [](std::vector<std::shared_ptr<AstNode>> args) {
         if (args[0]->getVal().is<Value::INT>()) {
             return static_cast<Value::FLOAT>(args[0]->getVal().get<Value::INT>());
-        } else if (args[0]->getVal().is<Value::FLOAT>()) {
+        }
+        if (args[0]->getVal().is<Value::FLOAT>()) {
             return args[0]->getVal().get<Value::FLOAT>();
-        } else if (args[0]->getVal().is<Value::BOOL>()) {
+        } if (args[0]->getVal().is<Value::BOOL>()) {
             return static_cast<Value::FLOAT>(args[0]->getVal().get<Value::BOOL>());
         } else if (args[0]->getVal().is<Value::STR>()) {
             try {
@@ -1047,9 +1106,10 @@ void Evaluator::initPtable() {
     Procedure::ProcType bool1 = [](std::vector<std::shared_ptr<AstNode>> args) {
         if (args[0]->getVal().is<Value::INT>()) {
             return static_cast<Value::BOOL>(args[0]->getVal().get<Value::INT>());
-        } else if (args[0]->getVal().is<Value::FLOAT>()) {
+        }
+        if (args[0]->getVal().is<Value::FLOAT>()) {
             return static_cast<Value::BOOL>(args[0]->getVal().get<Value::FLOAT>());
-        } else if (args[0]->getVal().is<Value::BOOL>()) {
+        } if (args[0]->getVal().is<Value::BOOL>()) {
             return args[0]->getVal().get<Value::BOOL>();
         }
 
@@ -1061,9 +1121,10 @@ void Evaluator::initPtable() {
 
         if (val.is<Value::STR>()) {
             return static_cast<Value::INT>(val.get<Value::STR>().size());
-        } else if (val.is<Value::LIST>()) {
+        }
+        if (val.is<Value::LIST>()) {
             return static_cast<Value::INT>(val.get<Value::LIST>()->size());
-        } else if (val.is<Value::TABLE>()) {
+        } if (val.is<Value::TABLE>()) {
             return static_cast<Value::INT>(val.get<Value::TABLE>()->size());
         } else if (val.is<Value::COLUMN>()) {
             return static_cast<Value::INT>(val.get<Value::COLUMN>()->data->size());
@@ -1109,7 +1170,8 @@ void Evaluator::initPtable() {
         Value val = args[0]->getVal();
         if (val.is<Value::LIST>()) {
             return Value(copyList(val.get<Value::LIST>()));
-        } else if (val.is<Value::TABLE>()) {
+        }
+        if (val.is<Value::TABLE>()) {
             return Value(copyTable(val.get<Value::TABLE>()));
         }
 
@@ -1228,7 +1290,7 @@ void Evaluator::initPtable() {
                     if (i >= values.size() || values[i].empty()) {
                         cols[i]->data->emplace_back(std::make_shared<Value>(nullptr));
                     } else {
-                        Value::LIST dataTypes = dataTypesVal.get<Value::LIST>();
+                        const Value::LIST &dataTypes = dataTypesVal.get<Value::LIST>();
                         if (dataTypes->empty()) {
                             cols[i]->data->emplace_back(std::make_shared<Value>(values[i]));
                         } else {
@@ -1270,7 +1332,7 @@ void Evaluator::initPtable() {
                         // While the hash is already in headers vector we make a new one to avoid
                         // collision
                         size_t j = i;
-                        while (std::count(headers.begin(), headers.end(), hashStr)) {
+                        while (std::count(headers.begin(), headers.end(), hashStr) != 0) {
                             ++j;
                             hashStr = "id" + std::to_string(hash(j));
                         }
@@ -1401,17 +1463,16 @@ void Evaluator::initPtable() {
     ptable.bind(Procedure("writeTable", {"filename", "table", "delimiter"}, writeTable3));
 }
 
-bool Evaluator::rowsIntersect(const Value::TABLE& leftTable, 
-                              const Value::TABLE& rightTable, 
+bool Evaluator::rowsIntersect(const Value::TABLE &leftTable, const Value::TABLE &rightTable,
                               size_t i, size_t j) {
     for (size_t l = 0; l < leftTable->size(); ++l) {
         auto leftMap = std::next(leftTable->begin(), l);
         auto rightCol = Evaluator::getColumnByHeader(rightTable, leftMap->first);
 
-        auto leftData = (*leftMap->second->data)[i]; 
-        auto rightData = (*rightCol->data)[j]; 
+        auto leftData = (*leftMap->second->data)[i];
+        auto rightData = (*rightCol->data)[j];
 
-        if (*leftData != *rightData) { 
+        if (*leftData != *rightData) {
             return false;
         }
     }
@@ -1422,20 +1483,18 @@ double Evaluator::getNumericValue(const Value &val) {
     if (val.is<Value::BOOL>()) {
         return static_cast<double>(val.get<Value::BOOL>());
     }
-    else if (val.is<Value::INT>()) {
+    if (val.is<Value::INT>()) {
         return static_cast<double>(val.get<Value::INT>());
-    }
-    else if (val.is<Value::FLOAT>()) {
+    } if (val.is<Value::FLOAT>()) {
         return val.get<Value::FLOAT>();
-    }
-    else {
+    } else {
         return 0.0;
     }
 }
 
 bool Evaluator::loopBody(std::vector<std::shared_ptr<AstNode>> bodyNodes) {
     bool breakFromLoop = false;
-    for (size_t i = 0; i < bodyNodes.size(); ++i) { 
+    for (size_t i = 0; i < bodyNodes.size(); ++i) {
         try {
             bodyNodes[i]->accept(shared_from_this());
         } catch (const ContinueValue &e) {
@@ -1448,38 +1507,39 @@ bool Evaluator::loopBody(std::vector<std::shared_ptr<AstNode>> bodyNodes) {
     return breakFromLoop;
 }
 
-void Evaluator::addDataToCols(const Value::TABLE& table, 
-                              std::vector<std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>>>& cols, 
-                              size_t i) {
+void Evaluator::addDataToCols(
+    const Value::TABLE &table,
+    std::vector<std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>>> &cols, size_t i) {
     for (size_t l = 0; l < table->size(); ++l) {
         auto leftMap = std::next(table->begin(), l);
         auto leftData = (*leftMap->second->data)[i];
-        cols[l]->emplace_back(leftData); 
+        cols[l]->emplace_back(leftData);
     }
 }
 
-Value::COLUMN Evaluator::getColumnByHeader(Value::TABLE table, const std::string& header) {
-    for (const auto& entry : *table) {
+Value::COLUMN Evaluator::getColumnByHeader(const Value::TABLE &table, const std::string &header) {
+    for (const auto &entry : *table) {
         if (entry.first == header) {
             return entry.second;
         }
     }
-    return nullptr; // Return null if no column with the given header is found
+    return nullptr;  // Return null if no column with the given header is found
 }
 
-bool Evaluator::isSameColumns(Value::TABLE leftTable, Value::TABLE rightTable) {
+bool Evaluator::isSameColumns(const Value::TABLE &leftTable, const Value::TABLE &rightTable) {
     for (size_t i = 0; i < leftTable->size(); ++i) {
-        const auto& tempEntryLeft = std::next(leftTable->begin(), i); 
-        if (getColumnByHeader(rightTable, tempEntryLeft->first) == nullptr) return false;
+        const auto &tempEntryLeft = std::next(leftTable->begin(), i);
+        if (getColumnByHeader(rightTable, tempEntryLeft->first) == nullptr) {
+            return false;
+        }
     }
     return true;
 }
 
-void Evaluator::addColUnionToTable(Value::TABLE& table, 
-                                   const std::shared_ptr<dplsrc::Value::COL_STRUCT>& col1, 
-                                   const std::shared_ptr<dplsrc::Value::COL_STRUCT>& col2, 
-                                   const Value::STR& header) {
-
+void Evaluator::addColUnionToTable(Value::TABLE &table,
+                                   const std::shared_ptr<dplsrc::Value::COL_STRUCT> &col1,
+                                   const std::shared_ptr<dplsrc::Value::COL_STRUCT> &col2,
+                                   const Value::STR &header) {
     auto tempList = std::make_shared<std::vector<std::shared_ptr<dplsrc::Value>>>();
 
     if (col1 == nullptr) {
@@ -1497,25 +1557,25 @@ void Evaluator::addColUnionToTable(Value::TABLE& table,
     Evaluator::insertColInTable(table, header, tempList);
 }
 
-void Evaluator::addNullValuesToList(const std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>>& list, 
-                                        size_t size) {
-
+void Evaluator::addNullValuesToList(
+    const std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>> &list, size_t size) {
     for (size_t j = 0; j < size; ++j) {
         list->push_back(std::make_shared<Value>(nullptr));
     }
 }
 
-void Evaluator::insertColInTable(Value::TABLE table, std::string header, Value::LIST list) {
+void Evaluator::insertColInTable(const Value::TABLE &table, const std::string &header,
+                                 Value::LIST list) {
     Value::COLUMN col = std::make_shared<Value::COL_STRUCT>();
     col->header = header;
-    col->data = list; 
+    col->data = std::move(list);
     col->parent = table;
     table->insert({header, col});
 }
 
-void Evaluator::addListToList(std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>> srcList, 
-                              std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>> dstList) {
-
+void Evaluator::addListToList(
+    const std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>> &srcList,
+    const std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>> &dstList) {
     for (size_t i = 0; i < srcList->size(); ++i) {
         dstList->push_back(srcList->at(i));
     }
@@ -1535,7 +1595,7 @@ Value::LIST Evaluator::copyList(const Value::LIST &list) {
 
         if (valPtr->is<Value::LIST>()) {
             Value::LIST nestedList = std::make_shared<std::vector<std::shared_ptr<Value>>>();
-            for (std::shared_ptr<Value> nestedVal : *valPtr->get<Value::LIST>()) {
+            for (const std::shared_ptr<Value> &nestedVal : *valPtr->get<Value::LIST>()) {
                 stack.push({nestedList, nestedVal});
             }
             currentList->emplace_back(std::make_shared<Value>(nestedList));

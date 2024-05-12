@@ -3,6 +3,7 @@
 
 #include <AstNode.hpp>
 #include <ChildNode.hpp>
+#include <utility>
 
 class BinaryNode : public AstNode {
    public:
@@ -30,8 +31,8 @@ class BinaryNode : public AstNode {
     std::shared_ptr<ChildNode> rightNode;
 
    protected:
-    void setLeftNode(std::shared_ptr<AstNode> child) { leftNode->addChild(child); };
-    void setRightNode(std::shared_ptr<AstNode> child) { rightNode->addChild(child); };
+    void setLeftNode(std::shared_ptr<AstNode> child) { leftNode->addChild(std::move(child)); };
+    void setRightNode(std::shared_ptr<AstNode> child) { rightNode->addChild(std::move(child)); };
 };
 
 #endif

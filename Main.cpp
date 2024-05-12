@@ -92,7 +92,7 @@ int main(int argc, char **argv) {
     parser.addErrorListener(parserErrorListener.get());
     std::shared_ptr<ANTLRErrorStrategy> strategy = std::make_shared<DplErrorStrategy>();
     parser.setErrorHandler(strategy);
-    tree::ParseTree *tree;
+    tree::ParseTree *tree = nullptr;
 
     try {
         tree = parser.prog();

@@ -4,11 +4,12 @@
 #include <exception>
 
 namespace dplsrc {
-    // Not really a exception just abusing try/catch mechanism, and therefore does not derive from DplException
-    class ContinueValue : public std::exception {
-            public:
-                ContinueValue() {}
-    };
-}
+// Not really a exception just abusing try/catch mechanism, and therefore does not derive from
+// DplException
+class ContinueValue : public std::exception {
+   public:
+    ContinueValue() {}
+};
+}  // namespace dplsrc
 
 #endif

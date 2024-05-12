@@ -19,7 +19,7 @@ class ProcedureTable : public SymbolTable {
      * @param arity The arity of the procedure to look up
      * @return A pointer to the procedure
      */
-    Procedure *lookup(const std::string &name, const int arity);
+    Procedure *lookup(const std::string &name, int arity);
 
     /**
      * Prints the state of the table to stdout
