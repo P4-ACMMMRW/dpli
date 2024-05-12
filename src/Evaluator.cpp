@@ -12,19 +12,68 @@ void Evaluator::visit(const std::shared_ptr<AndExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    if (!leftNode->getVal().is<Value::BOOL>() || !rightNode->getVal().is<Value::BOOL>()) {
+    if (leftNode->getVal().is<Value::COLUMN>() || rightNode->getVal().is<Value::COLUMN>()) {
+        // TODO: move to error handler at some point
         throw RuntimeException("Cannot do logical and with the used types");
     }
 
     // Evaluates the value of the expression
     if (leftNode->getVal().is<Value::BOOL>()) {
-        if (leftNode->getVal().get<Value::BOOL>() == true &&
-            rightNode->getVal().get<Value::BOOL>() == true)
+        if (rightNode->getVal().is<Value::BOOL>())
+            if (leftNode->getVal().get<Value::BOOL>() == true &&
+            rightNode->getVal().get<Value::BOOL>() == true) 
+                node->setVal(true);
+            else node->setVal(false);
+        else if (rightNode->getVal().is<Value::INT>()) 
+            if (leftNode->getVal().get<Value::BOOL>() == true &&
+            rightNode->getVal().get<Value::INT>() == true)
+                node->setVal(true);
+            else node->setVal(false);
+        else if (leftNode->getVal().get<Value::BOOL>() == true &&
+            rightNode->getVal().get<Value::FLOAT>() == true)
             node->setVal(true);
-        else
-            node->setVal(false);
-    } else
-        throw RuntimeException("Could not convert string to value of nodes");
+        else if (rightNode->getVal().is<Value::STR>() || rightNode->getVal().is<Value::LIST>())
+            node->setVal(rightNode->getVal());
+        else node->setVal (false);
+    } else if (leftNode->getVal().is<Value::INT>()) {
+        if (rightNode->getVal().is<Value::BOOL>())
+            if (leftNode->getVal().get<Value::INT>() == true &&
+            rightNode->getVal().get<Value::BOOL>() == true) 
+                node->setVal(true);
+            else node->setVal(false);
+        else if (rightNode->getVal().is<Value::INT>()) 
+            if (leftNode->getVal().get<Value::INT>() == true &&
+            rightNode->getVal().get<Value::INT>() == true)
+                node->setVal(true);
+            else node->setVal(false);
+        else if (leftNode->getVal().get<Value::INT>() == true &&
+            rightNode->getVal().get<Value::FLOAT>() == true)
+            node->setVal(true);
+        else if (rightNode->getVal().is<Value::STR>() || rightNode->getVal().is<Value::LIST>())
+            node->setVal(rightNode->getVal());
+        else node->setVal (false);
+    } else if (leftNode->getVal().is<Value::FLOAT>()) {
+        if (rightNode->getVal().is<Value::BOOL>())
+            if (leftNode->getVal().get<Value::FLOAT>() == true &&
+            rightNode->getVal().get<Value::BOOL>() == true) 
+                node->setVal(true);
+            else node->setVal(false);
+        else if (rightNode->getVal().is<Value::INT>()) 
+            if (leftNode->getVal().get<Value::FLOAT>() == true &&
+            rightNode->getVal().get<Value::INT>() == true)
+                node->setVal(true);
+            else node->setVal(false);
+        else if (leftNode->getVal().get<Value::FLOAT>() == true &&
+            rightNode->getVal().get<Value::FLOAT>() == true)
+            node->setVal(true);
+        else if (rightNode->getVal().is<Value::STR>() || rightNode->getVal().is<Value::LIST>())
+            node->setVal(rightNode->getVal());
+        else node->setVal (false);
+    } else if (leftNode->getVal().is<Value::STR>())
+        node->setVal(rightNode->getVal());
+    else if (leftNode->getVal().is<Value::LIST>())
+        node->setVal(rightNode->getVal());
+    else RuntimeException("Could not convert string to value of nodes");
 }
 
 void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
@@ -160,70 +209,7 @@ void Evaluator::visit(const std::shared_ptr<DivExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()))) {
-        throw RuntimeException("Cannot divide with the types");
-    }
-
-    // Divide with 0 check
-    if (rightNode->getVal().is<Value::INT>()) {
-        if (rightNode->getVal().get<Value::INT>() == 0) {
-            throw RuntimeException("Cannot divide with 0");
-        }
-    } else if (rightNode->getVal().is<Value::FLOAT>()) {
-        if (rightNode->getVal().get<Value::FLOAT>() == 0) {
-            throw RuntimeException("Cannot divide with 0");
-        }
-    } else if (rightNode->getVal().get<Value::BOOL>() == 0) {
-        throw RuntimeException("Cannot divide with 0");
-    }
-
-    // Evaluates the value of the expression
-    if (leftNode->getVal().is<Value::INT>()) {
-        if (rightNode->getVal().is<Value::BOOL>()) {
-            node->setVal(static_cast<double>(leftNode->getVal().get<Value::INT>()) /
-                         rightNode->getVal().get<Value::BOOL>());
-        } else if (rightNode->getVal().is<Value::INT>()) {
-            node->setVal(static_cast<double>(leftNode->getVal().get<Value::INT>()) /
-                         rightNode->getVal().get<Value::INT>());
-        } else {
-            node->setVal(static_cast<double>(leftNode->getVal().get<Value::INT>()) /
-                         rightNode->getVal().get<Value::FLOAT>());
-        }
-    } else if (leftNode->getVal().is<Value::FLOAT>()) {
-        if (rightNode->getVal().is<Value::BOOL>()) {
-            node->setVal(leftNode->getVal().get<Value::FLOAT>() /
-                         rightNode->getVal().get<Value::BOOL>());
-        } else if (rightNode->getVal().is<Value::INT>()) {
-            node->setVal(leftNode->getVal().get<Value::FLOAT>() /
-                         rightNode->getVal().get<Value::INT>());
-        } else {
-            node->setVal(leftNode->getVal().get<Value::FLOAT>() /
-                         rightNode->getVal().get<Value::FLOAT>());
-        }
-    } else if (leftNode->getVal().is<Value::BOOL>()) {
-        if (rightNode->getVal().is<Value::BOOL>()) {
-            node->setVal(static_cast<double>(leftNode->getVal().get<Value::BOOL>()) /
-                         rightNode->getVal().get<Value::BOOL>());
-        } else if (rightNode->getVal().is<Value::INT>()) {
-            node->setVal(static_cast<double>(leftNode->getVal().get<Value::BOOL>()) /
-                         rightNode->getVal().get<Value::INT>());
-        } else {
-            node->setVal(static_cast<double>(leftNode->getVal().get<Value::BOOL>()) /
-                         rightNode->getVal().get<Value::FLOAT>());
-        }
-    } else if (leftNode->getVal().is<Value::BOOL>()) {
-        if (rightNode->getVal().is<Value::BOOL>()) {
-            node->setVal(static_cast<double>(leftNode->getVal().get<Value::BOOL>()) /
-                         rightNode->getVal().get<Value::BOOL>());
-        } else if (rightNode->getVal().is<Value::INT>()) {
-            node->setVal(static_cast<double>(leftNode->getVal().get<Value::BOOL>()) /
-                         rightNode->getVal().get<Value::INT>());
-        } else {
-            node->setVal(static_cast<double>(leftNode->getVal().get<Value::BOOL>()) /
-                         rightNode->getVal().get<Value::FLOAT>());
-        }
-    } else
-        throw RuntimeException("Could not convert string to value of nodes");
+    node->setVal(rightNode->getVal() / leftNode->getVal()); 
 }
 
 void Evaluator::visit(const std::shared_ptr<ElseNode> &node) {
@@ -259,60 +245,7 @@ void Evaluator::visit(const std::shared_ptr<ExpoExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()))) {
-        throw RuntimeException("Cannot multiply with the used types");
-    }
-
-    // Evaluates the value of the expression
-
-    if (leftNode->getVal().is<Value::INT>()) {
-        if (rightNode->getVal().is<Value::BOOL>()) {
-            node->setVal(std::pow(leftNode->getVal().get<Value::INT>(),
-                                  rightNode->getVal().get<Value::BOOL>()));
-        } else if (rightNode->getVal().is<Value::INT>()) {
-            if (rightNode->getVal().get<Value::INT>() >= 0) {
-                node->setVal(static_cast<Value::INT>(std::pow(
-                    leftNode->getVal().get<Value::INT>(), rightNode->getVal().get<Value::INT>())));
-            } else {
-                node->setVal(std::pow(leftNode->getVal().get<Value::INT>(),
-                                      rightNode->getVal().get<Value::INT>()));
-            }
-        } else {
-            node->setVal(std::pow(leftNode->getVal().get<Value::INT>(),
-                                  rightNode->getVal().get<Value::FLOAT>()));
-        }
-    } else if (leftNode->getVal().is<Value::BOOL>()) {
-        if (rightNode->getVal().is<Value::BOOL>()) {
-            node->setVal(std::pow(leftNode->getVal().get<Value::INT>(),
-                                  rightNode->getVal().get<Value::BOOL>()));
-        } else if (rightNode->getVal().is<Value::INT>()) {
-            if (rightNode->getVal().get<Value::INT>() >= 0) {
-                node->setVal((int)round(std::pow(leftNode->getVal().get<Value::INT>(),
-                                                 rightNode->getVal().get<Value::INT>())));
-            } else {
-                node->setVal(std::pow(leftNode->getVal().get<Value::INT>(),
-                                      rightNode->getVal().get<Value::INT>()));
-            }
-        } else
-            std::pow(leftNode->getVal().get<Value::INT>(), rightNode->getVal().get<Value::FLOAT>());
-    } else if (leftNode->getVal().is<Value::FLOAT>()) {
-        if (rightNode->getVal().is<Value::BOOL>()) {
-            node->setVal(std::pow(leftNode->getVal().get<Value::INT>(),
-                                  rightNode->getVal().get<Value::BOOL>()));
-        } else if (rightNode->getVal().is<Value::INT>()) {
-            if (rightNode->getVal().get<Value::INT>() >= 0) {
-                node->setVal((int)round(std::pow(leftNode->getVal().get<Value::INT>(),
-                                                 rightNode->getVal().get<Value::INT>())));
-            } else {
-                node->setVal(std::pow(leftNode->getVal().get<Value::INT>(),
-                                      rightNode->getVal().get<Value::INT>()));
-            }
-        } else {
-            node->setVal(std::pow(leftNode->getVal().get<Value::INT>(),
-                                  rightNode->getVal().get<Value::FLOAT>()));
-        }
-    } else
-        throw RuntimeException("Could not convert string to value of nodes");
+    node->setVal(rightNode->getVal().pow(leftNode->getVal())); 
 }
 
 void Evaluator::visit(const std::shared_ptr<FilterNode> &node) {
@@ -617,46 +550,7 @@ void Evaluator::visit(const std::shared_ptr<MinusExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()))) {
-        throw RuntimeException("Cannot do substraction with the used types");
-    }
-
-    // Evaluates the value of the expression
-    if (leftNode->getVal().is<Value::INT>()) {
-        if (rightNode->getVal().is<Value::BOOL>()) {
-            node->setVal(leftNode->getVal().get<Value::INT>() -
-                         rightNode->getVal().get<Value::BOOL>());
-        } else if (rightNode->getVal().is<Value::INT>()) {
-            node->setVal(leftNode->getVal().get<Value::INT>() -
-                         rightNode->getVal().get<Value::INT>());
-        } else {
-            node->setVal(leftNode->getVal().get<Value::INT>() -
-                         rightNode->getVal().get<Value::FLOAT>());
-        }
-    } else if (leftNode->getVal().is<Value::FLOAT>()) {
-        if (rightNode->getVal().is<Value::BOOL>()) {
-            node->setVal(leftNode->getVal().get<Value::FLOAT>() -
-                         rightNode->getVal().get<Value::BOOL>());
-        } else if (rightNode->getVal().is<Value::INT>()) {
-            node->setVal(leftNode->getVal().get<Value::FLOAT>() -
-                         rightNode->getVal().get<Value::INT>());
-        } else {
-            node->setVal(leftNode->getVal().get<Value::FLOAT>() -
-                         rightNode->getVal().get<Value::FLOAT>());
-        }
-    } else if (leftNode->getVal().is<Value::BOOL>()) {
-        if (rightNode->getVal().is<Value::BOOL>()) {
-            node->setVal(leftNode->getVal().get<Value::BOOL>() -
-                         rightNode->getVal().get<Value::BOOL>());
-        } else if (rightNode->getVal().is<Value::INT>()) {
-            node->setVal(leftNode->getVal().get<Value::BOOL>() -
-                         rightNode->getVal().get<Value::INT>());
-        } else {
-            node->setVal(leftNode->getVal().get<Value::BOOL>() -
-                         rightNode->getVal().get<Value::FLOAT>());
-        }
-    } else
-        throw RuntimeException("Couldn't convert string to value of nodes");
+    node->setVal(rightNode->getVal() - leftNode->getVal()); 
 }
 
 void Evaluator::visit(const std::shared_ptr<MinusNode> &node) {
@@ -664,7 +558,8 @@ void Evaluator::visit(const std::shared_ptr<MinusNode> &node) {
     std::shared_ptr<AstNode> childNode = node->getChildNode();
     childNode->accept(shared_from_this());
 
-    if (!isNumeric(childNode->getVal())) {
+    if (!(isNumeric(childNode->getVal()) || childNode->getVal().is<Value::COLUMN>())) {
+        // TODO: move to error handler at some point
         throw RuntimeException("Cannot do substraction with the used type");
     }
 
@@ -675,6 +570,19 @@ void Evaluator::visit(const std::shared_ptr<MinusNode> &node) {
         node->setVal(-childNode->getVal().get<Value::FLOAT>());
     } else if (childNode->getVal().is<Value::BOOL>()) {
         node->setVal(-childNode->getVal().get<Value::BOOL>());
+    } else if (childNode->getVal().is<Value::COLUMN>()) {
+        Value::COLUMN col;
+        for (size_t i = 0; i < childNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
+                if ((*(*childNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) 
+                    *(*col->data)[i] = - (*(*childNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>();
+                else if ((*(*childNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>())
+                    *(*col->data)[i] = - (*(*childNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>();
+                else if ((*(*childNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>())
+                    *(*col->data)[i] = - (*(*childNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>();
+                else 
+                    throw RuntimeException ("Cannot divide with columns contained type");   
+            }
+            node->setVal(col);
     } else
         throw RuntimeException("Couldn't convert string to value of nodes");
 }
@@ -686,47 +594,7 @@ void Evaluator::visit(const std::shared_ptr<ModExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    if (!(isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal()))) {
-        throw RuntimeException("Cannot do modulo with the used types");
-    }
-
-    // Evaluates the value of the expression
-    if (leftNode->getVal().is<Value::INT>()) {
-        if (rightNode->getVal().is<Value::BOOL>()) {
-            node->setVal(leftNode->getVal().get<Value::INT>() %
-                         rightNode->getVal().get<Value::BOOL>());
-        } else if (rightNode->getVal().is<Value::INT>()) {
-            node->setVal(leftNode->getVal().get<Value::INT>() %
-                         rightNode->getVal().get<Value::INT>());
-        } else {
-            node->setVal(fmod(leftNode->getVal().get<Value::INT>(),
-                              rightNode->getVal().get<Value::FLOAT>()));
-        }
-    } else if (leftNode->getVal().is<Value::FLOAT>()) {
-        if (rightNode->getVal().is<Value::BOOL>()) {
-            node->setVal(fmod(leftNode->getVal().get<Value::FLOAT>(),
-                              rightNode->getVal().get<Value::BOOL>()));
-        } else if (rightNode->getVal().is<Value::INT>()) {
-            node->setVal(fmod(leftNode->getVal().get<Value::FLOAT>(),
-                              rightNode->getVal().get<Value::INT>()));
-        } else {
-            node->setVal(fmod(leftNode->getVal().get<Value::FLOAT>(),
-                              rightNode->getVal().get<Value::BOOL>()));
-        }
-    } else if (leftNode->getVal().is<Value::BOOL>()) {
-        if (rightNode->getVal().is<Value::BOOL>()) {
-            node->setVal(leftNode->getVal().get<Value::BOOL>() %
-                         rightNode->getVal().get<Value::BOOL>());
-        } else if (rightNode->getVal().is<Value::INT>()) {
-            node->setVal(leftNode->getVal().get<Value::BOOL>() %
-                         rightNode->getVal().get<Value::INT>());
-        } else {
-            node->setVal(fmod(leftNode->getVal().get<Value::BOOL>(),
-                              rightNode->getVal().get<Value::FLOAT>()));
-        }
-    } else {
-        throw RuntimeException("Couldn't convert string to value of nodes");
-    }
+    node->setVal(rightNode->getVal() % leftNode->getVal()); 
 }
 
 void Evaluator::visit(const std::shared_ptr<MultExprNode> &node) {
@@ -736,71 +604,7 @@ void Evaluator::visit(const std::shared_ptr<MultExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    if (!((isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal())) ||
-          (leftNode->getVal().is<Value::INT>() && rightNode->getVal().is<Value::STR>()) ||
-          (leftNode->getVal().is<Value::STR>() && rightNode->getVal().is<Value::INT>()) ||
-          (leftNode->getVal().is<Value::STR>() && rightNode->getVal().is<Value::BOOL>()) ||
-          (leftNode->getVal().is<Value::BOOL>() && rightNode->getVal().is<Value::STR>()))) {
-        throw RuntimeException("Cannot multiply with the used types");
-    }
-
-    // Evaluates the value of the expression
-    if (leftNode->getVal().is<Value::INT>()) {
-        if (rightNode->getVal().is<Value::BOOL>()) {
-            node->setVal(leftNode->getVal().get<Value::INT>() *
-                         rightNode->getVal().get<Value::BOOL>());
-        } else if (rightNode->getVal().is<Value::INT>()) {
-            node->setVal(leftNode->getVal().get<Value::INT>() *
-                         rightNode->getVal().get<Value::INT>());
-        } else if (rightNode->getVal().is<Value::FLOAT>()) {
-            node->setVal(leftNode->getVal().get<Value::INT>() *
-                         rightNode->getVal().get<Value::FLOAT>());
-        } else {
-            node->setVal("");
-            for (Value::INT i = 0; i < leftNode->getVal().get<Value::INT>(); i++)
-                node->setVal(node->getVal().get<Value::STR>() +
-                             rightNode->getVal().get<Value::STR>());
-        }
-    } else if (leftNode->getVal().is<Value::FLOAT>()) {
-        if (rightNode->getVal().is<Value::BOOL>()) {
-            node->setVal(leftNode->getVal().get<Value::FLOAT>() *
-                         rightNode->getVal().get<Value::BOOL>());
-        } else if (rightNode->getVal().is<Value::INT>()) {
-            node->setVal(leftNode->getVal().get<Value::FLOAT>() *
-                         rightNode->getVal().get<Value::INT>());
-        } else {
-            node->setVal(leftNode->getVal().get<Value::FLOAT>() *
-                         rightNode->getVal().get<Value::FLOAT>());
-        }
-    } else if (leftNode->getVal().is<Value::BOOL>()) {
-        if (rightNode->getVal().is<Value::BOOL>()) {
-            node->setVal(leftNode->getVal().get<Value::BOOL>() *
-                         rightNode->getVal().get<Value::BOOL>());
-        } else if (rightNode->getVal().is<Value::INT>()) {
-            node->setVal(leftNode->getVal().get<Value::BOOL>() *
-                         rightNode->getVal().get<Value::INT>());
-        } else if (rightNode->getVal().is<Value::FLOAT>()) {
-            node->setVal(leftNode->getVal().get<Value::BOOL>() *
-                         rightNode->getVal().get<Value::FLOAT>());
-        } else {
-            node->setVal("");
-            for (size_t i = 0; i < leftNode->getVal().get<Value::BOOL>(); i++)
-                node->setVal(node->getVal().get<Value::STR>() +
-                             rightNode->getVal().get<Value::STR>());
-        }
-    } else if (leftNode->getVal().is<Value::STR>()) {
-        node->setVal("");
-        if (rightNode->getVal().is<Value::INT>()) {
-            for (Value::INT i = 0; i < rightNode->getVal().get<Value::INT>(); i++)
-                node->setVal(node->getVal().get<Value::STR>() +
-                             leftNode->getVal().get<Value::STR>());
-        } else {
-            for (size_t i = 0; i < rightNode->getVal().get<Value::BOOL>(); i++)
-                node->setVal(node->getVal().get<Value::STR>() +
-                             leftNode->getVal().get<Value::STR>());
-        }
-    } else
-        throw RuntimeException("Couldn't convert string to value of nodes");
+    node->setVal(rightNode->getVal() * leftNode->getVal()); 
 }
 
 void Evaluator::visit(const std::shared_ptr<NotEqualExprNode> &node) {
@@ -893,16 +697,69 @@ void Evaluator::visit(const std::shared_ptr<OrExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    if (!leftNode->getVal().is<Value::BOOL>() || !rightNode->getVal().is<Value::BOOL>()) {
+    if (leftNode->getVal().is<Value::COLUMN>() || rightNode->getVal().is<Value::COLUMN>()) {
+        // TODO: move to error handler at some point
         throw RuntimeException("Cannot do logical or with the used types");
     }
 
     // Evaluates the value of the expression
-    if (leftNode->getVal().get<Value::BOOL>() == true ||
-        rightNode->getVal().get<Value::BOOL>() == true)
-        node->setVal(true);
-    else
-        node->setVal(false);
+    // Evaluates the value of the expression
+    if (leftNode->getVal().is<Value::BOOL>()) {
+        if (rightNode->getVal().is<Value::BOOL>())
+            if (leftNode->getVal().get<Value::BOOL>() == true ||
+            rightNode->getVal().get<Value::BOOL>() == true) 
+                node->setVal(true);
+            else node->setVal(false);
+        else if (rightNode->getVal().is<Value::INT>()) 
+            if (leftNode->getVal().get<Value::BOOL>() == true ||
+            rightNode->getVal().get<Value::INT>() == true)
+                node->setVal(true);
+            else node->setVal(false);
+        else if (leftNode->getVal().get<Value::BOOL>() == true ||
+            rightNode->getVal().get<Value::FLOAT>() == true)
+            node->setVal(true);
+        else if (rightNode->getVal().is<Value::STR>() || rightNode->getVal().is<Value::LIST>())
+            node->setVal(leftNode->getVal());
+        else node->setVal (false);
+    } else if (leftNode->getVal().is<Value::INT>()) {
+        if (rightNode->getVal().is<Value::BOOL>())
+            if (leftNode->getVal().get<Value::INT>() == true ||
+            rightNode->getVal().get<Value::BOOL>() == true) 
+                node->setVal(true);
+            else node->setVal(false);
+        else if (rightNode->getVal().is<Value::INT>()) 
+            if (leftNode->getVal().get<Value::INT>() == true ||
+            rightNode->getVal().get<Value::INT>() == true)
+                node->setVal(true);
+            else node->setVal(false);
+        else if (leftNode->getVal().get<Value::INT>() == true ||
+            rightNode->getVal().get<Value::FLOAT>() == true)
+            node->setVal(true);
+        else if (rightNode->getVal().is<Value::STR>() || rightNode->getVal().is<Value::LIST>())
+            node->setVal(leftNode->getVal());
+        else node->setVal (false);
+    } else if (leftNode->getVal().is<Value::FLOAT>()) {
+        if (rightNode->getVal().is<Value::BOOL>())
+            if (leftNode->getVal().get<Value::FLOAT>() == true ||
+            rightNode->getVal().get<Value::BOOL>() == true) 
+                node->setVal(true);
+            else node->setVal(false);
+        else if (rightNode->getVal().is<Value::INT>()) 
+            if (leftNode->getVal().get<Value::FLOAT>() == true ||
+            rightNode->getVal().get<Value::INT>() == true)
+                node->setVal(true);
+            else node->setVal(false);
+        else if (leftNode->getVal().get<Value::FLOAT>() == true ||
+            rightNode->getVal().get<Value::FLOAT>() == true)
+            node->setVal(true);
+        else if (rightNode->getVal().is<Value::STR>() || rightNode->getVal().is<Value::LIST>())
+            node->setVal(leftNode->getVal());
+        else node->setVal (false);
+    } else if (leftNode->getVal().is<Value::STR>())
+        node->setVal(leftNode->getVal());
+    else if (leftNode->getVal().is<Value::LIST>())
+        node->setVal(leftNode->getVal());
+    else throw RuntimeException("Could not convert string to value of nodes");
 }
 
 void Evaluator::visit(const std::shared_ptr<ParNode> &node) {
@@ -918,49 +775,7 @@ void Evaluator::visit(const std::shared_ptr<PlusExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    if (!((isNumeric(leftNode->getVal()) && isNumeric(rightNode->getVal())) ||
-          (leftNode->getVal().is<Value::STR>() && rightNode->getVal().is<Value::STR>()))) {
-        throw RuntimeException("Cannot do addition with the used types");
-    }
-
-    // Evaluates the value of the expression
-    if (leftNode->getVal().is<Value::INT>()) {
-        if (rightNode->getVal().is<Value::BOOL>()) {
-            node->setVal(leftNode->getVal().get<Value::INT>() +
-                         rightNode->getVal().get<Value::BOOL>());
-        } else if (rightNode->getVal().is<Value::INT>()) {
-            node->setVal(leftNode->getVal().get<Value::INT>() +
-                         rightNode->getVal().get<Value::INT>());
-        } else {
-            node->setVal(leftNode->getVal().get<Value::INT>() +
-                         rightNode->getVal().get<Value::FLOAT>());
-        }
-    } else if (leftNode->getVal().is<Value::FLOAT>()) {
-        if (rightNode->getVal().is<Value::BOOL>()) {
-            node->setVal(leftNode->getVal().get<Value::FLOAT>() +
-                         rightNode->getVal().get<Value::BOOL>());
-        } else if (rightNode->getVal().is<Value::INT>()) {
-            node->setVal(leftNode->getVal().get<Value::FLOAT>() +
-                         rightNode->getVal().get<Value::INT>());
-        } else {
-            node->setVal(leftNode->getVal().get<Value::FLOAT>() +
-                         rightNode->getVal().get<Value::FLOAT>());
-        }
-    } else if (leftNode->getVal().is<Value::BOOL>()) {
-        if (rightNode->getVal().is<Value::BOOL>()) {
-            node->setVal(leftNode->getVal().get<Value::BOOL>() +
-                         rightNode->getVal().get<Value::BOOL>());
-        } else if (rightNode->getVal().is<Value::INT>()) {
-            node->setVal(leftNode->getVal().get<Value::BOOL>() +
-                         rightNode->getVal().get<Value::INT>());
-        } else {
-            node->setVal(leftNode->getVal().get<Value::BOOL>() +
-                         rightNode->getVal().get<Value::FLOAT>());
-        }
-    } else if (leftNode->getVal().is<Value::STR>()) {
-        node->setVal(leftNode->getVal().get<Value::STR>() + rightNode->getVal().get<Value::STR>());
-    } else
-        throw RuntimeException("Couldn't convert string to value of nodes");
+    node->setVal(rightNode->getVal() + leftNode->getVal()); 
 }
 
 void Evaluator::visit(const std::shared_ptr<PlusNode> &node) {
@@ -968,7 +783,8 @@ void Evaluator::visit(const std::shared_ptr<PlusNode> &node) {
     std::shared_ptr<AstNode> childNode = node->getChildNode();
     childNode->accept(shared_from_this());
 
-    if (!isNumeric(childNode->getVal())) {
+    if (!isNumeric(childNode->getVal()) && !childNode->getVal().is<Value::COLUMN>()) {
+        // TODO: move to error handler at some point
         throw RuntimeException("Cannot use unary plus with the used type");
     }
 
@@ -979,6 +795,8 @@ void Evaluator::visit(const std::shared_ptr<PlusNode> &node) {
         node->setVal(childNode->getVal().get<Value::FLOAT>());
     } else if (childNode->getVal().is<Value::BOOL>()) {
         node->setVal(childNode->getVal().get<Value::BOOL>());
+    } else if (childNode->getVal().is<Value::COLUMN>()) {
+        node->setVal(childNode->getVal().get<Value::COLUMN>());
     } else
         throw RuntimeException("Couldn't convert string to value of nodes");
 }
@@ -1630,7 +1448,6 @@ bool Evaluator::loopBody(std::vector<std::shared_ptr<AstNode>> bodyNodes) {
     return breakFromLoop;
 }
 
-
 void Evaluator::addDataToCols(const Value::TABLE& table, 
                               std::vector<std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>>>& cols, 
                               size_t i) {
@@ -1703,8 +1520,6 @@ void Evaluator::addListToList(std::shared_ptr<std::vector<std::shared_ptr<dplsrc
         dstList->push_back(srcList->at(i));
     }
 }
-
-
 
 Value::LIST Evaluator::copyList(const Value::LIST &list) {
     Value::LIST copiedList = std::make_shared<std::vector<std::shared_ptr<Value>>>();

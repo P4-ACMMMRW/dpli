@@ -141,7 +141,7 @@ class Evaluator : public AstVisitor {
      * Adds a list of values to another list of values
      */
     void addListToList(std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>> srcList, 
-                   std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>> dstList);
+                       std::shared_ptr<std::vector<std::shared_ptr<dplsrc::Value>>> dstList);
 
     /**
      * Inserts a new column into the given table

@@ -7,6 +7,8 @@
 #include <string>
 #include <variant>
 #include <vector>
+#include <functional>
+#include <cmath>
 
 #include "InternalException.hpp"
 
@@ -60,12 +62,26 @@ class Value {
     std::string toTypeString(bool verbose = false) const;
 
     // Operator overloadings
+        // Bools
     bool operator==(const Value& other) const;
     bool operator!=(const Value& other) const;
     bool operator<(const Value& other) const;
     bool operator>(const Value& other) const;
     bool operator<=(const Value& other) const;
     bool operator>=(const Value& other) const;
+
+        // Arthmetic
+    Value operator+(const Value& other) const;
+    Value operator-(const Value& other) const;
+    Value operator*(const Value& other) const;
+    Value operator/(const Value& other) const;
+    Value operator%(const Value& other) const;
+    Value pow(const Value& other) const;
+
+        // Logical
+    Value operator&&(const Value& other) const;
+    Value operator||(const Value& other) const;
+
 
     /**
      * DPL Types
@@ -87,6 +103,33 @@ class Value {
 
    private:
     mutable std::variant<INT, FLOAT, STR, BOOL, NONETYPE, LIST, TABLE, COLUMN> innerValue;
+
+    /**
+     * @param leftTable
+     * @param rightTable
+     * @return true if the tables have the same columns
+     */
+    bool isSameColumns(Value::TABLE leftTable, Value::TABLE rightTable) const;
+
+    /**
+     * @param leftTable
+     * @param rightTable
+     * @return a coloumn corresponding to the header in the given table, if no hit nullptr.
+     */
+    Value::COLUMN getColumnByHeader(Value::TABLE table, const std::string& header) const;
+
+    /**
+     * Inserts a new column into the given table
+     */
+    void insertColInTable(Value::TABLE table, std::string header, Value::LIST list) const;
+
+    /**
+     * @return Value resulting from a binary operator on this and other
+     */
+    Value binaryOperator(const Value& other, 
+                         std::string errOpWord,
+                         const std::function<Value(Value, Value)>& op) const;
+
 };
 }  // namespace dplsrc
 
