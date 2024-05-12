@@ -171,8 +171,11 @@ void TestingUtil::testEval(std::string testFileName, std::vector<std::pair<std::
 
         if (actualValue != expectedVal) {
             FAIL("Variable " + acutalVariable->getId() + 
-                 " is of type: "  + actualValue.toTypeString() + " and value: "  + actualValue.toString() + 
-                 "\nNot the expected type: "  + expectedVal.toTypeString() + " and expected value: " + expectedVal.toString());
+                 " is of type: "  + actualValue.toTypeString() + 
+                 " and value:          " + actualValue.toString() + 
+
+                 "\nNot the expected type: " + expectedVal.toTypeString() + 
+                 " and expected value: " + expectedVal.toString());
         }
     }
 }
