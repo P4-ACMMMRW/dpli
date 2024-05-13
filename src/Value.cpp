@@ -528,6 +528,14 @@ Value Value::operator-() const {
     if (is<BOOL>()) {
         return Value(!get<BOOL>());
     }
+    if (is<COLUMN>()) {
+        Value::COLUMN col = get<COLUMN>();
+        Value::LIST result = std::make_shared<std::vector<std::shared_ptr<Value>>>();
+        for (const std::shared_ptr<Value>& elem : *col->data) {
+            result->push_back(std::make_shared<Value>(-(*elem)));
+        }
+        return Value(result);
+    }
 
     throw InternalException("Cannot negate value of type " + toTypeString());
 }
@@ -643,8 +651,15 @@ Value Value::binaryOperator(const Value& other, const std::string& errOpWord,
         }
         return Value(result);
     }
-    //if ()
-    // implement value times column
+    if ((is<COLUMN>()       && (other.isNumeric() || other.is<STR>())) ||
+        (other.is<COLUMN>() && (isNumeric()       || is<STR>()))) {
+        const Value::LIST& list1 = get<COLUMN>()->data;
+        Value::LIST result = std::make_shared<std::vector<std::shared_ptr<Value>>>();
+        for (const std::shared_ptr<Value>& elem : *list1) {
+            result->push_back(std::make_shared<Value>(op(Value(*elem), other)));
+        }
+        return Value(result);
+    }
     throw InternalException("Cannot " + errOpWord + " values of type " + toTypeString() +
                             " and " + other.toTypeString());
 }

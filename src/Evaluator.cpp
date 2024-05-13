@@ -515,32 +515,7 @@ void Evaluator::visit(const std::shared_ptr<MinusNode> &node) {
     }
 
     // Evaluates the value of the expression
-    if (childNode->getVal().is<Value::INT>()) {
-        node->setVal(-childNode->getVal().get<Value::INT>());
-    } else if (childNode->getVal().is<Value::FLOAT>()) {
-        node->setVal(-childNode->getVal().get<Value::FLOAT>());
-    } else if (childNode->getVal().is<Value::BOOL>()) {
-        node->setVal(-static_cast<int>(childNode->getVal().get<Value::BOOL>()));
-    } else if (childNode->getVal().is<Value::COLUMN>()) {
-        Value::COLUMN col;
-        for (size_t i = 0; i < childNode->getVal().get<Value::COLUMN>()->data->size(); i++) {
-            if ((*(*childNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::INT>()) {
-                *(*col->data)[i] =
-                    -(*(*childNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::INT>();
-            } else if ((*(*childNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::BOOL>()) {
-                *(*col->data)[i] = -static_cast<int>(
-                    (*(*childNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::BOOL>());
-            } else if ((*(*childNode->getVal().get<Value::COLUMN>()->data)[i]).is<Value::FLOAT>()) {
-                *(*col->data)[i] =
-                    -(*(*childNode->getVal().get<Value::COLUMN>()->data)[i]).get<Value::FLOAT>();
-            } else {
-                throw RuntimeException("Cannot divide with columns contained type");
-            }
-        }
-        node->setVal(col);
-    } else {
-        throw RuntimeException("Couldn't convert string to value of nodes");
-    }
+    node->setVal(-childNode->getVal());
 }
 
 void Evaluator::visit(const std::shared_ptr<ModExprNode> &node) {
@@ -633,27 +608,9 @@ void Evaluator::visit(const std::shared_ptr<PlusExprNode> &node) {
 }
 
 void Evaluator::visit(const std::shared_ptr<PlusNode> &node) {
-    // Get left and right node
     std::shared_ptr<AstNode> childNode = node->getChildNode();
     childNode->accept(shared_from_this());
-
-    if (!(childNode->getVal().isNumeric()) && !childNode->getVal().is<Value::COLUMN>()) {
-        // TODO: move to error handler at some point
-        throw RuntimeException("Cannot use unary plus with the used type");
-    }
-
-    // Evaluates the value of the expression
-    if (childNode->getVal().is<Value::INT>()) {
-        node->setVal(childNode->getVal().get<Value::INT>());
-    } else if (childNode->getVal().is<Value::FLOAT>()) {
-        node->setVal(childNode->getVal().get<Value::FLOAT>());
-    } else if (childNode->getVal().is<Value::BOOL>()) {
-        node->setVal(childNode->getVal().get<Value::BOOL>());
-    } else if (childNode->getVal().is<Value::COLUMN>()) {
-        node->setVal(childNode->getVal().get<Value::COLUMN>());
-    } else {
-        throw RuntimeException("Couldn't convert string to value of nodes");
-    }
+    node->setVal(childNode->getVal()); // temp fix until PlusNode deleted
 }
 
 void Evaluator::visit(const std::shared_ptr<ProcCallNode> &node) {
