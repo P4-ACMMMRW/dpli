@@ -74,10 +74,6 @@ class Evaluator : public AstVisitor {
     ProcedureTable ptable = ProcedureTable();
     bool verbose;
 
-    static bool isNumeric(const Value &value) {
-        return value.is<Value::FLOAT>() || value.is<Value::INT>() || value.is<Value::BOOL>();
-    }
-
     /**
      * Initializes the procedures from the standard library of the language
      */
@@ -96,11 +92,6 @@ class Evaluator : public AstVisitor {
      * @return the copied table
      */
     Value::TABLE copyTable(const Value::TABLE &table);
-
-    /**
-     * @return the double representation of the given numeric Value, if not Numeric 0.0.
-     */
-    static double getNumericValue(const Value &val);
 
     /**
      * Executes body of loop taking into account the possibility of break and continue

@@ -51,6 +51,19 @@ class Value {
     }
 
     /**
+     * @return true if the value is a number
+     */
+    bool isNumeric() const {
+        return is<Value::FLOAT>() || is<Value::INT>() || is<Value::BOOL>();
+    }
+
+     /**
+     * @return the double representation of the  numeric Value, if not Numeric 0.0.
+     */
+    double getNumericValue() const;
+
+
+    /**
      * @return String representation of value
      */
     std::string toString() const;

@@ -9,4 +9,5 @@ test.dpl
 coverage.info
 base.info
 test.info
+tab.csv
 coverage/
