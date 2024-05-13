@@ -75,15 +75,21 @@ class Value {
     std::string toTypeString(bool verbose = false) const;
 
     // Operator overloadings
-    // Bools
+        // Bools
+            // Binary
     bool operator==(const Value& other) const;
     bool operator!=(const Value& other) const;
     bool operator<(const Value& other) const;
     bool operator>(const Value& other) const;
     bool operator<=(const Value& other) const;
     bool operator>=(const Value& other) const;
+            
+            // Unary
+    bool operator!() const;
 
-    // Arthmetic
+
+        // Arthmetic
+            // Binary
     Value operator+(const Value& other) const;
     Value operator-(const Value& other) const;
     Value operator*(const Value& other) const;
@@ -91,7 +97,10 @@ class Value {
     Value operator%(const Value& other) const;
     Value pow(const Value& other) const;
 
-    // Logical
+            // Unary
+    Value operator-() const;
+
+        // Logical
     Value operator&&(const Value& other) const;
     Value operator||(const Value& other) const;
 

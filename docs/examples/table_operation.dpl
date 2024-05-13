@@ -1,0 +1,8 @@
+# Replaces missing values in area column with the product of width and height
+t1 = { "width": [1, 2, 3], "height": [4, 5, 6], "area": [None, 10,   None]}
+t2 = { "width": [3, 4, 3], "height": [7, 8, 6], "area": [None, None, None]}
+
+t3 = t1 union t2
+
+t4 = t1 intersection t2
+

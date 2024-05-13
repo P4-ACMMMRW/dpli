@@ -305,6 +305,23 @@ bool Value::operator<=(const Value& other) const { return *this < other || *this
 
 bool Value::operator>=(const Value& other) const { return *this > other || *this == other; }
 
+bool Value::operator!() const {
+    if (is<INT>() || is<FLOAT>()) {
+        return get<INT>() != 0;
+    }
+    if (is<BOOL>()) {
+        return !get<BOOL>();
+    }
+    if (is<STR>()) {
+        return !get<STR>().empty();
+    }
+    if (is<LIST>()) {
+        return !get<LIST>()->empty();
+    }
+
+    throw InternalException("Can not use NOT on this type");
+}
+
 Value Value::operator+(const Value& other) const {
     std::string errOpWord = "add";
 
@@ -501,6 +518,19 @@ Value Value::pow(const Value& other) const {
     return Value::binaryOperator(other, errOpWord, op);
 }
 
+Value Value::operator-() const {
+    if (is<INT>()) {
+        return Value(-get<INT>());
+    }
+    if (is<FLOAT>()) {
+        return Value(-get<FLOAT>());
+    }
+    if (is<BOOL>()) {
+        return Value(!get<BOOL>());
+    }
+
+    throw InternalException("Cannot negate value of type " + toTypeString());
+}
 
 Value Value::operator&&(const Value& other) const {
     std::string errOpWord = "perform logical AND between";
@@ -613,6 +643,8 @@ Value Value::binaryOperator(const Value& other, const std::string& errOpWord,
         }
         return Value(result);
     }
+    //if ()
+    // implement value times column
     throw InternalException("Cannot " + errOpWord + " values of type " + toTypeString() +
                             " and " + other.toTypeString());
 }
