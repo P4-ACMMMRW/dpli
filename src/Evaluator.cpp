@@ -203,9 +203,7 @@ void Evaluator::visit(const std::shared_ptr<FilterNode> &node) {
     Value identifierVal = identifierNode->getVal();
     Value filterVal = filterNode->getVal();
 
-    if (identifierVal.is<Value::LIST>()) {
-        //? is it possible to use on list?
-    } else if (identifierVal.is<Value::COLUMN>()) {
+    if (identifierVal.is<Value::COLUMN>()) {
         const Value::COLUMN &col = identifierVal.get<Value::COLUMN>();
 
         // Map string to operator function
