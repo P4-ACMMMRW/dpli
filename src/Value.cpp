@@ -307,16 +307,16 @@ bool Value::operator>=(const Value& other) const { return *this > other || *this
 
 bool Value::operator!() const {
     if (is<INT>() || is<FLOAT>()) {
-        return get<INT>() != 0;
+        return get<INT>() == 0; // not 0 == true
     }
     if (is<BOOL>()) {
-        return !get<BOOL>();
+        return !get<BOOL>(); // not False == True
     }
     if (is<STR>()) {
-        return !get<STR>().empty();
+        return get<STR>().empty(); // not "" == true
     }
     if (is<LIST>()) {
-        return !get<LIST>()->empty();
+        return get<LIST>()->empty(); // not [] == true
     }
 
     throw InternalException("Can not use NOT on this type");

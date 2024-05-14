@@ -167,9 +167,6 @@ void Evaluator::visit(const std::shared_ptr<EqualExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    bool numeric = leftNode->getVal().isNumeric() && rightNode->getVal().isNumeric();
-    bool string = leftNode->getVal().is<Value::STR>() && rightNode->getVal().is<Value::STR>();
-
     // Evaluates the value of the expression
     node->setVal(leftNode->getVal() == rightNode->getVal());
 }
