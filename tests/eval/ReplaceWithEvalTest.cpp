@@ -5,7 +5,9 @@ using namespace dplgrammar;
 
 EVAL_TEST("replace_with.dpl") {
     std::vector<std::pair<std::string, dplsrc::Value>> expectedVarVec;
-    
+    std::vector<std::string> expectedOutputLines;
+
+    expectedOutputLines.push_back("{ \'area\': [4, 18], \'height\': [4, 6], \'width\': [1, 3] }");
 
     //                      
     //               TABLE 1
@@ -106,5 +108,5 @@ EVAL_TEST("replace_with.dpl") {
     expectedVarVec.push_back({"t2", dplsrc::Value(table2)});
     expectedVarVec.push_back({"t3", dplsrc::Value(columnT3Area)});
 
-    dplutil::TestingUtil::testEval("replace_with.dpl", expectedVarVec);
+    dplutil::TestingUtil::testEval("replace_with.dpl", expectedVarVec, expectedOutputLines);
 }

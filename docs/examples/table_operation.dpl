@@ -4,5 +4,8 @@ t2 = { "width": [3, 4, 3], "height": [7, 8, 6], "area": [None, None, None]}
 
 t3 = t1 union t2
 
+print(t3)
+
 t4 = t1 intersection t2
 
+print(t4)

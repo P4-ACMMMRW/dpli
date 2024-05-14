@@ -5,6 +5,13 @@ using namespace dplgrammar;
 
 EVAL_TEST("table_operation.dpl") {
     std::vector<std::pair<std::string, dplsrc::Value>> expectedVarVec;
+    std::vector<std::string> expectedOutputLines;
+    
+
+    expectedOutputLines.push_back("{ \'area\': [None, 10, None, None, None, None], \'height\': [4, 5, 6, 7, 8, 6], \'width\': [1, 2, 3, 3, 4, 3] }");
+    expectedOutputLines.push_back("{ \'area\': [None], \'height\': [6], \'width\': [3] }");
+
+
     
 
     //                      
@@ -192,5 +199,5 @@ EVAL_TEST("table_operation.dpl") {
     expectedVarVec.push_back({"t4", dplsrc::Value(table4)});
 
 
-    dplutil::TestingUtil::testEval("table_operation.dpl", expectedVarVec);
+    dplutil::TestingUtil::testEval("table_operation.dpl", expectedVarVec, expectedOutputLines);
 }

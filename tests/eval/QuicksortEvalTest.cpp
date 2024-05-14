@@ -5,6 +5,9 @@ using namespace dplgrammar;
 
 EVAL_TEST("quicksort.dpl") {
     std::vector<std::pair<std::string, dplsrc::Value>> expectedVarVec;
+    std::vector<std::string> expectedOutputLines;
+
+    expectedOutputLines.push_back("Sorted list: [1, 1, 2, 3, 3, 4, 5, 5, 5, 6, 9]");
 
     dplsrc::Value::LIST list = std::make_shared<std::vector<std::shared_ptr<dplsrc::Value>>>();
 
@@ -22,5 +25,5 @@ EVAL_TEST("quicksort.dpl") {
 
     expectedVarVec.push_back(std::make_pair("A", list));
 
-    dplutil::TestingUtil::testEval("quicksort.dpl", expectedVarVec);
+    dplutil::TestingUtil::testEval("quicksort.dpl", expectedVarVec, expectedOutputLines);
 }

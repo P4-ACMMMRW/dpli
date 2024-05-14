@@ -203,52 +203,49 @@ void Evaluator::visit(const std::shared_ptr<FilterNode> &node) {
     Value identifierVal = identifierNode->getVal();
     Value filterVal = filterNode->getVal();
 
-    if (identifierVal.is<Value::LIST>()) {
-        //? is it possible to use on list?
-    } else if (identifierVal.is<Value::COLUMN>()) {
-        const Value::COLUMN &col = identifierVal.get<Value::COLUMN>();
-
-        // Map string to operator function
-        std::map<std::string, std::function<bool(const Value &, const Value &)>> ops = {
-            {"<", [](const Value &a, const Value &b) { return a < b; }},
-            {">", [](const Value &a, const Value &b) { return a > b; }},
-            {"==", [](const Value &a, const Value &b) { return a == b; }},
-            {"!=", [](const Value &a, const Value &b) { return a != b; }},
-            {">=", [](const Value &a, const Value &b) { return a >= b; }},
-            {"<=", [](const Value &a, const Value &b) { return a <= b; }},
-        };
-
-        std::string op = node->getText();
-
-        // Compute indices to keep
-        std::vector<Value::INT> indicesToKeep;
-        for (size_t i = 0; i < col->data->size(); ++i) {
-            Value val = *(*col->data)[i];
-            if (ops[op](val, filterVal)) {
-                indicesToKeep.push_back(i);
-            }
-        }
-
-        // Create new columns with filtered data and insert into new table
-        Value::TABLE table = col->parent;
-        Value::TABLE newTable = std::make_shared<std::map<Value::STR, Value::COLUMN>>();
-        for (const std::pair<const Value::STR, Value::COLUMN> &entry : *table) {
-            Value::LIST newData = std::make_shared<std::vector<std::shared_ptr<Value>>>();
-            for (Value::INT index : indicesToKeep) {
-                newData->emplace_back((*entry.second->data)[index]);
-            }
-
-            Value::COLUMN newCol = std::make_shared<Value::COL_STRUCT>();
-            newCol->parent = newTable;
-            newCol->header = entry.first;
-            newCol->data = newData;
-            newTable->insert({entry.first, newCol});
-        }
-
-        node->setVal(newTable);
-    } else {
+    if (!identifierVal.is<Value::COLUMN>()) {
         throw RuntimeException("Filter operation not allowed for this type");
     }
+    const Value::COLUMN &col = identifierVal.get<Value::COLUMN>();
+
+    // Map string to operator function
+    std::map<std::string, std::function<bool(const Value &, const Value &)>> ops = {
+        {"<", [](const Value &a, const Value &b) { return a < b; }},
+        {">", [](const Value &a, const Value &b) { return a > b; }},
+        {"==", [](const Value &a, const Value &b) { return a == b; }},
+        {"!=", [](const Value &a, const Value &b) { return a != b; }},
+        {">=", [](const Value &a, const Value &b) { return a >= b; }},
+        {"<=", [](const Value &a, const Value &b) { return a <= b; }},
+    };
+
+    std::string op = node->getText();
+
+    // Compute indices to keep
+    std::vector<Value::INT> indicesToKeep;
+    for (size_t i = 0; i < col->data->size(); ++i) {
+        Value val = *(*col->data)[i];
+        if (ops[op](val, filterVal)) {
+            indicesToKeep.push_back(i);
+        }
+    }
+
+    // Create new columns with filtered data and insert into new table
+    Value::TABLE table = col->parent;
+    Value::TABLE newTable = std::make_shared<std::map<Value::STR, Value::COLUMN>>();
+    for (const std::pair<const Value::STR, Value::COLUMN> &entry : *table) {
+        Value::LIST newData = std::make_shared<std::vector<std::shared_ptr<Value>>>();
+        for (Value::INT index : indicesToKeep) {
+            newData->emplace_back((*entry.second->data)[index]);
+        }
+
+        Value::COLUMN newCol = std::make_shared<Value::COL_STRUCT>();
+        newCol->parent = newTable;
+        newCol->header = entry.first;
+        newCol->data = newData;
+        newTable->insert({entry.first, newCol});
+    }
+
+    node->setVal(newTable);
 }
 
 void Evaluator::visit(const std::shared_ptr<GreaterEqualExprNode> &node) {
@@ -784,7 +781,7 @@ void Evaluator::visit(const std::shared_ptr<WhileNode> &node) {
 
     condNode->accept(shared_from_this());
 
-    if (!(condNode->getVal().isNumeric())) {
+    if (!(condNode->getVal().isNumeric())) { // should probably be changed to bool cuz string and list shouldalso work
         throw RuntimeException("Invalid type");
     }
     while (condNode->getVal().getNumericValue() != 0.0) {

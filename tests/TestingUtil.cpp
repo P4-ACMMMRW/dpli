@@ -115,7 +115,10 @@ void TestingUtil::testAst(std::string testFileName, std::vector<size_t> expected
     root->accept(visitor);
 }
 
-void TestingUtil::testEval(std::string testFileName, std::vector<std::pair<std::string, dplsrc::Value>> expectedVarVec) {
+void TestingUtil::testEval(std::string testFileName, 
+                           std::vector<std::pair<std::string, dplsrc::Value>> expectedVarVec,
+                           std::vector<std::string> expectedOutputLines) {
+
     std::string filePath = std::filesystem::path(std::string{exampleLocation} + testFileName).string();
 
     if (!std::filesystem::exists(filePath)) {
@@ -149,11 +152,16 @@ void TestingUtil::testEval(std::string testFileName, std::vector<std::pair<std::
     }
 
     std::shared_ptr<dplsrc::Evaluator> evaluator;
+
     try {
+        std::freopen("../../testOutput.txt", "w", stdout);
         evaluator = std::make_shared<dplsrc::Evaluator>();
         root->accept(evaluator);
+        std::fclose(stdout);
     } catch (const dplsrc::DplException &e) {
+        std::fclose(stdout);
         std::cerr << e.what() << '\n';
+        FAIL("Evaluator failed to evaluate");
     }
 
     dplsrc::VariableTable varTable = evaluator->getVtable();
@@ -178,4 +186,29 @@ void TestingUtil::testEval(std::string testFileName, std::vector<std::pair<std::
                  " and expected value: " + expectedVal.toString());
         }
     }
+
+    std::ifstream printFile("../../testOutput.txt");
+    std::string line;
+    std::vector<std::string> lines;
+
+    while (std::getline(printFile, line)) {
+        lines.push_back(line);
+    }
+
+    printFile.close();
+    std::remove("../../testOutput.txt");
+
+    if (lines.size() != expectedOutputLines.size()) {
+        FAIL("Printed output doesn't have the correct amount of lines");
+        for (std::string l : lines) {
+            std::cout << l << '\n';
+        }
+    }
+
+    for (size_t i = 0; i < lines.size(); ++i) {
+        if (lines[i] != expectedOutputLines[i]) {
+            FAIL("Printed output " + lines[i] + "doesn't match expected output" + expectedOutputLines[i]);
+        }
+    }
+
 }

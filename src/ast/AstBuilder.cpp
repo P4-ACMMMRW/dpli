@@ -541,7 +541,7 @@ antlrcpp::Any AstBuilder::flowStm(tree::TerminalNode* node) {
     newNode->setRule(lexerRule);
     newNode->setText(node->getText());
 
-    currentNode->addChild(newNode);  // Error here
+    currentNode->addChild(newNode);  // error here
 
     return nullptr;
 }
