@@ -13,11 +13,6 @@ void Evaluator::visit(const std::shared_ptr<AndExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    if (leftNode->getVal().is<Value::COLUMN>() || rightNode->getVal().is<Value::COLUMN>()) {
-        // TODO: move to error handler at some point
-        throw RuntimeException("Cannot do logical and with the used types");
-    }
-
     node->setVal(rightNode->getVal() && leftNode->getVal());
 }
 
@@ -175,10 +170,6 @@ void Evaluator::visit(const std::shared_ptr<EqualExprNode> &node) {
     bool numeric = leftNode->getVal().isNumeric() && rightNode->getVal().isNumeric();
     bool string = leftNode->getVal().is<Value::STR>() && rightNode->getVal().is<Value::STR>();
 
-    if (!numeric && !string) {
-        throw RuntimeException("Cannot check equality with the used types");
-    }
-
     // Evaluates the value of the expression
     node->setVal(leftNode->getVal() == rightNode->getVal());
 }
@@ -255,9 +246,6 @@ void Evaluator::visit(const std::shared_ptr<GreaterEqualExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    if (!(leftNode->getVal().isNumeric()) && rightNode->getVal().isNumeric()) {
-        throw RuntimeException("Cannot do greater or equal with the used types");
-    }
     // Evaluates the value of the expression
     node->setVal(leftNode->getVal() >= rightNode->getVal());
 }
@@ -268,10 +256,6 @@ void Evaluator::visit(const std::shared_ptr<GreaterExprNode> &node) {
     leftNode->accept(shared_from_this());
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
-
-    if (!((leftNode->getVal().isNumeric()) && (rightNode->getVal().isNumeric()))) {
-        throw RuntimeException("Cannot do greater than with the used types");
-    }
 
     // Evaluates the value of the expression
     node->setVal(leftNode->getVal() > rightNode->getVal());
@@ -456,10 +440,6 @@ void Evaluator::visit(const std::shared_ptr<LessEqualExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    if (!((leftNode->getVal().isNumeric()) && (rightNode->getVal().isNumeric()))) {
-        throw RuntimeException("Cannot do less or equal with the used types");
-    }
-
     // Evaluates the value of the expression
     node->setVal(leftNode->getVal() <= rightNode->getVal());
 }
@@ -470,10 +450,6 @@ void Evaluator::visit(const std::shared_ptr<LessExprNode> &node) {
     leftNode->accept(shared_from_this());
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
-
-    if (!((leftNode->getVal().isNumeric()) && (rightNode->getVal().isNumeric()))) {
-        throw RuntimeException("Cannot do less than with the used types");
-    }
 
     // Evaluates the value of the expression
     node->setVal(leftNode->getVal() < rightNode->getVal());
@@ -505,11 +481,6 @@ void Evaluator::visit(const std::shared_ptr<MinusNode> &node) {
     // Get left and right node
     std::shared_ptr<AstNode> childNode = node->getChildNode();
     childNode->accept(shared_from_this());
-
-    if (!((childNode->getVal().isNumeric()) || childNode->getVal().is<Value::COLUMN>())) {
-        // TODO: move to error handler at some point
-        throw RuntimeException("Cannot do substraction with the used type");
-    }
 
     // Evaluates the value of the expression
     node->setVal(-childNode->getVal());
@@ -550,32 +521,7 @@ void Evaluator::visit(const std::shared_ptr<NotNode> &node) {
     std::shared_ptr<AstNode> childNode = node->getChildNode();
     childNode->accept(shared_from_this());
 
-    if (!((childNode->getVal().isNumeric()))) {
-        throw RuntimeException("Cannot negate the used type");
-    }
-
-    // Evaluates the value of the expression
-    if (childNode->getVal().is<Value::INT>()) {
-        if (static_cast<bool>(childNode->getVal().get<Value::INT>())) {
-            node->setVal(false);
-        } else {
-            node->setVal(true);
-        }
-    } else if (childNode->getVal().is<Value::INT>()) {
-        if (static_cast<bool>(childNode->getVal().get<Value::FLOAT>())) {
-            node->setVal(false);
-        } else {
-            node->setVal(true);
-        }
-    } else if (childNode->getVal().is<Value::BOOL>()) {
-        if (childNode->getVal().get<Value::BOOL>()) {
-            node->setVal(false);
-        } else {
-            node->setVal(true);
-        }
-    } else {
-        throw RuntimeException("Couldn't evaluate negation");
-    }
+    node->setVal(!childNode->getVal());
 }
 
 void Evaluator::visit(const std::shared_ptr<OrExprNode> &node) {
