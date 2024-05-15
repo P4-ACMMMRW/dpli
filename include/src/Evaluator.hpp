@@ -4,6 +4,8 @@
 #include <DplLexer.h>
 
 #include <cmath>
+#include <string>
+#include <utility>
 #include <filesystem>
 
 #include "AllNodeIncludes.hpp"

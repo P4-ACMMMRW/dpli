@@ -397,7 +397,10 @@ Value Value::operator*(const Value& other) const {
     const std::function<Value(Value, Value)> op = [](const Value& val1,
                                                      const Value& val2) -> Value {
 
-        if ((val1.is<INT>() || val1.is<BOOL>()) && (val2.is<INT>() || val2.is<BOOL>())) {
+        bool isVal1Int = val1.is<INT>() || val1.is<BOOL>();
+        bool isVal2Int = val2.is<INT>() || val2.is<BOOL>();
+        
+        if (isVal1Int && isVal2Int) {
             Value::INT int1 = (val1.is<INT>()) ? val1.get<INT>() : val1.get<BOOL>();
             Value::INT int2 = (val2.is<INT>()) ? val2.get<INT>() : val2.get<BOOL>();
 
@@ -411,8 +414,8 @@ Value Value::operator*(const Value& other) const {
 
             return Value(float1 * float2);
         }
-        if (((val1.is<INT>() || val1.is<BOOL>()) && val2.is<STR>()) ||
-            ((val2.is<INT>() || val2.is<BOOL>()) && val1.is<STR>())) {
+        if ((isVal1Int && val2.is<STR>()) ||
+            (isVal2Int && val1.is<STR>())) {
             int intVal = 0;
             std::string strVal;
 
@@ -452,8 +455,8 @@ Value Value::operator*(const Value& other) const {
 
             return Value(result);
         }
-        throw InternalException("Cannot multiply values of type " + val1.toTypeString() +
-                                " and " + val2.toTypeString());
+        throw InternalException("Cannot multiply values of type " + val1.toTypeString()+ ": " + val1.toString() +
+                                " and " + val2.toTypeString() + ": " + val2.toString());
     };
     return Value::binaryOperator(other, errOpWord, op);
 }
@@ -472,8 +475,19 @@ Value Value::operator/(const Value& other) const {
             (val2.is<BOOL>()  && val2.get<BOOL>() == 0)) {
             throw InternalException("Cannot take remainder of values with divisor 0");
         }
-        return Value((val1.is<INT>() ? val1.get<INT>() : val1.get<FLOAT>()) /
-                     (val2.is<INT>() ? val2.get<INT>() : val2.get<FLOAT>()));
+        if (!val1.is<FLOAT>() && !val2.is<FLOAT>()) {
+            Value::INT int1 = (val1.is<INT>()) ? val1.get<INT>() : val1.get<BOOL>();
+            Value::INT int2 = (val2.is<INT>()) ? val2.get<INT>() : val2.get<BOOL>();
+            
+            return Value::INT(int1 / int2);
+        }
+        auto float1 = (val1.is<INT>())   ? val1.get<INT>()   : 
+                      (val1.is<FLOAT>()) ? val1.get<FLOAT>() : val1.get<BOOL>();
+
+        auto float2 = (val2.is<INT>())   ? val2.get<INT>()   : 
+                      (val2.is<FLOAT>()) ? val2.get<FLOAT>() : val2.get<BOOL>();
+
+        return Value(float1 / float2);
     };
     return Value::binaryOperator(other, errOpWord, op);
 }
@@ -492,7 +506,7 @@ Value Value::operator%(const Value& other) const {
             (val2.is<BOOL>()  && val2.get<BOOL>() == false)) {
             throw InternalException("Cannot take remainder of values with divisor 0");
         }
-         if (!val1.is<FLOAT>() && !val2.is<FLOAT>()) {
+        if (!val1.is<FLOAT>() && !val2.is<FLOAT>()) {
             Value::INT int1 = (val1.is<INT>()) ? val1.get<INT>() : val1.get<BOOL>();
             Value::INT int2 = (val2.is<INT>()) ? val2.get<INT>() : val2.get<BOOL>();
             
@@ -543,7 +557,7 @@ Value Value::operator-() const {
         return Value(-get<FLOAT>());
     }
     if (is<BOOL>()) {
-        return Value(!get<BOOL>());
+        return Value(-Value::INT(get<BOOL>()));
     }
     if (is<COLUMN>()) {
         Value::COLUMN col = get<COLUMN>();
@@ -667,6 +681,16 @@ Value Value::binaryOperator(const Value& other, const std::string& errOpWord,
                 std::make_shared<Value>(op(Value(*(*list1)[i]), Value(*(*list2)[i]))));
         }
         return Value(result);
+    }
+    if ((is<STR>()       && (other.isNumeric() || other.is<STR>())) ||
+        (other.is<STR>() && (isNumeric()       || is<STR>()))) {
+        
+        return Value(op(*this, other));
+    }
+    if (is<LIST>() && other.isNumeric() ||
+        other.is<LIST>() && isNumeric()) {
+            
+        return Value(op(*this, other));
     }
     if ((is<COLUMN>()       && (other.isNumeric() || other.is<STR>())) ||
         (other.is<COLUMN>() && (isNumeric()       || is<STR>()))) {

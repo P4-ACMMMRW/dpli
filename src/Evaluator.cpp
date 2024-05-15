@@ -1,8 +1,5 @@
 #include "Evaluator.hpp"
 
-#include <cmath>
-#include <string>
-#include <utility>
 
 using namespace dplsrc;
 
@@ -845,6 +842,9 @@ void Evaluator::initPtable() {
 
         if (val.is<Value::FLOAT>()) {
             return static_cast<Value::INT>(std::floor(val.get<Value::FLOAT>()));
+        }
+        if (val.is<Value::INT>()) {
+            return val.get<Value::INT>();
         }
 
         throw RuntimeException("Floor called with invalid type " + val.toTypeString() +
