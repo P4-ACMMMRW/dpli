@@ -347,8 +347,8 @@ Value Value::operator+(const Value& other) const {
         if (val1.is<LIST>() && val2.is<LIST>()) {
             Value::LIST result = std::make_shared<std::vector<std::shared_ptr<Value>>>();
             
-            Value::LIST list1 = val1.get<LIST>();
-            Value::LIST list2 = val2.get<LIST>();
+            Value::LIST list1 = val2.get<LIST>();
+            Value::LIST list2 = val1.get<LIST>();
 
             for (const std::shared_ptr<Value>& elem : *list1) {
                 result->push_back(elem);
@@ -590,7 +590,7 @@ Value Value::operator&&(const Value& other) const {
             (val1.is<FLOAT>() && val1.get<FLOAT>() == 0.0)) {
             return Value((val1.is<INT>() ? 0 : 0.0));
         }
-        if (val1.is<STR>() && val1.get<STR>().empty()) {
+        if (val1.is<STR>() && val1.get<STR>() == "") {
             return Value("");
         }
         if (val1.is<BOOL>() && val1.get<BOOL>() == false) {

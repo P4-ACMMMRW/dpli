@@ -211,6 +211,39 @@ VALUE_TEST("compare values") {
     REQUIRE(tab1 < tab2);
 }
 
+
+VALUE_TEST("Logical values") { 
+    // Numeric
+    Value valFloat = 1.0;
+    Value valInt = 1;
+    Value valBool = true;
+
+    REQUIRE((valFloat && valInt) == valInt);
+    REQUIRE((valFloat && valBool) == valBool);
+    REQUIRE((valInt && valFloat) == valFloat);
+    REQUIRE((valInt && valBool) == valBool);
+    REQUIRE((valBool && valInt) == valInt);
+    REQUIRE((valBool && valFloat) == valFloat);
+
+    REQUIRE((valFloat || valInt) == valFloat);
+    REQUIRE((valFloat || valBool) == valFloat);
+    REQUIRE((valInt || valFloat) == valInt);
+    REQUIRE((valInt || valBool) == valInt);
+    REQUIRE((valBool || valInt) == valBool);
+    REQUIRE((valBool || valFloat) == valBool);
+
+  
+    // Strings
+    Value str1 = "";
+    Value str2 = "abc";
+    REQUIRE((str1 && str2) == str1);
+    REQUIRE((str2 && str1) == str1);
+    REQUIRE((str2 || str1) == str2);
+    REQUIRE((str1 || str2) == str2);
+}
+
+
+
 VALUE_TEST("Arthrimetic values") {
      // Numeric
     Value valFloat = 1.0;
@@ -235,7 +268,7 @@ VALUE_TEST("Arthrimetic values") {
     REQUIRE(valFloat * valInt == 1.0);
     REQUIRE(valFloat * valBool == 1.0);
     REQUIRE(valInt * valFloat == 1.0);
-    REQUIRE(valInt * valBool== 1);
+    REQUIRE(valInt * valBool == 1);
     REQUIRE(valBool * valInt == 1);
     REQUIRE(valBool * valFloat == 1.0);
 
@@ -332,17 +365,21 @@ VALUE_TEST("Arthrimetic values") {
     
     Value colRes1 = std::make_shared<Value::COL_STRUCT>();
     Value colListRes1 = std::make_shared<std::vector<std::shared_ptr<Value>>>();
-    l5.get<Value::LIST>()->emplace_back(std::make_shared<Value>(10));
-    l5.get<Value::LIST>()->emplace_back(std::make_shared<Value>(1));
+    colListRes1.get<Value::LIST>()->emplace_back(std::make_shared<Value>("aa"));
+    colListRes1.get<Value::LIST>()->emplace_back(std::make_shared<Value>(2));
+    colRes1.get<Value::COLUMN>()->data = colListRes1.get<Value::LIST>();
 
-    colRes1.get<Value::COLUMN>()->data = l3.get<Value::LIST>();
+    REQUIRE(col1 + col3 == colListRes1);
+    REQUIRE(col3 + col3 == colListRes1);
+    REQUIRE(col1 + col1 == colListRes1);
 
-    //REQUIRE(col1 + col3);
-    //REQUIRE(col3 + col3);
-    //REQUIRE(col1 + col1);
+    Value colRes2 = std::make_shared<Value::COL_STRUCT>();
+    Value colListRes2 = std::make_shared<std::vector<std::shared_ptr<Value>>>();
+    colListRes2.get<Value::LIST>()->emplace_back(std::make_shared<Value>("a"));
+    colListRes2.get<Value::LIST>()->emplace_back(std::make_shared<Value>("a"));
 
-    //REQUIRE(col1 * col2);
-    //REQUIRE(col2 * col1);
+    REQUIRE(col1 * col2 == colListRes2);
+    REQUIRE(col2 * col1 == colListRes2);
 
     Value col4 = std::make_shared<Value::COL_STRUCT>();
     col4.get<Value::COLUMN>()->data = l4.get<Value::LIST>();
@@ -353,9 +390,26 @@ VALUE_TEST("Arthrimetic values") {
     Value col6 = std::make_shared<Value::COL_STRUCT>();
     col6.get<Value::COLUMN>()->data = l6.get<Value::LIST>();
 
-    //REQUIRE(col4 + col5);
-    //REQUIRE(col6 + col6);
+    Value colRes3 = std::make_shared<Value::COL_STRUCT>();
+    Value colListRes3 = std::make_shared<std::vector<std::shared_ptr<Value>>>();
+    colListRes3.get<Value::LIST>()->emplace_back(std::make_shared<Value>(11));
+    colListRes3.get<Value::LIST>()->emplace_back(std::make_shared<Value>(11));
 
-    //REQUIRE(col4 * col5);
-    //REQUIRE(col6 * col6);
+    REQUIRE(col4 + col5 == colListRes3);
+
+    Value colRes4 = std::make_shared<Value::COL_STRUCT>();
+    Value colListRes4 = std::make_shared<std::vector<std::shared_ptr<Value>>>();
+    colListRes4.get<Value::LIST>()->emplace_back(std::make_shared<Value>(2));
+
+    REQUIRE(col6 + col6 == colListRes4);
+
+    Value colRes5 = std::make_shared<Value::COL_STRUCT>();
+    Value colListRes5 = std::make_shared<std::vector<std::shared_ptr<Value>>>();
+    colListRes5.get<Value::LIST>()->emplace_back(std::make_shared<Value>(10));
+    colListRes5.get<Value::LIST>()->emplace_back(std::make_shared<Value>(10));
+
+    REQUIRE(col4 * col5 == colListRes5);
+
+    REQUIRE(col6 * col6 == l6);
+    
 }
