@@ -659,9 +659,6 @@ Value Value::binaryOperator(const Value& other, const std::string& errOpWord,
     if (is<STR>() && other.is<STR>()) {
         return op(Value(other.get<STR>()), Value(get<STR>()));
     }
-    if (is<NONETYPE>() && other.is<NONETYPE>()) {
-        return Value(nullptr);  // might need to throw error
-    }
     if (is<LIST>() && other.is<LIST>()) {
         const Value::LIST& list1 = other.get<LIST>();
         const Value::LIST& list2 = get<LIST>();

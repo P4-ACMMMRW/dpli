@@ -210,3 +210,152 @@ VALUE_TEST("compare values") {
     REQUIRE(tab4 < tab1);
     REQUIRE(tab1 < tab2);
 }
+
+VALUE_TEST("Arthrimetic values") {
+     // Numeric
+    Value valFloat = 1.0;
+    Value valInt = 1;
+    Value valBool = true;
+
+
+    REQUIRE(valFloat + valInt == 2.0);
+    REQUIRE(valFloat + valBool == 2.0);
+    REQUIRE(valInt + valFloat == 2.0);
+    REQUIRE(valInt + valBool == 2);
+    REQUIRE(valBool + valInt == 2);
+    REQUIRE(valBool + valFloat == 2.0);
+
+    REQUIRE(valFloat - valInt == 0.0);
+    REQUIRE(valFloat - valBool == 0.0);
+    REQUIRE(valInt - valFloat == 0.0);
+    REQUIRE(valInt - valBool == 0);
+    REQUIRE(valBool - valInt == 0);
+    REQUIRE(valBool - valFloat == 0.0);
+
+    REQUIRE(valFloat * valInt == 1.0);
+    REQUIRE(valFloat * valBool == 1.0);
+    REQUIRE(valInt * valFloat == 1.0);
+    REQUIRE(valInt * valBool== 1);
+    REQUIRE(valBool * valInt == 1);
+    REQUIRE(valBool * valFloat == 1.0);
+
+    REQUIRE(valFloat / valInt == 1.0);
+    REQUIRE(valFloat / valBool == 1.0);
+    REQUIRE(valInt / valFloat == 1.0);
+    REQUIRE(valInt / valBool == 1);
+    REQUIRE(valBool / valInt == 1);
+    REQUIRE(valBool / valFloat == 1.0);
+
+    REQUIRE(valFloat % valInt == 0.0);
+    REQUIRE(valFloat % valBool == 0.0);
+    REQUIRE(valInt % valFloat == 0.0);
+    REQUIRE(valInt % valBool == 0);
+    REQUIRE(valBool % valInt == 0);
+    REQUIRE(valBool % valFloat == 0.0);
+
+    REQUIRE(valFloat.pow(valInt) == 1.0);
+    REQUIRE(valFloat.pow(valBool) == 1.0);
+    REQUIRE(valInt.pow(valFloat) == 1.0);
+    REQUIRE(valInt.pow(valBool) == 1);
+    REQUIRE(valBool.pow(valInt) == 1);
+    REQUIRE(valBool.pow(valFloat) == 1.0);
+
+    REQUIRE(-valInt == -1.0);
+    REQUIRE(-valBool == -1.0);
+    REQUIRE(-valFloat == -1.0);
+
+    // Strings
+    Value str1 = "abc";
+
+    REQUIRE(str1 + str1 == "abcabc");
+    REQUIRE(str1 * 2 == "abcabc");
+
+    // NoneType
+ 
+    // List
+    Value l1 = std::make_shared<std::vector<std::shared_ptr<Value>>>();
+    l1.get<Value::LIST>()->emplace_back(std::make_shared<Value>("a"));
+    l1.get<Value::LIST>()->emplace_back(std::make_shared<Value>(1));
+
+    Value l2 = std::make_shared<std::vector<std::shared_ptr<Value>>>();
+    l2.get<Value::LIST>()->emplace_back(std::make_shared<Value>(1));
+    l2.get<Value::LIST>()->emplace_back(std::make_shared<Value>("a"));
+
+    Value l3 = std::make_shared<std::vector<std::shared_ptr<Value>>>();
+    l3.get<Value::LIST>()->emplace_back(std::make_shared<Value>("a"));
+    l3.get<Value::LIST>()->emplace_back(std::make_shared<Value>(1));
+
+    Value lRes1 = std::make_shared<std::vector<std::shared_ptr<Value>>>();
+    lRes1.get<Value::LIST>()->emplace_back(std::make_shared<Value>("a"));
+    lRes1.get<Value::LIST>()->emplace_back(std::make_shared<Value>(1));
+    lRes1.get<Value::LIST>()->emplace_back(std::make_shared<Value>("a"));
+    lRes1.get<Value::LIST>()->emplace_back(std::make_shared<Value>(1));
+
+    Value lRes2 = std::make_shared<std::vector<std::shared_ptr<Value>>>();
+    lRes2.get<Value::LIST>()->emplace_back(std::make_shared<Value>("a"));
+    lRes2.get<Value::LIST>()->emplace_back(std::make_shared<Value>(1));
+    lRes2.get<Value::LIST>()->emplace_back(std::make_shared<Value>(1));
+    lRes2.get<Value::LIST>()->emplace_back(std::make_shared<Value>("a"));
+   
+    REQUIRE(l1 + l2 != lRes1);
+    REQUIRE(l1 + l2 == lRes2);
+    REQUIRE(l1 + l3 != lRes2);
+    REQUIRE(l1 + l3 == lRes1);
+
+
+    REQUIRE(l1 * 2 == lRes1);
+    REQUIRE(l1 * 2 != lRes2);
+
+
+    Value l4 = std::make_shared<std::vector<std::shared_ptr<Value>>>();
+    l4.get<Value::LIST>()->emplace_back(std::make_shared<Value>(1));
+    l4.get<Value::LIST>()->emplace_back(std::make_shared<Value>(10));
+
+    Value l5 = std::make_shared<std::vector<std::shared_ptr<Value>>>();
+    l5.get<Value::LIST>()->emplace_back(std::make_shared<Value>(10));
+    l5.get<Value::LIST>()->emplace_back(std::make_shared<Value>(1));
+
+    Value l6 = std::make_shared<std::vector<std::shared_ptr<Value>>>();
+    l6.get<Value::LIST>()->emplace_back(std::make_shared<Value>(1));
+
+ 
+
+    // Columns
+    Value col1 = std::make_shared<Value::COL_STRUCT>();
+    col1.get<Value::COLUMN>()->data = l1.get<Value::LIST>();
+
+    Value col2 = std::make_shared<Value::COL_STRUCT>();
+    col2.get<Value::COLUMN>()->data = l2.get<Value::LIST>();
+
+    Value col3 = std::make_shared<Value::COL_STRUCT>();
+    col3.get<Value::COLUMN>()->data = l3.get<Value::LIST>();
+    
+    Value colRes1 = std::make_shared<Value::COL_STRUCT>();
+    Value colListRes1 = std::make_shared<std::vector<std::shared_ptr<Value>>>();
+    l5.get<Value::LIST>()->emplace_back(std::make_shared<Value>(10));
+    l5.get<Value::LIST>()->emplace_back(std::make_shared<Value>(1));
+
+    colRes1.get<Value::COLUMN>()->data = l3.get<Value::LIST>();
+
+    //REQUIRE(col1 + col3);
+    //REQUIRE(col3 + col3);
+    //REQUIRE(col1 + col1);
+
+    //REQUIRE(col1 * col2);
+    //REQUIRE(col2 * col1);
+
+    Value col4 = std::make_shared<Value::COL_STRUCT>();
+    col4.get<Value::COLUMN>()->data = l4.get<Value::LIST>();
+
+    Value col5 = std::make_shared<Value::COL_STRUCT>();
+    col5.get<Value::COLUMN>()->data = l5.get<Value::LIST>();
+
+    Value col6 = std::make_shared<Value::COL_STRUCT>();
+    col6.get<Value::COLUMN>()->data = l6.get<Value::LIST>();
+
+    //REQUIRE(col4 + col5);
+    //REQUIRE(col6 + col6);
+
+    //REQUIRE(col4 * col5);
+    //REQUIRE(col6 * col6);
+}

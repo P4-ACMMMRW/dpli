@@ -9,11 +9,11 @@ EVAL_TEST("math.dpl") {
 
     expectedOutputLines.push_back("8");
     expectedOutputLines.push_back("6");
-    expectedOutputLines.push_back("5.0");
+    expectedOutputLines.push_back("5");
     expectedOutputLines.push_back("0");
 
     expectedVarVec.push_back(std::make_pair("i", dplsrc::Value(0)));
-    expectedVarVec.push_back(std::make_pair("z", dplsrc::Value(5.0)));
+    expectedVarVec.push_back(std::make_pair("z", dplsrc::Value(5)));
     expectedVarVec.push_back(std::make_pair("y", dplsrc::Value(6)));
     expectedVarVec.push_back(std::make_pair("x", dplsrc::Value(8)));
 
