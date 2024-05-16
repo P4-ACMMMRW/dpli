@@ -425,6 +425,7 @@ antlrcpp::Any AstBuilder::unaryNode(const std::function<std::shared_ptr<AstNode>
     initNewNode(parseNode, newNode, text);
 
     if (!hasChild) {
+        currentNode = oldNode;
         return nullptr;
     }
 
@@ -443,6 +444,7 @@ antlrcpp::Any AstBuilder::unaryNodeList(const std::function<std::shared_ptr<AstN
     initNewNode(parseNode, newNode, text);
 
     if (!hasChild) {
+        currentNode = oldNode;
         return nullptr;
     }
 

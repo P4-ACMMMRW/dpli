@@ -21,6 +21,7 @@
 #define SYMBOL_TABLE_TEST(name) TEST_CASE("Symbol Table -- " #name, "[symbol_table]")
 #define VALUE_TEST(name) TEST_CASE("Value -- " #name, "[value]")
 #define EVAL_TEST(name) TEST_CASE("Eval --" #name, "[eval]")
+#define EVAL_UNIT_TEST(name) TEST_CASE("Eval Unit Test --" #name, "[eval_unit_test]")
 
 namespace dplutil {
     class TestVisitor : public dplgrammar::DplParserBaseVisitor {

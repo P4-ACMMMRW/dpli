@@ -63,6 +63,15 @@ class Value {
      */
     double getNumericValue() const;
 
+    /**
+    * @return True under the following conditions:
+    *         - if val is numeric and is not 0.0, 
+    *         - if val is a string and is not empty,
+    *         - if val is a list and is not empty,
+    *         - if val is column and is not empty,
+    *         - if val is a table and is not empty,
+    */
+    bool getBoolValue() const;
 
     /**
      * @return String representation of value

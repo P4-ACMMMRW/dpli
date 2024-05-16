@@ -1,6 +1,5 @@
 #include "Evaluator.hpp"
 
-
 using namespace dplsrc;
 
 void Evaluator::visit(const std::shared_ptr<AndExprNode> &node) {
@@ -284,11 +283,7 @@ void Evaluator::visit(const std::shared_ptr<IfNode> &node) {
 
     condNode->accept(shared_from_this());
 
-    if (!(condNode->getVal().isNumeric())) {
-        throw RuntimeException("Error: Invalid type.");
-    }
-
-    if (condNode->getVal().getNumericValue() != 0.0) {
+    if (condNode->getVal().getBoolValue()) {
         for (size_t i = 0; i < bodyNodes.size(); ++i) {
             bodyNodes[i]->accept(shared_from_this());
         }
@@ -721,10 +716,7 @@ void Evaluator::visit(const std::shared_ptr<WhileNode> &node) {
 
     condNode->accept(shared_from_this());
 
-    if (!(condNode->getVal().isNumeric())) { // should probably be changed to bool cuz string and list shouldalso work
-        throw RuntimeException("Invalid type");
-    }
-    while (condNode->getVal().getNumericValue() != 0.0) {
+    while (condNode->getVal().getBoolValue()) {
         if (Evaluator::loopBody(bodyNodes)) {
             break;
         }

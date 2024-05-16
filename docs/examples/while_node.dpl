@@ -1,0 +1,59 @@
+t1 = { "width": [1, 2, 3], "height": [4, 5, 6], "area": [None, 10,   None]}
+t2 = {}
+t3 = { "test": []}
+
+while 1:
+    print("int_works 1")
+    break
+
+while 0:
+    print("int_doesnt_works 2")
+    break
+
+while 1.0:
+    print("float_works 1")
+    break
+
+while 0.0:
+    print("float_doesnt_works 2")
+    break
+
+while True:
+    print("bool_works 1")
+    break
+
+while False:
+    print("bool_doesnt_works 2")
+    break
+
+while "False":
+    print("str_works 1")
+    break
+
+while "":
+    print("str_doesnt_works 2")
+    break
+
+while [1, 2]:
+    print("list_works 1")
+    break
+
+while []:
+    print("list_doesnt_works 2")
+    break
+
+while t1[$"width"]:
+    print("column_works 1")
+    break
+
+while t3[$"test"]:
+    print("column_doesnt_works 2")
+    break
+
+while t1:
+    print("table_works 1")
+    break
+
+while t2:
+    print("table_doesnt_works 1")
+    break

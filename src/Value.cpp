@@ -594,13 +594,7 @@ Value Value::operator&&(const Value& other) const {
     const Value val1 = *this;
     const Value val2 = other;
     
-    if ((val1.is<INT>()    && val1.get<INT>() == 0) ||
-        (val1.is<FLOAT>()  && val1.get<FLOAT>() == 0.0) ||
-        (val1.is<STR>()    && val1.get<STR>().empty()) ||
-        (val1.is<BOOL>()   && val1.get<BOOL>() == false) ||
-        (val1.is<LIST>()   && val1.get<LIST>()->empty()) ||
-        (val1.is<COLUMN>() && val1.get<COLUMN>()->data->empty()) ||
-        (val1.is<TABLE>()  && val1.get<TABLE>()->empty())) {
+    if (!val1.getBoolValue()) {
         return val1;
     }
     
@@ -611,13 +605,7 @@ Value Value::operator||(const Value& other) const {
     const Value val1 = *this;
     const Value val2 = other;
     
-    if ((val1.is<INT>()    && val1.get<INT>() != 0) ||
-        (val1.is<FLOAT>()  && val1.get<FLOAT>() != 0.0) ||
-        (val1.is<STR>()    && !val1.get<STR>().empty()) ||
-        (val1.is<BOOL>()   && val1.get<BOOL>() == true) ||
-        (val1.is<LIST>()   && !val1.get<LIST>()->empty()) ||
-        (val1.is<COLUMN>() && !val1.get<COLUMN>()->data->empty()) ||
-        (val1.is<TABLE>()  && !val1.get<TABLE>()->empty())) {
+    if (val1.getBoolValue()) {
         return val1;
     }
     
@@ -676,4 +664,29 @@ double Value::getNumericValue() const {
         return get<FLOAT>();
     } 
     return 0.0;
+}
+
+bool Value::getBoolValue() const {
+    if (is<BOOL>()) {
+        return get<BOOL>();
+    }
+    if (is<INT>()) {
+        return get<INT>() != 0;
+    }
+    if (is<FLOAT>()) {
+        return get<FLOAT>() != 0.0;
+    }
+    if (is<STR>()) {
+        return !get<STR>().empty();
+    }
+    if (is<LIST>()) {
+        return !get<LIST>()->empty();
+    }
+    if (is<COLUMN>()) {
+        return !get<COLUMN>()->data->empty();
+    }
+    if (is<TABLE>()) {
+        return !get<TABLE>()->empty();
+    }
+    return false;
 }
