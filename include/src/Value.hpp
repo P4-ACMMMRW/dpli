@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "InternalException.hpp"
+#include "RuntimeException.hpp"
 
 namespace dplsrc {
 class Value {
@@ -125,31 +126,12 @@ class Value {
    private:
     mutable std::variant<INT, FLOAT, STR, BOOL, NONETYPE, LIST, TABLE, COLUMN> innerValue;
 
+ 
     /**
-     * @param leftTable
-     * @param rightTable
-     * @return true if the tables have the same columns
+     * @return the result of the operation on the columns, if not a valid column operation None (Value(nullptr)) is returned.
      */
-    static bool isSameColumns(const Value::TABLE& leftTable, const Value::TABLE& rightTable);
-
-    /**
-     * @param leftTable
-     * @param rightTable
-     * @return a coloumn corresponding to the header in the given table, if no hit nullptr.
-     */
-    static Value::COLUMN getColumnByHeader(const Value::TABLE& table, const std::string& header);
-
-    /**
-     * Inserts a new column into the given table
-     */
-    static void insertColInTable(const Value::TABLE& table, const std::string& header,
-                                 Value::LIST list);
-
-    /**
-     * @return Value resulting from a binary operator on this and other
-     */
-    Value binaryOperator(const Value& other, const std::string& errOpWord,
-                         const std::function<Value(Value, Value)>& op) const;
+    Value colOperations(const Value val1, const Value val2,
+                        const std::function<Value(Value, Value)>& op) const;
 };
 }  // namespace dplsrc
 

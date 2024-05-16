@@ -10,7 +10,7 @@ void Evaluator::visit(const std::shared_ptr<AndExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    node->setVal(rightNode->getVal() && leftNode->getVal());
+    node->setVal(leftNode->getVal() && rightNode->getVal());
 }
 
 void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
@@ -146,7 +146,7 @@ void Evaluator::visit(const std::shared_ptr<DivExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    node->setVal(rightNode->getVal() / leftNode->getVal());
+    node->setVal(leftNode->getVal() / rightNode->getVal());
 }
 
 void Evaluator::visit(const std::shared_ptr<ElseNode> &node) {
@@ -175,7 +175,7 @@ void Evaluator::visit(const std::shared_ptr<ExpoExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    node->setVal(rightNode->getVal().pow(leftNode->getVal()));
+    node->setVal(leftNode->getVal().pow(rightNode->getVal()));
 }
 
 void Evaluator::visit(const std::shared_ptr<FilterNode> &node) {
@@ -468,7 +468,7 @@ void Evaluator::visit(const std::shared_ptr<MinusExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    node->setVal(rightNode->getVal() - leftNode->getVal());
+    node->setVal(leftNode->getVal() - rightNode->getVal());
 }
 
 void Evaluator::visit(const std::shared_ptr<MinusNode> &node) {
@@ -487,7 +487,7 @@ void Evaluator::visit(const std::shared_ptr<ModExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    node->setVal(rightNode->getVal() % leftNode->getVal());
+    node->setVal(leftNode->getVal() % rightNode->getVal());
 }
 
 void Evaluator::visit(const std::shared_ptr<MultExprNode> &node) {
@@ -497,7 +497,7 @@ void Evaluator::visit(const std::shared_ptr<MultExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    node->setVal(rightNode->getVal() * leftNode->getVal());
+    node->setVal(leftNode->getVal() * rightNode->getVal());
 }
 
 void Evaluator::visit(const std::shared_ptr<NotEqualExprNode> &node) {
@@ -541,7 +541,7 @@ void Evaluator::visit(const std::shared_ptr<PlusExprNode> &node) {
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
 
-    node->setVal(rightNode->getVal() + leftNode->getVal());
+    node->setVal(leftNode->getVal() + rightNode->getVal());
 }
 
 void Evaluator::visit(const std::shared_ptr<PlusNode> &node) {
