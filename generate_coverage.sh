@@ -1,10 +1,6 @@
 #!/bin/bash
 
-# Check if dpli file in build directory exists
-if [ ! -f build/dpli ]; then
-    echo "dpli not found. Compiling the project..."
-    ./compile.sh
-fi
+./compile.sh
 
 if ! command -v lcov &> /dev/null; then
     echo "lcov could not be found. Installing lcov..."
