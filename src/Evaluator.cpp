@@ -824,6 +824,9 @@ void Evaluator::initPtable() {
         if (val.is<Value::FLOAT>()) {
             return static_cast<Value::INT>(std::ceil(val.get<Value::FLOAT>()));
         }
+        if (val.is<Value::INT>()) {
+            return val.get<Value::INT>();
+        }
 
         throw RuntimeException("Ceil called with invalid type " + val.toTypeString() +
                                ". Expected: " + Value(0.0).toTypeString());
@@ -848,6 +851,9 @@ void Evaluator::initPtable() {
 
         if (val.is<Value::FLOAT>()) {
             return static_cast<Value::INT>(std::round(val.get<Value::FLOAT>()));
+        }
+        if (val.is<Value::INT>()) {
+            return val.get<Value::INT>();
         }
 
         throw RuntimeException("Round called with invalid type " + val.toTypeString() +
