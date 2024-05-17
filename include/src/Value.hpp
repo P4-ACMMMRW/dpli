@@ -54,23 +54,21 @@ class Value {
     /**
      * @return true if the value is a number
      */
-    bool isNumeric() const {
-        return is<Value::FLOAT>() || is<Value::INT>() || is<Value::BOOL>();
-    }
+    bool isNumeric() const { return is<Value::FLOAT>() || is<Value::INT>() || is<Value::BOOL>(); }
 
-     /**
+    /**
      * @return the double representation of the  numeric Value, if not Numeric 0.0.
      */
     double getNumericValue() const;
 
     /**
-    * @return True under the following conditions:
-    *         - if val is numeric and is not 0.0, 
-    *         - if val is a string and is not empty,
-    *         - if val is a list and is not empty,
-    *         - if val is column and is not empty,
-    *         - if val is a table and is not empty,
-    */
+     * @return True under the following conditions:
+     *         - if val is numeric and is not 0.0,
+     *         - if val is a string and is not empty,
+     *         - if val is a list and is not empty,
+     *         - if val is column and is not empty,
+     *         - if val is a table and is not empty,
+     */
     bool getBoolValue() const;
 
     /**
@@ -85,21 +83,20 @@ class Value {
     std::string toTypeString(bool verbose = false) const;
 
     // Operator overloadings
-        // Bools
-            // Binary
+    // Bools
+    // Binary
     bool operator==(const Value& other) const;
     bool operator!=(const Value& other) const;
     bool operator<(const Value& other) const;
     bool operator>(const Value& other) const;
     bool operator<=(const Value& other) const;
     bool operator>=(const Value& other) const;
-            
-            // Unary
+
+    // Unary
     bool operator!() const;
 
-
-        // Arthmetic
-            // Binary
+    // Arthmetic
+    // Binary
     Value operator+(const Value& other) const;
     Value operator-(const Value& other) const;
     Value operator*(const Value& other) const;
@@ -107,10 +104,10 @@ class Value {
     Value operator%(const Value& other) const;
     Value pow(const Value& other) const;
 
-            // Unary
+    // Unary
     Value operator-() const;
 
-        // Logical
+    // Logical
     Value operator&&(const Value& other) const;
     Value operator||(const Value& other) const;
 
@@ -135,9 +132,9 @@ class Value {
    private:
     mutable std::variant<INT, FLOAT, STR, BOOL, NONETYPE, LIST, TABLE, COLUMN> innerValue;
 
- 
     /**
-     * @return the result of the operation on the columns, if not a valid column operation None (Value(nullptr)) is returned.
+     * @return the result of the operation on the columns, if not a valid column operation None
+     * (Value(nullptr)) is returned.
      */
     Value colOperations(const Value val1, const Value val2,
                         const std::function<Value(Value, Value)>& op) const;

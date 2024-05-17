@@ -89,7 +89,7 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
                 if (col->data->size() != rightNode->getVal().get<Value::LIST>()->size()) {
                     throw RuntimeException(
                         "size of right side of assignment does not match size of column");
-                    }
+                }
                 for (size_t i = 0; i < col->data->size(); ++i) {
                     *(*col->data)[i] = *(*rightNode->getVal().get<Value::LIST>())[i];
                 }
@@ -503,7 +503,7 @@ void Evaluator::visit(const std::shared_ptr<OrExprNode> &node) {
     leftNode->accept(shared_from_this());
     std::shared_ptr<AstNode> rightNode = node->getRightNode();
     rightNode->accept(shared_from_this());
-    
+
     node->setVal(leftNode->getVal() || rightNode->getVal());
 }
 
@@ -526,7 +526,7 @@ void Evaluator::visit(const std::shared_ptr<PlusExprNode> &node) {
 void Evaluator::visit(const std::shared_ptr<PlusNode> &node) {
     std::shared_ptr<AstNode> childNode = node->getChildNode();
     childNode->accept(shared_from_this());
-    node->setVal(childNode->getVal()); // temp fix until PlusNode deleted
+    node->setVal(childNode->getVal());  // temp fix until PlusNode deleted
 }
 
 void Evaluator::visit(const std::shared_ptr<ProcCallNode> &node) {
@@ -740,7 +740,8 @@ void Evaluator::initPtable() {
         }
         if (args[0]->getVal().is<Value::FLOAT>()) {
             return static_cast<Value::INT>(args[0]->getVal().get<Value::FLOAT>());
-        } if (args[0]->getVal().is<Value::BOOL>()) {
+        }
+        if (args[0]->getVal().is<Value::BOOL>()) {
             return static_cast<Value::INT>(args[0]->getVal().get<Value::BOOL>());
         } else if (args[0]->getVal().is<Value::STR>()) {
             try {
@@ -759,7 +760,8 @@ void Evaluator::initPtable() {
         }
         if (args[0]->getVal().is<Value::FLOAT>()) {
             return args[0]->getVal().get<Value::FLOAT>();
-        } if (args[0]->getVal().is<Value::BOOL>()) {
+        }
+        if (args[0]->getVal().is<Value::BOOL>()) {
             return static_cast<Value::FLOAT>(args[0]->getVal().get<Value::BOOL>());
         } else if (args[0]->getVal().is<Value::STR>()) {
             try {
@@ -778,7 +780,8 @@ void Evaluator::initPtable() {
         }
         if (args[0]->getVal().is<Value::FLOAT>()) {
             return static_cast<Value::BOOL>(args[0]->getVal().get<Value::FLOAT>());
-        } if (args[0]->getVal().is<Value::BOOL>()) {
+        }
+        if (args[0]->getVal().is<Value::BOOL>()) {
             return args[0]->getVal().get<Value::BOOL>();
         }
 
@@ -793,7 +796,8 @@ void Evaluator::initPtable() {
         }
         if (val.is<Value::LIST>()) {
             return static_cast<Value::INT>(val.get<Value::LIST>()->size());
-        } if (val.is<Value::TABLE>()) {
+        }
+        if (val.is<Value::TABLE>()) {
             return static_cast<Value::INT>(val.get<Value::TABLE>()->size());
         } else if (val.is<Value::COLUMN>()) {
             return static_cast<Value::INT>(val.get<Value::COLUMN>()->data->size());

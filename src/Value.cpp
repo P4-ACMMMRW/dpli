@@ -114,8 +114,9 @@ std::string Value::toTypeString(bool verbose) const {
         return "NoneType";
     }
     if (is<LIST>()) {
-        if (!verbose) { return "list";
-}
+        if (!verbose) {
+            return "list";
+        }
 
         std::string listStr = "list -> [";
         Value::LIST list = get<LIST>();
@@ -134,8 +135,9 @@ std::string Value::toTypeString(bool verbose) const {
         return listStr;
     }
     if (is<TABLE>()) {
-        if (!verbose) { return "table";
-}
+        if (!verbose) {
+            return "table";
+        }
 
         std::string tableStr = "table -> { ";
         Value::TABLE table = get<TABLE>();
@@ -154,8 +156,9 @@ std::string Value::toTypeString(bool verbose) const {
         return tableStr;
     }
     if (is<COLUMN>()) {
-        if (!verbose) { return "column";
-}
+        if (!verbose) {
+            return "column";
+        }
 
         std::string result =
             "column -> " + static_cast<Value>(get<COLUMN>()->header).toTypeString(verbose) + ": [";
@@ -200,12 +203,14 @@ bool Value::operator==(const Value& other) const {
         Value::LIST list1 = get<LIST>();
         const Value::LIST& list2 = other.get<LIST>();
 
-        if (list1->size() != list2->size()) { return false;
-}
+        if (list1->size() != list2->size()) {
+            return false;
+        }
 
         for (size_t i = 0; i < list1->size(); ++i) {
-            if (*(*list1)[i] != *(*list2)[i]) { return false;
-}
+            if (*(*list1)[i] != *(*list2)[i]) {
+                return false;
+            }
         }
 
         return true;
@@ -270,8 +275,9 @@ bool Value::operator<(const Value& other) const {
         size_t minSize = std::min(list1->size(), list2->size());
 
         for (size_t i = 0; i < minSize; ++i) {
-            if (*(*list1)[i] != *(*list2)[i]) { return *(*list1)[i] < *(*list2)[i];
-}
+            if (*(*list1)[i] != *(*list2)[i]) {
+                return *(*list1)[i] < *(*list2)[i];
+            }
         }
 
         return list1->size() < list2->size();
@@ -307,19 +313,19 @@ bool Value::operator>=(const Value& other) const { return *this > other || *this
 
 bool Value::operator!() const {
     if (is<INT>()) {
-        return get<INT>() == 0; // not 0 == true
+        return get<INT>() == 0;  // not 0 == true
     }
     if (is<FLOAT>()) {
-        return get<FLOAT>() == 0.0; // not 0.0 == true
+        return get<FLOAT>() == 0.0;  // not 0.0 == true
     }
     if (is<BOOL>()) {
-        return !get<BOOL>(); // not False == True
+        return !get<BOOL>();  // not False == True
     }
     if (is<STR>()) {
-        return get<STR>().empty(); // not "" == true
+        return get<STR>().empty();  // not "" == true
     }
     if (is<LIST>()) {
-        return get<LIST>()->empty(); // not [] == true
+        return get<LIST>()->empty();  // not [] == true
     }
 
     throw RuntimeException("Can not use NOT on this type");
@@ -336,10 +342,12 @@ Value Value::operator+(const Value& other) const {
         return Value(int1 + int2);
     }
     if (val1.isNumeric() && val2.isNumeric()) {
-        Value::FLOAT float1 = (val1.is<INT>())   ? val1.get<INT>() : 
-                                ((val1.is<BOOL>()) ? val1.get<BOOL>() : val1.get<FLOAT>());
-        Value::FLOAT float2 = (val2.is<INT>())   ? val2.get<INT>() : 
-                                ((val2.is<BOOL>()) ? val2.get<BOOL>() : val2.get<FLOAT>());
+        Value::FLOAT float1 = (val1.is<INT>())
+                                  ? val1.get<INT>()
+                                  : ((val1.is<BOOL>()) ? val1.get<BOOL>() : val1.get<FLOAT>());
+        Value::FLOAT float2 = (val2.is<INT>())
+                                  ? val2.get<INT>()
+                                  : ((val2.is<BOOL>()) ? val2.get<BOOL>() : val2.get<FLOAT>());
 
         return Value(float1 + float2);
     }
@@ -348,7 +356,7 @@ Value Value::operator+(const Value& other) const {
     }
     if (val1.is<LIST>() && val2.is<LIST>()) {
         Value::LIST result = std::make_shared<std::vector<std::shared_ptr<Value>>>();
-        
+
         Value::LIST list1 = val1.get<LIST>();
         Value::LIST list2 = val2.get<LIST>();
 
@@ -360,16 +368,13 @@ Value Value::operator+(const Value& other) const {
         }
 
         return Value(result);
-    }         
-    Value colResult = colOperations(val1, val2, [](Value val1, Value val2) {
-        return val1 + val2;
-    });
+    }
+    Value colResult = colOperations(val1, val2, [](Value val1, Value val2) { return val1 + val2; });
     if (colResult != Value(nullptr)) {
         return colResult;
-    }   
-    throw RuntimeException("Cannot add values of type " + val1.toTypeString() +
-                                " and " + val2.toTypeString());
-    
+    }
+    throw RuntimeException("Cannot add values of type " + val1.toTypeString() + " and " +
+                           val2.toTypeString());
 }
 
 Value Value::operator-(const Value& other) const {
@@ -383,30 +388,30 @@ Value Value::operator-(const Value& other) const {
         return Value(int1 - int2);
     }
     if (val1.isNumeric() && val2.isNumeric()) {
-        Value::FLOAT float1 = (val1.is<INT>())   ? val1.get<INT>() : 
-                                ((val1.is<BOOL>()) ? val1.get<BOOL>() : val1.get<FLOAT>());
-        Value::FLOAT float2 = (val2.is<INT>())   ? val2.get<INT>() : 
-                                ((val2.is<BOOL>()) ? val2.get<BOOL>() : val2.get<FLOAT>());
+        Value::FLOAT float1 = (val1.is<INT>())
+                                  ? val1.get<INT>()
+                                  : ((val1.is<BOOL>()) ? val1.get<BOOL>() : val1.get<FLOAT>());
+        Value::FLOAT float2 = (val2.is<INT>())
+                                  ? val2.get<INT>()
+                                  : ((val2.is<BOOL>()) ? val2.get<BOOL>() : val2.get<FLOAT>());
 
         return Value(float1 - float2);
     }
-    Value colResult = colOperations(val1, val2, [](Value val1, Value val2) {
-        return val1 - val2;
-    });
+    Value colResult = colOperations(val1, val2, [](Value val1, Value val2) { return val1 - val2; });
     if (colResult != Value(nullptr)) {
         return colResult;
     }
-    throw RuntimeException("Cannot detract values of type " + val1.toTypeString() +
-                            " and " + val2.toTypeString());
+    throw RuntimeException("Cannot detract values of type " + val1.toTypeString() + " and " +
+                           val2.toTypeString());
 }
 
 Value Value::operator*(const Value& other) const {
     const Value val1 = *this;
     const Value val2 = other;
-    
+
     bool isVal1Int = val1.is<INT>() || val1.is<BOOL>();
     bool isVal2Int = val2.is<INT>() || val2.is<BOOL>();
-    
+
     if (isVal1Int && isVal2Int) {
         Value::INT int1 = (val1.is<INT>()) ? val1.get<INT>() : val1.get<BOOL>();
         Value::INT int2 = (val2.is<INT>()) ? val2.get<INT>() : val2.get<BOOL>();
@@ -414,15 +419,16 @@ Value Value::operator*(const Value& other) const {
         return Value(int1 * int2);
     }
     if (val1.isNumeric() && val2.isNumeric()) {
-        Value::FLOAT float1 = (val1.is<INT>())   ? val1.get<INT>() : 
-                                ((val1.is<BOOL>()) ? val1.get<BOOL>() : val1.get<FLOAT>());
-        Value::FLOAT float2 = (val2.is<INT>())   ? val2.get<INT>() : 
-                                ((val2.is<BOOL>()) ? val2.get<BOOL>() : val2.get<FLOAT>());
+        Value::FLOAT float1 = (val1.is<INT>())
+                                  ? val1.get<INT>()
+                                  : ((val1.is<BOOL>()) ? val1.get<BOOL>() : val1.get<FLOAT>());
+        Value::FLOAT float2 = (val2.is<INT>())
+                                  ? val2.get<INT>()
+                                  : ((val2.is<BOOL>()) ? val2.get<BOOL>() : val2.get<FLOAT>());
 
         return Value(float1 * float2);
     }
-    if ((isVal1Int && val2.is<STR>()) ||
-        (isVal2Int && val1.is<STR>())) {
+    if ((isVal1Int && val2.is<STR>()) || (isVal2Int && val1.is<STR>())) {
         int intVal = 0;
         std::string strVal;
 
@@ -462,88 +468,86 @@ Value Value::operator*(const Value& other) const {
 
         return Value(result);
     }
-    Value colResult = colOperations(val1, val2, [](Value val1, Value val2) {
-        return val1 * val2;
-    });
+    Value colResult = colOperations(val1, val2, [](Value val1, Value val2) { return val1 * val2; });
     if (colResult != Value(nullptr)) {
         return colResult;
     }
-    throw RuntimeException("Cannot multiply values of type " + val1.toTypeString()+ ": " + val1.toString() +
-                            " and " + val2.toTypeString() + ": " + val2.toString());
-
+    throw RuntimeException("Cannot multiply values of type " + val1.toTypeString() + ": " +
+                           val1.toString() + " and " + val2.toTypeString() + ": " +
+                           val2.toString());
 }
 
 Value Value::operator/(const Value& other) const {
     const Value val1 = *this;
     const Value val2 = other;
-    
-    if ((val2.is<INT>()   && val2.get<INT>() == 0 )  ||
+
+    if ((val2.is<INT>() && val2.get<INT>() == 0) ||
         (val2.is<FLOAT>() && val2.get<FLOAT>() == 0.0) ||
-        (val2.is<BOOL>()  && val2.get<BOOL>() == false)) {
+        (val2.is<BOOL>() && val2.get<BOOL>() == false)) {
         throw RuntimeException("Cannot divide values with divisor 0");
     }
-   if ((val1.is<INT>() || val1.is<BOOL>()) && (val2.is<INT>() || val2.is<BOOL>())) {
+    if ((val1.is<INT>() || val1.is<BOOL>()) && (val2.is<INT>() || val2.is<BOOL>())) {
         Value::INT int1 = (val1.is<INT>()) ? val1.get<INT>() : val1.get<BOOL>();
         Value::INT int2 = (val2.is<INT>()) ? val2.get<INT>() : val2.get<BOOL>();
 
         return Value::INT(int1 / int2);
     }
     if (val1.isNumeric() && val2.isNumeric()) {
-        Value::FLOAT float1 = (val1.is<INT>())   ? val1.get<INT>() : 
-                                ((val1.is<BOOL>()) ? val1.get<BOOL>() : val1.get<FLOAT>());
-        Value::FLOAT float2 = (val2.is<INT>())   ? val2.get<INT>() : 
-                                ((val2.is<BOOL>()) ? val2.get<BOOL>() : val2.get<FLOAT>());
+        Value::FLOAT float1 = (val1.is<INT>())
+                                  ? val1.get<INT>()
+                                  : ((val1.is<BOOL>()) ? val1.get<BOOL>() : val1.get<FLOAT>());
+        Value::FLOAT float2 = (val2.is<INT>())
+                                  ? val2.get<INT>()
+                                  : ((val2.is<BOOL>()) ? val2.get<BOOL>() : val2.get<FLOAT>());
 
         return Value(float1 / float2);
     }
-    Value colResult = colOperations(val1, val2, [](Value val1, Value val2) {
-        return val1 % val2;
-    });
+    Value colResult = colOperations(val1, val2, [](Value val1, Value val2) { return val1 % val2; });
     if (colResult != Value(nullptr)) {
         return colResult;
     }
-    
-    throw RuntimeException("Cannot divide values of type " +
-                            val1.toTypeString() + " and " + val2.toTypeString());
+
+    throw RuntimeException("Cannot divide values of type " + val1.toTypeString() + " and " +
+                           val2.toTypeString());
 }
 
 Value Value::operator%(const Value& other) const {
     const Value val1 = *this;
     const Value val2 = other;
-    
-    if ((val2.is<INT>()   && val2.get<INT>() == 0)     ||
+
+    if ((val2.is<INT>() && val2.get<INT>() == 0) ||
         (val2.is<FLOAT>() && val2.get<FLOAT>() == 0.0) ||
-        (val2.is<BOOL>()  && val2.get<BOOL>() == false)) {
+        (val2.is<BOOL>() && val2.get<BOOL>() == false)) {
         throw RuntimeException("Cannot take remainder of values with divisor 0");
     }
-   if ((val1.is<INT>() || val1.is<BOOL>()) && (val2.is<INT>() || val2.is<BOOL>())) {
+    if ((val1.is<INT>() || val1.is<BOOL>()) && (val2.is<INT>() || val2.is<BOOL>())) {
         Value::INT int1 = (val1.is<INT>()) ? val1.get<INT>() : val1.get<BOOL>();
         Value::INT int2 = (val2.is<INT>()) ? val2.get<INT>() : val2.get<BOOL>();
 
         return Value::INT(int1 % int2);
     }
     if (val1.isNumeric() && val2.isNumeric()) {
-        Value::FLOAT float1 = (val1.is<INT>())   ? val1.get<INT>() : 
-                                ((val1.is<BOOL>()) ? val1.get<BOOL>() : val1.get<FLOAT>());
-        Value::FLOAT float2 = (val2.is<INT>())   ? val2.get<INT>() : 
-                                ((val2.is<BOOL>()) ? val2.get<BOOL>() : val2.get<FLOAT>());
+        Value::FLOAT float1 = (val1.is<INT>())
+                                  ? val1.get<INT>()
+                                  : ((val1.is<BOOL>()) ? val1.get<BOOL>() : val1.get<FLOAT>());
+        Value::FLOAT float2 = (val2.is<INT>())
+                                  ? val2.get<INT>()
+                                  : ((val2.is<BOOL>()) ? val2.get<BOOL>() : val2.get<FLOAT>());
 
         return Value(std::fmod(float1, float2));
     }
-    Value colResult = colOperations(val1, val2, [](Value val1, Value val2) {
-        return val1 % val2;
-    });
+    Value colResult = colOperations(val1, val2, [](Value val1, Value val2) { return val1 % val2; });
     if (colResult != nullptr) {
         return colResult;
     }
-    throw RuntimeException("Cannot get remainder between values of type " +
-                            val1.toTypeString() + " and " + val2.toTypeString());
+    throw RuntimeException("Cannot get remainder between values of type " + val1.toTypeString() +
+                           " and " + val2.toTypeString());
 }
 
 Value Value::pow(const Value& other) const {
     const Value val1 = *this;
     const Value val2 = other;
-    
+
     if ((val1.is<INT>() || val1.is<BOOL>()) && (val2.is<INT>() || val2.is<BOOL>())) {
         Value::INT int1 = (val1.is<INT>()) ? val1.get<INT>() : val1.get<BOOL>();
         Value::INT int2 = (val2.is<INT>()) ? val2.get<INT>() : val2.get<BOOL>();
@@ -551,21 +555,22 @@ Value Value::pow(const Value& other) const {
         return Value::INT(std::pow(int1, int2));
     }
     if (val1.isNumeric() && val2.isNumeric()) {
-        Value::FLOAT float1 = (val1.is<INT>())   ? val1.get<INT>() : 
-                                ((val1.is<BOOL>()) ? val1.get<BOOL>() : val1.get<FLOAT>());
-        Value::FLOAT float2 = (val2.is<INT>())   ? val2.get<INT>() : 
-                                ((val2.is<BOOL>()) ? val2.get<BOOL>() : val2.get<FLOAT>());
+        Value::FLOAT float1 = (val1.is<INT>())
+                                  ? val1.get<INT>()
+                                  : ((val1.is<BOOL>()) ? val1.get<BOOL>() : val1.get<FLOAT>());
+        Value::FLOAT float2 = (val2.is<INT>())
+                                  ? val2.get<INT>()
+                                  : ((val2.is<BOOL>()) ? val2.get<BOOL>() : val2.get<FLOAT>());
 
         return Value(std::pow(float1, float2));
     }
-    Value colResult = colOperations(val1, val2, [](Value val1, Value val2) {
-        return val1.pow(val2);
-    });
+    Value colResult =
+        colOperations(val1, val2, [](Value val1, Value val2) { return val1.pow(val2); });
     if (colResult != Value(nullptr)) {
         return colResult;
     }
-    throw RuntimeException("Cannot get exponent between values of type " +
-                            val1.toTypeString() + " and " + val2.toTypeString());
+    throw RuntimeException("Cannot get exponent between values of type " + val1.toTypeString() +
+                           " and " + val2.toTypeString());
 }
 
 Value Value::operator-() const {
@@ -593,28 +598,27 @@ Value Value::operator-() const {
 Value Value::operator&&(const Value& other) const {
     const Value val1 = *this;
     const Value val2 = other;
-    
+
     if (!val1.getBoolValue()) {
         return val1;
     }
-    
+
     return val2;
 }
 
-Value Value::operator||(const Value& other) const {     
+Value Value::operator||(const Value& other) const {
     const Value val1 = *this;
     const Value val2 = other;
-    
+
     if (val1.getBoolValue()) {
         return val1;
     }
-    
+
     return val2;
 }
 
 Value Value::colOperations(const Value val1, const Value val2,
                            const std::function<Value(Value, Value)>& op) const {
-    
     if (val1.is<COLUMN>() && val2.is<COLUMN>()) {
         const Value::LIST& list1 = val1.get<COLUMN>()->data;
         const Value::LIST& list2 = val2.get<COLUMN>()->data;
@@ -631,7 +635,6 @@ Value Value::colOperations(const Value val1, const Value val2,
         return Value(result);
     }
     if ((val1.is<COLUMN>() && (val2.isNumeric() || val2.is<STR>()))) {
-
         const Value::LIST& list1 = val1.get<COLUMN>()->data;
         Value::LIST result = std::make_shared<std::vector<std::shared_ptr<Value>>>();
         for (const std::shared_ptr<Value>& elem : *list1) {
@@ -640,7 +643,6 @@ Value Value::colOperations(const Value val1, const Value val2,
         return Value(result);
     }
     if ((val2.is<COLUMN>() && (val1.isNumeric() || val1.is<STR>()))) {
-
         const Value::LIST& list1 = val2.get<COLUMN>()->data;
         Value::LIST result = std::make_shared<std::vector<std::shared_ptr<Value>>>();
         for (const std::shared_ptr<Value>& elem : *list1) {
@@ -652,17 +654,16 @@ Value Value::colOperations(const Value val1, const Value val2,
     return Value(nullptr);
 }
 
-
 double Value::getNumericValue() const {
     if (is<BOOL>()) {
         return static_cast<double>(get<BOOL>());
     }
     if (is<INT>()) {
         return static_cast<double>(get<INT>());
-    } 
+    }
     if (is<FLOAT>()) {
         return get<FLOAT>();
-    } 
+    }
     return 0.0;
 }
 
