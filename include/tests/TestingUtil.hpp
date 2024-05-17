@@ -21,7 +21,7 @@
 #define SYMBOL_TABLE_TEST(name) TEST_CASE("Symbol Table -- " #name, "[symbol_table]")
 #define VALUE_TEST(name) TEST_CASE("Value -- " #name, "[value]")
 #define EVAL_TEST(name) TEST_CASE("Eval --" #name, "[eval]")
-#define EVAL_UNIT_TEST(name) TEST_CASE("Eval Unit Test --" #name, "[eval_unit_test]")
+#define EVAL_EXCEPTION_TEST(name) TEST_CASE("Eval Exception Test --" #name, "[eval_exception_test]")
 
 namespace dplutil {
     class TestVisitor : public dplgrammar::DplParserBaseVisitor {
@@ -46,9 +46,11 @@ namespace dplutil {
             static void testEval(std::string testFileName, 
                                  std::vector<std::pair<std::string, dplsrc::Value>> expectedVarVec,
                                  std::vector<std::string> expectedOutputLines);
+            static void testEvalException(std::string testFileName);
 
         private:
             static constexpr std::string_view exampleLocation = "../../docs/examples/"; 
+            static constexpr std::string_view exceptionExampleLocation = "../../docs/examples/exceptions/"; 
     };
 }
 

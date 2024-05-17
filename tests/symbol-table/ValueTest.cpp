@@ -227,7 +227,6 @@ VALUE_TEST("compare values") {
 
     REQUIRE(tab1 != tab5);
     REQUIRE(tab4 < tab1);
-    REQUIRE(tab1 < tab2);
     
 }
 

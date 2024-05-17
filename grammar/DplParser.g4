@@ -90,7 +90,7 @@ list: OpenSquare args CloseSquare
 table: OpenCurly column (Comma column)* CloseCurly
      | OpenCurly CloseCurly; 
 
-column: orexpr Colon list;
+column: orexpr Colon orexpr;
 
 // Trailers
 index: (OpenSquare orexpr CloseSquare);

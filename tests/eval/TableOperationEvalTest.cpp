@@ -11,7 +11,12 @@ EVAL_TEST("table_operation.dpl") {
     expectedOutputLines.push_back("{ \'area\': [None, 10, None, None, None, None], \'height\': [4, 5, 6, 7, 8, 6], \'width\': [1, 2, 3, 3, 4, 3] }");
     expectedOutputLines.push_back("{ \'area\': [None], \'height\': [6], \'width\': [3] }");
 
-
+    expectedOutputLines.push_back("{ \'area\': [10, None], \'height\': [5, 6], \'width\': [2, 3] }");
+    expectedOutputLines.push_back("{ \'area\': [None], \'height\': [4], \'width\': [1] }");
+    expectedOutputLines.push_back("{ \'area\': [None], \'height\': [8], \'width\': [4] }");
+    
+    expectedOutputLines.push_back("{ \'area\': [None, 10], \'height\': [4, 5], \'width\': [1, 2] }");
+    expectedOutputLines.push_back("{ \'area\': [None, None], \'height\': [7, 6], \'width\': [3, 3] }");
     
 
     //                      

@@ -212,3 +212,48 @@ void TestingUtil::testEval(std::string testFileName,
     }
 
 }
+
+void TestingUtil::testEvalException(std::string testFileName) {
+
+    std::string filePath = std::filesystem::path(std::string{exceptionExampleLocation} + testFileName).string();
+
+    if (!std::filesystem::exists(filePath)) {
+        FAIL("File does not exist: " + filePath);
+    }
+
+    std::ifstream file{filePath};
+    if (!file.is_open()) {
+        FAIL("Failed to open file: " + filePath);
+    }
+
+    antlr4::ANTLRInputStream input(file);
+
+    dplgrammar::DplLexer lexer(&input);
+    antlr4::CommonTokenStream tokens(&lexer);
+
+    tokens.fill();
+
+    dplgrammar::DplParser parser(&tokens);
+
+    dplgrammar::DplParser::ProgContext* tree = parser.prog();
+
+    AstBuilder builder{&parser, &lexer};
+    builder.visit(tree);
+
+    std::shared_ptr<AstNode> root;
+    try {
+        root = builder.getRoot();
+    } catch (const dplsrc::DplException &e) {
+        std::cerr << e.what() << '\n';
+    }
+
+    std::shared_ptr<dplsrc::Evaluator> evaluator;
+
+    try {
+        evaluator = std::make_shared<dplsrc::Evaluator>();
+        REQUIRE_THROWS_AS(root->accept(evaluator), dplsrc::RuntimeException);
+    } catch (const dplsrc::DplException &e) {
+        std::cerr << e.what() << '\n';
+        FAIL("Evaluator failed to evaluate");
+    }
+}

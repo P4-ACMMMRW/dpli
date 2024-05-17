@@ -9,3 +9,9 @@ print(t3)
 t4 = t1 intersection t2
 
 print(t4)
+
+print(t1[$"width"][>=2])
+print(t1[$"height"][<5])
+print(t2[$"height"][>7])
+print(t1[$"height"][<=5])
+print(t2[$"width"][!=4])

@@ -63,33 +63,18 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
             if (val.is<Value::LIST>()) {
                 Value::INT index = indices[i].get<Value::INT>();
                 list = val.getMut<Value::LIST>();
-
-                if (index < 0 || static_cast<size_t>(index) >= list->size()) {
-                    throw RuntimeException("Index out of range");
-                }
-
                 lastIndex = index;
                 val = *(*list)[index];
             } else if (val.is<Value::COLUMN>()) {
                 Value::INT index = indices[i].get<Value::INT>();
                 list = val.getMut<Value::COLUMN>()->data;
-
-                if (index < 0 || static_cast<size_t>(index) >= list->size()) {
-                    throw RuntimeException("Index out of range");
-                }
-
                 lastIndex = index;
                 val = *(*list)[index];
             } else if (val.is<Value::TABLE>()) {
                 // Tables index by header name
                 Value::TABLE table = val.get<Value::TABLE>();
                 Value::STR header = indices[i].get<Value::STR>();
-
-                try {
-                    val = table->at(header);
-                } catch (const std::out_of_range &e) {
-                    throw RuntimeException("Header not found in table");
-                }
+                val = table->at(header);
             } else {
                 throw RuntimeException("Index assignment not allowed for this type");
             }
@@ -104,8 +89,7 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
                 if (col->data->size() != rightNode->getVal().get<Value::LIST>()->size()) {
                     throw RuntimeException(
                         "size of right side of assignment does not match size of column");
-                }
-
+                    }
                 for (size_t i = 0; i < col->data->size(); ++i) {
                     *(*col->data)[i] = *(*rightNode->getVal().get<Value::LIST>())[i];
                 }
@@ -673,7 +657,7 @@ void Evaluator::visit(const std::shared_ptr<UnionExprNode> &node) {
 
     if (!node->getLeftNode()->getVal().is<Value::TABLE>() ||
         !node->getRightNode()->getVal().is<Value::TABLE>()) {
-        throw RuntimeException("Intersection operation only allowed for Table type");
+        throw RuntimeException("Union operation only allowed for Table type");
     }
 
     Value::TABLE leftTable = leftNode->getVal().get<Value::TABLE>();
