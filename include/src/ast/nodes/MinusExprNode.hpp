@@ -1,7 +1,7 @@
 #ifndef MINUSEXPRNODE_HPP
 #define MINUSEXPRNODE_HPP
 
-#include <BinaryNode.hpp>
+#include "BinaryNode.hpp"
 
 class MinusExprNode : public BinaryNode {
    public:

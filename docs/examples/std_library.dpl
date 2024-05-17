@@ -1,0 +1,53 @@
+t1 = { "test1": [1, 2, 3], "test2": [4.0, 5.0, 6.0], "test3": ["12", "10", "11"], "test4": [True, False, False], "test5": [None, None, None]}
+l1 = [1, 2]
+
+print(type(2))
+print(type(2.2))
+print(type(True))
+print(type("str"))
+print(type(l1))
+print(type(t1[$"test1"]))
+print(type(t1))
+
+print(str(2))
+print(str(2.2))
+print(str(True))
+print(str("str"))
+print(str(l1))
+print(str(t1[$"test1"]))
+print(str(t1))
+
+print(int(2))
+print(int(2.2))
+print(int(True))
+print(int("2"))
+
+print(float(2))
+print(float(2.2))
+print(float(True))
+print(float("2"))
+
+print(len("str"))
+print(len(l1))
+print(len(t1[$"test1"]))
+print(len(t1))
+
+print(ceil(2.2))
+print(ceil(2))
+print(floor(2.2))
+print(floor(2))
+print(round(2.2))
+print(round(2))
+
+print(copy(l1))
+print(copy(t1))
+
+writeFile("string.txt", "test")
+readFile("string.txt")
+
+writeTable("table.csv", t1, ",")
+print(readTable("table.csv", ",", ["int", "float", "str", "bool", "NoneType"]))
+print(readTable("table.csv", ","))
+
+writeTable("table.csv", t1)
+print(readTable("table.csv"))

@@ -1,0 +1,73 @@
+t1 = { "width": [1, 2, 3], "height": [4, 5, 6], "area": [None, 10,   None]}
+t2 = {}
+t3 = { "test": []}
+
+if 1:
+    print("int_works 1")
+else:
+    print("int_doesnt_works 1")
+
+if 0:
+    print("int_doesnt_works 2")
+else:
+    print("int_works 2")
+
+if 1.0:
+    print("float_works 1")
+else:
+    print("float_doesnt_works 1")
+
+if 0.0:
+    print("float_doesnt_works 2")
+else:
+    print("float_works 2")
+
+if True:
+    print("bool_works 1")
+else:
+    print("bool_doesnt_works 1")
+
+if False:
+    print("bool_doesnt_works 2")
+else:
+    print("bool_works 2")
+    
+if "False":
+    print("str_works 1")
+else:
+    print("str_doesnt_works 1")
+
+if "":
+    print("str_doesnt_works 2")
+else:
+    print("str_works 2")
+    
+if [1, 2]:
+    print("list_works 1")
+else:
+    print("list_doesnt_works 1")
+
+if []:
+    print("list_doesnt_works 2")
+else:
+    print("list_works 2")
+
+if t1[$"width"]:
+    print("column_works 1")
+else:
+    print("column_doesnt_works 1")
+
+if t3[$"test"]:
+    print("column_doesnt_works 2")
+else:
+    print("column_works 2")
+
+if t1:
+    print("table_works 1")
+else:
+    print("table_doesnt_works 1")
+
+if t2:
+    print("table_doesnt_works 2")
+else:
+    print("table_works 2")

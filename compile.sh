@@ -35,6 +35,11 @@ if [ ! -d build ]; then
     mkdir build
 fi
 
+# Remove gcda files to avoid checksum error with libgcov
+if [ ! -f build/ ]; then
+    find build/ -name "*.gcda" -type f -delete
+fi
+
 cd build
 
 # If ./build.sh release enable release mode

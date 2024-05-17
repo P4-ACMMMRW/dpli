@@ -1,7 +1,7 @@
 #ifndef ANDEXPRNODE_HPP
 #define ANDEXPRNODE_HPP
 
-#include <BinaryNode.hpp>
+#include "BinaryNode.hpp"
 
 class AndExprNode : public BinaryNode {
    public:

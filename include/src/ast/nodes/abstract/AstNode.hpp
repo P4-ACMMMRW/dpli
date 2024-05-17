@@ -1,15 +1,18 @@
 #ifndef ASTNODE_HPP
 #define ASTNODE_HPP
 
-#include <AstVisitor.hpp>
 #include <iostream>
 #include <memory>
 #include <string>
 #include <utility>
 
+#include "AstException.hpp"
+#include "AstVisitor.hpp"
+#include "Value.hpp"
+
 class AstNode : public std::enable_shared_from_this<AstNode> {
    public:
-    AstNode() {}
+    AstNode() = default;
     AstNode(std::shared_ptr<AstNode> parent) : parent(std::move(parent)) {}
 
     // Rule of five
@@ -26,6 +29,9 @@ class AstNode : public std::enable_shared_from_this<AstNode> {
     void setText(std::string text) { this->text = std::move(text); }
     void setParent(std::shared_ptr<AstNode> parent) { this->parent = std::move(parent); }
 
+    void setVal(dplsrc::Value val) { this->val = std::move(val); }
+    dplsrc::Value getVal() { return val; }
+
     virtual std::string print(std::string indent = "", std::string prefix = "");
     virtual void addChild(std::shared_ptr<AstNode> child) = 0;
     virtual void accept(std::shared_ptr<AstVisitor> visitor) = 0;
@@ -34,6 +40,7 @@ class AstNode : public std::enable_shared_from_this<AstNode> {
     size_t rule{};
     std::shared_ptr<AstNode> parent;
     std::string text;
+    dplsrc::Value val;
 };
 
 #endif

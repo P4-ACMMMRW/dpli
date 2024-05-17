@@ -1,8 +1,8 @@
 #ifndef ELSENODE_HPP
 #define ELSENODE_HPP
 
-#include <AstNode.hpp>
-#include <UnaryNodeList.hpp>
+#include "AstNode.hpp"
+#include "UnaryNodeList.hpp"
 
 class ElseNode : public UnaryNodeList {
    public:

@@ -1,7 +1,7 @@
 #ifndef MULTEXPRNODE_HPP
 #define MULTEXPRNODE_HPP
 
-#include <BinaryNode.hpp>
+#include "BinaryNode.hpp"
 
 class MultExprNode : public BinaryNode {
    public:

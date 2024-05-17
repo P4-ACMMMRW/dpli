@@ -1,7 +1,7 @@
 #ifndef FILTERNODE_HPP
 #define FILTERNODE_HPP
 
-#include <IndexNode.hpp>
+#include "IndexNode.hpp"
 
 class FilterNode : public IndexNode {
    public:

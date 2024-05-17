@@ -1,7 +1,7 @@
 #ifndef COLUMNNODE_HPP
 #define COLUMNNODE_HPP
 
-#include <BinaryNode.hpp>
+#include "BinaryNode.hpp"
 
 class ColumnNode : public BinaryNode {
    public:

@@ -1,4 +1,4 @@
-#include <TestingUtil.hpp>
+#include "TestingUtil.hpp"
 
 using namespace dplgrammar;
 
@@ -261,6 +261,20 @@ PARSER_TEST("quicksort.dpl") {
         DplParser::RuleTerm,
         DplParser::RuleSubscript,
         DplParser::RuleIndex,
+        DplParser::RuleOrexpr,
+        DplParser::RuleAndexpr,
+        DplParser::RuleNotexpr,
+        DplParser::RuleEqulexpr,
+        DplParser::RuleCompexpr,
+        DplParser::RulePlusexpr,
+        DplParser::RuleTablexpr,
+        DplParser::RuleMultexpr,
+        DplParser::RulePolaexpr,
+        DplParser::RuleExpoexpr,
+        DplParser::RuleTerm,
+        DplParser::RuleSubscript,
+        DplParser::RuleProccall,
+        DplParser::RuleArgs,
         DplParser::RuleOrexpr,
         DplParser::RuleAndexpr,
         DplParser::RuleNotexpr,
@@ -1016,7 +1030,21 @@ PARSER_TEST("quicksort.dpl") {
         DplParser::RulePolaexpr,
         DplParser::RuleExpoexpr,
         DplParser::RuleTerm,
-        DplParser::RuleSubscript
+        DplParser::RuleSubscript,
+        DplParser::RuleProccall,
+        DplParser::RuleArgs,
+        DplParser::RuleOrexpr,
+        DplParser::RuleAndexpr,
+        DplParser::RuleNotexpr,
+        DplParser::RuleEqulexpr,
+        DplParser::RuleCompexpr,
+        DplParser::RulePlusexpr,
+        DplParser::RuleTablexpr,
+        DplParser::RuleMultexpr,
+        DplParser::RulePolaexpr,
+        DplParser::RuleExpoexpr,
+        DplParser::RuleTerm,
+        DplParser::RuleSubscript,
     };
     
     dplutil::TestingUtil::testParser("quicksort.dpl", expectedNodeRules);

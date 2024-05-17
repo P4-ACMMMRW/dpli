@@ -1,5 +1,6 @@
-#include <AllNodeIncludes.hpp>
-#include <AstVisitor.hpp>
+#include "AstVisitor.hpp"
+
+#include "AllNodeIncludes.hpp"
 
 void AstVisitor::visit(const std::shared_ptr<AndExprNode> &node) {
     visit(std::static_pointer_cast<BinaryNode>(node));
@@ -9,9 +10,13 @@ void AstVisitor::visit(const std::shared_ptr<AssignNode> &node) {
     visit(std::static_pointer_cast<BinaryNode>(node));
 }
 
+void AstVisitor::visit([[maybe_unused]] const std::shared_ptr<BreakNode> &node) {}
+
 void AstVisitor::visit(const std::shared_ptr<ColumnNode> &node) {
     visit(std::static_pointer_cast<BinaryNode>(node));
 }
+
+void AstVisitor::visit([[maybe_unused]] const std::shared_ptr<ContinueNode> &node) {}
 
 void AstVisitor::visit(const std::shared_ptr<DivExprNode> &node) {
     visit(std::static_pointer_cast<BinaryNode>(node));

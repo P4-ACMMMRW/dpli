@@ -1,7 +1,7 @@
 #ifndef ASSIGNNODE_HPP
 #define ASSIGNNODE_HPP
 
-#include <BinaryNode.hpp>
+#include "BinaryNode.hpp"
 
 class AssignNode : public BinaryNode {
    public:

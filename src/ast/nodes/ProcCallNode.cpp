@@ -1,4 +1,6 @@
-#include <ProcCallNode.hpp>
+#include "ProcCallNode.hpp"
+
+using namespace dplsrc;
 
 void ProcCallNode::addChild(std::shared_ptr<AstNode> node) {
     if (visitingParams) {
@@ -6,7 +8,7 @@ void ProcCallNode::addChild(std::shared_ptr<AstNode> node) {
     } else if (childNode->getChildNode() == nullptr) {  // problem here
         childNode->addChild(node);
     } else {
-        throw std::runtime_error(
+        throw AstException(
             "ProcCallNode can add more children after stopped visitingParams and procdure has been "
             "added");
     }
@@ -16,7 +18,7 @@ std::string ProcCallNode::print(std::string indent = "", std::string prefix = ""
     std::string childIndent = AstNode::print(indent, prefix);
 
     bool isChildNodeListEmpty = childNodeList->getChildNodeList().empty();
-    childNode->print(childIndent, (isChildNodeListEmpty) ? "└── " : "├── Name: ");
+    childNode->print(childIndent, (isChildNodeListEmpty) ? "└── Name: " : "├── Name: ");
 
     childNodeList->print(childIndent, "└── ");
     return "";

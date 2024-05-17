@@ -1,4 +1,4 @@
-#include <TestingUtil.hpp>
+#include "TestingUtil.hpp"
 
 using namespace dplgrammar;
 
@@ -49,6 +49,8 @@ AST_TEST("quicksort.dpl") {
        DplParser::RuleAssignstm,
        DplLexer::Identifier,
        DplParser::RuleIndex,
+       DplLexer::Identifier,
+       DplParser::RuleProccall,
        DplLexer::Identifier,
        DplParser::RuleMultexpr,
        DplParser::RuleTerm,
@@ -165,6 +167,7 @@ AST_TEST("quicksort.dpl") {
        DplLexer::Identifier,
        DplParser::RulePlusexpr,
        DplLexer::String,
+       DplParser::RuleProccall,
        DplLexer::Identifier,
     };
     

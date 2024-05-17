@@ -1,4 +1,6 @@
-#include <ChildNodeList.hpp>
+#include "ChildNodeList.hpp"
+
+using namespace dplsrc;
 
 void ChildNodeList::addChild(std::shared_ptr<AstNode> node) {
     childNodeList.push_back(std::move(node));
@@ -15,5 +17,5 @@ std::string ChildNodeList::print(std::string indent, std::string prefix) {
 }
 
 void ChildNodeList::accept([[maybe_unused]] std::shared_ptr<AstVisitor> visitor) {
-    throw std::runtime_error("Can't accept composite node");
+    throw AstException("Can't accept composite node");
 }

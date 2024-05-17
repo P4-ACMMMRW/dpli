@@ -1,4 +1,5 @@
-#include <ProcDecNode.hpp>
+#include "ProcDecNode.hpp"
+
 #include <memory>
 
 void ProcDecNode::addChild(std::shared_ptr<AstNode> node) {

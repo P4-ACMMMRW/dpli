@@ -1,4 +1,4 @@
-#include <TestingUtil.hpp>
+#include "TestingUtil.hpp"
 
 using namespace dplgrammar;
 
@@ -28,6 +28,5 @@ AST_TEST("continue.dpl") {
         DplLexer::Identifier,
         DplLexer::Identifier
     };
-    
     dplutil::TestingUtil::testAst("continue.dpl", expectedNodeRules);
 }

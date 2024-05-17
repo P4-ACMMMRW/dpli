@@ -1,7 +1,7 @@
 #ifndef PARNODE_HPP
 #define PARNODE_HPP
 
-#include <UnaryNode.hpp>
+#include "UnaryNode.hpp"
 
 class ParNode : public UnaryNode {
    public:

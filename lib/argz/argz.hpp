@@ -22,6 +22,10 @@
 #include <variant>
 #include <vector>
 
+#include "ArgumentException.hpp"
+
+using namespace dplsrc;
+
 namespace argz
 {
    template <class T>
@@ -115,7 +119,6 @@ namespace argz
       std::cout << '\n' << R"(-h, --help       write help to console)" << '\n';
       std::cout << R"(-v, --version    write the version to console)" << '\n';
 
-      std::cout << "\nArguments:\n";
       for (auto& [ids, v, h] : opts)
       {
          if (ids.alias != '\0') {
@@ -155,7 +158,7 @@ namespace argz
 
          const char* flag = argv[i];
          if (*flag != '-') {
-            throw std::runtime_error("Expected '-'");
+            throw ArgumentException("Expected '-'");
          }
          ++flag;
          
@@ -174,7 +177,7 @@ namespace argz
          if (str.size() == 1) {
             str = get_id(*flag);
             if (str.empty()) {
-               throw std::runtime_error("Invalid argument: '-" + std::string(1, *flag) + "'");
+               throw ArgumentException("Invalid argument '-" + std::string(1, *flag) + "'");
             }
          }
          if (str.empty()) { break; }

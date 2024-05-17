@@ -1,7 +1,7 @@
 #ifndef UNIONEXPRNODE_HPP
 #define UNIONEXPRNODE_HPP
 
-#include <BinaryNode.hpp>
+#include "BinaryNode.hpp"
 
 class UnionExprNode : public BinaryNode {
    public:

@@ -1,7 +1,7 @@
 #ifndef NOTNODE_HPP
 #define NOTNODE_HPP
 
-#include <UnaryNode.hpp>
+#include "UnaryNode.hpp"
 
 class NotNode : public UnaryNode {
    public:
