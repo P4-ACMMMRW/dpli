@@ -20,8 +20,8 @@ EVAL_TEST("std_library.dpl") {
     expectedOutputLines.push_back("True");
     expectedOutputLines.push_back("str");
     expectedOutputLines.push_back("[1, 2]");
-    expectedOutputLines.push_back("'width': [1, 2, 3]");
-    expectedOutputLines.push_back("{ 'area': [None, 10, None], 'height': [4, 5, 6], 'width': [1, 2, 3] }");
+    expectedOutputLines.push_back("'test1': [1, 2, 3]");
+    expectedOutputLines.push_back("{ 'test1': [1, 2, 3], 'test2': [4.0, 5.0, 6.0], 'test3': ['12', '10', '11'], 'test4': [True, False, False], 'test5': [None, None, None] }");
     
     expectedOutputLines.push_back("2");
     expectedOutputLines.push_back("2");
@@ -36,7 +36,7 @@ EVAL_TEST("std_library.dpl") {
     expectedOutputLines.push_back("3");
     expectedOutputLines.push_back("2");
     expectedOutputLines.push_back("3");
-    expectedOutputLines.push_back("3");
+    expectedOutputLines.push_back("5");
 
     expectedOutputLines.push_back("3");
     expectedOutputLines.push_back("2");
@@ -44,50 +44,87 @@ EVAL_TEST("std_library.dpl") {
     expectedOutputLines.push_back("2");
     expectedOutputLines.push_back("2");
     expectedOutputLines.push_back("2");
+
+    expectedOutputLines.push_back("[1, 2]");
+    
+    expectedOutputLines.push_back("{ 'test1': [1, 2, 3], 'test2': [4.0, 5.0, 6.0], 'test3': ['12', '10', '11'], 'test4': [True, False, False], 'test5': [None, None, None] }");
+    expectedOutputLines.push_back("{ 'test1': [1, 2, 3], 'test2': [4.0, 5.0, 6.0], 'test3': ['12', '10', '11'], 'test4': [True, False, False], 'test5': [None, None, None] }");
+    
+    expectedOutputLines.push_back("{ 'test1': ['1', '2', '3'], 'test2': ['4.0', '5.0', '6.0'], 'test3': ['12', '10', '11'], 'test4': ['True', 'False', 'False'], 'test5': ['None', 'None', 'None'] }");
+    expectedOutputLines.push_back("{ 'test1': ['1', '2', '3'], 'test2': ['4.0', '5.0', '6.0'], 'test3': ['12', '10', '11'], 'test4': ['True', 'False', 'False'], 'test5': ['None', 'None', 'None'] }");
+    
+
     //                      
     //               TABLE 1
     //
     dplsrc::Value::TABLE table1 = std::make_shared<std::map<std::string, dplsrc::Value::COLUMN>>();
 
-    dplsrc::Value::COLUMN columnT1Area = std::make_shared<dplsrc::Value::COL_STRUCT>();
-    dplsrc::Value::LIST listT1Area = std::make_shared<std::vector<std::shared_ptr<dplsrc::Value>>>();
+    dplsrc::Value::COLUMN columnT1Test1= std::make_shared<dplsrc::Value::COL_STRUCT>();
+    dplsrc::Value::LIST listT1Test1 = std::make_shared<std::vector<std::shared_ptr<dplsrc::Value>>>();
 
-    listT1Area->push_back(std::make_shared<dplsrc::Value>(nullptr));
-    listT1Area->push_back(std::make_shared<dplsrc::Value>(10)); 
-    listT1Area->push_back(std::make_shared<dplsrc::Value>(nullptr)); 
+    listT1Test1->push_back(std::make_shared<dplsrc::Value>(1));
+    listT1Test1->push_back(std::make_shared<dplsrc::Value>(2)); 
+    listT1Test1->push_back(std::make_shared<dplsrc::Value>(3)); 
 
-    columnT1Area->parent = table1;
-    columnT1Area->header = "area";
-    columnT1Area->data = listT1Area;
+    columnT1Test1->parent = table1;
+    columnT1Test1->header = "test1";
+    columnT1Test1->data = listT1Test1;
 
-    table1->insert({"area", columnT1Area});
+    table1->insert({"test1", columnT1Test1});
 
-    dplsrc::Value::COLUMN columnT1Height = std::make_shared<dplsrc::Value::COL_STRUCT>();
-    dplsrc::Value::LIST listT1Height = std::make_shared<std::vector<std::shared_ptr<dplsrc::Value>>>();
+    dplsrc::Value::COLUMN columnT1Test2 = std::make_shared<dplsrc::Value::COL_STRUCT>();
+    dplsrc::Value::LIST listT1Test2 = std::make_shared<std::vector<std::shared_ptr<dplsrc::Value>>>();
 
-    listT1Height->push_back(std::make_shared<dplsrc::Value>(4));
-    listT1Height->push_back(std::make_shared<dplsrc::Value>(5)); 
-    listT1Height->push_back(std::make_shared<dplsrc::Value>(6)); 
+    listT1Test2->push_back(std::make_shared<dplsrc::Value>(4.0));
+    listT1Test2->push_back(std::make_shared<dplsrc::Value>(5.0)); 
+    listT1Test2->push_back(std::make_shared<dplsrc::Value>(6.0)); 
 
-    columnT1Height->parent = table1;
-    columnT1Height->header = "height";
-    columnT1Height->data = listT1Height;
+    columnT1Test2->parent = table1;
+    columnT1Test2->header = "test2";
+    columnT1Test2->data = listT1Test2;
 
-    table1->insert({"height", columnT1Height});
+    table1->insert({"test2", columnT1Test2});
 
-    dplsrc::Value::COLUMN columnT1Width = std::make_shared<dplsrc::Value::COL_STRUCT>();
-    dplsrc::Value::LIST listT1Width = std::make_shared<std::vector<std::shared_ptr<dplsrc::Value>>>();
+    dplsrc::Value::COLUMN columnT1Test3 = std::make_shared<dplsrc::Value::COL_STRUCT>();
+    dplsrc::Value::LIST listT1Test3 = std::make_shared<std::vector<std::shared_ptr<dplsrc::Value>>>();
 
-    listT1Width->push_back(std::make_shared<dplsrc::Value>(1));
-    listT1Width->push_back(std::make_shared<dplsrc::Value>(2)); 
-    listT1Width->push_back(std::make_shared<dplsrc::Value>(3)); 
+    listT1Test3->push_back(std::make_shared<dplsrc::Value>("12"));
+    listT1Test3->push_back(std::make_shared<dplsrc::Value>("10")); 
+    listT1Test3->push_back(std::make_shared<dplsrc::Value>("11")); 
     
-    columnT1Width->parent = table1;
-    columnT1Width->header = "width";
-    columnT1Width->data = listT1Width;
+    columnT1Test3->parent = table1;
+    columnT1Test3->header = "test3";
+    columnT1Test3->data = listT1Test3;
 
-    table1->insert({"width", columnT1Width});
+    table1->insert({"test3", columnT1Test3});
 
+    dplsrc::Value::COLUMN columnT1Test4 = std::make_shared<dplsrc::Value::COL_STRUCT>();
+    dplsrc::Value::LIST listT1Test4 = std::make_shared<std::vector<std::shared_ptr<dplsrc::Value>>>();
+
+    listT1Test4->push_back(std::make_shared<dplsrc::Value>(true));
+    listT1Test4->push_back(std::make_shared<dplsrc::Value>(false)); 
+    listT1Test4->push_back(std::make_shared<dplsrc::Value>(false)); 
+    
+    columnT1Test4->parent = table1;
+    columnT1Test4->header = "test4";
+    columnT1Test4->data = listT1Test4;
+
+    table1->insert({"test4", columnT1Test4});
+
+    dplsrc::Value::COLUMN columnT1Test5 = std::make_shared<dplsrc::Value::COL_STRUCT>();
+    dplsrc::Value::LIST listT1Test5 = std::make_shared<std::vector<std::shared_ptr<dplsrc::Value>>>();
+
+    listT1Test5->push_back(std::make_shared<dplsrc::Value>(nullptr));
+    listT1Test5->push_back(std::make_shared<dplsrc::Value>(nullptr)); 
+    listT1Test5->push_back(std::make_shared<dplsrc::Value>(nullptr)); 
+    
+    columnT1Test5->parent = table1;
+    columnT1Test5->header = "test5";
+    columnT1Test5->data = listT1Test5;
+
+    table1->insert({"test5", columnT1Test5});
+
+     
     //                      
     //               LIST 1
     //

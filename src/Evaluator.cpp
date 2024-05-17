@@ -980,7 +980,7 @@ void Evaluator::initPtable() {
                                 cols[i]->data->emplace_back(
                                     std::make_shared<Value>(std::stod(values[i])));
                             } else if (dataType == "bool") {
-                                bool isTrue = values[i] == "True" || values[i] != "0";
+                                bool isTrue = values[i] != "False" && values[i] != "0";
                                 cols[i]->data->emplace_back(std::make_shared<Value>(isTrue));
                             } else if (dataType == "NoneType") {
                                 cols[i]->data->emplace_back(std::make_shared<Value>(nullptr));
