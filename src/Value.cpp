@@ -333,21 +333,23 @@ bool Value::operator!() const {
 
 Value Value::operator+(const Value& other) const {
     const Value val1 = *this;
-    const Value val2 = other;
+    const Value& val2 = other;
 
     if ((val1.is<INT>() || val1.is<BOOL>()) && (val2.is<INT>() || val2.is<BOOL>())) {
-        Value::INT int1 = (val1.is<INT>()) ? val1.get<INT>() : val1.get<BOOL>();
-        Value::INT int2 = (val2.is<INT>()) ? val2.get<INT>() : val2.get<BOOL>();
+        Value::INT int1 = (val1.is<INT>()) ? val1.get<INT>() : static_cast<long>(val1.get<BOOL>());
+        Value::INT int2 = (val2.is<INT>()) ? val2.get<INT>() : static_cast<long>(val2.get<BOOL>());
 
         return Value(int1 + int2);
     }
     if (val1.isNumeric() && val2.isNumeric()) {
-        Value::FLOAT float1 = (val1.is<INT>())
-                                  ? val1.get<INT>()
-                                  : ((val1.is<BOOL>()) ? val1.get<BOOL>() : val1.get<FLOAT>());
-        Value::FLOAT float2 = (val2.is<INT>())
-                                  ? val2.get<INT>()
-                                  : ((val2.is<BOOL>()) ? val2.get<BOOL>() : val2.get<FLOAT>());
+        Value::FLOAT float1 =
+            (val1.is<INT>())
+                ? val1.get<INT>()
+                : ((val1.is<BOOL>()) ? static_cast<double>(val1.get<BOOL>()) : val1.get<FLOAT>());
+        Value::FLOAT float2 =
+            (val2.is<INT>())
+                ? val2.get<INT>()
+                : ((val2.is<BOOL>()) ? static_cast<double>(val2.get<BOOL>()) : val2.get<FLOAT>());
 
         return Value(float1 + float2);
     }
@@ -357,8 +359,8 @@ Value Value::operator+(const Value& other) const {
     if (val1.is<LIST>() && val2.is<LIST>()) {
         Value::LIST result = std::make_shared<std::vector<std::shared_ptr<Value>>>();
 
-        Value::LIST list1 = val1.get<LIST>();
-        Value::LIST list2 = val2.get<LIST>();
+        const Value::LIST& list1 = val1.get<LIST>();
+        const Value::LIST& list2 = val2.get<LIST>();
 
         for (const std::shared_ptr<Value>& elem : *list1) {
             result->push_back(elem);
@@ -369,7 +371,8 @@ Value Value::operator+(const Value& other) const {
 
         return Value(result);
     }
-    Value colResult = colOperations(val1, val2, [](Value val1, Value val2) { return val1 + val2; });
+    Value colResult =
+        colOperations(val1, val2, [](const Value& val1, const Value& val2) { return val1 + val2; });
     if (colResult != Value(nullptr)) {
         return colResult;
     }
@@ -379,25 +382,28 @@ Value Value::operator+(const Value& other) const {
 
 Value Value::operator-(const Value& other) const {
     const Value val1 = *this;
-    const Value val2 = other;
+    const Value& val2 = other;
 
     if ((val1.is<INT>() || val1.is<BOOL>()) && (val2.is<INT>() || val2.is<BOOL>())) {
-        Value::INT int1 = (val1.is<INT>()) ? val1.get<INT>() : val1.get<BOOL>();
-        Value::INT int2 = (val2.is<INT>()) ? val2.get<INT>() : val2.get<BOOL>();
+        Value::INT int1 = (val1.is<INT>()) ? val1.get<INT>() : static_cast<long>(val1.get<BOOL>());
+        Value::INT int2 = (val2.is<INT>()) ? val2.get<INT>() : static_cast<long>(val2.get<BOOL>());
 
         return Value(int1 - int2);
     }
     if (val1.isNumeric() && val2.isNumeric()) {
-        Value::FLOAT float1 = (val1.is<INT>())
-                                  ? val1.get<INT>()
-                                  : ((val1.is<BOOL>()) ? val1.get<BOOL>() : val1.get<FLOAT>());
-        Value::FLOAT float2 = (val2.is<INT>())
-                                  ? val2.get<INT>()
-                                  : ((val2.is<BOOL>()) ? val2.get<BOOL>() : val2.get<FLOAT>());
+        Value::FLOAT float1 =
+            (val1.is<INT>())
+                ? val1.get<INT>()
+                : ((val1.is<BOOL>()) ? static_cast<double>(val1.get<BOOL>()) : val1.get<FLOAT>());
+        Value::FLOAT float2 =
+            (val2.is<INT>())
+                ? val2.get<INT>()
+                : ((val2.is<BOOL>()) ? static_cast<double>(val2.get<BOOL>()) : val2.get<FLOAT>());
 
         return Value(float1 - float2);
     }
-    Value colResult = colOperations(val1, val2, [](Value val1, Value val2) { return val1 - val2; });
+    Value colResult =
+        colOperations(val1, val2, [](const Value& val1, const Value& val2) { return val1 - val2; });
     if (colResult != Value(nullptr)) {
         return colResult;
     }
@@ -407,24 +413,26 @@ Value Value::operator-(const Value& other) const {
 
 Value Value::operator*(const Value& other) const {
     const Value val1 = *this;
-    const Value val2 = other;
+    const Value& val2 = other;
 
     bool isVal1Int = val1.is<INT>() || val1.is<BOOL>();
     bool isVal2Int = val2.is<INT>() || val2.is<BOOL>();
 
     if (isVal1Int && isVal2Int) {
-        Value::INT int1 = (val1.is<INT>()) ? val1.get<INT>() : val1.get<BOOL>();
-        Value::INT int2 = (val2.is<INT>()) ? val2.get<INT>() : val2.get<BOOL>();
+        Value::INT int1 = (val1.is<INT>()) ? val1.get<INT>() : static_cast<long>(val1.get<BOOL>());
+        Value::INT int2 = (val2.is<INT>()) ? val2.get<INT>() : static_cast<long>(val2.get<BOOL>());
 
         return Value(int1 * int2);
     }
     if (val1.isNumeric() && val2.isNumeric()) {
-        Value::FLOAT float1 = (val1.is<INT>())
-                                  ? val1.get<INT>()
-                                  : ((val1.is<BOOL>()) ? val1.get<BOOL>() : val1.get<FLOAT>());
-        Value::FLOAT float2 = (val2.is<INT>())
-                                  ? val2.get<INT>()
-                                  : ((val2.is<BOOL>()) ? val2.get<BOOL>() : val2.get<FLOAT>());
+        Value::FLOAT float1 =
+            (val1.is<INT>())
+                ? val1.get<INT>()
+                : ((val1.is<BOOL>()) ? static_cast<double>(val1.get<BOOL>()) : val1.get<FLOAT>());
+        Value::FLOAT float2 =
+            (val2.is<INT>())
+                ? val2.get<INT>()
+                : ((val2.is<BOOL>()) ? static_cast<double>(val2.get<BOOL>()) : val2.get<FLOAT>());
 
         return Value(float1 * float2);
     }
@@ -468,7 +476,8 @@ Value Value::operator*(const Value& other) const {
 
         return Value(result);
     }
-    Value colResult = colOperations(val1, val2, [](Value val1, Value val2) { return val1 * val2; });
+    Value colResult =
+        colOperations(val1, val2, [](const Value& val1, const Value& val2) { return val1 * val2; });
     if (colResult != Value(nullptr)) {
         return colResult;
     }
@@ -479,30 +488,32 @@ Value Value::operator*(const Value& other) const {
 
 Value Value::operator/(const Value& other) const {
     const Value val1 = *this;
-    const Value val2 = other;
+    const Value& val2 = other;
 
     if ((val2.is<INT>() && val2.get<INT>() == 0) ||
-        (val2.is<FLOAT>() && val2.get<FLOAT>() == 0.0) ||
-        (val2.is<BOOL>() && val2.get<BOOL>() == false)) {
+        (val2.is<FLOAT>() && val2.get<FLOAT>() == 0.0) || (val2.is<BOOL>() && !val2.get<BOOL>())) {
         throw RuntimeException("Cannot divide values with divisor 0");
     }
     if ((val1.is<INT>() || val1.is<BOOL>()) && (val2.is<INT>() || val2.is<BOOL>())) {
-        Value::INT int1 = (val1.is<INT>()) ? val1.get<INT>() : val1.get<BOOL>();
-        Value::INT int2 = (val2.is<INT>()) ? val2.get<INT>() : val2.get<BOOL>();
+        Value::INT int1 = (val1.is<INT>()) ? val1.get<INT>() : static_cast<long>(val1.get<BOOL>());
+        Value::INT int2 = (val2.is<INT>()) ? val2.get<INT>() : static_cast<long>(val2.get<BOOL>());
 
         return Value::INT(int1 / int2);
     }
     if (val1.isNumeric() && val2.isNumeric()) {
-        Value::FLOAT float1 = (val1.is<INT>())
-                                  ? val1.get<INT>()
-                                  : ((val1.is<BOOL>()) ? val1.get<BOOL>() : val1.get<FLOAT>());
-        Value::FLOAT float2 = (val2.is<INT>())
-                                  ? val2.get<INT>()
-                                  : ((val2.is<BOOL>()) ? val2.get<BOOL>() : val2.get<FLOAT>());
+        Value::FLOAT float1 =
+            (val1.is<INT>())
+                ? val1.get<INT>()
+                : ((val1.is<BOOL>()) ? static_cast<double>(val1.get<BOOL>()) : val1.get<FLOAT>());
+        Value::FLOAT float2 =
+            (val2.is<INT>())
+                ? val2.get<INT>()
+                : ((val2.is<BOOL>()) ? static_cast<double>(val2.get<BOOL>()) : val2.get<FLOAT>());
 
         return Value(float1 / float2);
     }
-    Value colResult = colOperations(val1, val2, [](Value val1, Value val2) { return val1 % val2; });
+    Value colResult =
+        colOperations(val1, val2, [](const Value& val1, const Value& val2) { return val1 % val2; });
     if (colResult != Value(nullptr)) {
         return colResult;
     }
@@ -513,30 +524,32 @@ Value Value::operator/(const Value& other) const {
 
 Value Value::operator%(const Value& other) const {
     const Value val1 = *this;
-    const Value val2 = other;
+    const Value& val2 = other;
 
     if ((val2.is<INT>() && val2.get<INT>() == 0) ||
-        (val2.is<FLOAT>() && val2.get<FLOAT>() == 0.0) ||
-        (val2.is<BOOL>() && val2.get<BOOL>() == false)) {
+        (val2.is<FLOAT>() && val2.get<FLOAT>() == 0.0) || (val2.is<BOOL>() && !val2.get<BOOL>())) {
         throw RuntimeException("Cannot take remainder of values with divisor 0");
     }
     if ((val1.is<INT>() || val1.is<BOOL>()) && (val2.is<INT>() || val2.is<BOOL>())) {
-        Value::INT int1 = (val1.is<INT>()) ? val1.get<INT>() : val1.get<BOOL>();
-        Value::INT int2 = (val2.is<INT>()) ? val2.get<INT>() : val2.get<BOOL>();
+        Value::INT int1 = (val1.is<INT>()) ? val1.get<INT>() : static_cast<long>(val1.get<BOOL>());
+        Value::INT int2 = (val2.is<INT>()) ? val2.get<INT>() : static_cast<long>(val2.get<BOOL>());
 
         return Value::INT(int1 % int2);
     }
     if (val1.isNumeric() && val2.isNumeric()) {
-        Value::FLOAT float1 = (val1.is<INT>())
-                                  ? val1.get<INT>()
-                                  : ((val1.is<BOOL>()) ? val1.get<BOOL>() : val1.get<FLOAT>());
-        Value::FLOAT float2 = (val2.is<INT>())
-                                  ? val2.get<INT>()
-                                  : ((val2.is<BOOL>()) ? val2.get<BOOL>() : val2.get<FLOAT>());
+        Value::FLOAT float1 =
+            (val1.is<INT>())
+                ? val1.get<INT>()
+                : ((val1.is<BOOL>()) ? static_cast<double>(val1.get<BOOL>()) : val1.get<FLOAT>());
+        Value::FLOAT float2 =
+            (val2.is<INT>())
+                ? val2.get<INT>()
+                : ((val2.is<BOOL>()) ? static_cast<double>(val2.get<BOOL>()) : val2.get<FLOAT>());
 
         return Value(std::fmod(float1, float2));
     }
-    Value colResult = colOperations(val1, val2, [](Value val1, Value val2) { return val1 % val2; });
+    Value colResult =
+        colOperations(val1, val2, [](const Value& val1, const Value& val2) { return val1 % val2; });
     if (colResult != nullptr) {
         return colResult;
     }
@@ -546,26 +559,28 @@ Value Value::operator%(const Value& other) const {
 
 Value Value::pow(const Value& other) const {
     const Value val1 = *this;
-    const Value val2 = other;
+    const Value& val2 = other;
 
     if ((val1.is<INT>() || val1.is<BOOL>()) && (val2.is<INT>() || val2.is<BOOL>())) {
-        Value::INT int1 = (val1.is<INT>()) ? val1.get<INT>() : val1.get<BOOL>();
-        Value::INT int2 = (val2.is<INT>()) ? val2.get<INT>() : val2.get<BOOL>();
+        Value::INT int1 = (val1.is<INT>()) ? val1.get<INT>() : static_cast<long>(val1.get<BOOL>());
+        Value::INT int2 = (val2.is<INT>()) ? val2.get<INT>() : static_cast<long>(val2.get<BOOL>());
 
         return Value::INT(std::pow(int1, int2));
     }
     if (val1.isNumeric() && val2.isNumeric()) {
-        Value::FLOAT float1 = (val1.is<INT>())
-                                  ? val1.get<INT>()
-                                  : ((val1.is<BOOL>()) ? val1.get<BOOL>() : val1.get<FLOAT>());
-        Value::FLOAT float2 = (val2.is<INT>())
-                                  ? val2.get<INT>()
-                                  : ((val2.is<BOOL>()) ? val2.get<BOOL>() : val2.get<FLOAT>());
+        Value::FLOAT float1 =
+            (val1.is<INT>())
+                ? val1.get<INT>()
+                : ((val1.is<BOOL>()) ? static_cast<double>(val1.get<BOOL>()) : val1.get<FLOAT>());
+        Value::FLOAT float2 =
+            (val2.is<INT>())
+                ? val2.get<INT>()
+                : ((val2.is<BOOL>()) ? static_cast<double>(val2.get<BOOL>()) : val2.get<FLOAT>());
 
         return Value(std::pow(float1, float2));
     }
-    Value colResult =
-        colOperations(val1, val2, [](Value val1, Value val2) { return val1.pow(val2); });
+    Value colResult = colOperations(
+        val1, val2, [](const Value& val1, const Value& val2) { return val1.pow(val2); });
     if (colResult != Value(nullptr)) {
         return colResult;
     }
@@ -597,7 +612,7 @@ Value Value::operator-() const {
 
 Value Value::operator&&(const Value& other) const {
     const Value val1 = *this;
-    const Value val2 = other;
+    const Value& val2 = other;
 
     if (!val1.getBoolValue()) {
         return val1;
@@ -608,7 +623,7 @@ Value Value::operator&&(const Value& other) const {
 
 Value Value::operator||(const Value& other) const {
     const Value val1 = *this;
-    const Value val2 = other;
+    const Value& val2 = other;
 
     if (val1.getBoolValue()) {
         return val1;
@@ -617,8 +632,8 @@ Value Value::operator||(const Value& other) const {
     return val2;
 }
 
-Value Value::colOperations(const Value val1, const Value val2,
-                           const std::function<Value(Value, Value)>& op) const {
+Value Value::colOperations(const Value& val1, const Value& val2,
+                           const std::function<Value(Value, Value)>& op) {
     if (val1.is<COLUMN>() && val2.is<COLUMN>()) {
         const Value::LIST& list1 = val1.get<COLUMN>()->data;
         const Value::LIST& list2 = val2.get<COLUMN>()->data;

@@ -395,7 +395,11 @@ void Evaluator::visit(const std::shared_ptr<LeafNode> &node) {
             std::string text = node->getText();
             node->setVal(text.substr(1, text.size() - 2));
         } else if (val.is<Value::INT>()) {
-            node->setVal(std::stol(node->getText()));
+            try {
+                node->setVal(std::stol(node->getText()));
+            } catch (const std::out_of_range &e) {
+                throw RuntimeException("Integer value out of range");
+            }
         } else if (val.is<Value::FLOAT>()) {
             node->setVal(std::stod(node->getText()));
         } else if (val.is<Value::BOOL>()) {
@@ -738,12 +742,16 @@ void Evaluator::initPtable() {
         if (args[0]->getVal().is<Value::INT>()) {
             return args[0]->getVal().get<Value::INT>();
         }
+
         if (args[0]->getVal().is<Value::FLOAT>()) {
             return static_cast<Value::INT>(args[0]->getVal().get<Value::FLOAT>());
         }
+
         if (args[0]->getVal().is<Value::BOOL>()) {
             return static_cast<Value::INT>(args[0]->getVal().get<Value::BOOL>());
-        } else if (args[0]->getVal().is<Value::STR>()) {
+        }
+
+        if (args[0]->getVal().is<Value::STR>()) {
             try {
                 return std::stol(args[0]->getVal().get<Value::STR>());
             } catch (const std::invalid_argument &e) {
@@ -763,7 +771,8 @@ void Evaluator::initPtable() {
         }
         if (args[0]->getVal().is<Value::BOOL>()) {
             return static_cast<Value::FLOAT>(args[0]->getVal().get<Value::BOOL>());
-        } else if (args[0]->getVal().is<Value::STR>()) {
+        }
+        if (args[0]->getVal().is<Value::STR>()) {
             try {
                 return std::stod(args[0]->getVal().get<Value::STR>());
             } catch (const std::invalid_argument &e) {
@@ -799,7 +808,8 @@ void Evaluator::initPtable() {
         }
         if (val.is<Value::TABLE>()) {
             return static_cast<Value::INT>(val.get<Value::TABLE>()->size());
-        } else if (val.is<Value::COLUMN>()) {
+        }
+        if (val.is<Value::COLUMN>()) {
             return static_cast<Value::INT>(val.get<Value::COLUMN>()->data->size());
         }
 
@@ -978,8 +988,12 @@ void Evaluator::initPtable() {
                         } else {
                             Value::STR dataType = dataTypes->at(i)->get<Value::STR>();
                             if (dataType == "int") {
-                                cols[i]->data->emplace_back(
-                                    std::make_shared<Value>(std::stol(values[i])));
+                                try {
+                                    cols[i]->data->emplace_back(
+                                        std::make_shared<Value>(std::stol(values[i])));
+                                } catch (const std::out_of_range &e) {
+                                    throw RuntimeException("Integer value out of range");
+                                }
                             } else if (dataType == "float") {
                                 cols[i]->data->emplace_back(
                                     std::make_shared<Value>(std::stod(values[i])));

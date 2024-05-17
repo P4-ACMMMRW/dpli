@@ -11,6 +11,7 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <utility>
 
 #include "AstTestVisitor.hpp"
 #include "Evaluator.hpp"
@@ -31,7 +32,7 @@ class TestVisitor : public dplgrammar::DplParserBaseVisitor {
 
    public:
     TestVisitor(dplgrammar::DplParser* parser, std::vector<size_t> expectedTreeNodes)
-        : parser(parser), expectedTreeNodes(expectedTreeNodes) {}
+        : parser(parser), expectedTreeNodes(std::move(expectedTreeNodes)) {}
 
     void printTokens(int ruleIndex);
     void testNode(antlr4::ParserRuleContext* ctx);
