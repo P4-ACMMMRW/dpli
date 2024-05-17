@@ -6,9 +6,9 @@
 #include <DplParserBaseVisitor.h>
 #include <antlr4-runtime.h>
 
-#include <AstTestVisitor.hpp>
 #include <Evaluator.hpp>
-#include <catch2/catch_test_macros.hpp>
+#include <catch2/catch_test_macros.hpp>  // Move this line up
+#include <AstTestVisitor.hpp> 
 #include <cstdio>
 #include <filesystem>
 #include <fstream>
@@ -49,7 +49,7 @@ class TestingUtil {
 
    private:
     static constexpr std::string_view exampleLocation = "../../docs/examples/";
-    static constexpr std::string_view exceptionExampleLocation = "../../docs/examples/exceptions/";
+    static constexpr std::string_view exceptionExampleLocation = "../../tests/eval/exception_example/";
 };
 }  // namespace dplutil
 
