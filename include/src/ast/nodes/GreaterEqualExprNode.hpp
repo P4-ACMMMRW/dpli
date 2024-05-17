@@ -1,7 +1,7 @@
 #ifndef GREATEREQUALEXPRNODE_HPP
 #define GREATEREQUALEXPRNODE_HPP
 
-#include <BinaryNode.hpp>
+#include "BinaryNode.hpp"
 
 class GreaterEqualExprNode : public BinaryNode {
    public:

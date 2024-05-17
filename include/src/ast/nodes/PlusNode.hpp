@@ -1,7 +1,7 @@
 #ifndef PLUSNODE_HPP
 #define PLUSNODE_HPP
 
-#include <UnaryNode.hpp>
+#include "UnaryNode.hpp"
 
 class PlusNode : public UnaryNode {
    public:

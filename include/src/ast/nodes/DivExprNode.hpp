@@ -1,7 +1,7 @@
 #ifndef DIVEXPRNODE_HPP
 #define DIVEXPRNODE_HPP
 
-#include <BinaryNode.hpp>
+#include "BinaryNode.hpp"
 
 class DivExprNode : public BinaryNode {
    public:

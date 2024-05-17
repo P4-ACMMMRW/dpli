@@ -1,7 +1,7 @@
 #ifndef RETURNNODE_HPP
 #define RETURNNODE_HPP
 
-#include <UnaryNode.hpp>
+#include "UnaryNode.hpp"
 
 class ReturnNode : public UnaryNode {
    public:

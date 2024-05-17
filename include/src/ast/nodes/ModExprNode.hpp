@@ -1,7 +1,7 @@
 #ifndef MODEXPRNODE_HPP
 #define MODEXPRNODE_HPP
 
-#include <BinaryNode.hpp>
+#include "BinaryNode.hpp"
 
 class ModExprNode : public BinaryNode {
    public:

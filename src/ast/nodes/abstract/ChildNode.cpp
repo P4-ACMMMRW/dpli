@@ -1,4 +1,4 @@
-#include <ChildNode.hpp>
+#include "ChildNode.hpp"
 
 using namespace dplsrc;
 

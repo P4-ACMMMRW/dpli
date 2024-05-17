@@ -1,9 +1,11 @@
 #ifndef ASTTESTVISITOR_HPP
 #define ASTTESTVISITOR_HPP
 
-#include <AstBuilder.hpp>
-#include <AstNode.hpp>
-#include <AstVisitor.hpp>
+#include <catch2/catch_test_macros.hpp>
+
+#include "AstBuilder.hpp"
+#include "AstNode.hpp"
+#include "AstVisitor.hpp"
 
 class AstTestVisitor : public AstVisitor {
    public:

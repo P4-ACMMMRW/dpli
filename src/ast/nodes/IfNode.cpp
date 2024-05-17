@@ -1,5 +1,6 @@
-#include <ElseNode.hpp>
-#include <IfNode.hpp>
+#include "IfNode.hpp"
+
+#include "ElseNode.hpp"
 
 void IfNode::addChild(std::shared_ptr<AstNode> node) {
     if (condNode->getChildNode() == nullptr) {

@@ -1,7 +1,7 @@
 #ifndef CONTINUENODE_HPP
 #define CONTINUENODE_HPP
 
-#include <LeafNode.hpp>
+#include "LeafNode.hpp"
 
 class ContinueNode : public LeafNode {
    public:

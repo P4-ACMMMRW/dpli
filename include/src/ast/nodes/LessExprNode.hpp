@@ -1,7 +1,7 @@
 #ifndef LESSEXPRNODE_HPP
 #define LESSEXPRNODE_HPP
 
-#include <BinaryNode.hpp>
+#include "BinaryNode.hpp"
 
 class LessExprNode : public BinaryNode {
    public:

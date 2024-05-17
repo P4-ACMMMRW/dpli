@@ -1,8 +1,8 @@
 #ifndef IFNODE_HPP
 #define IFNODE_HPP
 
-#include <ChildNode.hpp>
-#include <ChildNodeList.hpp>
+#include "ChildNode.hpp"
+#include "ChildNodeList.hpp"
 
 class IfNode : public AstNode {
    public:

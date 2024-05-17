@@ -1,13 +1,13 @@
 #ifndef ASTNODE_HPP
 #define ASTNODE_HPP
 
-#include <AstVisitor.hpp>
 #include <iostream>
 #include <memory>
 #include <string>
 #include <utility>
 
 #include "AstException.hpp"
+#include "AstVisitor.hpp"
 #include "Value.hpp"
 
 class AstNode : public std::enable_shared_from_this<AstNode> {

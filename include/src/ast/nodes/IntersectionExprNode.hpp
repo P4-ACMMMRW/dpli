@@ -1,7 +1,7 @@
 #ifndef INTERSECTIONEXPRNODE_HPP
 #define INTERSECTIONEXPRNODE_HPP
 
-#include <BinaryNode.hpp>
+#include "BinaryNode.hpp"
 
 class IntersectionExprNode : public BinaryNode {
    public:

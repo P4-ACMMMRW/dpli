@@ -1,9 +1,10 @@
 #ifndef BINARYNODE_HPP
 #define BINARYNODE_HPP
 
-#include <AstNode.hpp>
-#include <ChildNode.hpp>
 #include <utility>
+
+#include "AstNode.hpp"
+#include "ChildNode.hpp"
 
 class BinaryNode : public AstNode {
    public:
