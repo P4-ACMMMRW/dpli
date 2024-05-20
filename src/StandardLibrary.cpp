@@ -87,6 +87,21 @@ void Evaluator::initStdlib() {
         throw RuntimeException("Could not convert value to bool");
     };
 
+    Procedure::ProcType sum1 = [](std::vector<std::shared_ptr<AstNode>> args) {
+        Value val = args[0]->getVal();
+        return val.sum();
+    };
+
+    Procedure::ProcType mean1 = [](std::vector<std::shared_ptr<AstNode>> args) {
+        Value val = args[0]->getVal();
+        return val.mean();
+    };
+
+    Procedure::ProcType stdDev1 = [](std::vector<std::shared_ptr<AstNode>> args) {
+        Value val = args[0]->getVal();
+        return val.stdDev();
+    };
+
     Procedure::ProcType len1 = [](std::vector<std::shared_ptr<AstNode>> args) {
         Value val = args[0]->getVal();
 
@@ -435,6 +450,9 @@ void Evaluator::initStdlib() {
     ptable.bind(Procedure("int", {"x"}, int1));
     ptable.bind(Procedure("float", {"x"}, float1));
     ptable.bind(Procedure("bool", {"x"}, bool1));
+    ptable.bind(Procedure("sum", {"x"}, sum1));
+    ptable.bind(Procedure("mean", {"x"}, mean1));
+    ptable.bind(Procedure("stdDev", {"x"}, stdDev1));
     ptable.bind(Procedure("len", {"x"}, len1));
     ptable.bind(Procedure("ceil", {"x"}, ceil1));
     ptable.bind(Procedure("floor", {"x"}, floor1));

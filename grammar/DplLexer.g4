@@ -151,7 +151,7 @@ String : '"' ( ~["\r\n\\] | '\\' '"' )* '"';
 None: 'None';
 
 // Identifiers
-Identifier: ALPHA ALPHANUM*;
+Identifier: ALPHA (ALPHANUM | '_')*;
 
 // Comments
 Comment: '#' ~[\r\n]* -> skip;
