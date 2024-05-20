@@ -88,7 +88,7 @@ int main(int argc, char **argv) {
     DplParser parser(&tokens);
     parser.removeErrorListeners();
     std::shared_ptr<ANTLRErrorListener> parserErrorListener =
-    std::make_shared<ParserErrorListener>(filename);
+        std::make_shared<ParserErrorListener>(filename);
     parser.addErrorListener(parserErrorListener.get());
     std::shared_ptr<ANTLRErrorStrategy> strategy = std::make_shared<DplErrorStrategy>();
     parser.setErrorHandler(strategy);
