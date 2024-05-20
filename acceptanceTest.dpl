@@ -1,0 +1,9 @@
+t1 = { "id": [1, 2, 3, 4, 5, 6, 7], "value": [1, 2, 3, 100, 5, 6, 7]}
+
+c1 = t1[$"value"]
+
+mean = mean(c1)
+stdDev = stdDev(c1)
+threshold = 2
+
+t1 = c1[<= threshold * stdDev + mean] 
