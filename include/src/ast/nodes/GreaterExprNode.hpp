@@ -1,7 +1,7 @@
 #ifndef GREATEREXPRNODE_HPP
 #define GREATEREXPRNODE_HPP
 
-#include <BinaryNode.hpp>
+#include "BinaryNode.hpp"
 
 class GreaterExprNode : public BinaryNode {
    public:

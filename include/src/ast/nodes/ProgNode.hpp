@@ -1,7 +1,7 @@
 #ifndef PROGNODE_HPP
 #define PROGNODE_HPP
 
-#include <UnaryNodeList.hpp>
+#include "UnaryNodeList.hpp"
 
 class ProgNode : public UnaryNodeList {
    public:

@@ -5,10 +5,10 @@
 #include <DplParser.h>
 #include <DplParserBaseVisitor.h>
 
-#include <AllNodeIncludes.hpp>
 #include <functional>
 #include <memory>
 
+#include "AllNodeIncludes.hpp"
 #include "AstException.hpp"
 
 using namespace antlr4;

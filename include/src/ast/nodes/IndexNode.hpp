@@ -1,7 +1,7 @@
 #ifndef INDEXNODE_HPP
 #define INDEXNODE_HPP
 
-#include <BinaryNode.hpp>
+#include "BinaryNode.hpp"
 
 class IndexNode : public BinaryNode {
    public:

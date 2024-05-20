@@ -1,7 +1,7 @@
 #ifndef EXPOEXPRNODE_HPP
 #define EXPOEXPRNODE_HPP
 
-#include <BinaryNode.hpp>
+#include "BinaryNode.hpp"
 
 class ExpoExprNode : public BinaryNode {
    public:

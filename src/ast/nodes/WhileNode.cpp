@@ -1,4 +1,4 @@
-#include <WhileNode.hpp>
+#include "WhileNode.hpp"
 
 void WhileNode::addChild(std::shared_ptr<AstNode> node) {
     if (childNode->getChildNode() == nullptr) {

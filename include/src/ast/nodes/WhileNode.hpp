@@ -1,8 +1,8 @@
 #ifndef WHILENODE_HPP
 #define WHILENODE_HPP
 
-#include <ChildNode.hpp>
-#include <ChildNodeList.hpp>
+#include "ChildNode.hpp"
+#include "ChildNodeList.hpp"
 
 class WhileNode : public AstNode {
    public:

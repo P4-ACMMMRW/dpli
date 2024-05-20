@@ -1,14 +1,18 @@
 #ifndef ASTTESTVISITOR_HPP
 #define ASTTESTVISITOR_HPP
 
-#include <AstVisitor.hpp>
-#include <AstNode.hpp>
-#include <AstBuilder.hpp>
+#include <catch2/catch_test_macros.hpp>
+#include <utility>
+
+#include "AstBuilder.hpp"
+#include "AstNode.hpp"
+#include "AstVisitor.hpp"
 
 class AstTestVisitor : public AstVisitor {
    public:
-    AstTestVisitor(std::vector<size_t> expectedTreeNodes, dplgrammar::DplParser* parser, dplgrammar::DplLexer* lexer)
-                  : parser(parser), lexer(lexer), expectedTreeNodes(expectedTreeNodes) {}
+    AstTestVisitor(std::vector<size_t> expectedTreeNodes, dplgrammar::DplParser *parser,
+                   dplgrammar::DplLexer *lexer)
+        : parser(parser), lexer(lexer), expectedTreeNodes(std::move(expectedTreeNodes)) {}
 
     void visit(const std::shared_ptr<AndExprNode> &node) override {
         std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
@@ -69,7 +73,7 @@ class AstTestVisitor : public AstVisitor {
         test(astNode);
         AstVisitor::visit(node);
     };
-    
+
     void visit(const std::shared_ptr<GreaterEqualExprNode> &node) override {
         std::shared_ptr<AstNode> astNode = std::dynamic_pointer_cast<AstNode>(node);
         test(astNode);
@@ -233,8 +237,8 @@ class AstTestVisitor : public AstVisitor {
     };
 
    private:
-    dplgrammar::DplParser* parser;
-    dplgrammar::DplLexer* lexer;
+    dplgrammar::DplParser *parser;
+    dplgrammar::DplLexer *lexer;
     std::vector<size_t> expectedTreeNodes;
     size_t index = 0;
 
@@ -243,15 +247,16 @@ class AstTestVisitor : public AstVisitor {
             return;
         }
         std::shared_ptr<LeafNode> leafNode = std::dynamic_pointer_cast<LeafNode>(node);
-        std::cout << "Expected: " << expectedTreeNodes[index] << " Actual: " << node->getRule() << std::endl;
+        std::cout << "Expected: " << expectedTreeNodes[index] << " Actual: " << node->getRule()
+                  << std::endl;
         REQUIRE(node->getRule() == expectedTreeNodes[index]);
         index++;
     }
 
     void printRule(const std::shared_ptr<AstNode> &node) {
         std::shared_ptr<LeafNode> leafNode = std::dynamic_pointer_cast<LeafNode>(node);
-        std::string enumType = "";
-        std::string name = "";
+        std::string enumType;
+        std::string name;
         if (leafNode != nullptr) {
             enumType = "DplLexer::";
             name = lexer->getRuleNames()[node->getRule()];

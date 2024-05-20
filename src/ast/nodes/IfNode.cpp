@@ -1,10 +1,12 @@
-#include <ElseNode.hpp>
-#include <IfNode.hpp>
+#include "IfNode.hpp"
+
+#include "ElseNode.hpp"
 
 void IfNode::addChild(std::shared_ptr<AstNode> node) {
     if (condNode->getChildNode() == nullptr) {
         condNode->addChild(node);
-    } else if (dynamic_cast<ElseNode*>(node.get())) {  // continue and else same rule index
+    } else if (dynamic_cast<ElseNode*>(node.get()) !=
+               nullptr) {  // continue and else same rule index
         elseNode->addChild(node);
     } else {
         bodyNodeList->addChild(node);

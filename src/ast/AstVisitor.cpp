@@ -1,5 +1,6 @@
-#include <AllNodeIncludes.hpp>
-#include <AstVisitor.hpp>
+#include "AstVisitor.hpp"
+
+#include "AllNodeIncludes.hpp"
 
 void AstVisitor::visit(const std::shared_ptr<AndExprNode> &node) {
     visit(std::static_pointer_cast<BinaryNode>(node));

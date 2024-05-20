@@ -1,8 +1,9 @@
 #ifndef CHILDNODE_HPP
 #define CHILDNODE_HPP
 
-#include <AstNode.hpp>
 #include <vector>
+
+#include "AstNode.hpp"
 
 class ChildNode : public AstNode {
    public:

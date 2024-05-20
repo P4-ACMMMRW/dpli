@@ -139,8 +139,8 @@ class Value {
      * @return the result of the operation on the columns, if not a valid column operation None
      * (Value(nullptr)) is returned.
      */
-    Value colOperations(const Value val1, const Value val2,
-                        const std::function<Value(Value, Value)>& op) const;
+    static Value colOperations(const Value& val1, const Value& val2,
+                               const std::function<Value(Value, Value)>& op);
 };
 }  // namespace dplsrc
 

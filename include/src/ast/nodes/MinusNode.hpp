@@ -1,7 +1,7 @@
 #ifndef MINUSNODE_HPP
 #define MINUSNODE_HPP
 
-#include <UnaryNode.hpp>
+#include "UnaryNode.hpp"
 
 class MinusNode : public UnaryNode {
    public:

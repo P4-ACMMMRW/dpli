@@ -1,7 +1,7 @@
 #ifndef HEADERINDEXNODE_HPP
 #define HEADERINDEXNODE_HPP
 
-#include <IndexNode.hpp>
+#include "IndexNode.hpp"
 
 class HeaderIndexNode : public IndexNode {
    public:

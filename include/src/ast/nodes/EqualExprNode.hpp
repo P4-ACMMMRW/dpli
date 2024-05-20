@@ -1,7 +1,7 @@
 #ifndef EQUALEXPRNODE_HPP
 #define EQUALEXPRNODE_HPP
 
-#include <BinaryNode.hpp>
+#include "BinaryNode.hpp"
 
 class EqualExprNode : public BinaryNode {
    public:

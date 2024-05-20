@@ -1,8 +1,8 @@
 #ifndef PROCCALLNODE_HPP
 #define PROCCALLNODE_HPP
 
-#include <ChildNode.hpp>
-#include <ChildNodeList.hpp>
+#include "ChildNode.hpp"
+#include "ChildNodeList.hpp"
 
 class ProcCallNode : public AstNode {
    public:

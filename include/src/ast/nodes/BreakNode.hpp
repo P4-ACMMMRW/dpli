@@ -1,7 +1,7 @@
 #ifndef BREAKNODE_HPP
 #define BREAKNODE_HPP
 
-#include <LeafNode.hpp>
+#include "LeafNode.hpp"
 
 class BreakNode : public LeafNode {
    public:

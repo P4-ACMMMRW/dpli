@@ -1,8 +1,8 @@
 #ifndef PROCDECNODE_HPP
 #define PROCDECNODE_HPP
 
-#include <ChildNode.hpp>
-#include <ChildNodeList.hpp>
+#include "ChildNode.hpp"
+#include "ChildNodeList.hpp"
 
 class ProcDecNode : public AstNode {
    public:

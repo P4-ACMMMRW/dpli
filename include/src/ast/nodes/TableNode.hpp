@@ -1,7 +1,7 @@
 #ifndef TABLENODE_HPP
 #define TABLENODE_HPP
 
-#include <UnaryNodeList.hpp>
+#include "UnaryNodeList.hpp"
 
 class TableNode : public UnaryNodeList {
    public:
