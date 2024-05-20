@@ -2,6 +2,7 @@
 #define DPLERRORSTRATEGY_HPP
 
 #include <antlr4-runtime.h>
+#include <RuntimeException.hpp>
 
 namespace dplsrc {
 class DplErrorStrategy : public antlr4::BailErrorStrategy {
@@ -23,6 +24,20 @@ class DplErrorStrategy : public antlr4::BailErrorStrategy {
 
         std::string msg = "no viable alternative to input " + escapeWSAndQuote(input);
         recognizer->notifyErrorListeners(e.getOffendingToken(), msg, std::make_exception_ptr(e));
+    }
+
+    Token* recoverInline(Parser *recognizer) override {
+        Token *matchedSymbol = singleTokenDeletion(recognizer);
+        if (matchedSymbol) {
+            recognizer->consume();
+            return matchedSymbol;
+        }
+
+        if (singleTokenInsertion(recognizer)) {
+            return getMissingSymbol(recognizer);
+        }
+
+        throw InputMismatchException(recognizer);
     }
 };
 }  // namespace dplsrc
