@@ -573,6 +573,43 @@ Value Value::pow(const Value& other) const {
                            " and " + val2.toTypeString());
 }
 
+Value Value::sum() const {
+    if (is<LIST>() || is<COLUMN>()) {
+        Value::LIST list = (is<LIST>()) ? get<LIST>() : get<COLUMN>()->data;
+        Value::FLOAT sum = 0.0;
+        for (const std::shared_ptr<Value>& elem : *list) {
+            sum += elem->getNumericValue();
+        }
+        return Value(sum);
+    }
+
+    throw RuntimeException("Cannot sum values of type " + toTypeString());
+}
+
+Value Value::mean() const {
+    if (is<LIST>() || is<COLUMN>()) {
+        Value::LIST list = (is<LIST>()) ? get<LIST>() : get<COLUMN>()->data;;
+        return Value(sum().get<FLOAT>() / list->size());
+    }
+
+    throw RuntimeException("Cannot get mean of values of type " + toTypeString());
+}
+
+Value Value::stdDev() const {
+    if (is<LIST>() || is<COLUMN>()) {
+        Value::LIST list = (is<LIST>()) ? get<LIST>() : get<COLUMN>()->data;
+        Value::FLOAT mu = mean().get<FLOAT>();
+        Value::FLOAT sum = 0.0;
+        for (const std::shared_ptr<Value>& elem : *list) {
+            sum += std::pow(elem->getNumericValue() - mu, 2);
+        }
+        return Value(std::sqrt(sum / list->size()));
+    }
+
+    throw RuntimeException("Cannot get standard deviation of values of type " + toTypeString());
+
+}
+
 Value Value::operator-() const {
     if (is<INT>()) {
         return Value(-get<INT>());
