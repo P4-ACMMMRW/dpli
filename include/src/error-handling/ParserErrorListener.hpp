@@ -3,6 +3,8 @@
 
 #include <antlr4-runtime.h>
 
+#include "ParserException.hpp"
+
 namespace dplsrc {
 class ParserErrorListener : public antlr4::BaseErrorListener {
    public:
@@ -11,8 +13,9 @@ class ParserErrorListener : public antlr4::BaseErrorListener {
                      [[maybe_unused]] antlr4::Token *offendingSymbol, size_t line,
                      size_t charPositionInLine, const std::string &msg,
                      [[maybe_unused]] std::exception_ptr e) override {
-        std::cerr << "Parser Error: " << msg << " in " << filename << " (" << line << ":"
-                  << charPositionInLine << ")\n";
+        std::string exceptionMsg = msg + " in " + filename + " (" + std::to_string(line) + ":" +
+                                   std::to_string(charPositionInLine) + ")";
+        throw ParserException(exceptionMsg);
     }
 
    private:
