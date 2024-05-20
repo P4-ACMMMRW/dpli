@@ -87,19 +87,49 @@ void Evaluator::initStdlib() {
         throw RuntimeException("Could not convert value to bool");
     };
 
+    Procedure::ProcType list1 = [this](std::vector<std::shared_ptr<AstNode>> args) {
+        if (args[0]->getVal().is<Value::COLUMN>()) {
+            return copyList(args[0]->getVal().get<Value::COLUMN>()->data);
+        }
+        throw RuntimeException("Could not convert value to list");
+    };
+
     Procedure::ProcType sum1 = [](std::vector<std::shared_ptr<AstNode>> args) {
         Value val = args[0]->getVal();
-        return val.sum();
+        if (val.is<Value::LIST>() || val.is<Value::COLUMN>()) {
+            Value::LIST list = (val.is<Value::LIST>()) ? val.get<Value::LIST>() : val.get<Value::COLUMN>()->data;
+            Value::FLOAT sum = 0.0;
+            for (const std::shared_ptr<Value>& elem : *list) {
+                sum += elem->getNumericValue();
+            }
+            return Value(sum);
+        }
+        throw RuntimeException("Cannot sum values of type " + val.toTypeString());
     };
 
-    Procedure::ProcType mean1 = [](std::vector<std::shared_ptr<AstNode>> args) {
+    Procedure::ProcType mean1 = [sum1](std::vector<std::shared_ptr<AstNode>> args) {
         Value val = args[0]->getVal();
-        return val.mean();
+        if (val.is<Value::LIST>() || val.is<Value::COLUMN>()) {
+            Value::LIST list = (val.is<Value::LIST>()) ? val.get<Value::LIST>() : val.get<Value::COLUMN>()->data;
+            return Value(sum1(args).get<Value::FLOAT>() / list->size());
+        }
+
+        throw RuntimeException("Cannot get mean of values of type " + val.toTypeString());
     };
 
-    Procedure::ProcType stdDev1 = [](std::vector<std::shared_ptr<AstNode>> args) {
+    Procedure::ProcType stdDev1 = [mean1](std::vector<std::shared_ptr<AstNode>> args) {
         Value val = args[0]->getVal();
-        return val.stdDev();
+        if (val.is<Value::LIST>() || val.is<Value::COLUMN>()) {
+            Value::LIST list = (val.is<Value::LIST>()) ? val.get<Value::LIST>() : val.get<Value::COLUMN>()->data;
+            Value::FLOAT mu = mean1(args).get<Value::FLOAT>();
+            Value::FLOAT sum = 0.0;
+            for (const std::shared_ptr<Value>& elem : *list) {
+                sum += std::pow(elem->getNumericValue() - mu, 2);
+            }
+            return Value(std::sqrt(sum / list->size()));
+        }
+
+        throw RuntimeException("Cannot get standard deviation of values of type " + val.toTypeString());
     };
 
     Procedure::ProcType len1 = [](std::vector<std::shared_ptr<AstNode>> args) {
@@ -450,9 +480,10 @@ void Evaluator::initStdlib() {
     ptable.bind(Procedure("int", {"x"}, int1));
     ptable.bind(Procedure("float", {"x"}, float1));
     ptable.bind(Procedure("bool", {"x"}, bool1));
+    ptable.bind(Procedure("list", {"x"}, list1));
     ptable.bind(Procedure("sum", {"x"}, sum1));
     ptable.bind(Procedure("mean", {"x"}, mean1));
-    ptable.bind(Procedure("stdDev", {"x"}, stdDev1));
+    ptable.bind(Procedure("std_dev", {"x"}, stdDev1));
     ptable.bind(Procedure("len", {"x"}, len1));
     ptable.bind(Procedure("ceil", {"x"}, ceil1));
     ptable.bind(Procedure("floor", {"x"}, floor1));

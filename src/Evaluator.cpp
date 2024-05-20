@@ -372,7 +372,7 @@ void Evaluator::visit(const std::shared_ptr<IntersectionExprNode> &node) {
         auto leftCol = std::next(leftTable->begin(), i);
         Evaluator::insertColInTable(table, leftCol->first, cols[i]);
     }
-    node->setVal(table);
+    node->setVal(copyTable(table));
 }
 
 void Evaluator::visit(const std::shared_ptr<LeafNode> &node) {
@@ -695,7 +695,7 @@ void Evaluator::visit(const std::shared_ptr<UnionExprNode> &node) {
             addColUnionToTable(table, leftColPair->second, rightColMatch, leftColPair->first);
         }
     }
-    node->setVal(table);
+    node->setVal(copyTable(table));
 }
 
 void Evaluator::visit(const std::shared_ptr<WhileNode> &node) {

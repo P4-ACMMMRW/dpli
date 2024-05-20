@@ -9,6 +9,8 @@
 #include <string>
 #include <variant>
 #include <vector>
+#include <iostream>
+#include <utility>
 
 #include "InternalException.hpp"
 #include "RuntimeException.hpp"
@@ -106,9 +108,6 @@ class Value {
 
     // Unary
     Value operator-() const;
-    Value sum() const; 
-    Value mean() const;
-    Value stdDev() const;
 
     // Logical
     Value operator&&(const Value& other) const;

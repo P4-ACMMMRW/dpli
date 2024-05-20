@@ -1,9 +1,16 @@
-t1 = { "id": [1, 2, 3, 4, 5, 6, 7], "value": [1, 2, 3, 100, 5, 6, 7]}
 
-c1 = t1[$"value"]
+types = ["str", "str", "str", "str", "str", "int", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str"]
 
-mean = mean(c1)
-stdDev = stdDev(c1)
+houseTable = readTable("AmesHousing.csv", ",", types)
+
+areaColumn = houseTable[$"Lot Area"]
+
+mean = mean(areaColumn)
+stdDev = std_dev(areaColumn)
 threshold = 2
 
-t1 = c1[<= threshold * stdDev + mean] 
+result = areaColumn[> threshold * stdDev + mean] 
+
+result = {"Order" : list(result[$"Order"]), "Lot Area" : list(result[$"Lot Area"])}
+
+print(result)
