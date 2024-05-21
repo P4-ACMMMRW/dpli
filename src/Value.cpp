@@ -611,7 +611,7 @@ Value Value::operator-() const {
 }
 
 Value Value::operator&&(const Value& other) const {
-    const Value val1 = *this;
+    Value val1 = *this;
     const Value& val2 = other;
 
     if (!val1.getBoolValue()) {
