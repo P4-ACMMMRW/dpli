@@ -23,3 +23,4 @@ cmake ..; make
 - `Java JDK 11+`
 - `cmake`
 - `make`
+- `c++17 compatible compiler`
