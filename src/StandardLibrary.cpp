@@ -97,9 +97,10 @@ void Evaluator::initStdlib() {
     Procedure::ProcType sum1 = [](std::vector<std::shared_ptr<AstNode>> args) {
         Value val = args[0]->getVal();
         if (val.is<Value::LIST>() || val.is<Value::COLUMN>()) {
-            Value::LIST list = (val.is<Value::LIST>()) ? val.get<Value::LIST>() : val.get<Value::COLUMN>()->data;
+            Value::LIST list =
+                (val.is<Value::LIST>()) ? val.get<Value::LIST>() : val.get<Value::COLUMN>()->data;
             Value::FLOAT sum = 0.0;
-            for (const std::shared_ptr<Value>& elem : *list) {
+            for (const std::shared_ptr<Value> &elem : *list) {
                 sum += elem->getNumericValue();
             }
             return Value(sum);
@@ -110,7 +111,8 @@ void Evaluator::initStdlib() {
     Procedure::ProcType mean1 = [sum1](std::vector<std::shared_ptr<AstNode>> args) {
         Value val = args[0]->getVal();
         if (val.is<Value::LIST>() || val.is<Value::COLUMN>()) {
-            Value::LIST list = (val.is<Value::LIST>()) ? val.get<Value::LIST>() : val.get<Value::COLUMN>()->data;
+            Value::LIST list =
+                (val.is<Value::LIST>()) ? val.get<Value::LIST>() : val.get<Value::COLUMN>()->data;
             return Value(sum1(args).get<Value::FLOAT>() / list->size());
         }
 
@@ -120,16 +122,18 @@ void Evaluator::initStdlib() {
     Procedure::ProcType stdDev1 = [mean1](std::vector<std::shared_ptr<AstNode>> args) {
         Value val = args[0]->getVal();
         if (val.is<Value::LIST>() || val.is<Value::COLUMN>()) {
-            Value::LIST list = (val.is<Value::LIST>()) ? val.get<Value::LIST>() : val.get<Value::COLUMN>()->data;
+            Value::LIST list =
+                (val.is<Value::LIST>()) ? val.get<Value::LIST>() : val.get<Value::COLUMN>()->data;
             Value::FLOAT mu = mean1(args).get<Value::FLOAT>();
             Value::FLOAT sum = 0.0;
-            for (const std::shared_ptr<Value>& elem : *list) {
+            for (const std::shared_ptr<Value> &elem : *list) {
                 sum += std::pow(elem->getNumericValue() - mu, 2);
             }
             return Value(std::sqrt(sum / list->size()));
         }
 
-        throw RuntimeException("Cannot get standard deviation of values of type " + val.toTypeString());
+        throw RuntimeException("Cannot get standard deviation of values of type " +
+                               val.toTypeString());
     };
 
     Procedure::ProcType len1 = [](std::vector<std::shared_ptr<AstNode>> args) {
@@ -142,7 +146,7 @@ void Evaluator::initStdlib() {
             return static_cast<Value::INT>(val.get<Value::LIST>()->size());
         }
         if (val.is<Value::TABLE>()) {
-            return static_cast<Value::INT>(val.get<Value::TABLE>()->size());
+            return static_cast<Value::INT>(val.get<Value::TABLE>()->second.size());
         }
         if (val.is<Value::COLUMN>()) {
             return static_cast<Value::INT>(val.get<Value::COLUMN>()->data->size());
@@ -279,11 +283,12 @@ void Evaluator::initStdlib() {
 
         bool isFirstLine = true;
         std::string line;
-        Value::TABLE table = std::make_shared<std::map<Value::STR, Value::COLUMN>>();
+        Value::TABLE table = std::make_shared<
+            std::pair<std::vector<Value::STR>, std::unordered_map<Value::STR, Value::COLUMN>>>();
         std::vector<Value::COLUMN> cols;
         std::vector<Value::STR> headers;
         while (std::getline(file, line)) {
-            // Split line by delimiter
+            // Split line by delimiterstd::unordered_map
             bool inQuotes = false;
             std::vector<Value::STR> values;
             Value::STR value;
@@ -379,7 +384,8 @@ void Evaluator::initStdlib() {
 
         // Insert columns into table
         for (size_t i = 0; i < headers.size(); ++i) {
-            table->insert({headers[i], cols[i]});
+            table->first.emplace_back(headers[i]);
+            table->second.insert({headers[i], cols[i]});
         }
 
         return table;
@@ -434,28 +440,28 @@ void Evaluator::initStdlib() {
         }
 
         // Write headers
-        for (const std::pair<const Value::STR, Value::COLUMN> &entry : *table.get<Value::TABLE>()) {
-            file << entry.first << delimiter;
+        for (const Value::STR &header : table.get<Value::TABLE>()->first) {
+            file << header << delimiter;
         }
 
         // Overwrite last delimiter
-        if (!table.get<Value::TABLE>()->empty()) {
+        if (!table.get<Value::TABLE>()->second.empty()) {
             file.seekp(-1, std::ios_base::end);
         }
 
         file << '\n';
 
         // Write data
-        for (size_t i = 0; i < table.get<Value::TABLE>()->begin()->second->data->size(); ++i) {
+        for (size_t i = 0; i < table.get<Value::TABLE>()->second.begin()->second->data->size();
+             ++i) {
             std::string entryStr;
-            for (const std::pair<const Value::STR, Value::COLUMN> &entry :
-                 *table.get<Value::TABLE>()) {
-                Value::STR val = (*entry.second->data)[i]->toString();
+            for (const Value::STR &key : table.get<Value::TABLE>()->first) {
+                Value::STR val = (*table.get<Value::TABLE>()->second.at(key)->data)[i]->toString();
                 entryStr += val + delimiter;
             }
 
             // Overwrite last delimiter
-            if (!table.get<Value::TABLE>()->empty()) {
+            if (!table.get<Value::TABLE>()->second.empty()) {
                 entryStr.pop_back();
             }
 

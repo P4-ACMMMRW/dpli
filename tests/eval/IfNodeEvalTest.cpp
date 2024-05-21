@@ -28,10 +28,7 @@ EVAL_TEST("if_node.dpl") {
     expectedOutputLines.push_back("table_works 1");
     expectedOutputLines.push_back("table_works 2");
 
-    //                      
-    //               TABLE 1
-    //
-    dplsrc::Value::TABLE table1 = std::make_shared<std::map<std::string, dplsrc::Value::COLUMN>>();
+    dplsrc::Value::TABLE table1 = std::make_shared<std::pair<std::vector<dplsrc::Value::STR>, std::unordered_map<dplsrc::Value::STR, dplsrc::Value::COLUMN>>>();
 
     dplsrc::Value::COLUMN columnT1Area = std::make_shared<dplsrc::Value::COL_STRUCT>();
     dplsrc::Value::LIST listT1Area = std::make_shared<std::vector<std::shared_ptr<dplsrc::Value>>>();
@@ -44,7 +41,7 @@ EVAL_TEST("if_node.dpl") {
     columnT1Area->header = "area";
     columnT1Area->data = listT1Area;
 
-    table1->insert({"area", columnT1Area});
+    table1->second.insert({"area", columnT1Area});
 
     dplsrc::Value::COLUMN columnT1Height = std::make_shared<dplsrc::Value::COL_STRUCT>();
     dplsrc::Value::LIST listT1Height = std::make_shared<std::vector<std::shared_ptr<dplsrc::Value>>>();
@@ -57,7 +54,7 @@ EVAL_TEST("if_node.dpl") {
     columnT1Height->header = "height";
     columnT1Height->data = listT1Height;
 
-    table1->insert({"height", columnT1Height});
+    table1->second.insert({"height", columnT1Height});
 
     dplsrc::Value::COLUMN columnT1Width = std::make_shared<dplsrc::Value::COL_STRUCT>();
     dplsrc::Value::LIST listT1Width = std::make_shared<std::vector<std::shared_ptr<dplsrc::Value>>>();
@@ -70,20 +67,20 @@ EVAL_TEST("if_node.dpl") {
     columnT1Width->header = "width";
     columnT1Width->data = listT1Width;
 
-    table1->insert({"width", columnT1Width});
+    table1->second.insert({"width", columnT1Width});
 
 
     //                      
     //               TABLE 2
     //
 
-    dplsrc::Value::TABLE table2 = std::make_shared<std::map<std::string, dplsrc::Value::COLUMN>>();
+    dplsrc::Value::TABLE table2 = std::make_shared<std::pair<std::vector<dplsrc::Value::STR>, std::unordered_map<dplsrc::Value::STR, dplsrc::Value::COLUMN>>>();
 
 
     //                      
     //               TABLE 3
     //
-    dplsrc::Value::TABLE table3 = std::make_shared<std::map<std::string, dplsrc::Value::COLUMN>>();
+    dplsrc::Value::TABLE table3 = std::make_shared<std::pair<std::vector<dplsrc::Value::STR>, std::unordered_map<dplsrc::Value::STR, dplsrc::Value::COLUMN>>>();
 
     dplsrc::Value::COLUMN columnT3Area = std::make_shared<dplsrc::Value::COL_STRUCT>();
     dplsrc::Value::LIST listT3Area = std::make_shared<std::vector<std::shared_ptr<dplsrc::Value>>>();
@@ -92,7 +89,7 @@ EVAL_TEST("if_node.dpl") {
     columnT3Area->header = "test";
     columnT3Area->data = listT3Area;
 
-    table3->insert({"test", columnT3Area});
+    table3->second.insert({"test", columnT3Area});
 
     expectedVarVec.push_back({"t1", table1});
     expectedVarVec.push_back({"t2", table2});

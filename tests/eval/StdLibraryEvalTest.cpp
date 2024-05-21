@@ -57,7 +57,7 @@ EVAL_TEST("std_library.dpl") {
     //                      
     //               TABLE 1
     //
-    dplsrc::Value::TABLE table1 = std::make_shared<std::map<std::string, dplsrc::Value::COLUMN>>();
+    dplsrc::Value::TABLE table1 = std::make_shared<std::pair<std::vector<dplsrc::Value::STR>, std::unordered_map<dplsrc::Value::STR, dplsrc::Value::COLUMN>>>();
 
     dplsrc::Value::COLUMN columnT1Test1= std::make_shared<dplsrc::Value::COL_STRUCT>();
     dplsrc::Value::LIST listT1Test1 = std::make_shared<std::vector<std::shared_ptr<dplsrc::Value>>>();
@@ -70,7 +70,7 @@ EVAL_TEST("std_library.dpl") {
     columnT1Test1->header = "test1";
     columnT1Test1->data = listT1Test1;
 
-    table1->insert({"test1", columnT1Test1});
+    table1->second.insert({"test1", columnT1Test1});
 
     dplsrc::Value::COLUMN columnT1Test2 = std::make_shared<dplsrc::Value::COL_STRUCT>();
     dplsrc::Value::LIST listT1Test2 = std::make_shared<std::vector<std::shared_ptr<dplsrc::Value>>>();
@@ -83,7 +83,7 @@ EVAL_TEST("std_library.dpl") {
     columnT1Test2->header = "test2";
     columnT1Test2->data = listT1Test2;
 
-    table1->insert({"test2", columnT1Test2});
+    table1->second.insert({"test2", columnT1Test2});
 
     dplsrc::Value::COLUMN columnT1Test3 = std::make_shared<dplsrc::Value::COL_STRUCT>();
     dplsrc::Value::LIST listT1Test3 = std::make_shared<std::vector<std::shared_ptr<dplsrc::Value>>>();
@@ -96,7 +96,7 @@ EVAL_TEST("std_library.dpl") {
     columnT1Test3->header = "test3";
     columnT1Test3->data = listT1Test3;
 
-    table1->insert({"test3", columnT1Test3});
+    table1->second.insert({"test3", columnT1Test3});
 
     dplsrc::Value::COLUMN columnT1Test4 = std::make_shared<dplsrc::Value::COL_STRUCT>();
     dplsrc::Value::LIST listT1Test4 = std::make_shared<std::vector<std::shared_ptr<dplsrc::Value>>>();
@@ -109,7 +109,7 @@ EVAL_TEST("std_library.dpl") {
     columnT1Test4->header = "test4";
     columnT1Test4->data = listT1Test4;
 
-    table1->insert({"test4", columnT1Test4});
+    table1->second.insert({"test4", columnT1Test4});
 
     dplsrc::Value::COLUMN columnT1Test5 = std::make_shared<dplsrc::Value::COL_STRUCT>();
     dplsrc::Value::LIST listT1Test5 = std::make_shared<std::vector<std::shared_ptr<dplsrc::Value>>>();
@@ -122,7 +122,7 @@ EVAL_TEST("std_library.dpl") {
     columnT1Test5->header = "test5";
     columnT1Test5->data = listT1Test5;
 
-    table1->insert({"test5", columnT1Test5});
+    table1->second.insert({"test5", columnT1Test5});
 
      
     //                      
