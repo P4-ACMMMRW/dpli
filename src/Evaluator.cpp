@@ -47,10 +47,13 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
         // Store indices in a temporary vector
         std::vector<Value> indices;
         while (indexNode != nullptr) {
-            if (indexNode->getRightNode()->getVal().is<Value::INT>()) {
-                indices.emplace_back(indexNode->getRightNode()->getVal().get<Value::INT>());
-            } else if (indexNode->getRightNode()->getVal().is<Value::STR>()) {
-                indices.emplace_back(indexNode->getRightNode()->getVal().get<Value::STR>());
+            std::shared_ptr<FilterNode> filterNode = std::dynamic_pointer_cast<FilterNode>(indexNode);
+
+            if (filterNode) {
+                filterNode->accept(shared_from_this());
+                indices.emplace_back(filterNode->getVal());
+            } else {
+                indices.emplace_back(indexNode->getRightNode()->getVal());
             }
 
             indexNode = std::dynamic_pointer_cast<IndexNode>(indexNode->getLeftNode());
@@ -59,17 +62,22 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
         // Get the pointer to the innermost list or column
         Value::LIST list = nullptr;
         Value::INT lastIndex = 0;
-        for (size_t i = indices.size(); (i--) != 0U;) {
+
+        for (size_t i = indices.size(); i--;) {
             if (val.is<Value::LIST>()) {
                 Value::INT index = indices[i].get<Value::INT>();
                 list = val.getMut<Value::LIST>();
                 lastIndex = index;
                 val = *(*list)[index];
             } else if (val.is<Value::COLUMN>()) {
-                Value::INT index = indices[i].get<Value::INT>();
-                list = val.getMut<Value::COLUMN>()->data;
-                lastIndex = index;
-                val = *(*list)[index];
+                if (indices[i].is<Value::INT>()) {
+                    Value::INT index = indices[i].get<Value::INT>();
+                    list = val.getMut<Value::COLUMN>()->data;
+                    lastIndex = index;
+                    val = *(*list)[index];
+                } else {
+                    val = indices[i];
+                }
             } else if (val.is<Value::TABLE>()) {
                 // Tables index by header name
                 Value::TABLE table = val.get<Value::TABLE>();
@@ -99,7 +107,11 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
                 }
             }
         } else {
-            *(*list)[lastIndex] = rightNode->getVal();
+            if (list) {
+                *(*list)[lastIndex] = rightNode->getVal();
+            } else {
+                throw RuntimeException("cannot directly assign a value to a unnamed table");
+            }
         }
     } else {
         vtable.bind(Variable(leftNode->getText(), rightNode->getVal()));
