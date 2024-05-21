@@ -80,54 +80,38 @@ int main(int argc, char **argv) {
 
     try {
         tokens.fill();
-    } catch (const dplsrc::RuntimeException &e) {
-        std::cerr << e.what() << '\n';
-        return EXIT_FAILURE;
-    }
-
-    DplParser parser(&tokens);
-    parser.removeErrorListeners();
-    std::shared_ptr<ANTLRErrorListener> parserErrorListener =
-        std::make_shared<ParserErrorListener>(filename);
-    parser.addErrorListener(parserErrorListener.get());
-    std::shared_ptr<ANTLRErrorStrategy> strategy = std::make_shared<DplErrorStrategy>();
-    parser.setErrorHandler(strategy);
-    tree::ParseTree *tree = nullptr;
-
-    try {
+        DplParser parser(&tokens);
+        parser.removeErrorListeners();
+        std::shared_ptr<ANTLRErrorListener> parserErrorListener =
+            std::make_shared<ParserErrorListener>(filename);
+        parser.addErrorListener(parserErrorListener.get());
+        std::shared_ptr<ANTLRErrorStrategy> strategy = std::make_shared<DplErrorStrategy>();
+        parser.setErrorHandler(strategy);
+        tree::ParseTree *tree = nullptr;
         tree = parser.prog();
-    } catch (const ParseCancellationException &e) {
-        std::cerr << e.what() << '\n';
-        return EXIT_FAILURE;
-    }
 
-    AstBuilder builder{&parser, &lexer};
-    builder.visit(tree);
+        AstBuilder builder{&parser, &lexer};
+        builder.visit(tree);
 
-    std::shared_ptr<AstNode> root;
-    try {
+        std::shared_ptr<AstNode> root;
+
         root = builder.getRoot();
-    } catch (const DplException &e) {
-        std::cerr << e.what() << '\n';
-        return EXIT_FAILURE;
-    }
 
-    std::shared_ptr<Evaluator> evaluator;
-    try {
+        std::shared_ptr<Evaluator> evaluator;
         evaluator = std::make_shared<Evaluator>();
         root->accept(evaluator);
+
+        if (debug) {
+            // Ast print
+            builder.getRoot()->print();
+
+            // print eval
+            evaluator->getVtable().print();
+            evaluator->getPtable().print();
+        }
     } catch (const DplException &e) {
         std::cerr << e.what() << '\n';
         return EXIT_FAILURE;
-    }
-
-    if (debug) {
-        // Ast print
-        builder.getRoot()->print();
-
-        // print eval
-        evaluator->getVtable().print();
-        evaluator->getPtable().print();
     }
 
     return EXIT_SUCCESS;
