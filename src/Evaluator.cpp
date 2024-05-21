@@ -64,7 +64,7 @@ void Evaluator::visit(const std::shared_ptr<AssignNode> &node) {
         Value::LIST list = nullptr;
         Value::INT lastIndex = 0;
 
-        for (size_t i = indices.size(); i--;) {
+        for (size_t i = indices.size(); (i--) != 0u;) {
             if (val.is<Value::LIST>()) {
                 Value::INT index = indices[i].get<Value::INT>();
                 list = val.getMut<Value::LIST>();
@@ -799,7 +799,8 @@ void Evaluator::addColUnionToTable(Value::TABLE &table,
     auto tempList = std::make_shared<std::vector<std::shared_ptr<dplsrc::Value>>>();
 
     // Dont add headers twice
-    if (Evaluator::getColumnByHeader(table, header)) return;
+    if (Evaluator::getColumnByHeader(table, header)) { return;
+}
 
     if (col1 == nullptr) {
         Evaluator::addNullValuesToList(tempList, col2->data->size());
