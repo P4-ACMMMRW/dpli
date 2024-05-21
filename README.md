@@ -1,43 +1,25 @@
 [![Build and Test](https://github.com/P4-ACMMMRW/dpli/actions/workflows/build_and_test.yml/badge.svg)](https://github.com/P4-ACMMMRW/dpli/actions/workflows/build_and_test.yml)
+[![Linting](https://github.com/P4-ACMMMRW/dpli/actions/workflows/linting.yml/badge.svg)](https://github.com/P4-ACMMMRW/dpli/actions/workflows/linting.yml)
 
-# DPL
-## Build
-### Ubuntu
-Run the ```compile.sh``` script with:
+# DPLI
+The official interpreter for Data Preprocessing Language (DPL).
+
+## Future Plans
+
+## How to Compile
+On Ubuntu simply run:
 ```bash
-./compile.sh
+./scripts/compile.sh
 ```
-this will create an executable which can be run with:
+
+On other linux distrobutions:
 ```bash
+mkdir build
 cd build
-./dpli <file>
+cmake ..; make
 ```
 
-#### Clean Build
-To make a clean build run the ```compile.sh``` script with the argument "clean":
-```bash
-./compile.sh clean
-```
-
-#### Run Tests
-After compiling the interpreter tests can be run using the ```run_tests.sh``` script:
-```bash
-./run_tests.sh
-```
-
-## Linting
-Linting can be done with
-```bash
-./linter.sh
-```
-or
-```bash
-./linter format-only
-```
-to skip clang-tidy checks.
-
-## Benchmarking
-Benchmarking can be done with 
-```bash
-./bench.sh
-```
+### Dependencies
+- `Java JDK 11+`
+- `cmake`
+- `make`
