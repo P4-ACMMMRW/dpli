@@ -1,11 +1,48 @@
-types = ["str", "str", "str", "float", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str"]
+# Regression Example
+def simple_linear_regression(x, y):
+    n = len(x)
+    mean_x = mean(x)
+    mean_y = mean(y)
+
+    i = 0
+    numeratorSum = 0
+    denominatorSum = 0
+    while i < n:
+        if ((y[i] == None) or (x[i] == None)):
+            i = i + 1 
+            continue
+
+        numeratorSum = numeratorSum + (x[i] - mean_x) * (y[i] - mean_y)
+        denominatorSum = denominatorSum + (x[i] - mean_x) ** 2
+        i = i + 1 
+
+    slope = numeratorSum / denominatorSum
+    intercept = mean_y - slope * mean_x
+
+    return [slope, intercept]
+
+
+types = ["str", "str", "str", "float", "int", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str"]
 
 horseTable = readTable("./tests/acceptance_test/horse-colic.csv", ",", types)
+
+
+# Rectal temp None replace with mean
 tempColumn = horseTable[$"Rectal Temperature"]
+pulseColumn = horseTable[$"Pulse"]
 
 mean = mean(tempColumn[!=None][$"Rectal Temperature"])
 
-noneTable = tempColumn[==None]
-noneTable[$"Rectal Temperature"] = mean
+noneTempTable = tempColumn[==None]
+noneTempTable[$"Rectal Temperature"] = mean
 
-print(horseTable[$"Rectal Temperature"])
+
+# Pulse None replaces with regression between Rectal temp and Pulse
+tempReg = simple_linear_regression(list(tempColumn), list(pulseColumn))
+
+nonePulseTable = pulseColumn[==None]
+
+nonePulseTable[$"Pulse"] = tempReg[0] * nonePulseTable[$"Rectal Temperature"]
+nonePulseTable[$"Pulse"] = nonePulseTable[$"Pulse"] + tempReg[1]
+
+print({"Pulse" : list(pulseColumn), "Rectal Temperature" : list(tempColumn)})
