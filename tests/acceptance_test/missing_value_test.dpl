@@ -1,0 +1,13 @@
+types = ["str", "str", "str", "float", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str"]
+
+horseTable = readTable("./tests/acceptance_test/horse-colic.csv", ",", types)
+tempColumn = horseTable[$"Rectal Temperature"]
+
+
+mean = mean(tempColumn[!=None][$"Rectal Temperature"])
+
+print("test")
+
+tempColumn[==None][$"Rectal Temperature"] = mean
+
+print(horseTable[$"Rectal Temperature"])

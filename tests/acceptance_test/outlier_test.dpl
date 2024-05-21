@@ -1,7 +1,7 @@
 
 types = ["str", "str", "str", "str", "str", "int", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str"]
 
-houseTable = readTable("AmesHousing.csv", ",", types)
+houseTable = readTable("./tests/acceptance_test/AmesHousing.csv", ",", types)
 
 areaColumn = houseTable[$"Lot Area"]
 
