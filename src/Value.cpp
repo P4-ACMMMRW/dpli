@@ -454,8 +454,7 @@ Value Value::operator*(const Value& other) const {
         }
         return Value(resultStr);
     }
-    if (((val1.is<INT>() || val1.is<BOOL>()) && val2.is<LIST>()) ||
-        ((val2.is<INT>() || val2.is<BOOL>()) && val1.is<LIST>())) {
+    if ((isVal1Int && val2.is<LIST>()) || (isVal2Int && val1.is<LIST>())) {
         Value::LIST result = std::make_shared<std::vector<std::shared_ptr<Value>>>();
         Value::INT intVal = 0;
         Value::LIST listVal;
