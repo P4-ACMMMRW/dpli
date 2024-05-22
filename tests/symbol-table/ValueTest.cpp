@@ -196,14 +196,14 @@ VALUE_TEST("compare values") {
     REQUIRE(!(col6 > col5));
 
     // Tables
-    Value tab1 = std::make_shared<std::map<Value::STR, Value::COLUMN>>();
-    tab1.get<Value::TABLE>()->insert({"col", col1.get<Value::COLUMN>()});
+    Value tab1 = std::make_shared<std::pair<std::vector<Value::STR>, std::unordered_map<Value::STR, Value::COLUMN>>>();
+    tab1.get<Value::TABLE>()->second.insert({"col", col1.get<Value::COLUMN>()});
 
-    Value tab2 = std::make_shared<std::map<Value::STR, Value::COLUMN>>();
-    tab2.get<Value::TABLE>()->insert({"col", col2.get<Value::COLUMN>()});
+    Value tab2 = std::make_shared<std::pair<std::vector<Value::STR>, std::unordered_map<Value::STR, Value::COLUMN>>>();
+    tab2.get<Value::TABLE>()->second.insert({"col", col2.get<Value::COLUMN>()});
 
-    Value tab3 = std::make_shared<std::map<Value::STR, Value::COLUMN>>();
-    tab3.get<Value::TABLE>()->insert({"col", col3.get<Value::COLUMN>()});
+    Value tab3 = std::make_shared<std::pair<std::vector<Value::STR>, std::unordered_map<Value::STR, Value::COLUMN>>>();
+    tab3.get<Value::TABLE>()->second.insert({"col", col3.get<Value::COLUMN>()});
 
     REQUIRE(!(tab1 == tab2));
     REQUIRE(tab1 == tab3);
@@ -219,11 +219,11 @@ VALUE_TEST("compare values") {
     REQUIRE(!(tab3 != tab1));
     REQUIRE(tab3 != tab2);
 
-    Value tab4 = std::make_shared<std::map<Value::STR, Value::COLUMN>>();
+    Value tab4 = std::make_shared<std::pair<std::vector<Value::STR>, std::unordered_map<Value::STR, Value::COLUMN>>>();
     REQUIRE(tab1 != tab4);
 
-    Value tab5 = std::make_shared<std::map<Value::STR, Value::COLUMN>>();
-    tab5.get<Value::TABLE>()->insert({"diff_key", col1.get<Value::COLUMN>()});
+    Value tab5 = std::make_shared<std::pair<std::vector<Value::STR>, std::unordered_map<Value::STR, Value::COLUMN>>>();
+    tab5.get<Value::TABLE>()->second.insert({"diff_key", col1.get<Value::COLUMN>()});
 
     REQUIRE(tab1 != tab5);
     REQUIRE(tab4 < tab1);
@@ -315,13 +315,13 @@ VALUE_TEST("Logical values") {
     REQUIRE((col3 || col2) == col2);
 
     // Tables
-    Value tab1 = std::make_shared<std::map<Value::STR, Value::COLUMN>>();
-    tab1.get<Value::TABLE>()->insert({"col", col1.get<Value::COLUMN>()});
+    Value tab1 = std::make_shared<std::pair<std::vector<Value::STR>, std::unordered_map<Value::STR, Value::COLUMN>>>();
+    tab1.get<Value::TABLE>()->second.insert({"col", col1.get<Value::COLUMN>()});
 
-    Value tab2 = std::make_shared<std::map<Value::STR, Value::COLUMN>>();
-    tab2.get<Value::TABLE>()->insert({"col", col2.get<Value::COLUMN>()});
+    Value tab2 = std::make_shared<std::pair<std::vector<Value::STR>, std::unordered_map<Value::STR, Value::COLUMN>>>();
+    tab2.get<Value::TABLE>()->second.insert({"col", col2.get<Value::COLUMN>()});
 
-    Value tab3 = std::make_shared<std::map<Value::STR, Value::COLUMN>>();
+    Value tab3 = std::make_shared<std::pair<std::vector<Value::STR>, std::unordered_map<Value::STR, Value::COLUMN>>>();
 
     REQUIRE((tab1 && tab2) == tab2);
     REQUIRE((tab1 && tab3) == tab3);

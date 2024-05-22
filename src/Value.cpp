@@ -54,8 +54,9 @@ std::string Value::toString() const {
     if (is<TABLE>()) {
         std::string result = "{ ";
         bool addedSomething = false;
-        for (const std::pair<const std::string, Value::COLUMN>& entry : *get<TABLE>()) {
-            result += static_cast<Value>(entry.second).toString() + ", ";
+        std::vector<STR> keys = get<TABLE>()->first;
+        for (const STR& key : keys) {
+            result += static_cast<Value>(get<TABLE>()->second.at(key)).toString() + ", ";
             addedSomething = true;
         }
 
@@ -140,12 +141,14 @@ std::string Value::toTypeString(bool verbose) const {
 
         std::string tableStr = "table -> { ";
         Value::TABLE table = get<TABLE>();
-        for (const std::pair<const std::string, Value::COLUMN>& entry : *table) {
-            tableStr += "{ " + static_cast<Value>(entry.second).toTypeString(verbose) + ", ";
+        std::vector<STR> keys = table->first;
+        for (const STR& key : keys) {
+            tableStr +=
+                "{ " + static_cast<Value>(table->second.at(key)).toTypeString(verbose) + ", ";
         }
 
         // Remove trailing comma and space
-        if (table->size() > 1) {
+        if (table->second.size() > 1) {
             tableStr.pop_back();
             tableStr.pop_back();
         }
@@ -183,9 +186,8 @@ std::string Value::toTypeString(bool verbose) const {
 bool Value::operator==(const Value& other) const {
     if ((is<INT>() || is<FLOAT>() || is<BOOL>()) &&
         (other.is<INT>() || other.is<FLOAT>() || other.is<BOOL>())) {
-        Value::FLOAT val1 = is<INT>()
-                                ? get<INT>()
-                                : (is<FLOAT>() ? get<FLOAT>() : static_cast<FLOAT>(get<BOOL>()));
+        Value::FLOAT val1 =
+            is<INT>() ? get<INT>() : (is<FLOAT>() ? get<FLOAT>() : static_cast<FLOAT>(get<BOOL>()));
         Value::FLOAT val2 =
             other.is<INT>()
                 ? other.get<INT>()
@@ -224,14 +226,14 @@ bool Value::operator==(const Value& other) const {
         Value::TABLE table1 = get<TABLE>();
         const Value::TABLE& table2 = other.get<TABLE>();
 
-        if (table1->size() != table2->size()) {
+        if (table1->second.size() != table2->second.size()) {
             return false;
         }
 
-        for (const std::pair<const std::string, Value::COLUMN>& entry : *table1) {
+        for (const std::pair<const std::string, Value::COLUMN>& entry : table1->second) {
             Value::COLUMN col = nullptr;
             try {
-                col = table2->at(entry.first);
+                col = table2->second.at(entry.first);
             } catch (const std::out_of_range& e) {
                 return false;
             }
@@ -252,9 +254,8 @@ bool Value::operator!=(const Value& other) const { return !(*this == other); }
 bool Value::operator<(const Value& other) const {
     if ((is<INT>() || is<FLOAT>() || is<BOOL>()) &&
         (other.is<INT>() || other.is<FLOAT>() || other.is<BOOL>())) {
-        Value::FLOAT val1 = is<INT>()
-                                ? get<INT>()
-                                : (is<FLOAT>() ? get<FLOAT>() : static_cast<FLOAT>(get<BOOL>()));
+        Value::FLOAT val1 =
+            is<INT>() ? get<INT>() : (is<FLOAT>() ? get<FLOAT>() : static_cast<FLOAT>(get<BOOL>()));
         Value::FLOAT val2 =
             other.is<INT>()
                 ? other.get<INT>()
@@ -290,13 +291,13 @@ bool Value::operator<(const Value& other) const {
         Value::TABLE table1 = get<TABLE>();
         const Value::TABLE& table2 = other.get<TABLE>();
 
-        if (table1->size() != table2->size()) {
-            return table1->size() < table2->size();
+        if (table1->second.size() != table2->second.size()) {
+            return table1->second.size() < table2->second.size();
         }
 
-        for (const std::pair<const std::string, Value::COLUMN>& entry : *table1) {
-            if (entry.second != table2->at(entry.first)) {
-                return entry.second < table2->at(entry.first);
+        for (const std::pair<const std::string, Value::COLUMN>& entry : table1->second) {
+            if (entry.second != table2->second.at(entry.first)) {
+                return entry.second < table2->second.at(entry.first);
             }
         }
     }
@@ -436,7 +437,7 @@ Value Value::operator*(const Value& other) const {
         return Value(float1 * float2);
     }
     if ((isVal1Int && val2.is<STR>()) || (isVal2Int && val1.is<STR>())) {
-        int intVal = 0;
+        Value::INT intVal = 0;
         std::string strVal;
 
         if (val1.is<INT>() || val1.is<BOOL>()) {
@@ -456,7 +457,7 @@ Value Value::operator*(const Value& other) const {
     if (((val1.is<INT>() || val1.is<BOOL>()) && val2.is<LIST>()) ||
         ((val2.is<INT>() || val2.is<BOOL>()) && val1.is<LIST>())) {
         Value::LIST result = std::make_shared<std::vector<std::shared_ptr<Value>>>();
-        int intVal = 0;
+        Value::INT intVal = 0;
         Value::LIST listVal;
 
         if (val1.is<INT>() || val1.is<BOOL>()) {
@@ -610,7 +611,7 @@ Value Value::operator-() const {
 }
 
 Value Value::operator&&(const Value& other) const {
-    const Value val1 = *this;
+    Value val1 = *this;
     const Value& val2 = other;
 
     if (!val1.getBoolValue()) {
@@ -701,7 +702,7 @@ bool Value::getBoolValue() const {
         return !get<COLUMN>()->data->empty();
     }
     if (is<TABLE>()) {
-        return !get<TABLE>()->empty();
+        return !get<TABLE>()->second.empty();
     }
     return false;
 }
