@@ -25,7 +25,7 @@ if [ "$(java -version 2>&1 | awk -F '"' '/version/ {print $2}' | awk -F '.' '{pr
     exit 1
 fi
 
-# If ./build clean
+# If ./compile.sh clean
 if [ "$1" == "clean" ]; then
     rm -rf build
 fi

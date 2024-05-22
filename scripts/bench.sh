@@ -28,7 +28,7 @@ run_perf() {
 # Check if dpli exists otherwise compile
 if [ ! -f ./build/dpli ]; then
     echo "dpli could not be found. Compiling dpli..."
-    ./compile.sh
+    .scripts/compile.sh
 fi
 
 # Check if wsl2
