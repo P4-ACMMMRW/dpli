@@ -1,6 +1,6 @@
 #!/bin/bash
 
-./compile.sh
+./scripts/compile.sh
 
 if ! command -v lcov &> /dev/null; then
     echo "lcov could not be found. Installing lcov..."

@@ -15,7 +15,7 @@ fi
 # If build/compile_commands.json does not exist, then run ./compile.sh to generate it
 if [ ! -f "build/compile_commands.json" ]; then
     echo "compile_commands.json not found. Running: ./compile.sh to generate it..."
-    ./compile.sh
+    ./scripts/compile.sh
 fi
 
 # Run clang-format and clang-tidy on all cpp and hpp files in the project except in lib and build directories
