@@ -799,8 +799,9 @@ void Evaluator::addColUnionToTable(Value::TABLE &table,
     auto tempList = std::make_shared<std::vector<std::shared_ptr<dplsrc::Value>>>();
 
     // Dont add headers twice
-    if (Evaluator::getColumnByHeader(table, header)) { return;
-}
+    if (Evaluator::getColumnByHeader(table, header)) {
+        return;
+    }
 
     if (col1 == nullptr) {
         Evaluator::addNullValuesToList(tempList, col2->data->size());
