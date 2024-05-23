@@ -1,7 +1,7 @@
 [![Build and Test](https://github.com/P4-ACMMMRW/dpli/actions/workflows/build_and_test.yml/badge.svg?branch=main)](https://github.com/P4-ACMMMRW/dpli/actions/workflows/build_and_test.yml)
 [![Linting](https://github.com/P4-ACMMMRW/dpli/actions/workflows/linting.yml/badge.svg?branch=main)](https://github.com/P4-ACMMMRW/dpli/actions/workflows/linting.yml)
 
-# DPLI
+# DPL Interpreter
 The official interpreter for Data Preprocessing Language (DPL).
 
 ## How to Compile
@@ -20,8 +20,7 @@ cmake ..; make
 ### Dependencies
 - `Java JDK 11+`
 - `cmake`
-- `make`
-- `c++17 compatible compiler`
+- `c++17 compiler`
 
 ## Future Plans
 
