@@ -21,7 +21,7 @@
 namespace dplsrc {
 class Evaluator : public AstVisitor {
    public:
-    Evaluator(bool verbose = false) : verbose(verbose) { initPtable(); }
+    Evaluator(bool verbose = false) : verbose(verbose) { initStdlib(); }
 
     void visit(const std::shared_ptr<AndExprNode> &node) override;
     void visit(const std::shared_ptr<AssignNode> &node) override;
@@ -79,7 +79,7 @@ class Evaluator : public AstVisitor {
     /**
      * Initializes the procedures from the standard library of the language
      */
-    void initPtable();
+    void initStdlib();
 
     /**
      * Makes a deep copy of a list using DFS

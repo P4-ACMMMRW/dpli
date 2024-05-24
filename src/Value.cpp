@@ -1,14 +1,13 @@
 #include "Value.hpp"
 
 using namespace dplsrc;
-#include <iostream>
-#include <utility>
+
 std::string Value::toString() const {
     if (is<INT>()) {
-        return std::to_string(get<long>());
+        return std::to_string(get<INT>());
     }
     if (is<FLOAT>()) {
-        std::string doubleStr = std::to_string(get<double>());
+        std::string doubleStr = std::to_string(get<FLOAT>());
 
         // Remove trailing zeros
         doubleStr.erase(doubleStr.find_last_not_of('0') + 1, std::string::npos);
@@ -55,8 +54,9 @@ std::string Value::toString() const {
     if (is<TABLE>()) {
         std::string result = "{ ";
         bool addedSomething = false;
-        for (const std::pair<const std::string, Value::COLUMN>& entry : *get<TABLE>()) {
-            result += static_cast<Value>(entry.second).toString() + ", ";
+        std::vector<STR> keys = get<TABLE>()->first;
+        for (const STR& key : keys) {
+            result += static_cast<Value>(get<TABLE>()->second.at(key)).toString() + ", ";
             addedSomething = true;
         }
 
@@ -141,12 +141,14 @@ std::string Value::toTypeString(bool verbose) const {
 
         std::string tableStr = "table -> { ";
         Value::TABLE table = get<TABLE>();
-        for (const std::pair<const std::string, Value::COLUMN>& entry : *table) {
-            tableStr += "{ " + static_cast<Value>(entry.second).toTypeString(verbose) + ", ";
+        std::vector<STR> keys = table->first;
+        for (const STR& key : keys) {
+            tableStr +=
+                "{ " + static_cast<Value>(table->second.at(key)).toTypeString(verbose) + ", ";
         }
 
         // Remove trailing comma and space
-        if (table->size() > 1) {
+        if (table->second.size() > 1) {
             tableStr.pop_back();
             tableStr.pop_back();
         }
@@ -184,13 +186,12 @@ std::string Value::toTypeString(bool verbose) const {
 bool Value::operator==(const Value& other) const {
     if ((is<INT>() || is<FLOAT>() || is<BOOL>()) &&
         (other.is<INT>() || other.is<FLOAT>() || other.is<BOOL>())) {
-        Value::FLOAT val1 = is<INT>()
-                                ? get<INT>()
-                                : (is<FLOAT>() ? get<FLOAT>() : static_cast<double>(get<BOOL>()));
+        Value::FLOAT val1 =
+            is<INT>() ? get<INT>() : (is<FLOAT>() ? get<FLOAT>() : static_cast<FLOAT>(get<BOOL>()));
         Value::FLOAT val2 =
             other.is<INT>()
                 ? other.get<INT>()
-                : (other.is<FLOAT>() ? other.get<FLOAT>() : static_cast<double>(other.get<BOOL>()));
+                : (other.is<FLOAT>() ? other.get<FLOAT>() : static_cast<FLOAT>(other.get<BOOL>()));
         return val1 == val2;
     }
     if (is<STR>() && other.is<STR>()) {
@@ -225,14 +226,14 @@ bool Value::operator==(const Value& other) const {
         Value::TABLE table1 = get<TABLE>();
         const Value::TABLE& table2 = other.get<TABLE>();
 
-        if (table1->size() != table2->size()) {
+        if (table1->second.size() != table2->second.size()) {
             return false;
         }
 
-        for (const std::pair<const std::string, Value::COLUMN>& entry : *table1) {
+        for (const std::pair<const std::string, Value::COLUMN>& entry : table1->second) {
             Value::COLUMN col = nullptr;
             try {
-                col = table2->at(entry.first);
+                col = table2->second.at(entry.first);
             } catch (const std::out_of_range& e) {
                 return false;
             }
@@ -253,13 +254,12 @@ bool Value::operator!=(const Value& other) const { return !(*this == other); }
 bool Value::operator<(const Value& other) const {
     if ((is<INT>() || is<FLOAT>() || is<BOOL>()) &&
         (other.is<INT>() || other.is<FLOAT>() || other.is<BOOL>())) {
-        Value::FLOAT val1 = is<INT>()
-                                ? get<INT>()
-                                : (is<FLOAT>() ? get<FLOAT>() : static_cast<double>(get<BOOL>()));
+        Value::FLOAT val1 =
+            is<INT>() ? get<INT>() : (is<FLOAT>() ? get<FLOAT>() : static_cast<FLOAT>(get<BOOL>()));
         Value::FLOAT val2 =
             other.is<INT>()
                 ? other.get<INT>()
-                : (other.is<FLOAT>() ? other.get<FLOAT>() : static_cast<double>(other.get<BOOL>()));
+                : (other.is<FLOAT>() ? other.get<FLOAT>() : static_cast<FLOAT>(other.get<BOOL>()));
         return val1 < val2;
     }
     if (is<STR>() && other.is<STR>()) {
@@ -291,13 +291,13 @@ bool Value::operator<(const Value& other) const {
         Value::TABLE table1 = get<TABLE>();
         const Value::TABLE& table2 = other.get<TABLE>();
 
-        if (table1->size() != table2->size()) {
-            return table1->size() < table2->size();
+        if (table1->second.size() != table2->second.size()) {
+            return table1->second.size() < table2->second.size();
         }
 
-        for (const std::pair<const std::string, Value::COLUMN>& entry : *table1) {
-            if (entry.second != table2->at(entry.first)) {
-                return entry.second < table2->at(entry.first);
+        for (const std::pair<const std::string, Value::COLUMN>& entry : table1->second) {
+            if (entry.second != table2->second.at(entry.first)) {
+                return entry.second < table2->second.at(entry.first);
             }
         }
     }
@@ -336,8 +336,8 @@ Value Value::operator+(const Value& other) const {
     const Value& val2 = other;
 
     if ((val1.is<INT>() || val1.is<BOOL>()) && (val2.is<INT>() || val2.is<BOOL>())) {
-        Value::INT int1 = (val1.is<INT>()) ? val1.get<INT>() : static_cast<long>(val1.get<BOOL>());
-        Value::INT int2 = (val2.is<INT>()) ? val2.get<INT>() : static_cast<long>(val2.get<BOOL>());
+        Value::INT int1 = (val1.is<INT>()) ? val1.get<INT>() : static_cast<INT>(val1.get<BOOL>());
+        Value::INT int2 = (val2.is<INT>()) ? val2.get<INT>() : static_cast<INT>(val2.get<BOOL>());
 
         return Value(int1 + int2);
     }
@@ -345,11 +345,11 @@ Value Value::operator+(const Value& other) const {
         Value::FLOAT float1 =
             (val1.is<INT>())
                 ? val1.get<INT>()
-                : ((val1.is<BOOL>()) ? static_cast<double>(val1.get<BOOL>()) : val1.get<FLOAT>());
+                : ((val1.is<BOOL>()) ? static_cast<FLOAT>(val1.get<BOOL>()) : val1.get<FLOAT>());
         Value::FLOAT float2 =
             (val2.is<INT>())
                 ? val2.get<INT>()
-                : ((val2.is<BOOL>()) ? static_cast<double>(val2.get<BOOL>()) : val2.get<FLOAT>());
+                : ((val2.is<BOOL>()) ? static_cast<FLOAT>(val2.get<BOOL>()) : val2.get<FLOAT>());
 
         return Value(float1 + float2);
     }
@@ -385,8 +385,8 @@ Value Value::operator-(const Value& other) const {
     const Value& val2 = other;
 
     if ((val1.is<INT>() || val1.is<BOOL>()) && (val2.is<INT>() || val2.is<BOOL>())) {
-        Value::INT int1 = (val1.is<INT>()) ? val1.get<INT>() : static_cast<long>(val1.get<BOOL>());
-        Value::INT int2 = (val2.is<INT>()) ? val2.get<INT>() : static_cast<long>(val2.get<BOOL>());
+        Value::INT int1 = (val1.is<INT>()) ? val1.get<INT>() : static_cast<INT>(val1.get<BOOL>());
+        Value::INT int2 = (val2.is<INT>()) ? val2.get<INT>() : static_cast<INT>(val2.get<BOOL>());
 
         return Value(int1 - int2);
     }
@@ -394,11 +394,11 @@ Value Value::operator-(const Value& other) const {
         Value::FLOAT float1 =
             (val1.is<INT>())
                 ? val1.get<INT>()
-                : ((val1.is<BOOL>()) ? static_cast<double>(val1.get<BOOL>()) : val1.get<FLOAT>());
+                : ((val1.is<BOOL>()) ? static_cast<FLOAT>(val1.get<BOOL>()) : val1.get<FLOAT>());
         Value::FLOAT float2 =
             (val2.is<INT>())
                 ? val2.get<INT>()
-                : ((val2.is<BOOL>()) ? static_cast<double>(val2.get<BOOL>()) : val2.get<FLOAT>());
+                : ((val2.is<BOOL>()) ? static_cast<FLOAT>(val2.get<BOOL>()) : val2.get<FLOAT>());
 
         return Value(float1 - float2);
     }
@@ -419,8 +419,8 @@ Value Value::operator*(const Value& other) const {
     bool isVal2Int = val2.is<INT>() || val2.is<BOOL>();
 
     if (isVal1Int && isVal2Int) {
-        Value::INT int1 = (val1.is<INT>()) ? val1.get<INT>() : static_cast<long>(val1.get<BOOL>());
-        Value::INT int2 = (val2.is<INT>()) ? val2.get<INT>() : static_cast<long>(val2.get<BOOL>());
+        Value::INT int1 = (val1.is<INT>()) ? val1.get<INT>() : static_cast<INT>(val1.get<BOOL>());
+        Value::INT int2 = (val2.is<INT>()) ? val2.get<INT>() : static_cast<INT>(val2.get<BOOL>());
 
         return Value(int1 * int2);
     }
@@ -428,23 +428,23 @@ Value Value::operator*(const Value& other) const {
         Value::FLOAT float1 =
             (val1.is<INT>())
                 ? val1.get<INT>()
-                : ((val1.is<BOOL>()) ? static_cast<double>(val1.get<BOOL>()) : val1.get<FLOAT>());
+                : ((val1.is<BOOL>()) ? static_cast<FLOAT>(val1.get<BOOL>()) : val1.get<FLOAT>());
         Value::FLOAT float2 =
             (val2.is<INT>())
                 ? val2.get<INT>()
-                : ((val2.is<BOOL>()) ? static_cast<double>(val2.get<BOOL>()) : val2.get<FLOAT>());
+                : ((val2.is<BOOL>()) ? static_cast<FLOAT>(val2.get<BOOL>()) : val2.get<FLOAT>());
 
         return Value(float1 * float2);
     }
     if ((isVal1Int && val2.is<STR>()) || (isVal2Int && val1.is<STR>())) {
-        int intVal = 0;
+        Value::INT intVal = 0;
         std::string strVal;
 
         if (val1.is<INT>() || val1.is<BOOL>()) {
-            intVal = (val1.is<INT>()) ? val1.get<INT>() : static_cast<long>(val1.get<BOOL>());
+            intVal = (val1.is<INT>()) ? val1.get<INT>() : static_cast<INT>(val1.get<BOOL>());
             strVal = val2.get<STR>();
         } else {
-            intVal = (val2.get<INT>()) != 0 ? val2.get<INT>() : static_cast<long>(val2.get<BOOL>());
+            intVal = (val2.get<INT>()) != 0 ? val2.get<INT>() : static_cast<INT>(val2.get<BOOL>());
             strVal = val1.get<STR>();
         }
 
@@ -454,17 +454,16 @@ Value Value::operator*(const Value& other) const {
         }
         return Value(resultStr);
     }
-    if (((val1.is<INT>() || val1.is<BOOL>()) && val2.is<LIST>()) ||
-        ((val2.is<INT>() || val2.is<BOOL>()) && val1.is<LIST>())) {
+    if ((isVal1Int && val2.is<LIST>()) || (isVal2Int && val1.is<LIST>())) {
         Value::LIST result = std::make_shared<std::vector<std::shared_ptr<Value>>>();
-        int intVal = 0;
+        Value::INT intVal = 0;
         Value::LIST listVal;
 
         if (val1.is<INT>() || val1.is<BOOL>()) {
-            intVal = (val1.is<INT>()) ? val1.get<INT>() : static_cast<long>(val1.get<BOOL>());
+            intVal = (val1.is<INT>()) ? val1.get<INT>() : static_cast<INT>(val1.get<BOOL>());
             listVal = val2.get<LIST>();
         } else {
-            intVal = (val2.get<INT>()) != 0 ? val2.get<INT>() : static_cast<long>(val2.get<BOOL>());
+            intVal = (val2.get<INT>()) != 0 ? val2.get<INT>() : static_cast<INT>(val2.get<BOOL>());
             listVal = val1.get<LIST>();
         }
 
@@ -495,8 +494,8 @@ Value Value::operator/(const Value& other) const {
         throw RuntimeException("Cannot divide values with divisor 0");
     }
     if ((val1.is<INT>() || val1.is<BOOL>()) && (val2.is<INT>() || val2.is<BOOL>())) {
-        Value::INT int1 = (val1.is<INT>()) ? val1.get<INT>() : static_cast<long>(val1.get<BOOL>());
-        Value::INT int2 = (val2.is<INT>()) ? val2.get<INT>() : static_cast<long>(val2.get<BOOL>());
+        Value::INT int1 = (val1.is<INT>()) ? val1.get<INT>() : static_cast<INT>(val1.get<BOOL>());
+        Value::INT int2 = (val2.is<INT>()) ? val2.get<INT>() : static_cast<INT>(val2.get<BOOL>());
 
         return Value::INT(int1 / int2);
     }
@@ -504,11 +503,11 @@ Value Value::operator/(const Value& other) const {
         Value::FLOAT float1 =
             (val1.is<INT>())
                 ? val1.get<INT>()
-                : ((val1.is<BOOL>()) ? static_cast<double>(val1.get<BOOL>()) : val1.get<FLOAT>());
+                : ((val1.is<BOOL>()) ? static_cast<FLOAT>(val1.get<BOOL>()) : val1.get<FLOAT>());
         Value::FLOAT float2 =
             (val2.is<INT>())
                 ? val2.get<INT>()
-                : ((val2.is<BOOL>()) ? static_cast<double>(val2.get<BOOL>()) : val2.get<FLOAT>());
+                : ((val2.is<BOOL>()) ? static_cast<FLOAT>(val2.get<BOOL>()) : val2.get<FLOAT>());
 
         return Value(float1 / float2);
     }
@@ -531,8 +530,8 @@ Value Value::operator%(const Value& other) const {
         throw RuntimeException("Cannot take remainder of values with divisor 0");
     }
     if ((val1.is<INT>() || val1.is<BOOL>()) && (val2.is<INT>() || val2.is<BOOL>())) {
-        Value::INT int1 = (val1.is<INT>()) ? val1.get<INT>() : static_cast<long>(val1.get<BOOL>());
-        Value::INT int2 = (val2.is<INT>()) ? val2.get<INT>() : static_cast<long>(val2.get<BOOL>());
+        Value::INT int1 = (val1.is<INT>()) ? val1.get<INT>() : static_cast<INT>(val1.get<BOOL>());
+        Value::INT int2 = (val2.is<INT>()) ? val2.get<INT>() : static_cast<INT>(val2.get<BOOL>());
 
         return Value::INT(int1 % int2);
     }
@@ -540,11 +539,11 @@ Value Value::operator%(const Value& other) const {
         Value::FLOAT float1 =
             (val1.is<INT>())
                 ? val1.get<INT>()
-                : ((val1.is<BOOL>()) ? static_cast<double>(val1.get<BOOL>()) : val1.get<FLOAT>());
+                : ((val1.is<BOOL>()) ? static_cast<FLOAT>(val1.get<BOOL>()) : val1.get<FLOAT>());
         Value::FLOAT float2 =
             (val2.is<INT>())
                 ? val2.get<INT>()
-                : ((val2.is<BOOL>()) ? static_cast<double>(val2.get<BOOL>()) : val2.get<FLOAT>());
+                : ((val2.is<BOOL>()) ? static_cast<FLOAT>(val2.get<BOOL>()) : val2.get<FLOAT>());
 
         return Value(std::fmod(float1, float2));
     }
@@ -562,8 +561,8 @@ Value Value::pow(const Value& other) const {
     const Value& val2 = other;
 
     if ((val1.is<INT>() || val1.is<BOOL>()) && (val2.is<INT>() || val2.is<BOOL>())) {
-        Value::INT int1 = (val1.is<INT>()) ? val1.get<INT>() : static_cast<long>(val1.get<BOOL>());
-        Value::INT int2 = (val2.is<INT>()) ? val2.get<INT>() : static_cast<long>(val2.get<BOOL>());
+        Value::INT int1 = (val1.is<INT>()) ? val1.get<INT>() : static_cast<INT>(val1.get<BOOL>());
+        Value::INT int2 = (val2.is<INT>()) ? val2.get<INT>() : static_cast<INT>(val2.get<BOOL>());
 
         return Value::INT(std::pow(int1, int2));
     }
@@ -571,11 +570,11 @@ Value Value::pow(const Value& other) const {
         Value::FLOAT float1 =
             (val1.is<INT>())
                 ? val1.get<INT>()
-                : ((val1.is<BOOL>()) ? static_cast<double>(val1.get<BOOL>()) : val1.get<FLOAT>());
+                : ((val1.is<BOOL>()) ? static_cast<FLOAT>(val1.get<BOOL>()) : val1.get<FLOAT>());
         Value::FLOAT float2 =
             (val2.is<INT>())
                 ? val2.get<INT>()
-                : ((val2.is<BOOL>()) ? static_cast<double>(val2.get<BOOL>()) : val2.get<FLOAT>());
+                : ((val2.is<BOOL>()) ? static_cast<FLOAT>(val2.get<BOOL>()) : val2.get<FLOAT>());
 
         return Value(std::pow(float1, float2));
     }
@@ -611,7 +610,7 @@ Value Value::operator-() const {
 }
 
 Value Value::operator&&(const Value& other) const {
-    const Value val1 = *this;
+    Value val1 = *this;
     const Value& val2 = other;
 
     if (!val1.getBoolValue()) {
@@ -671,10 +670,10 @@ Value Value::colOperations(const Value& val1, const Value& val2,
 
 double Value::getNumericValue() const {
     if (is<BOOL>()) {
-        return static_cast<double>(get<BOOL>());
+        return static_cast<FLOAT>(get<BOOL>());
     }
     if (is<INT>()) {
-        return static_cast<double>(get<INT>());
+        return static_cast<FLOAT>(get<INT>());
     }
     if (is<FLOAT>()) {
         return get<FLOAT>();
@@ -702,7 +701,7 @@ bool Value::getBoolValue() const {
         return !get<COLUMN>()->data->empty();
     }
     if (is<TABLE>()) {
-        return !get<TABLE>()->empty();
+        return !get<TABLE>()->second.empty();
     }
     return false;
 }

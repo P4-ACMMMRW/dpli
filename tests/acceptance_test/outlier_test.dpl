@@ -1,0 +1,16 @@
+
+types = ["str", "str", "str", "str", "str", "int", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str", "str"]
+
+houseTable = readTable("./tests/acceptance_test/AmesHousing.csv", ",", types)
+
+areaColumn = houseTable[$"Lot Area"]
+
+mean = mean(areaColumn)
+deviation = stdev(areaColumn)
+threshold = 2
+
+result = areaColumn[> threshold * deviation + mean] 
+
+result = {"Order" : list(result[$"Order"]), "Lot Area" : list(result[$"Lot Area"])}
+
+print(result)

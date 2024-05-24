@@ -145,18 +145,19 @@ fragment ALPHANUM: [a-zA-Z0-9];
 
 // Types
 Integer: DIGIT+;
-Float: DIGIT+ '.' DIGIT+;
+Float: DIGIT* '.' DIGIT+;
 Bool: 'True' | 'False';
-String : '"' ( ~["\r\n\\] | '\\' '"' )* '"';
+String : '"' ( ~["\r\n] | '\\' . )* '"';
 None: 'None';
 
 // Identifiers
-Identifier: ALPHA ALPHANUM*;
+Identifier: (ALPHA | '_') (ALPHANUM | '_')*;
 
 // Comments
 Comment: '#' ~[\r\n]* -> skip;
 
 // Add Indent and Dedent tokens
 Newline: '\r'? '\n' { addDentTokens(); };
+
 // Skip whitespace
 Whitespace: [ \t] -> skip;
