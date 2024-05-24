@@ -119,7 +119,7 @@ void Evaluator::initStdlib() {
         throw RuntimeException("Cannot get mean of values of type " + val.toTypeString());
     };
 
-    Procedure::ProcType stdDev1 = [mean1](std::vector<std::shared_ptr<AstNode>> args) {
+    Procedure::ProcType stdev1 = [mean1](std::vector<std::shared_ptr<AstNode>> args) {
         Value val = args[0]->getVal();
         if (val.is<Value::LIST>() || val.is<Value::COLUMN>()) {
             Value::LIST list =
@@ -489,7 +489,7 @@ void Evaluator::initStdlib() {
     ptable.bind(Procedure("list", {"x"}, list1));
     ptable.bind(Procedure("sum", {"x"}, sum1));
     ptable.bind(Procedure("mean", {"x"}, mean1));
-    ptable.bind(Procedure("std_dev", {"x"}, stdDev1));
+    ptable.bind(Procedure("stdev", {"x"}, stdev1));
     ptable.bind(Procedure("len", {"x"}, len1));
     ptable.bind(Procedure("ceil", {"x"}, ceil1));
     ptable.bind(Procedure("floor", {"x"}, floor1));

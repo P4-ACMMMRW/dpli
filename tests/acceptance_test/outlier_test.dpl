@@ -6,10 +6,10 @@ houseTable = readTable("./tests/acceptance_test/AmesHousing.csv", ",", types)
 areaColumn = houseTable[$"Lot Area"]
 
 mean = mean(areaColumn)
-stdDev = std_dev(areaColumn)
+deviation = stdev(areaColumn)
 threshold = 2
 
-result = areaColumn[> threshold * stdDev + mean] 
+result = areaColumn[> threshold * deviation + mean] 
 
 result = {"Order" : list(result[$"Order"]), "Lot Area" : list(result[$"Lot Area"])}
 
