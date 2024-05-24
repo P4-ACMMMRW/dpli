@@ -1,8 +1,11 @@
 name: Linting
 on:
+  push:
+    branches: [main]
+    paths: ['**.cpp', '**.hpp']
   pull_request:
     branches: [main]
-    paths-ignore: ['**.cpp', '**.hpp']
+    paths: ['**.cpp', '**.hpp']
 
 jobs:
   lint:
