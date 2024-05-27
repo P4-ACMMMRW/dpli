@@ -327,6 +327,15 @@ bool Value::operator!() const {
     if (is<LIST>()) {
         return get<LIST>()->empty();  // not [] == true
     }
+    if (is<NONETYPE>()) {
+        return true;
+    }
+    if (is<COLUMN>()) {
+        return !get<COLUMN>()->data->empty();
+    }
+    if (is<TABLE>()) {
+        return !get<TABLE>()->second.empty();
+    }
 
     throw RuntimeException("Can not use NOT on this type");
 }
@@ -703,5 +712,6 @@ bool Value::getBoolValue() const {
     if (is<TABLE>()) {
         return !get<TABLE>()->second.empty();
     }
+
     return false;
 }
