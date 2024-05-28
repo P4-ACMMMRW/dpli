@@ -171,6 +171,10 @@ VALUE_TEST("compare values") {
     REQUIRE(!(col3 != col1));
     REQUIRE(col3 != col2);
 
+    REQUIRE(!(col1) == false);
+    REQUIRE(!(col2) == false);
+    REQUIRE(!(col3) == false);
+
     Value col4 = std::make_shared<Value::COL_STRUCT>();
     std::cout << l4.toString() << '\n';
     col4.get<Value::COLUMN>()->data = l4.get<Value::LIST>();
@@ -194,6 +198,10 @@ VALUE_TEST("compare values") {
     REQUIRE(col5 > col6);
     REQUIRE(!(col6 > col4));
     REQUIRE(!(col6 > col5));
+
+    REQUIRE(!(col4) == false);
+    REQUIRE(!(col5) == false);
+    REQUIRE(!(col6) == false);
 
     // Tables
     Value tab1 = std::make_shared<std::pair<std::vector<Value::STR>, std::unordered_map<Value::STR, Value::COLUMN>>>();
@@ -219,6 +227,10 @@ VALUE_TEST("compare values") {
     REQUIRE(!(tab3 != tab1));
     REQUIRE(tab3 != tab2);
 
+    REQUIRE(!(tab1) == false);
+    REQUIRE(!(tab2) == false);
+    REQUIRE(!(tab3) == false);
+
     Value tab4 = std::make_shared<std::pair<std::vector<Value::STR>, std::unordered_map<Value::STR, Value::COLUMN>>>();
     REQUIRE(tab1 != tab4);
 
@@ -227,6 +239,9 @@ VALUE_TEST("compare values") {
 
     REQUIRE(tab1 != tab5);
     REQUIRE(tab4 < tab1);
+
+    REQUIRE(!(tab4) == true);
+    REQUIRE(!(tab5) == false);
     
 }
 
@@ -660,7 +675,6 @@ VALUE_TEST("Arthrimetic values") {
     Value colEmpty = std::make_shared<Value::COL_STRUCT>();
     colEmpty.get<Value::COLUMN>()->data = lEmpty.get<Value::LIST>();
     
-    REQUIRE_THROWS_AS(!col1, dplsrc::RuntimeException);
     REQUIRE_THROWS_AS(col1 + colEmpty, dplsrc::RuntimeException);
     REQUIRE_THROWS_AS(colEmpty + col1 , dplsrc::RuntimeException);
     REQUIRE_THROWS_AS(col1 - colEmpty, dplsrc::RuntimeException);
