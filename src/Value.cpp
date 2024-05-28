@@ -337,7 +337,7 @@ bool Value::operator!() const {
         return get<TABLE>()->second.empty(); // not {} == true
     }
 
-    throw RuntimeException("Can not use NOT on this type");
+    throw InternalException("Can not use NOT on this type");
 }
 
 Value Value::operator+(const Value& other) const {
