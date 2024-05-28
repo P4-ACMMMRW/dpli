@@ -19,6 +19,11 @@ Language documentation and program examples can be found under the `docs/` folde
 Precompiled binaries can be found under the actions tab on github.
 
 ## How to Compile
+### Dependencies
+- `Java JDK 11+`
+- `cmake`
+- `c++17 compiler`
+
 On Ubuntu simply run:
 ```bash
 ./scripts/compile.sh
@@ -30,8 +35,3 @@ mkdir build
 cd build
 cmake ..; cmake --build .
 ```
-
-### Dependencies
-- `Java JDK 11+`
-- `cmake`
-- `c++17 compiler`
