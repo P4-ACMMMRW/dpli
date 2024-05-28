@@ -331,10 +331,10 @@ bool Value::operator!() const {
         return true;
     }
     if (is<COLUMN>()) {
-        return get<COLUMN>()->data->empty(); // not "" : [] == true
+        return get<COLUMN>()->data->empty();  // not "" : [] == true
     }
     if (is<TABLE>()) {
-        return get<TABLE>()->second.empty(); // not {} == true
+        return get<TABLE>()->second.empty();  // not {} == true
     }
 
     throw InternalException("Can not use NOT on this type");
