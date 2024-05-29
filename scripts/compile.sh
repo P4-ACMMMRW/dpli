@@ -44,10 +44,10 @@ cd build
 
 # If ./build.sh release enable release mode
 if [ "$1" == "release" ]; then
-    cmake .. -DCMAKE_BUILD_TYPE=Release
+    cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="$ENV{EMSDK}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake"
     echo "Release mode enabled"
 else
-    cmake .. -DCMAKE_BUILD_TYPE=Debug
+    cmake .. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE="$ENV{EMSDK}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake"
     echo "Debug mode enabled"
 fi
 

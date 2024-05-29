@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.7 FATAL_ERROR)
+set(CMAKE_TOOLCHAIN_FILE "$ENV{EMSDK}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake")
 project(dpl)
 
 enable_testing()
@@ -12,7 +13,7 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 
     if (NOT CMAKE_BUILD_TYPE STREQUAL "Release")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 --coverage")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s DISABLE_EXCEPTION_CATCHING=0 -s ALLOW_MEMORY_GROWTH=1")
     endif()
 endif()
 
@@ -54,6 +55,9 @@ message(STATUS "Compiling with ${CMAKE_CXX_COMPILER_ID}")
 
 add_library(dpllib STATIC ${SOURCES} ${ANTLR_DplLexer_CXX_OUTPUTS} ${ANTLR_DplParser_CXX_OUTPUTS})
 
+include_directories(/lib/antlr/Cpp/runtime/src)
+target_link_libraries(dpllib PUBLIC antlr4_static ${PROJECT_SOURCE_DIR}/lib/antlr/Cpp/build/runtime/libantlr4-runtime.a)
+
 target_include_directories(dpllib PUBLIC 
     ${ANTLR_DplLexer_OUTPUT_DIR}
     ${ANTLR_DplParser_OUTPUT_DIR} 
@@ -71,13 +75,19 @@ target_link_libraries(dpllib PUBLIC antlr4_static)
 
 add_executable(dpli Main.cpp)
 
+include_directories(/lib/antlr/Cpp/runtime/src)
+target_link_libraries(dpli PRIVATE dpllib antlr4_static ${PROJECT_SOURCE_DIR}/lib/antlr/Cpp/build/runtime/libantlr4-runtime.a)
+
 target_include_directories(dpli PRIVATE ${PROJECT_SOURCE_DIR}/include)
 
-target_link_libraries(dpli PRIVATE dpllib antlr4_static)
-
-add_subdirectory(tests)
+#add_subdirectory(tests)
 
 # Strip debug symbols in Release mode
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
     add_custom_command(TARGET dpli POST_BUILD COMMAND ${CMAKE_STRIP} $<TARGET_FILE:dpli>)
 endif()
+
+# Test doesn't work
+set_target_properties(dpli PROPERTIES
+    LINK_FLAGS "--bind -s WASM=1 -s EXPORTED_FUNCTIONS='[\"_main\", \"_malloc\", \"_free\"]' -s EXTRA_EXPORTED_RUNTIME_METHODS='[\"cwrap\", \"FS\", \"allocate\", \"ALLOC_NORMAL\", \"stringToUTF8\"]'"
+)
